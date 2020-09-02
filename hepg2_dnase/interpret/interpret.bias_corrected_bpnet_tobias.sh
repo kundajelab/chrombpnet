@@ -1,0 +1,19 @@
+CUDA_VISIBLE_DEVICES=1 kerasAC_bpnet_shap_wrapper \
+		    --model_hdf5 /srv/scratch/annashch/deeplearning/profile/hepg2_dnase/with_bias_bpnet_tobias/hepg2.dnase.with.bpnet.tobias.bias.0.hdf5 \
+		    --ref_fasta /mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta \
+		    --bed_regions HEPG2.dnase.idr.optimal_peak.narrowPeak.gz \
+		    --bed_regions_center summit \
+		    --tdb_array /srv/scratch/annashch/encode_dnase_tiledb/db/dnase \
+		    --chrom_sizes /users/annashch/hg38.chrom.sizes \
+		    --tasks ENCSR149XIL \
+		    --batch_size 200 \
+		    --tdb_output_source_attribute count_bigwig_unstranded_5p count_bigwig_unstranded_5p \
+		    --tdb_output_flank 500 500 \
+		    --tdb_output_aggregation None sum \
+		    --tdb_output_transformation None log \
+		    --tdb_input_source_attribute seq \
+		    --tdb_input_flank 673 \
+		    --tdb_input_aggregation None \
+		    --tdb_input_transformation None \
+		    --out_pickle HEPG2.DNASE.bias_corrected_bpnet_tobias.fold0.deepSHAP \
+		    --num_threads 10

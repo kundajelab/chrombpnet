@@ -1,0 +1,6 @@
+dataset	idr_peak	count_bigwig_plus_5p	count_bigwig_minus_5p	control_count_bigwig_plus_5p	control_count_bigwig_minus_5p	ambig_peak
+GATA2	GATA2_ENCSR000EVW_endothelial-cell-of-umbilical-vein_all_peakints.bed.gz	GATA2_ENCSR000EVW_endothelial-cell-of-umbilical-vein_pos.bw	GATA2_ENCSR000EVW_endothelial-cell-of-umbilical-vein_neg.bw	control_ENCSR000EVV_endothelial-cell-of-umbilical-vein_pos.bw	control_ENCSR000EVV_endothelial-cell-of-umbilical-vein_neg.bw	/mnt/data/annotations/blacklist/GRch38/GRch38_unified_blacklist.bed.gz
+
+
+
+
