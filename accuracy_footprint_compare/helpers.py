@@ -12,10 +12,76 @@ font = {'family' : 'normal',
 matplotlib.rc('font', **font)
 import numpy as np
 import pandas as pd
+from kerasAC.vis import *
+from sklearn.metrics import average_precision_score
+
+def get_true_pos(tobias_vals,motif_coords,region_size=1000):
+    #get score distributions 
+    mask=np.zeros((region_size,))
+    mask[np.where(tobias_vals==tobias_vals.max())]=1
+    for motif_coord in motif_coords: 
+        mask[motif_coord[0]:motif_coord[1]]+=1
+    true_vals=(mask>=2)
+    if max(mask)<2:
+        return None
+    else:
+        return true_vals
+
+def project_scores(scores,seq):
+    projected=scores*seq
+    seq_length=seq.shape[0]
+    absmax=np.argmax(np.absolute(projected),axis=1)
+    projected=[projected[i][absmax[i]] for i in range(seq_length)]
+    return projected
 
 
-from kerasAC.vis import * 
+def get_auprc(vals,labels,seq):
+    vals=project_scores(vals,seq) 
+    auprc=round(average_precision_score(labels,vals),2)
+    vals_in_fp=np.asarray(vals)[np.argwhere(labels)]
+    vals_not_in_fp=np.asarray(vals)[np.argwhere(labels==False)]
+    return auprc, vals_in_fp, vals_not_in_fp
+
+
+def make_plot_perf(profile_shap,
+                   count_shap,
+                   binary_class_shap,
+                   binary_reg_shap,
+                   gkm_score,
+                   seq,
+                   true_vals):
+    plt.rcParams["figure.figsize"]=6,12
+    fig,axes=plt.subplots(5,1)
+    auprc_profile_shap,infp_profile_shap,outsidefp_profile_shap=get_auprc(profile_shap,true_vals,seq)
+    axes[0].hist(infp_profile_shap,color='b',alpha=0.3,label='In Footprint',density=True,cumulative=True)
+    axes[0].hist(outsidefp_profile_shap,color='r',alpha=0.3,label='Outside Footprint',density=True,cumulative=True)
+    axes[0].set_title("auPRC="+str(auprc_profile_shap)+ " BPNET Profile Loss SHAP CDF")
+    axes[0].legend()
+    auprc_count_shap,infp_count_shap,outsidefp_count_shap=get_auprc(count_shap,true_vals,seq)
+    axes[1].hist(infp_count_shap,color='b',alpha=0.3,label='In Footprint',density=True,cumulative=True)
+    axes[1].hist(outsidefp_count_shap,color='r',alpha=0.3,label='Outside Footprint',density=True,cumulative=True)
+    axes[1].set_title("auPRC="+str(auprc_count_shap)+ " BPNET Count Loss SHAP CDF")
+
+    auprc_binary_class_shap,infp_binary_class_shap,outsidefp_binary_class_shap=get_auprc(binary_class_shap,true_vals,seq)
+    axes[2].hist(infp_binary_class_shap,color='b',alpha=0.3,label='In Footprint',density=True,cumulative=True)
+    axes[2].hist(outsidefp_binary_class_shap,color='r',alpha=0.3,label='Outside Footprint',density=True,cumulative=True)
+    axes[2].set_title("auPRC="+str(auprc_binary_class_shap)+ " Binary Class. SHAP CDF")
+
+    auprc_binary_reg_shap,infp_binary_reg_shap,outsidefp_binary_reg_shap=get_auprc(binary_reg_shap,true_vals,seq)
+    axes[3].hist(infp_binary_reg_shap,color='b',alpha=0.3,label='In Footprint',density=True,cumulative=True)
+    axes[3].hist(outsidefp_binary_reg_shap,color='r',alpha=0.3,label='Outside Footprint',density=True,cumulative=True)
+    axes[3].set_title("auPRC="+str(auprc_binary_reg_shap)+ " Binary Reg. SHAP CDF")
+
+    auprc_gkm_score,infp_gkm_score, outsidefp_gkm_score=get_auprc(gkm_score,true_vals,seq)
+    axes[4].hist(infp_gkm_score,color='b',alpha=0.3,label='In Footprint',density=True,cumulative=True)
+    axes[4].hist(outsidefp_gkm_score,color='r',alpha=0.3,label='Outside Footprint',density=True,cumulative=True)
+    axes[4].set_title("auPRC="+str(auprc_gkm_score)+ " GKMExplain CDF")
+
+    plt.subplots_adjust(hspace=0.6)
+    plt.show()
+    
 def make_plot(coord,
+              tobias_vals,
               label_prob,
               pred_prob,
               profile_shap,
@@ -31,8 +97,8 @@ def make_plot(coord,
               xmin=0,
               xmax=1000,
               motif_coords=[]):
-    plt.rcParams["figure.figsize"]=25,10
-    fig, axes = plt.subplots(6, 1)
+    plt.rcParams["figure.figsize"]=25,12
+    fig, axes = plt.subplots(7, 1)
     
     #predictions & labels from bpnet 
     axes[0].plot(label_prob,label='Label Prob',color='b')
@@ -76,6 +142,11 @@ def make_plot(coord,
     if ymin is not None:
         axes[5].set_ylim(ymin,ymax)
     axes[5].set_xticks(list(range(xmin, xmax, 50,)))
+
+    #TOBIAS values
+    axes[6].plot(tobias_vals,label='TOBIAS Footprint Score',color='k')
+    axes[6].legend()
+    
     
     #add motif positions from vierstra 
     for motif_coord in motif_coords:
