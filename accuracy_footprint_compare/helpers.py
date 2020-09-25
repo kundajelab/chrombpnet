@@ -14,6 +14,10 @@ import numpy as np
 import pandas as pd
 from kerasAC.vis import *
 from sklearn.metrics import average_precision_score
+from scipy.ndimage import gaussian_filter1d
+
+def smooth(sig):
+    return gaussian_filter1d(sig, 7, truncate=(80 / 14))
 
 def get_true_pos(tobias_vals,motif_coords,region_size=1000):
     #get score distributions 
@@ -27,12 +31,13 @@ def get_true_pos(tobias_vals,motif_coords,region_size=1000):
     else:
         return true_vals
 
+
+def shap_to_prob(projected_shap):
+    projected_shap=np.squeeze(projected_shap)
+    return np.abs(projected_shap)/np.sum(projected_shap) 
+
 def project_scores(scores,seq):
-    projected=scores*seq
-    seq_length=seq.shape[0]
-    absmax=np.argmax(np.absolute(projected),axis=1)
-    projected=[projected[i][absmax[i]] for i in range(seq_length)]
-    return projected
+    return np.sum(scores*seq,axis=1)
 
 
 def get_auprc(vals,labels,seq):

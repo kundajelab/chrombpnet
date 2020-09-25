@@ -18,7 +18,10 @@ from sklearn.metrics import average_precision_score
 from matplotlib import cm
 from matplotlib.colors import Normalize 
 from scipy.interpolate import interpn
+from scipy.ndimage import gaussian_filter1d
 
+def smooth(sig):
+    return gaussian_filter1d(sig, 7, truncate=(80 / 14))
 
 
 def cont_jaccard_per_base(seq_1, seq_2):
@@ -49,7 +52,7 @@ def cosine_sim(a,b):
 
 
 
-def cosine_sim_perbase(seq_1, seq_2):
+def cosine_sim_per_base(seq_1, seq_2):
     """
     Takes two gradient sequences (I x 4 arrays) and computes a similarity between
     them, using a cosine similarity.
