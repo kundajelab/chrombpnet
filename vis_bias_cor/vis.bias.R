@@ -14,6 +14,7 @@ make_bias_dnase_plot <-function(data,metric){
                point_color=data$TestSet,
                fill=data$TestSet))+
     geom_density_ridges(
+      alpha=0.3,
       jittered_points=TRUE,
       scale=0.95,
       rel_min_height=0.01,
@@ -22,7 +23,7 @@ make_bias_dnase_plot <-function(data,metric){
     ) +
     scale_y_discrete(expand = c(0, 0), name="Model") +
     scale_x_continuous(expand = c(0, 0), name = metric) +
-    scale_fill_manual(name="Smoothing",values = c("#D55E0050", "#FF000050","#0072B250"), labels = c("GM12878 Peaks", "K562 Peaks","Strided Genome")) +
+    scale_fill_manual(name="Sig bQTL",values = c("#D55E0050", "#FF000050","#0072B250"), labels = c("GM12878 Peaks", "K562 Peaks","Strided Genome")) +
     scale_color_manual(values = c("#D55E00", "#FF0000","#0072B2"), guide = "none") +
     scale_discrete_manual("point_color", values = c("#D55E00", "#FF0000", "#0072B2"), guide = "none") +
     coord_cartesian(clip = "off") +
