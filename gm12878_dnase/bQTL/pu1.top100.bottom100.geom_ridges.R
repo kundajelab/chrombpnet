@@ -47,7 +47,8 @@ ggplot(data, aes(Abs_Delta_Counts, colour =sig)) +
   scale_color_manual(values=c("#e41a1c","#377eb8a0"))+
   xlab("Abs(Log(Count(Alt))-Log(Count(Ref)))")+
   ylab("CDF")+
-  ggtitle("sig thresh=5e-5 (n=3,831),\nvs p-val>5e-5 (n=995,968)")+
-  theme_bw(15)
+  ggtitle("p-val<5e-5 (n=3,831),\n vs p-val>5e-5 (n=995,968)")+
+  theme_bw(15)+
+  theme(legend.position="top")
 
 
