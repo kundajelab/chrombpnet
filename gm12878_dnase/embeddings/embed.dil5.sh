@@ -7,8 +7,8 @@ do
 			--ref_fasta /mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta \
 			--center_on_summit \
 			--flank 673 \
-			--output_npz_file gm12878_dnase_unplugged_embeddings_profile_out_prebias_$fold.6_dilconv.npz \
-			--embedding_layer_name 6_dilconv \
+			--output_npz_file gm12878_dnase_unplugged_embeddings_$fold.5_dilconv.npz \
+			--embedding_layer_name 5_dilconv \
 			--input_layer_name sequence \
 			--threads 20 \
 			--batch_size 25 \
