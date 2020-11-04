@@ -1,5 +1,5 @@
 #!/bin/bash
-outdir=/srv/scratch/annashch/deeplearning/profile/k562_dnase/bpnet/with_bias_unplugged
+outdir=/srv/scratch/annashch/chrombpnet/k562_dnase/bpnet/with_bias_unplugged
 model=k562.dnase.with.bias.unplugged
 seed=1234
 gpu=0

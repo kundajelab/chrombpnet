@@ -1,23 +1,27 @@
 import pdb 
-import numpy as np
+import numpy as np ;
+from keras.backend import int_shape
+from sklearn.metrics import average_precision_score
 from kerasAC.metrics import * 
 from kerasAC.custom_losses import *
-import keras
+
+import keras;
 
 #import the various keras layers 
-from keras.layers import Dense,Activation,Input, Concatenate, Cropping1D, Add
+from keras.layers import Dense,Activation,Dropout,Flatten,Reshape,Input, Concatenate, Cropping1D, Add
 from keras.layers.core import Dropout, Reshape, Dense, Activation, Flatten
-from keras.layers.convolutional import Conv1D, Conv2D
+from keras.layers.convolutional import Conv1D
 from keras.layers.pooling import GlobalMaxPooling1D,MaxPooling1D,GlobalAveragePooling1D
 from keras.layers.normalization import BatchNormalization
 
 from keras.optimizers import Adam
-from keras.constraints import maxnorm
+from keras.constraints import maxnorm;
 from keras.regularizers import l1, l2    
+
 from keras.models import Model
 
 
-def load_pretrained_bias(model_hdf5,model_name=None):
+def load_pretrained_bias(model_hdf5):
     from keras.models import load_model
     from keras.utils.generic_utils import get_custom_objects
     custom_objects={"recall":recall,
@@ -36,9 +40,7 @@ def load_pretrained_bias(model_hdf5,model_name=None):
     #freeze the model
     num_layers=len(pretrained_bias_model.layers)
     for i in range(num_layers):
-        pretrained_bias_model.layers[i].trainable=False
-    if model_name is not None:
-        pretrained_bias_model.name=model_name 
+        pretrained_bias_model.layers[i].trainable=False 
     return pretrained_bias_model 
 
 
@@ -60,41 +62,32 @@ def getModelGivenModelOptionsAndWeightInits(args):
     model_params=get_model_param_dict(args.model_params)
     profile_loss_weight=float(model_params['profile_loss_weight'])
     counts_loss_weight=float(model_params['counts_loss_weight'])
-    pretrained_model_names=model_params['pretrained_bias_model'].split(',')
-    assert len(pretrained_model_names)==2
-    pretrained_bias_models=[load_pretrained_bias(pretrained_model_names[i],'model_'+str(i)) for i in range(len(pretrained_model_names))]
+    pretrained_bias_model=load_pretrained_bias(model_params['pretrained_bias_model'])
     print("loaded pre-trained bias model with frozen layers")
     
     #read in arguments
-    seed=int(args.seed)
+    seed=args.seed
     init_weights=args.init_weights 
-    sequence_flank=int(args.tdb_input_flank[0])
-    num_tasks=int(args.num_tasks)
+    sequence_flank=args.tdb_input_flank[0]
+    num_tasks=args.num_tasks
     
     seq_len=2*sequence_flank
-    out_flank=int(args.tdb_output_flank[0])
+    out_flank=args.tdb_output_flank[0]
     out_pred_len=2*out_flank
     print(seq_len)
     print(out_pred_len)
     #define inputs
     inp = Input(shape=(seq_len, 4),name='sequence')    
-    bias_output0 = pretrained_bias_models[0] (inp)
-    bias_output1 = pretrained_bias_models[1] (inp)
-    #stack the outputs
-    concat_biases_profile=Concatenate(axis=-1,name='concat_biases_profile')([bias_output0[0],bias_output1[0]])
-    concat_biases_count=Concatenate(axis=-1,name='concat_biases_count')([bias_output0[1],bias_output1[1]])
-
-    print("concat_biases_profile shape:"+str(concat_biases_profile))
-    print("concat_biases_count shape:"+str(concat_biases_count))
-    
+    bias_output = pretrained_bias_model (inp)
+    print(bias_output[0].shape)
+    print(bias_output[1].shape)
     # conv layer without activation 
     profile_out = Conv1D(1,
                          kernel_size=20,
                          padding='same',
                          activation=None,
-                         name='profile_out')(concat_biases_profile)
-    
-    count_out=Dense(1,activation=None,name='count_out')(concat_biases_count)
+                         name='profile_out')(bias_output[0])
+    count_out=bias_output[1] 
     model=Model(inputs=[inp],outputs=[profile_out,
                                      count_out])
     print("got model") 

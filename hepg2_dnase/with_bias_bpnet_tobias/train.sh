@@ -37,7 +37,7 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --tdb_input_source_attribute seq \
 		    --tdb_input_aggregation None \
 		    --tdb_input_transformation None \
-		    --tdb_input_flank 673 \
+		    --tdb_input_flank 1020 \
 		    --tdb_output_source_attribute count_bigwig_unstranded_5p count_bigwig_unstranded_5p \
 		    --tdb_output_flank 500 500 \
 		    --tdb_output_aggregation None sum \
