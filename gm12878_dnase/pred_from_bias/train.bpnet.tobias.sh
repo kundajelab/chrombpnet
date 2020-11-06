@@ -28,7 +28,7 @@ fi
 params=$6
 echo "outdir:$outdir"
 
-ENCSR000EMTCUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
+CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --seed $seed \
 		    --batch_size 25 \
 		    --ref_fasta /mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta \

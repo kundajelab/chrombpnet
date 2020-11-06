@@ -45,7 +45,8 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_predict_tdb \
 		    --genome hg38 \
 		    --upsample_ratio_list_predict 1 \
 		    --predictions_and_labels_hdf5 $outdir/$model_name.$fold \
-		    --load_model_hdf5 $model_name.$fold.hdf5 \
+		    --json $model_name.$fold.arch \
+		    --weights $model_name.$fold.weights \
 		    --tasks ENCSR477RTP \
 		    --upsample_threads 1 \
 		    --tdb_ambig_attribute ambig_peak \
