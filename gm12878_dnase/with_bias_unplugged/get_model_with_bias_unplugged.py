@@ -20,8 +20,8 @@ from keras.regularizers import l1, l2
 
 from keras.models import Model
 
-def load_pretrained_model(model_hdf5):
-    from keras.models import load_model
+def load_pretrained_model(model_hdf5,arch,weights):
+    from keras.models import load_model, model_from_json
     from keras.utils.generic_utils import get_custom_objects
     custom_objects={"recall":recall,
                     "sensitivity":recall,
@@ -35,7 +35,12 @@ def load_pretrained_model(model_hdf5):
                     "ambig_mean_squared_error":ambig_mean_squared_error,
                     "MultichannelMultinomialNLL":MultichannelMultinomialNLL}
     get_custom_objects().update(custom_objects)
-    pretrained_model=load_model(model_hdf5)
+    if model_hdf5 is not None:
+        pretrained_model=load_model(model_hdf5)
+    else:
+        import json
+        pretrained_model=model_from_json(open(arch,'r').read())
+        pretrained_model.load_weights(weights)
     return pretrained_model 
 
 def get_model_param_dict(param_file):
@@ -98,7 +103,7 @@ def getModelGivenModelOptionsAndWeightInits(args):
     print(out_pred_len)
 
     #load the pretrained bias-corrected model
-    pretrained_model=load_pretrained_model(model_params['pretrained_model'])
+    pretrained_model=load_pretrained_model(None,model_params['arch'],model_params['weights'])
 
     
     #define inputs
@@ -183,7 +188,7 @@ if __name__=="__main__":
     parser=argparse.ArgumentParser(description="view model arch")
     parser.add_argument("--seed",type=int,default=1234)
     parser.add_argument("--init_weights",default=None)
-    parser.add_argument("--tdb_input_flank",nargs="+",default=[673])
+    parser.add_argument("--tdb_input_flank",nargs="+",default=[1057])
     parser.add_argument("--tdb_output_flank",nargs="+",default=[500])
     parser.add_argument("--num_tasks",type=int,default=1)
     parser.add_argument("--model_params",default=None)
@@ -192,6 +197,6 @@ if __name__=="__main__":
     model=getModelGivenModelOptionsAndWeightInits(args)
     print(model.summary())
     #save the model to hdf5
-    #model.save(args.outf)
+    model.save(args.outf)
 
     
