@@ -1,10 +1,10 @@
 #!/bin/bash
-outdir=/srv/scratch/annashch/chrombpnet/imr90_atac/with_bias_tobias
-model=imr90.atac.with.tobias.bias
+outdir=/srv/scratch/annashch/chrombpnet/h1esc_atac/with_bias_tobias
+model=h1esc.atac.with.tobias.bias
 seed=1234
-gpu=0
+gpu=2
 
-for fold in  1 2 3 4
+for fold in `seq 0 4`
 do 
     ./train.sh $fold $gpu $model $seed $outdir
     ./predict.sh $fold $gpu $model $seed $outdir 

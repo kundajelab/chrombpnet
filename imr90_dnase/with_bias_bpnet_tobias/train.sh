@@ -34,10 +34,11 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --tdb_array /srv/scratch/annashch/encode_dnase_tiledb/db/dnase \
 		    --tdb_partition_attribute_for_upsample overlap_peak \
 		    --tdb_partition_thresh_for_upsample 1 \
+		    --tdb_partition_datasets_for_upsample ENCSR477RTP \
 		    --tdb_input_source_attribute seq \
 		    --tdb_input_aggregation None \
 		    --tdb_input_transformation None \
-		    --tdb_input_flank 673 \
+		    --tdb_input_flank 1057 \
 		    --tdb_output_source_attribute count_bigwig_unstranded_5p count_bigwig_unstranded_5p \
 		    --tdb_output_flank 500 500 \
 		    --tdb_output_aggregation None sum \
@@ -60,10 +61,10 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --patience 3 \
 		    --patience_lr 2 \
 		    --model_prefix $outdir/$model_name.$fold \
-		    --architecture_from_file profile_bpnet_dnase_with_bias.py \
+		    --architecture_spec profile_bpnet_dnase_with_bias \
 		    --model_params $outdir/params.$fold.txt \
-		    --use_multiprocessing False \
-		    --tasks ENCSR477RTP \
+		    --tdb_input_datasets seq \
+		    --tdb_output_datasets ENCSR477RTP ENCSR477RTP \
 		    --upsample_ratio_list_train 1.0 \
 		    --upsample_ratio_list_eval 1.0 \
 		    --trackables logcount_predictions_loss loss profile_predictions_loss val_logcount_predictions_loss val_loss val_profile_predictions_loss

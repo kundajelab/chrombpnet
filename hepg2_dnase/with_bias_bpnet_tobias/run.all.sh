@@ -4,7 +4,7 @@ model=hepg2.dnase.with.bpnet.tobias.bias
 seed=1234
 gpu=2
 
-for fold in 1 2 3 4
+for fold in 2 3 4
 do 
     ./train.sh $fold $gpu $model $seed $outdir
     ./predict.sh $fold $gpu $model $seed $outdir

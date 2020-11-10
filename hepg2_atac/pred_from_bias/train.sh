@@ -35,10 +35,11 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --tdb_array /srv/scratch/annashch/encode_dnase_tiledb/db/atac \
 		    --tdb_partition_attribute_for_upsample overlap_peak \
 		    --tdb_partition_thresh_for_upsample 1 \
+		    --tdb_partition_datasets_for_upsample HEPG2 \
 		    --tdb_input_source_attribute seq \
 		    --tdb_input_aggregation None \
 		    --tdb_input_transformation None \
-		    --tdb_input_flank 673 \
+		    --tdb_input_flank 1057 \
 		    --tdb_output_source_attribute count_bigwig_unstranded_5p count_bigwig_unstranded_5p \
 		    --tdb_output_flank 500 500 \
 		    --tdb_output_aggregation None sum \
@@ -50,6 +51,8 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --tdb_output_max None 10.5 \
 		    --num_inputs 1 \
 		    --num_outputs 2 \
+		    --tdb_input_datasets seq \
+		    --tdb_output_datasets HEPG2 HEPG2 \
 		    --fold $fold \
 		    --genome hg38 \
 		    --num_train 10000 \
@@ -63,8 +66,6 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --model_prefix $outdir/$model_name.$fold \
 		    --architecture_from_file signal_from_bias.py \
 		    --model_params $params \
-		    --use_multiprocessing False \
-		    --tasks HEPG2 \
 		    --upsample_ratio_list_train 1.0 \
 		    --upsample_ratio_list_eval 1.0 \
 		    --trackables logcount_predictions_loss loss profile_predictions_loss val_logcount_predictions_loss val_loss val_profile_predictions_loss

@@ -66,27 +66,20 @@ def getModelGivenModelOptionsAndWeightInits(args):
     print("loaded pre-trained bias model with frozen layers")
     
     #read in arguments
-    seed=int(args.seed)
+    seed=args.seed
     init_weights=args.init_weights 
-    sequence_flank=int(args.tdb_input_flank[0])
-    num_tasks=int(args.num_tasks)
+    sequence_flank=args.tdb_input_flank[0]
+    num_tasks=args.num_tasks
     
     seq_len=2*sequence_flank
-    out_flank=int(args.tdb_output_flank[0])
+    out_flank=args.tdb_output_flank[0]
     out_pred_len=2*out_flank
     print(seq_len)
     print(out_pred_len)
     #define inputs
     inp = Input(shape=(seq_len, 4),name='sequence')    
     bias_output = pretrained_bias_model (inp)
-    print(bias_output[0].shape)
-    print(bias_output[1].shape)
-    # conv layer without activation 
-    profile_out = Conv1D(1,
-                         kernel_size=20,
-                         padding='same',
-                         activation=None,
-                         name='profile_out')(bias_output[0])
+    profile_out=bias_output[0]
     count_out=Dense(1,activation=None,name='count_out')(bias_output[1])
     model=Model(inputs=[inp],outputs=[profile_out,
                                      count_out])

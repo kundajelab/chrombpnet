@@ -26,14 +26,13 @@ echo "outdir:$outdir"
 CUDA_VISIBLE_DEVICES=$gpu kerasAC_predict_tdb \
 		    --batch_size 20 \
 		    --ref_fasta /mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta \
-		    --tdb_array /srv/scratch/annashch/encode_dnase_tiledb/db/dnase \
+		    --tdb_array /srv/scratch/annashch/encode_dnase_tiledb/db/atac \
 		    --tdb_partition_attribute_for_upsample idr_peak \
 		    --tdb_partition_thresh_for_upsample 2 \
-		    --tdb_partition_datasets_for_upsample ENCSR477RTP \
 		    --tdb_input_source_attribute seq \
 		    --tdb_input_aggregation None \
 		    --tdb_input_transformation None \
-		    --tdb_input_flank 1057 \
+		    --tdb_input_flank 673 \
 		    --tdb_output_source_attribute count_bigwig_unstranded_5p count_bigwig_unstranded_5p \
 		    --tdb_output_flank 500 500 \
 		    --tdb_output_aggregation None sum \
@@ -42,14 +41,11 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_predict_tdb \
 		    --num_outputs 2 \
 		    --chrom_sizes ~/hg38.chrom.sizes \
 		    --tiledb_stride 50 \
-		    --fold $fold \
 		    --genome hg38 \
+		    --fold $fold \
 		    --upsample_ratio_list_predict 1 \
 		    --predictions_and_labels_hdf5 $outdir/$model_name.$fold \
-		    --json $model_name.$fold.arch \
-		    --weights $model_name.$fold.weights \
-		    --tdb_input_datasets seq \
-		    --tdb_output_datasets ENCSR477RTP ENCSR477RTP \
-		    --upsample_threads 1 \
+		    --load_model_hdf5 $model_name.$fold.hdf5 \
+		    --tasks GM12878 \
 		    --tdb_ambig_attribute ambig_peak \
-		    --tdb_transformation_pseudocount 1
+		    --tdb_transformation_pseudocount 0.001

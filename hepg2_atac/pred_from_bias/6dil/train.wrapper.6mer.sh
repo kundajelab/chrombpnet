@@ -1,0 +1,4 @@
+#!/bin/bash
+./train.sh 0 1 6mer.bias.preds.gm12878 1234 /srv/scratch/annashch/deeplearning/profile/gm12878_atac/pred_from_bias params.6mer.txt
+./train.counts.sh 0 1 counts.6mer.bias.preds.gm12878 1234 /srv/scratch/annashch/deeplearning/profile/gm12878_atac/pred_from_bias params.6mer.txt
+./train.profile.sh 0 1 profile.6mer.bias.preds.gm12878 1234 /srv/scratch/annashch/deeplearning/profile/gm12878_atac/pred_from_bias params.6mer.txt
