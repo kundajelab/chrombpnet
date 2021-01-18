@@ -27,7 +27,6 @@ def parse_args():
     parser.add_argument('--ref_fasta')
     parser.add_argument('--out_prefix')
     parser.add_argument("--flank",type=int,default=673)
-    parser.add_argument("--output_size",type=int,default=1000) 
     parser.add_argument("--n_sample_for_background",type=int,default=30000)
     parser.add_argument("--dump_chunk_interval",type=int,default=250) 
     return parser.parse_args() 
@@ -100,8 +99,8 @@ def main():
     ref=pysam.FastaFile(args.ref_fasta)
 
     #create placeholders for background tracks
-    background_profile_ism=np.empty([args.output_size*args.n_sample_for_background])
-    background_counts_ism=np.empty([args.output_size*args.n_sample_for_background])
+    background_profile_ism=np.empty([args.flank*2*args.n_sample_for_background])
+    background_counts_ism=np.empty([args.flank*2*args.n_sample_for_background])
     background_index_interval=peaks.shape[0]/args.n_sample_for_background
 
     ism_foreground_score_dict={}
@@ -120,15 +119,16 @@ def main():
         
         if index % background_index_interval==0: 
             #get predictions for the sequence and the scrambled sequence
-            scrambled_seq=''.join(random.sample(seq,len(seq))) #generate scrambled sequence to calculate background ISM score distribution 
-            preds_scrambled_seq=model.predict([one_hot_encode([scrambled_seq])])
+            scrambled_seq=''.join(random.sample(seq,len(seq))) #generate scrambled sequence to calculate background ISM score distribution
+            scrambled_one_hot=one_hot_encode([scrambled_seq])
+            preds_scrambled_seq=model.predict([scrambled_one_hot])
             preds_scrambled_seq_prof=np.squeeze(preds_scrambled_seq[0])
             preds_scrambled_seq_count=np.squeeze(preds_scrambled_seq[1])
             #get ISM scores for scrambled track
             scrambled_ism_profile_track, scrambled_ism_count_track,scrambled_ism_mat_observed = get_ism_single_bp(model,scrambled_seq,preds_scrambled_seq_prof,preds_scrambled_seq_count)
             #flatten the scores for background
-            background_profile_ism[index*args.output_size:(index+1)*args.output_size]=np.squeeze(scrambled_ism_profile_track).flatten()
-            background_counts_ism[index*args.output_size:(index+1)*args.output_size]=np.squeeze(scrambled_ism_count_track).flatten()
+            background_profile_ism[index*(2*args.flank):(index+1)*(2*args.flank)]=np.sum(np.squeeze(scrambled_one_hot*scrambled_ism_profile_track),axis=1)
+            background_counts_ism[index*(2*args.flank):(index+1)*(2*args.flank)]=np.sum(np.squeeze(scrambled_one_hot*scrambled_ism_count_track),axis=1)
             
     #save to output files
     pickle.dump( background_profile_ism, open( args.out_prefix+"background_profile_ism.p", "wb" ) )
