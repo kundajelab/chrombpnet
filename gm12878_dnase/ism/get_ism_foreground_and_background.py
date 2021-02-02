@@ -23,6 +23,8 @@ from kerasAC.get_model import *
 def parse_args():
     parser=argparse.ArgumentParser()
     parser.add_argument('--model')
+    parser.add_argument('--peak_start',type=int,default=None)
+    parser.add_argument('--peak_end',type=int,default=None)
     parser.add_argument('--narrowPeak')
     parser.add_argument('--ref_fasta')
     parser.add_argument('--out_prefix')
@@ -62,6 +64,7 @@ def get_ism_single_bp(model,seq,prof_pred,count_pred):
     placeholder_count_normed=placeholder_count_normed-np.expand_dims(np.mean(placeholder_count_normed,axis=1),axis=1)
     
     seq_onehot=one_hot_encode([seq])
+    
     ism_profile_track=np.sum(np.abs(placeholder_prof_normed),axis=1)*seq_onehot
     ism_count_track=placeholder_count_normed*seq_onehot
     
@@ -104,9 +107,21 @@ def main():
     background_index_interval=peaks.shape[0]/args.n_sample_for_background
 
     ism_foreground_score_dict={}
-    
+    if args.peak_start is None:
+        peak_start=0
+    else:
+        peak_start=args.peak_start
+    if args.peak_end is None:
+        peak_end=peaks.shape[0]
+    else:
+        peak_end=args.peak_end
+        
     for index,row in peaks.iterrows():
-        print(index)
+        if index < peak_start:
+            continue
+        if index > peak_end:
+            continue
+        print(str(index))
         chrom=row[0]
         summit=row[1]+row[9]
         seq=ref.fetch(chrom,summit-args.flank,summit+args.flank)
