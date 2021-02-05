@@ -65,11 +65,11 @@ def get_ism_single_bp(model,seq,prof_pred,count_pred):
     
     seq_onehot=one_hot_encode([seq])
     
-    ism_profile_track=np.sum(np.abs(placeholder_prof_normed),axis=1)
-    ism_count_track=placeholder_count_normed
+    ism_profile_track=np.sum(np.abs(placeholder_prof_normed),axis=1)*seq_onehot
+    ism_count_track=placeholder_count_normed*seq_onehot
     
     #ism heatmap: 
-    ism_mat_observed=placeholder_prof_normed
+    ism_mat_observed=np.sum(np.expand_dims(np.squeeze(seq_onehot),axis=1)*placeholder_prof_normed,axis=2)      
     return ism_profile_track, ism_count_track, ism_mat_observed
 
 def get_model(hdf5_file):
