@@ -1,0 +1,5 @@
+pretrained_bias_model	/srv/scratch/annashch/chrombpnet/gm12878_dnase/pred_from_bias/bpnet.tobias.bias.preds.gm12878.0.hdf5
+counts_loss_weight	64
+profile_loss_weight	1
+filters	500
+n_dil_layers	8
