@@ -29,8 +29,8 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_predict_tdb \
 		    --tdb_array /srv/scratch/annashch/encode_dnase_tiledb/db/dnase \
 		    --tdb_partition_attribute_for_upsample idr_peak \
 		    --tdb_partition_thresh_for_upsample 2 \
-		    --tdb_partition_datasets_for_upsample ENCSR000EMT \
 		    --tdb_input_source_attribute seq \
+		    --tdb_partition_datasets_for_upsample ENCSR000EOT \
 		    --tdb_input_aggregation None \
 		    --tdb_input_transformation None \
 		    --tdb_input_flank 1057 \
@@ -40,6 +40,8 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_predict_tdb \
 		    --tdb_output_transformation None log \
 		    --num_inputs 1 \
 		    --num_outputs 2 \
+		    --tdb_input_datasets seq \
+		    --tdb_output_datasets ENCSR000EOT ENCSR000EOT \
 		    --chrom_sizes ~/hg38.chrom.sizes \
 		    --tiledb_stride 50 \
 		    --fold $fold \
@@ -47,8 +49,6 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_predict_tdb \
 		    --upsample_ratio_list_predict 1 \
 		    --predictions_and_labels_hdf5 $outdir/$model_name.$fold \
 		    --load_model_hdf5 $model_name.$fold.hdf5 \
-		    --tdb_input_datasets seq \
-		    --tdb_output_datasets ENCSR000EMT ENCSR000EMT \
 		    --upsample_threads 1 \
 		    --tdb_ambig_attribute ambig_peak \
 		    --tdb_transformation_pseudocount 1

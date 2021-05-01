@@ -197,7 +197,7 @@ keys.sort()
 # In[ ]:
 
 
-get_ipython().run_line_magic('matplotlib', 'inline')
+#get_ipython().run_line_magic('matplotlib', 'inline')
 import matplotlib 
 from matplotlib import pyplot as plt 
 
