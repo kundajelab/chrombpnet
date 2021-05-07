@@ -1,6 +1,8 @@
 import argparse
+import pickle
 import operator
 import pysam
+import numpy as np 
 from scipy.special import softmax 
 import tensorflow
 import pybedtools
@@ -28,6 +30,7 @@ from kerasAC.custom_losses import *
 def parse_args():
     parser=argparse.ArgumentParser()
     parser.add_argument("--model_path")
+    parser.add_argument("--batch_size",type=int,default=1000)
     parser.add_argument("--bigwig_labels")
     parser.add_argument("--out_prefix")
     parser.add_argument("--bed_file_to_score")
@@ -36,7 +39,7 @@ def parse_args():
     parser.add_argument("--flank_input",type=int,default=1057)
     parser.add_argument("--flank_output",type=int,default=500) 
     parser.add_argument("--ref_fasta",default="/mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta")
-    parser.add_argument("--chrom_sizes",default="/mnt/data/annotations/by_release/hg38/hg38.chrom.sizes")
+    parser.add_argument("--chrom_sizes")
     parser.add_argument("--run_ism",default=False,action="store_true")
     parser.add_argument("--batch-size",type=int,default=500)
     return parser.parse_args()
@@ -59,13 +62,13 @@ def load_model_wrapper(model_path):
 
 def get_deepshap(prof_explainer,count_explainer,seq_onehot):
     #dim will be (1,2114,4)
-    profile_explanations=np.squeeze(prof_explainer.shap_values(seq_onehot)*seq_onehot)
-    count_explanations=np.squeeze(count_explainer.shap_values(seq_onehot)[0]*seq_onehot)
-    #dim will be (2114,4) 
-    #sum along last axis to get the observed allele
-    profile_explanations=profile_explanations.sum(axis=-1)
-    count_explanations=count_explanations.sum(axis=-1) 
-    return profile_explanations, count_explanations
+    hyp_profile_explanations=prof_explainer.shap_values(seq_onehot)
+    hyp_count_explanations=count_explainer.shap_values(seq_onehot)[0]
+    
+    profile_explanations=np.squeeze(hyp_profile_explanations*seq_onehot).sum(axis=-1)
+    count_explanations=np.squeeze(hyp_count_explanations*seq_onehot).sum(axis=-1)
+    
+    return np.squeeze(hyp_profile_explanations), np.squeeze(hyp_count_explanations), profile_explanations, count_explanations 
 
 
 def get_preds(model,seq_onehot):
@@ -73,7 +76,7 @@ def get_preds(model,seq_onehot):
     prof=preds[0] #logits
     probs=np.squeeze(softmax(prof,axis=1)) #probabilities 
     count=np.squeeze(preds[1])   #count (1 val) 
-    count_track=probs*count  #count track 
+    count_track=probs*np.expand_dims(count,axis=1)  #count track 
     return prof,count,probs,count_track
 
 
@@ -170,7 +173,13 @@ def main():
     chromsizes=[i.split('\t') for i in open(args.chrom_sizes,'r').read().strip().split('\n')]
     chromsizes=[tuple([i[0],int(i[1])]) for i in chromsizes]
     chromsizes=sorted(chromsizes,key=operator.itemgetter(0))
-    
+    chroms=[i[0] for i in chromsizes]
+    print(str(chroms))
+    print(str(chromsizes)) 
+    chromsize_dict={}
+    for entry in chromsizes:
+        chromsize_dict[entry[0]]=int(entry[1])
+
     outputs={}
     
     #labels -- we already have the input in bigwig format, but helpful to restrict just to peak regions for visualization
@@ -194,51 +203,54 @@ def main():
         outputs['ism_profile'].addHeader(chromsizes)
         outputs['ism_count']=pyBigWig.open(args.out_prefix+".ism.count.bw",'w')
         outputs['ism_count'].addHeader(chromsizes)
-            
-    for index,row in regions.iterrows():
-        if index%100==0:
-            print(str(index))
-        chrom=row[0]
-        start_pos=int(row[1])
-        end_pos=int(row[2])
-        if args.precentered_intervals is False:
-            summit=start_pos+int(row[9])
-            start_pos_input=summit-args.flank_input 
-            end_pos_input=summit+args.flank_input 
-            start_pos_output=summit-args.flank_output
-            end_pos_output=summit+args.flank_output
-        else:
-            start_pos_input=start_pos
-            end_pos_input=end_pos
-            center=(start_pos_input+end_pos_input)//2
-            start_pos_output=center-args.flank_output
-            end_pos_output=center+args.flank_output
-            
-        #get the reference and alternate one-hot-encoded sequences 
-        seq=ref.fetch(chrom,start_pos_input,end_pos_input)
-        onehot=one_hot_encode([seq])
-
-        try:
-            #get the bigwig labels
-            labels=np.nan_to_num(pbw.values(chrom,start_pos_output,end_pos_output))
-            #print(labels.shape)
-            outputs['observed_count_bigwig'].addEntries(chrom,start_pos_output,values=labels, span=1,step=1)
         
-            #prediction
+    for chrom in chroms:
+        print(str(chrom))
+        chrom_dict={}
+        chrom_dict['observed_count_bigwig']=np.empty((chromsize_dict[chrom],))
+        chrom_dict['predicted_count_bigwig']=np.empty((chromsize_dict[chrom],))
+        chrom_dict['predicted_probability_bigwig']=np.empty((chromsize_dict[chrom],))
+        chrom_dict['deepshap_profile']=np.empty((chromsize_dict[chrom],))
+        chrom_dict['deepshap_counts']=np.empty((chromsize_dict[chrom],))
+        chrom_dict['deepshap_profile_hyp']=np.empty((chromsize_dict[chrom],4))
+        chrom_dict['deepshap_counts_hyp']=np.empty((chromsize_dict[chrom],4))
+        if args.run_ism is True:
+            chrom_dict['ism_profile']=np.empty((chromsize_dict[chrom],))
+            chrom_dict['ism_count']=np.empty((chromsize_dict[chrom],))
+
+        cur_batch_n=0
+        regions_chrom=regions[regions[0]==chrom]
+        num_batches=regions_chrom.shape[0]//args.batch_size +1
+        
+        for batch in np.array_split(regions_chrom,num_batches):
+            batch=batch.reset_index(drop=True)
+            cur_batch_n+=1
+            print(str(cur_batch_n))
+            cur_batch_size=batch.shape[0]
+            if args.precentered_intervals is False:
+                summit=batch[1]+batch[9]
+                start_pos_input=summit-args.flank_input
+                end_pos_input=summit+args.flank_input
+                start_pos_output=summit-args.flank_output
+                end_pos_output=summit+args.flank_output
+            else:
+                start_pos_input=batch[1]
+                end_pos_input=batch[2]
+                center=(start_pos_input+end_pos_input)//2
+                start_pos_output=center-args.flank_output
+                end_pos_output=center+args.flank_output
+
+
+            #get the reference and alternate one-hot-encoded sequences 
+            seq=[ref.fetch(chrom,start_pos_input[i],end_pos_input[i]) for i in range(cur_batch_size)]
+            onehot=one_hot_encode(seq)
+
             #profile head out, count head out, probability predicted track, count predicted track 
             predicted_profile_logit_head,predicted_count_head,predicted_prob_track,predicted_count_track=get_preds(model,onehot)
-            #print(predicted_count_track.shape)
-            #print(predicted_prob_track.shape)
-            outputs['predicted_count_bigwig'].addEntries(chrom,start_pos_output,values=predicted_count_track,span=1,step=1) 
-            outputs['predicted_probability_bigwig'].addEntries(chrom,start_pos_output,values=predicted_prob_track,span=1,step=1)
-            
+
             #get deepSHAP scores  
-            profile_explanations_shap, count_explanations_shap=get_deepshap(prof_explainer, count_explainer, onehot)
-            #print('profile_explanations:'+str(profile_explanations_shap.shape))
-            #print('count_explanations:'+str(count_explanations_shap.shape))
-            outputs['deepshap_profile'].addEntries(chrom,start_pos_input,values=profile_explanations_shap,span=1,step=1)
-            outputs['deepshap_counts'].addEntries(chrom,start_pos_input,values=count_explanations_shap,span=1,step=1)
-        
+            hyp_profile_explanations_shap, hyp_count_explanations_shap,profile_explanations_shap, count_explanations_shap=get_deepshap(prof_explainer, count_explainer, onehot)
+
             #get ISM scores
             if args.run_ism ==True:
                 single_bp_ism_profile_track,single_bp_ism_count_track= get_ism_single_bp(model,
@@ -246,14 +258,47 @@ def main():
                                                                                          np.squeeze(predicted_profile_logit_head),
                                                                                          np.squeeze(predicted_count_head))
                 single_bp_ism_profile_track_adjusted=get_observed_ism_from_mat(single_bp_ism_profile_track,
-                                                                               np.squeeze(onehot))
+                                                                               onehot)
                 single_bp_ism_count_track_adjusted=np.sum(np.squeeze(single_bp_ism_count_track*onehot),axis=-1)
-                #print("single_bp_ism_profile_track_adjusted:"+str(single_bp_ism_profile_track_adjusted.shape))
-                #print("single_bp_ism_count_track_adjusted:"+str(single_bp_ism_count_track_adjusted.shape))
-                outputs['ism_profile'].addEntries(chrom,start_pos_input,values=single_bp_ism_profile_track_adjusted,span=1,step=1)
-                outputs['ism_count'].addEntries(chrom,start_pos_input,values=single_bp_ism_count_track_adjusted,span=1,step=1)
-        except:
-            continue
+
+
+            #store in dictionary 
+            for batch_index in range(cur_batch_size):
+                cur_chrom=chrom
+                cur_start_pos_output=start_pos_output[batch_index]
+                cur_end_pos_output=end_pos_output[batch_index]
+                cur_start_pos_input=start_pos_input[batch_index]
+                cur_end_pos_input=end_pos_input[batch_index]
+
+
+                chrom_dict['observed_count_bigwig'][cur_start_pos_output:cur_end_pos_output]=np.nan_to_num(pbw.values(cur_chrom,cur_start_pos_output,cur_end_pos_output))
+                chrom_dict['predicted_count_bigwig'][cur_start_pos_output:cur_end_pos_output]=np.squeeze(predicted_count_track[batch_index])
+                chrom_dict['predicted_probability_bigwig'][cur_start_pos_output:cur_end_pos_output]=np.squeeze(predicted_prob_track[batch_index])
+                chrom_dict['deepshap_profile_hyp'][cur_start_pos_input:cur_end_pos_input]=np.squeeze(hyp_profile_explanations_shap[batch_index])
+                chrom_dict['deepshap_counts_hyp'][cur_start_pos_input:cur_end_pos_input]=np.squeeze(hyp_count_explanations_shap[batch_index])
+                chrom_dict['deepshap_profile'][cur_start_pos_input:cur_end_pos_input]=np.squeeze(profile_explanations_shap[batch_index])
+                chrom_dict['deepshap_counts'][cur_start_pos_input:cur_end_pos_input]=np.squeeze(count_explanations_shap[batch_index])
+                if args.run_ism is True:
+                    chrom_dict['ism_profile']=np.squeeze(single_bp_ism_profile_track_adjusted)
+                    chrom_dict['ism_count']=np.squeeze(single_bp_ism_count_track_adjusted)
+
+        #dump hypothetical scores to pickles
+        #write to bigwig
+        print("writing to bigwig") 
+        print(str(chrom))
+        with open(args.out_prefix+'.hyp.profile.deepshap.'+chrom+'.pkl','wb') as handle:
+            pickle.dump(chrom_dict['deepshap_profile_hyp'],handle,protocol=pickle.HIGHEST_PROTOCOL)
+        with open(args.out_prefix+'.hyp.count.deepshap.'+chrom+'.pkl','wb') as handle:
+            pickle.dump(chrom_dict['deepshap_counts_hyp'],handle,protocol=pickle.HIGHEST_PROTOCOL) 
+        print("pickled hypothetical scores") 
+        outputs['observed_count_bigwig'].addEntries(chrom,0,values=chrom_dict['observed_count_bigwig'], span=1,step=1)
+        outputs['predicted_count_bigwig'].addEntries(chrom,0,values=chrom_dict['predicted_count_bigwig'],span=1,step=1)
+        outputs['predicted_probability_bigwig'].addEntries(chrom,0,values=chrom_dict['predicted_probability_bigwig'],span=1,step=1)
+        outputs['deepshap_profile'].addEntries(chrom,0,values=chrom_dict['deepshap_profile'],span=1,step=1)
+        outputs['deepshap_counts'].addEntries(chrom,0,values=chrom_dict['deepshap_counts'],span=1,step=1)
+        if args.run_ism is True:
+            outputs['ism_profile'].addEntries(chrom,0,values=chrom_dict['ism_profile'],span=1,step=1)
+            outputs['ism_count'].addEntries(chrom,0,values=chrom_dict['ism_count'],span=1,step=1)
     #close the files
     for key in outputs:
         outputs[key].close() 

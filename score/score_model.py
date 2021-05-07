@@ -28,6 +28,7 @@ from kerasAC.custom_losses import *
 def parse_args():
     parser=argparse.ArgumentParser()
     parser.add_argument("--model_path")
+    parser.add_argument("--batch_size",type=int,default=1000)
     parser.add_argument("--bigwig_labels")
     parser.add_argument("--out_prefix")
     parser.add_argument("--bed_file_to_score")
