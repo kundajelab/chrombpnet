@@ -12,6 +12,7 @@ import numpy as np
 import pyBigWig
 import pysam
 import pickle
+import pdb
 
 #import the libraries necessary for getting keras model predictions
 from scipy.special import softmax,expit
@@ -48,7 +49,7 @@ def get_preds(model,seq_onehot):
     prof=preds[0] #logits
     probs=np.squeeze(softmax(prof,axis=1)) #probabilities 
     count=np.squeeze(preds[1])   #count (1 val) 
-    count_track=probs*np.expand_dims(count,axis=1)  #count track
+    count_track=probs*count  #count track
     return probs,count_track
 
 def dinuc_shuffle(seq):
@@ -61,8 +62,6 @@ def dinuc_shuffle(seq):
     random.seed(1234) 
     random.shuffle(nucs)
     return ''.join(nucs) 
-
-
 
 def parse_args():
     parser=argparse.ArgumentParser()
@@ -104,12 +103,14 @@ def main():
     #get the 5% of peaks with the lowest signal
     lowest_signal_n=round(0.05*num_peaks)
     peaks_with_low_signal=sorted_peak_to_count[0:lowest_signal_n]
+    num_peaks_low_signal=str(len(peaks_with_low_signal))
     #dinucleotide shuffle these peaks, keep the same order as the "peaks_with_low_signal" list so that we can map back directly  
-    shuffled_seqs={}
+    shuffled_seqs_dict={}
     peak_index=0 
     for peak in peaks_with_low_signal:
         if peak_index%100==0:
-            print(str(peak_index)+'/'+str(peaks_with_low_signal))
+            print(str(peak_index)+'/'+num_peaks_low_signal)
+        peak_index+=1
         peak_info=peak[0]
         count_signal=peak[1]
         chrom=peak_info[0]
@@ -118,37 +119,37 @@ def main():
         input_seq_end=summit+args.bpnet_input_flank 
         ref_seq=ref.fetch(chrom,input_seq_start,input_seq_end)
         shuffled_seq=dinuc_shuffle(ref_seq)
-        shuffled_seq_onehot=one_hot_encode([seq])
+        shuffled_seq_onehot=one_hot_encode([shuffled_seq])
         probability_preds,count_preds=get_preds(model,shuffled_seq_onehot)
         #get the entropy from the probability track
         signal_entropy=entropy(probability_preds) 
         #store the count track so we can subtract it out as baseline when we insert the motifs into the dinuc shuffled sequence 
-        shuffled_seq[(peak_info[0],peak_info[1],peak_info[2],peak_info[3],count_signal,ref_seq,shuffled_seq,count_preds,probability_preds)]=signal_entropy
+        shuffled_seqs_dict[(peak_info[0],peak_info[1],peak_info[2],peak_info[3])]=[signal_entropy,count_signal,ref_seq,shuffled_seq,count_preds,probability_preds]
         
     #sort the peaks by entropy, store the n peaks with the highest entropy
-    shuffled_seq_entropy_sorted=sorted(shuffled_seq.items(), key=lambda item: item[1],decreasing=True)
-    selected_background=shuffled_seq_entropy_sorted[0:args.n_to_sample]
+    shuffled_seq_entropy_sorted=sorted(shuffled_seqs_dict.items(), key=lambda item: item[1])
+    selected_background=shuffled_seq_entropy_sorted[len(shuffled_seq_entropy_sorted)-args.n_to_sample::]
     #store the background as a dictionary
     print("prepping the outputs") 
     background_dict={}
     for entry in selected_background:
-        seq_info=entry[0]
-        entropy=entry[1]
-        chrom=seq_info[0]
-        start_pos=seq_info[1]
-        end_pos=seq_info[2]
-        summit=seq_info[3]
+        peak_info=entry[0]
+        results=entry[1]
+        chrom=peak_info[0]
+        start_pos=peak_info[1]
+        end_pos=peak_info[2]
+        summit=peak_info[3]        
         background_dict[(chrom,start_pos,end_pos,summit)]={}
-        background_dict[(chrom,start_pos,end_pos,summit)]['count_signal']=seq_info[4]
-        background_dict[(chrom,start_pos,end_pos,summit)]['ref_seq']=seq_info[5]
-        background_dict[(chrom,start_pos,end_pos,summit)]['shuffled_seq']=seq_info[6]
-        background_dict[(chrom,start_pos,end_pos,summit)]['count_preds']=seq_info[7]
-        background_dict[(chrom,start_pos,end_pos,summit)]['probability_preds']=seq_info[8]
-        background_dict[(chrom,start_pos,end_pos,summit)]['signal_entropy']=entropy
+        background_dict[(chrom,start_pos,end_pos,summit)]['signal_entropy']=results[0]
+        background_dict[(chrom,start_pos,end_pos,summit)]['count_signal']=results[1]
+        background_dict[(chrom,start_pos,end_pos,summit)]['ref_seq']=results[2]
+        background_dict[(chrom,start_pos,end_pos,summit)]['shuffled_seq']=results[3]
+        background_dict[(chrom,start_pos,end_pos,summit)]['count_preds']=results[4]
+        background_dict[(chrom,start_pos,end_pos,summit)]['probability_preds']=results[5]
     
     #pickle the background dict!
     print("generating the pickle") 
-    with open(args.output_pickle,'wb') as f:
+    with open(args.out_pickle,'wb') as f:
         pickle.dump(background_dict,f,pickle.HIGHEST_PROTOCOL)
     
         
