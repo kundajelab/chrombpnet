@@ -1,6 +1,5 @@
 #GM12878 DNASE, use overlap peaks for background
-#peak_file="/oak/stanford/groups/akundaje/projects/atlas/dnase_processed/dnase/13da5ebe-0941-4855-8599-40bbcc5c58b4/call-reproducibility_overlap/execution/optimal_peak.narrowPeak.gz"
-peak_file=tmp
+peak_file="/oak/stanford/groups/akundaje/projects/atlas/dnase_processed/dnase/13da5ebe-0941-4855-8599-40bbcc5c58b4/call-reproducibility_overlap/execution/optimal_peak.narrowPeak.gz"
 python get_null_set_for_tf_background.py \
        --peak_file $peak_file \
        --n_to_sample 100 \
