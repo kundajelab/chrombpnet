@@ -48,9 +48,12 @@ def main():
         label_prof_val=label_prof[key]
         pred_prof_val=pred_prof[key]
         seq_val=seq[key]
-        profile_shap_val=np.sum(profile_shap[key]*seq_val,axis=1)
-        count_shap_val=np.sum(count_shap[key]*seq_val,axis=1) 
-
+        if (len(profile_shap[key].shape)>1) and (profile_shap[key].shape[1]==4):
+                profile_shap_val=np.sum(profile_shap[key]*seq_val,axis=1)
+                count_shap_val=np.sum(count_shap[key]*seq_val,axis=1) 
+        else:
+            profile_shap_val=profile_shap[key]
+            count_shap_val=count_shap[key] 
         n_entries_output=label_prof_val.shape[0]
         start_pos_output=summit-n_entries_output//2
         n_entries_interpretation=profile_shap_val.shape[0]
