@@ -57,8 +57,8 @@ def get_deepshap(prof_explainer,count_explainer,seq_onehot):
     hyp_profile_explanations=prof_explainer.shap_values(seq_onehot)
     hyp_count_explanations=count_explainer.shap_values(seq_onehot)[0]
     
-    profile_explanations=np.squeeze(hyp_profile_explanations*seq_onehot).sum(axis=-1)
-    count_explanations=np.squeeze(hyp_count_explanations*seq_onehot).sum(axis=-1)
+    profile_explanations=np.squeeze(hyp_profile_explanations*seq_onehot)
+    count_explanations=np.squeeze(hyp_count_explanations*seq_onehot)
     
     return np.squeeze(hyp_profile_explanations), np.squeeze(hyp_count_explanations), profile_explanations, count_explanations 
 
@@ -109,10 +109,14 @@ def main():
     
     #iterate through the background x sequence combinations, getting predictions and deepSHAP scores for each one 
     for motif_name in pwm_list_to_score:
+        print(str(motif_name))
         outputs[motif_name]={}
         candidate_sequences_actg=pwm_sequences[motif_name]
         candidate_sequences=one_hot_encode(candidate_sequences_actg)
+        index=0 
         for candidate_sequence_index in range(candidate_sequences.shape[0]):
+            index+=1
+            print(str(index))
             cur_candidate_sequence=candidate_sequences[candidate_sequence_index,:,:]
             outputs[motif_name][candidate_sequences_actg[candidate_sequence_index]]={} 
             for background_region_coordinates in background_regions:
