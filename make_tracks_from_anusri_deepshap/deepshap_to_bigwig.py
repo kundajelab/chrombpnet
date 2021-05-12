@@ -21,13 +21,13 @@ def main():
     chromsizes=sorted(chromsizes,key=operator.itemgetter(0))
     data=pickle.load(open(args.path_to_pickle,'rb'))
     cur_file=args.path_to_pickle.split('/')[-1]
-    outf_label_prof=pyBigWig.open('/'.join([args.output_dir,cur_file+'.label_prof.pos.bw']),'w')
+    outf_label_prof=pyBigWig.open('/'.join([args.output_dir,cur_file+'.label_prof.bw']),'w')
     outf_label_prof.addHeader(chromsizes)
-    outf_pred_prof=pyBigWig.open('/'.join([args.output_dir,cur_file+'.pred_prof.pos.bw']),'w')
+    outf_pred_prof=pyBigWig.open('/'.join([args.output_dir,cur_file+'.pred_prof.bw']),'w')
     outf_pred_prof.addHeader(chromsizes)
-    outf_profile_shap=pyBigWig.open('/'.join([args.output_dir,cur_file+'.pos.bw']),'w')
+    outf_profile_shap=pyBigWig.open('/'.join([args.output_dir,cur_file+'.shap_profile.bw']),'w')
     outf_profile_shap.addHeader(chromsizes)
-    outf_count_shap=pyBigWig.open('/'.join([args.output_dir,cur_file+'.count.bw']),'w')
+    outf_count_shap=pyBigWig.open('/'.join([args.output_dir,cur_file+'.shap_count.bw']),'w')
     outf_count_shap.addHeader(chromsizes)
 
     label_prof=data['label_prof']
