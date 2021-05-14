@@ -33,6 +33,7 @@ def main():
     label_prof=data['label_prof']
     pred_prof=data['pred_prof']
     pred_sum=data['pred_sum']
+    label_sum=data['label_sum'] 
     seq=data['seq'] 
     profile_shap=data['profile_shap']
     count_shap=data['count_shap']
@@ -45,9 +46,15 @@ def main():
         key_index+=1
         chrom=key[0]
         summit=key[1]
-        label_prof_val=label_prof[key]
-        pred_prof_val=pred_prof[key]
+        
+        label_sum_val=np.exp(np.squeeze(label_sum[key])) # counts
+        pred_sum_val=np.exp(np.squeeze(pred_sum[key])) # counts
+
+        label_prof_val=label_prof[key]*label_sum_val
+        pred_prof_val=pred_prof[key]*pred_sum_val
+
         seq_val=seq[key]
+        
         if (len(profile_shap[key].shape)>1) and (profile_shap[key].shape[1]==4):
                 profile_shap_val=np.sum(profile_shap[key]*seq_val,axis=1)
                 count_shap_val=np.sum(count_shap[key]*seq_val,axis=1) 
