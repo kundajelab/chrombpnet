@@ -17,8 +17,8 @@ idr_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/5846e593-a9
 is_filtered=True
 samtools_flag=None
 
-blacklist_region=/srv/scratch/anusri/bpnet_histone/tiledb/gm12878_dnase/onlypeaks/all_three_blacklists.bed
-chrom_sizes=/srv/scratch/anusri/bpnet_histone/hg38.chrom.sizes
+blacklist_region=$PWD/data/all_three_blacklists.bed
+chrom_sizes=$PWD/data/hg38.chrom.sizes
 ref_fasta=/mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
 main_dir=$PWD/$cell_line
