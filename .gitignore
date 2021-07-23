@@ -1,0 +1,13 @@
+# Compiler outputs #
+*.a
+*.bat
+*.exe
+*.json
+*.pyc
+
+# Directories #
+GM12878
+K562
+IMR90
+H1
+HEPG2
