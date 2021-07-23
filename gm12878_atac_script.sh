@@ -1,12 +1,12 @@
 #!/bin/bash
-##TODO flank_size and ref_fasta files in scripts fold too
+##TODO flank_size and ref_fasta files in scripts 
 
 cell_line=GM12878
+data_type="ATAC"
+
 date=$(date +'%m.%d.%Y')
-#data_type="ATAC"
-#setting=$data_type"_"$date
-setting=atac_07.21.2021
-cur_file_name="gm12878_testing_script.sh"
+setting=$data_type"_"$date
+cur_file_name="gm12878_atac_script.sh"
 
 ### SIGNAL INPUT
 
@@ -28,7 +28,7 @@ output_dir=$PWD/$cell_line/$setting
 
 ### MODEL PARAMS
 
-gpu=5
+gpu=0
 filters=500 
 n_dil_layers=8
 seed=1234 
@@ -130,6 +130,38 @@ else
 fi
 
 
+if [[ -d $data_dir/$cell_line"_idr_split" ]] ; then
+    echo "skipping creating idr splits for interpretation"
+else
+    mkdir  $data_dir/$cell_line"_idr_split" 
+    zcat $idr_peak | shuf  > $data_dir/$cell_line"_idr_split/temp.txt"
+    split -l 10000 $data_dir/$cell_line"_idr_split/temp.txt" $data_dir/$cell_line"_idr_split/x"
+    rm  $data_dir/$cell_line"_idr_split/temp.txt"
+fi
+
+
+if test -z "$bias_json" 
+then
+    if [[ -d $output_dir/invivo_bias_model_step1/deepshap ]] ; then
+        echo "skipping bias interpretations"
+    else
+        mkdir $output_dir/invivo_bias_model_step1/deepshap
+        bed_file=$data_dir/$cell_line"_idr_split"
+
+        for fold in 0
+        do
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
+        done
+
+        python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/invivo_bias_model_step1/deepshap --target $output_dir/invivo_bias_model_step1/deepshap --type 20k
+        cp $PWD/$cur_file_name $output_dir/invivo_bias_model_step1/deepshap
+    fi
+else
+    echo "skipping step1 interpretations - input bias model given"
+fi
+
 
 ### STEP 2 - FIT BIAS MODEL ON SIGNAL
 
@@ -141,7 +173,6 @@ else
 
     bash main_scripts/get_loss_weights.sh $data_dir/tiledb/db "chr10" "overlap_peak" "count_bigwig_unstranded_5p" $cell_line $flank_size $output_dir/bias_fit_on_signal_step2/counts_loss_weight.txt
     counts_loss_weight_step2=`cat $output_dir/bias_fit_on_signal_step2/counts_loss_weight.txt`
-
     counts_loss_weight_step3=$counts_loss_weight_step2
 
     echo -e "json_string\t"$bias_json"\nweights\t"$bias_weights"\ncounts_loss_weight\t"$counts_loss_weight_step2"\nprofile_loss_weight\t1\nfilters\t"$filters"\nn_dil_layers\t"$n_dil_layers > $output_dir/bias_fit_on_signal_step2/params.txt
@@ -155,8 +186,6 @@ else
     cp $PWD/$cur_file_name $output_dir/bias_fit_on_signal_step2
 fi
 
-counts_loss_weight_step2=`cat $output_dir/bias_fit_on_signal_step2/counts_loss_weight.txt`
-counts_loss_weight_step3=$counts_loss_weight_step2
 
 
 ### STEP 3 - FIT BIAS AND SIGNAL MODEL
@@ -201,14 +230,6 @@ fi
 
 ### GET INTERPRETATIONS
 
-if [[ -d $data_dir/$cell_line"_idr_split" ]] ; then
-    echo "skipping creating idr splits for interpretation"
-else
-    mkdir  $data_dir/$cell_line"_idr_split" 
-    zcat $idr_peak | shuf  > $data_dir/$cell_line"_idr_split/temp.txt"
-    split -l 10000 $data_dir/$cell_line"_idr_split/temp.txt" $data_dir/$cell_line"_idr_split/x"
-    rm  $data_dir/$cell_line"_idr_split/temp.txt"
-fi
 
 
 if [[ -d $output_dir/final_model_step3/unplug/deepshap ]] ; then
@@ -224,10 +245,12 @@ else
         ./main_scripts/interpret/interpret.sh $output_dir/final_model_step3/unplug/$model_name.$fold.hdf5 $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/final_model_step3/unplug/deepshap $cell_line $gpu $fold
     done
 
-    python /srv/scratch/anusri/pipeline_script/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/final_model_step3/unplug/deepshap --target $output_dir/final_model_step3/unplug/deepshap --type 20k
+    python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/final_model_step3/unplug/deepshap --target $output_dir/final_model_step3/unplug/deepshap --type 20k
     cp $PWD/$cur_file_name $output_dir/final_model_step3/unplug/deepshap
 
 fi
+
+
 
 
 ### RUN MODISCO
