@@ -1,5 +1,5 @@
 #!/bin/bash
-##TODO flank_size and ref_fasta files in scripts
+##TODO flank_size and ref_fasta files in scripts fold too
 
 cell_line=GM12878
 date=$(date +'%m.%d.%Y')
