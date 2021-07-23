@@ -1,22 +1,24 @@
 #!/bin/bash
 ##TODO flank_size and ref_fasta files in scripts
 
-cell_line=IMR90
+cell_line=HEPG2
+data_type="ATAC"
+
 date=$(date +'%m.%d.%Y')
-setting="atac_"$date
-cur_file_name="imr90_testing_script.sh"
+setting=$data_type"_"$date
+cur_file_name="hepg2_atac_script.sh"
 
 ### SIGNAL INPUT
 
-in_bam=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/merged_data/IMR90.atac.filt.merged.bam
-overlap_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/277549db-c2d8-49d3-ace0-81ad5d4088fb/call-reproducibility_overlap/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/overlap.optimal_peak.narrowPeak
+in_bam=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/merged_data/HEPG2.atac.filt.merged.bam
+overlap_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/25b3429e-5864-4e8d-a475-a92df8938887/call-reproducibility_overlap/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/overlap.optimal_peak.narrowPeak.gz
 #.gz file?
-idr_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/277549db-c2d8-49d3-ace0-81ad5d4088fb/call-reproducibility_idr/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/idr.optimal_peak.narrowPeak.gz
+idr_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/25b3429e-5864-4e8d-a475-a92df8938887/call-reproducibility_idr/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/idr.optimal_peak.narrowPeak.gz
 is_filtered=True
 samtools_flag=None
 
-blacklist_region=/srv/scratch/anusri/bpnet_histone/tiledb/gm12878_dnase/onlypeaks/all_three_blacklists.bed
-chrom_sizes=/srv/scratch/anusri/bpnet_histone/hg38.chrom.sizes
+blacklist_region=$PWD/data/all_three_blacklists.bed
+chrom_sizes=$PWD/data/hg38.chrom.sizes
 ref_fasta=/mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
 main_dir=$PWD/$cell_line
@@ -26,7 +28,7 @@ output_dir=$PWD/$cell_line/$setting
 
 ### MODEL PARAMS
 
-gpu=0
+gpu=1
 filters=500 
 n_dil_layers=8
 seed=1234 
@@ -57,9 +59,8 @@ if [[ -d $neg_dir ]] ; then
     echo "negatives director already exists"
 else
     mkdir $neg_dir
-    bash main_scripts/make_gc_matched_negatives/run.sh $neg_dir $overlap_peak $ref_fasta $chrom_sizes $flank_size $stride
+    bash main_scripts/make_gc_matched_negatives/run.sh $neg_dir $overlap_peak $ref_fasta $chrom_sizes $flank_size $stride 
 fi
-
 
 ###  BIAS  INPUTS
 
@@ -78,7 +79,7 @@ if [[ -d $data_dir ]] ; then
     echo "skipping bigwig creation"
 else
     mkdir $data_dir
-    ./main_scripts/preprocess.sh $in_bam $data_dir $samtools_flag $is_filtered
+    ./main_scripts/preprocess.sh $in_bam $data_dir $samtools_flag $is_filtered $data_type
     cp $PWD/$cur_file_name $data_dir
 fi
 
@@ -106,28 +107,58 @@ else
 
     if test -z "$bias_json" 
     then
-        mkdir $output_dir/invivo_bias_model_step1
+    	mkdir $output_dir/invivo_bias_model_step1
 
         bash main_scripts/get_loss_weights.sh $data_dir/tiledb/db "chr10" "negatives_peak" "count_bigwig_unstranded_5p" $cell_line $flank_size $output_dir/invivo_bias_model_step1/counts_loss_weight.txt
         counts_loss_weight_step1=`cat $output_dir/invivo_bias_model_step1/counts_loss_weight.txt`
  
-    echo -e "counts_loss_weight\t"$counts_loss_weight_step1"\nprofile_loss_weight\t1\nfilters\t"$filters"\nn_dil_layers\t"$n_dil_layers > $output_dir/invivo_bias_model_step1/params.txt
-        params=$output_dir/invivo_bias_model_step1/params.txt
-        for fold in 0
-        do
+   	echo -e "counts_loss_weight\t"$counts_loss_weight_step1"\nprofile_loss_weight\t1\nfilters\t"$filters"\nn_dil_layers\t"$n_dil_layers > $output_dir/invivo_bias_model_step1/params.txt
+    	params=$output_dir/invivo_bias_model_step1/params.txt
+    	for fold in 0
+    	do
             ./main_scripts/invivo_bias_model_step1/train.sh $fold $gpu $model_name $seed $output_dir/invivo_bias_model_step1 $params  $data_dir/tiledb/db $cell_line profile_bpnet_dnase $neg_bed_train
             ./main_scripts/invivo_bias_model_step1/predict.sh $fold $gpu $model_name $seed  $output_dir/invivo_bias_model_step1  $data_dir/tiledb/db $cell_line $chrom_sizes $neg_bed_test
             ./main_scripts/invivo_bias_model_step1/score.sh $output_dir/invivo_bias_model_step1 $model_name $fold $cell_line $seed
-        done
-        cp $PWD/$cur_file_name $output_dir/invivo_bias_model_step1
+    	done
+    	cp $PWD/$cur_file_name $output_dir/invivo_bias_model_step1
         bias_json=$output_dir/invivo_bias_model_step1/model.0.arch
         bias_weights=$output_dir/invivo_bias_model_step1/model.0.weights
     else
         echo "skipping step1 - input bias model given"
     fi
-
 fi
 
+
+if [[ -d $data_dir/$cell_line"_idr_split" ]] ; then
+    echo "skipping creating idr splits for interpretation"
+else
+    mkdir  $data_dir/$cell_line"_idr_split" 
+    zcat $idr_peak | shuf  > $data_dir/$cell_line"_idr_split/temp.txt"
+    split -l 10000 $data_dir/$cell_line"_idr_split/temp.txt" $data_dir/$cell_line"_idr_split/x"
+    rm  $data_dir/$cell_line"_idr_split/temp.txt"
+fi
+
+if test -z "$bias_json"
+then
+    if [[ -d $output_dir/invivo_bias_model_step1/deepshap ]] ; then
+        echo "skipping bias interpretations"
+    else
+        mkdir $output_dir/invivo_bias_model_step1/deepshap
+        bed_file=$data_dir/$cell_line"_idr_split"
+
+        for fold in 0
+        do
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_ste$
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_ste$
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_ste$
+        done
+
+        python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/invivo_bias_model_step1/deepshap --target $output_dir/invivo_bias_model_step1/deepshap --type 20k
+        cp $PWD/$cur_file_name $output_dir/invivo_bias_model_step1/deepshap
+    fi
+else
+    echo "skipping step1 interpretations - input bias model given"
+fi
 
 
 ### STEP 2 - FIT BIAS MODEL ON SIGNAL
@@ -153,6 +184,7 @@ else
     done
     cp $PWD/$cur_file_name $output_dir/bias_fit_on_signal_step2
 fi
+
 
 
 ### STEP 3 - FIT BIAS AND SIGNAL MODEL
@@ -197,14 +229,6 @@ fi
 
 ### GET INTERPRETATIONS
 
-if [[ -d $data_dir/$cell_line"_idr_split" ]] ; then
-    echo "skipping creating idr splits for interpretation"
-else
-    mkdir  $data_dir/$cell_line"_idr_split" 
-    zcat $idr_peak | shuf  > $data_dir/$cell_line"_idr_split/temp.txt"
-    split -l 10000 $data_dir/$cell_line"_idr_split/temp.txt" $data_dir/$cell_line"_idr_split/x"
-    rm  $data_dir/$cell_line"_idr_split/temp.txt"
-fi
 
 
 if [[ -d $output_dir/final_model_step3/unplug/deepshap ]] ; then
@@ -227,3 +251,6 @@ fi
 
 
 ### RUN MODISCO
+
+
+
