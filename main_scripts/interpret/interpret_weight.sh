@@ -10,7 +10,8 @@ cell_line=$7
 gpu=$8
 fold=$9
 CUDA_VISIBLE_DEVICES=$gpu python $PWD/main_scripts/interpret/bpnet_shap_wrapper.py \
-                        --model_hdf5 $model_name \
+                        --json_string $model_name.arch \
+                        --weights $model_name.weights \
                         --ref_fasta /mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta \
                         --bed_regions $bed_regions/$split \
                         --bed_regions_center center \
