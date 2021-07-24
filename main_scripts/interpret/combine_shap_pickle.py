@@ -46,9 +46,9 @@ for fin in fileso:
 print(len(data3["seq"].keys()))
 
 if args.type == "20k":
-	f3 = os.path.join(args.target,"gm12878.20K.dnase.fold0.deepSHAP")
+	f3 = os.path.join(args.target,"20K.fold0.deepSHAP")
 else:
-	f3 = os.path.join(args.target,"gm12878.all.dnase.fold0.deepSHAP")
+	f3 = os.path.join(args.target,"all.fold0.deepSHAP")
 
 of = open(f3,"wb")
 pkl.dump(data3,of)
