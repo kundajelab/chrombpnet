@@ -251,6 +251,62 @@ else
 fi
 
 
+modisco_sig_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/SIGNAL
+if [[ -d $modisco_sig_dir/$cell_line ]] ; then
+    echo "modisco dir already exists"
+else
+    mkdir $modisco_sig_dir/$cell_line
+fi
+
+if [[ -d $modisco_sig_dir/$cell_line/$setting/ ]] ; then
+    echo "modisco dir already exists"
+else
+    mkdir $modisco_sig_dir/$cell_line/$setting/
+    modisco_dir_final=$modisco_sig_dir/$cell_line/$setting/
+    cp  $cell_line/$setting/final_model_step3/unplug/deepshap/20K.fold0.deepSHAP $modisco_dir_final
+fi
+
+##BIAS INTERPRETATIONS
+
+
+if  [[ -d $output_dir/invivo_bias_model_step1/ ]]
+then
+    if [[ -d $output_dir/invivo_bias_model_step1/deepshap ]] ; then
+        echo "skipping bias interpretations"
+    else
+        mkdir $output_dir/invivo_bias_model_step1/deepshap
+        bed_file=$data_dir/$cell_line"_idr_split"
+
+        for fold in 0
+        do
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
+        done
+
+        python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/invivo_bias_model_step1/deepshap --target $output_dir/invivo_bias_model_step1/deepshap --type 20k
+        cp $PWD/$cur_file_name $output_dir/invivo_bias_model_step1/deepshap
+    fi
+else
+    echo "skipping step1 interpretations - input bias model given"
+fi
+
+
+
+modisco_bias_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/BIAS/
+if [[ -d $modisco_bias_dir/$cell_line ]] ; then
+    echo "modisco dir already exists"
+else
+    mkdir $modisco_bias_dir/$cell_line
+fi
+
+if [[ -d $modisco_bias_dir/$cell_line/$setting/ ]] ; then
+    echo "modisco dir already exists"
+else
+    mkdir $modisco_bias_dir/$cell_line/$setting/
+    modisco_dir_final=$modisco_bias_dir/$cell_line/$setting/
+    cp  $cell_line/$setting/invivo_bias_model_step1/deepshap/20K.fold0.deepSHAP $modisco_dir_final
+fi
 
 
 ### RUN MODISCO
