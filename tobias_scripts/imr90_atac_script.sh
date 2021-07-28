@@ -82,32 +82,55 @@ else
     cp $PWD/tobias_scripts/$cur_file_name $output_dir/model
 fi
 
-fold=0
-./tobias_scripts/main_scripts/model/predict.sh $fold $gpu $model_name $seed  $output_dir/model  $data_dir/tiledb/db $cell_line $chrom_sizes
-./tobias_scripts/main_scripts/model/score.sh $output_dir/model $model_name $fold $cell_line $seed
+
+## UNPLUG MODEL
+
+if [[ -d $output_dir/model/unplug ]] ; then
+    echo "skipping unplugging"
+else
+    mkdir $output_dir/model/unplug
+    counts_loss_weight=`cat $output_dir/model/counts_loss_weight.txt`
+    unplug_bias_json=$output_dir/model/model.0.arch
+    unplug_bias_weights=$output_dir/model/model.0.weights
+    echo -e "json_string\t"$unplug_bias_json"\nweights\t"$unplug_bias_weights"\ncounts_loss_weight\t"$counts_loss_weight"\nprofile_loss_weight\t1\nfilters\t"$filters"\nn_dil_layers\t"$n_dil_layers > $output_dir/model/unplug/params.txt
+
+    params=$output_dir/model/unplug/params.txt
+
+    for fold in 0
+    do
+        CUDA_VISIBLE_DEVICES=$gpu python ./main_scripts/unplug/get_model_with_bias_unplugged.py --model_params $params --outf $output_dir/model/unplug/$model_name.$fold.hdf5
+        ./main_scripts/unplug/predict.sh $fold $gpu $model_name $seed $output_dir/model/unplug $data_dir/tiledb/db $cell_line $chrom_sizes
+        ./main_scripts/unplug/score.sh $output_dir/model/unplug $model_name $fold $cell_line $seed
+    done
+    cp $PWD/$cur_file_name $output_dir/model/unplug
+fi
+
+
 
 
 ### GET INTERPRETATIONS
 
 
 
-if [[ -d $output_dir/model/deepshap ]] ; then
+if [[ -d $output_dir/model/unplug/deepshap ]] ; then
     echo "skipping interpretations"
 else
-    mkdir $output_dir/model/deepshap
+    mkdir $output_dir/model/unplug/deepshap
     bed_file=$PWD/$cell_line/data/$cell_line"_idr_split"
 
     for fold in 0
     do
-        ./tobias_scripts/main_scripts/interpret/interpret_weight.sh $output_dir/model/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/model/deepshap $cell_line $gpu $fold
-        ./tobias_scripts/main_scripts/interpret/interpret_weight.sh $output_dir/model/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/model/deepshap $cell_line $gpu $fold
-        ./tobias_scripts/main_scripts/interpret/interpret_weight.sh $output_dir/model/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/model/deepshap $cell_line $gpu $fold
+        ./main_scripts/interpret/interpret.sh $output_dir/model/unplug/$model_name.$fold.hdf5 $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/model/unplug/deepshap $cell_line $gpu $fold
+        ./main_scripts/interpret/interpret.sh $output_dir/model/unplug/$model_name.$fold.hdf5 $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/model/unplug/deepshap $cell_line $gpu $fold
+        ./main_scripts/interpret/interpret.sh $output_dir/model/unplug/$model_name.$fold.hdf5 $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/model/unplug/deepshap $cell_line $gpu $fold
     done
 
-    python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/model/deepshap --target $output_dir/model/deepshap --type 20k
-    cp $PWD/tobias_scripts/$cur_file_name $output_dir/model/deepshap
+    python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/model/unplug/deepshap --target $output_dir/model/unplug/deepshap --type 20k
+    cp $PWD/tobias_scripts/$cur_file_name $output_dir/model/unplug/deepshap
 
 fi
+
+
 
 modisco_sig_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/SIGNAL/
 

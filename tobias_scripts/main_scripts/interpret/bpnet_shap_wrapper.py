@@ -166,8 +166,8 @@ def get_interpretations(gen, model, count_explainer, prof_explainer,task_index,c
             control_counts=np.zeros_like(X[2])
             count_explanations=count_explainer.shap_values([seq_input,control_counts])[0]
             profile_explanations=prof_explainer(seq_input, control_profile)
-            print(profile_explanations.shape)
             profile_explanations=profile_explanations[task_index]
+            #print(profile_explanations.shape)
             count_explanations=count_explanations[task_index]       
         elif tfchipseq is True:
             control_profile=np.zeros_like(X[2])
@@ -192,6 +192,7 @@ def get_interpretations(gen, model, count_explainer, prof_explainer,task_index,c
             pred_prof_dict[cur_coord]=pred_prob[coord_index]
             pred_count_dict[cur_coord]=pred_sum[coord_index]
             profile_shap_dict[cur_coord]=profile_explanations[coord_index,:]
+            #print(profile_explanations[coord_index,:].shape)
             count_shap_dict[cur_coord]=count_explanations[coord_index,:]
             seq_dict[cur_coord]=X[0][coord_index]
     return label_prof_dict, label_count_dict,pred_prof_dict,pred_count_dict, profile_shap_dict, count_shap_dict, seq_dict
