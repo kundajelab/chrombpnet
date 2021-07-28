@@ -13,7 +13,7 @@ CUDA_VISIBLE_DEVICES=$gpu python $PWD/main_scripts/interpret/bpnet_shap_wrapper.
                         --model_hdf5 $model_name \
                         --ref_fasta /mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta \
                         --bed_regions $bed_regions/$split \
-                        --bed_regions_center center \
+                        --bed_regions_center summit \
                         --tdb_array $tdb_array \
                         --chrom_sizes $chrom_sizes \
                         --tdb_input_datasets seq \
