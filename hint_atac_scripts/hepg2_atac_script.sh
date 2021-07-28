@@ -80,6 +80,8 @@ else
     cp $PWD/hint_atac_scripts/$cur_file_name $output_dir/model
 fi
 
+fold=0
+./hint_atac_scripts/main_scripts/model/score.sh $output_dir/model $model_name $fold $cell_line $seed
 
 
 ### GET INTERPRETATIONS
