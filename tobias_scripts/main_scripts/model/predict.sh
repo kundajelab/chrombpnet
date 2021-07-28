@@ -51,7 +51,7 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_predict_tdb \
 		    --predictions_and_labels_hdf5 $outdir/$model_name.$fold \
 		    --json $outdir/$model_name.$fold.arch \
 		    --weights $outdir/$model_name.$fold.weights \
-		    --tdb_input_datasets seq \
+		    --tdb_input_datasets seq $cell_line $cell_line \
 		    --tdb_output_datasets $cell_line $cell_line \
 		    --upsample_threads 1 \
 		    --tdb_ambig_attribute ambig_peak \

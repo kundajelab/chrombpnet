@@ -5,8 +5,9 @@ cell_line=H1
 data_type="ATAC"
 
 date=$(date +'%m.%d.%Y')
-setting=tobias_$data_type"_"$date
+#setting=tobias_$data_type"_"$date
 cur_file_name="h1_atac_script.sh"
+setting=tobias_ATAC_07.26.2021
 
 ### SIGNAL INPUT
 
@@ -81,6 +82,9 @@ else
     cp $PWD/tobias_scripts/$cur_file_name $output_dir/model
 fi
 
+fold=0
+./tobias_scripts/main_scripts/model/predict.sh $fold $gpu $model_name $seed  $output_dir/model  $data_dir/tiledb/db $cell_line $chrom_sizes
+./tobias_scripts/main_scripts/model/score.sh $output_dir/model $model_name $fold $cell_line $seed
 
 
 ### GET INTERPRETATIONS
@@ -95,9 +99,9 @@ else
 
     for fold in 0
     do
-        ./main_scripts/interpret/interpret_weight.sh $output_dir/model/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/model/deepshap $cell_line $gpu $fold
-        ./main_scripts/interpret/interpret_weight.sh $output_dir/model/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/model/deepshap $cell_line $gpu $fold
-        ./main_scripts/interpret/interpret_weight.sh $output_dir/model/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/model/deepshap $cell_line $gpu $fold
+        ./tobias_scripts/main_scripts/interpret/interpret_weight.sh $output_dir/model/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/model/deepshap $cell_line $gpu $fold
+        ./tobias_scripts/main_scripts/interpret/interpret_weight.sh $output_dir/model/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/model/deepshap $cell_line $gpu $fold
+        ./tobias_scripts/main_scripts/interpret/interpret_weight.sh $output_dir/model/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/model/deepshap $cell_line $gpu $fold
     done
 
     python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/model/deepshap --target $output_dir/model/deepshap --type 20k
