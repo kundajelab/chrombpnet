@@ -145,7 +145,7 @@ if [[ -d $modisco_sig_dir/$cell_line/$setting/ ]] ; then
 else
     mkdir $modisco_sig_dir/$cell_line/$setting/
     modisco_dir_final=$modisco_sig_dir/$cell_line/$setting/
-    cp  tobias_scripts/$cell_line/$setting/model/deepshap/20K.fold0.deepSHAP $modisco_dir_final
+    cp  tobias_scripts/$cell_line/$setting/model/unplug/deepshap/20K.fold0.deepSHAP $modisco_dir_final
 fi
 
 ### RUN MODISCO
