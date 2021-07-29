@@ -8,6 +8,7 @@ interm=$2
 samtools_flag=$3
 is_filtered=$4
 type=$5
+neg_shift=$6
 
 ## shift bam files
 
@@ -17,8 +18,8 @@ if [ "$type" = DNASE ] ; then
     shifted_bam=$interm/shifted_0_1
 else
     echo "shift ATAC data"
-    alignmentSieve -p 56 -b $in_bam -o $interm/shifted_4_4.bam --shift 4 -4 4 -4  --filterMetrics $interm/log_4_4.txt
-    shifted_bam=$interm/shifted_4_4
+    alignmentSieve -p 56 -b $in_bam -o $interm/shifted_4_$neg_shift.bam --shift 4 -$neg_shift $neg_shift -4  --filterMetrics $interm/log_4_$neg_shift.txt
+    shifted_bam=$interm/shifted_4_$neg_shift
 fi
 
 # get unstranded bigwigs
@@ -31,8 +32,8 @@ samtools index $cur_bam
 
 if [ "$is_filtered" = True ] ; then
     echo "not filtering data"
-    bamCoverage -p16 -v --binSize 1  --Offset 1 1 -b $cur_bam -o $interm/shifted_4_4.sorted.bam.bpnet.unstranded.bw
+    bamCoverage -p16 -v --binSize 1  --Offset 1 1 -b $cur_bam -o $interm/shifted.sorted.bam.bpnet.unstranded.bw
 else
     echo "filtering data"
-    bamCoverage -p16 -v --binSize 1 --samFlagExclude $samtools_flag  --Offset 1 1 --minMappingQuality 30 -b $cur_bam -o $interm/shifted_4_4.sorted.bam.bpnet.unstranded.bw
+    bamCoverage -p16 -v --binSize 1 --samFlagExclude $samtools_flag  --Offset 1 1 --minMappingQuality 30 -b $cur_bam -o $interm/shifted.sorted.bam.bpnet.unstranded.bw
 fi

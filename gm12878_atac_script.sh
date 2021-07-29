@@ -3,10 +3,10 @@
 
 cell_line=GM12878
 data_type="ATAC"
+neg_shift=5
 
 date=$(date +'%m.%d.%Y')
-#setting=$data_type"_"$date
-setting=ATAC_07.22.2021
+setting=4_$neg_shift"_shifted_"$data_type"_"$date
 cur_file_name="gm12878_atac_script.sh"
 
 ### SIGNAL INPUT
@@ -23,13 +23,13 @@ chrom_sizes=$PWD/data/hg38.chrom.sizes
 ref_fasta=/mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
 main_dir=$PWD/$cell_line
-data_dir=$PWD/$cell_line/data
+data_dir=$PWD/$cell_line/data_$data_type"_4_"$neg_shift
 output_dir=$PWD/$cell_line/$setting
 
 
 ### MODEL PARAMS
 
-gpu=0
+gpu=5
 filters=500 
 n_dil_layers=8
 seed=1234 
@@ -80,7 +80,7 @@ if [[ -d $data_dir ]] ; then
     echo "skipping bigwig creation"
 else
     mkdir $data_dir
-    ./main_scripts/preprocess.sh $in_bam $data_dir $samtools_flag $is_filtered $data_type
+    ./main_scripts/preprocess.sh $in_bam $data_dir $samtools_flag $is_filtered $data_type $neg_shift
     cp $PWD/$cur_file_name $data_dir
 fi
 
@@ -92,7 +92,7 @@ if [[ -d $data_dir/tiledb ]] ; then
     echo "skipping tiledb"
 else
     mkdir $data_dir/tiledb
-    echo -e "dataset\tnegatives_peak\tidr_peak\toverlap_peak\tambig_peak\tcount_bigwig_unstranded_5p\n"$cell_line"\t"$neg_dir/bpnet.inputs.all.negatives.bed"\t"$idr_peak"\t"$overlap_peak"\t"$blacklist_region"\t"$data_dir/shifted_4_4.sorted.bam.bpnet.unstranded.bw > $data_dir/tiledb/inputs.tsv
+    echo -e "dataset\tnegatives_peak\tidr_peak\toverlap_peak\tambig_peak\tcount_bigwig_unstranded_5p\n"$cell_line"\t"$neg_dir/bpnet.inputs.all.negatives.bed"\t"$idr_peak"\t"$overlap_peak"\t"$blacklist_region"\t"$data_dir/shifted.sorted.bam.bpnet.unstranded.bw > $data_dir/tiledb/inputs.tsv
     echo -e "overlap_peak\tbed_summit_from_last_col\nnegatives_peak\tbed_summit_from_last_col\nidr_peak\tbed_summit_from_last_col\nambig_peak\tbed_no_summit\ncount_bigwig_unstranded_5p\tbigwig" > $data_dir/tiledb/attribs.txt
     ./main_scripts/db_ingest.sh  $data_dir/tiledb/inputs.tsv $data_dir/tiledb/db $chrom_sizes $data_dir/tiledb/attribs.txt
     cp $PWD/$cur_file_name $data_dir/tiledb
