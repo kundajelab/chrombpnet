@@ -6,7 +6,8 @@ data_type="ATAC"
 neg_shift=4
 
 date=$(date +'%m.%d.%Y')
-setting=naked_bias_4_$neg_shift"_shifted_"$data_type"_"$date
+#setting=naked_bias_4_$neg_shift"_shifted_"$data_type"_"$date
+setting=naked_bias_4_4_shifted_ATAC_07.29.2021
 cur_file_name="hepg2_atac_script.sh"
 
 ### SIGNAL INPUT

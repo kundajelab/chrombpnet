@@ -6,9 +6,9 @@ data_type="ATAC"
 neg_shift=4
 
 date=$(date +'%m.%d.%Y')
-setting=naked_bias_4_$neg_shift"_shifted_"$data_type"_"$date
+#setting=naked_bias_4_$neg_shift"_shifted_"$data_type"_"$date
 cur_file_name="gm12878_atac_script.sh"
-
+setting=naked_bias_4_4_shifted_ATAC_07.29.2021
 ### SIGNAL INPUT
 
 naked_bam=/oak/stanford/groups/akundaje/projects/enzymatic_bias_correction/pipeline_out/atac/SRR072187/call-filter/shard-0/execution/SRR072187.4_1.merged.nodup.no_chrM_MT.bam
