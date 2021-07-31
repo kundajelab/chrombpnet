@@ -5,9 +5,8 @@ cell_line=GM12878
 data_type="ATAC"
 
 date=$(date +'%m.%d.%Y')
-#setting=tobias_$data_type"_"$date
+setting=tobias_$data_type"_"$date
 cur_file_name="gm12878_atac_script.sh"
-setting=tobias_ATAC_07.26.2021
 
 ### SIGNAL INPUT
 

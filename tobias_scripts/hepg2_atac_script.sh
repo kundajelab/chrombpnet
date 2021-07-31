@@ -5,9 +5,8 @@ cell_line=HEPG2
 data_type="ATAC"
 
 date=$(date +'%m.%d.%Y')
-#setting=tobias_$data_type"_"$date
+setting=tobias_$data_type"_"$date
 cur_file_name="hepg2_atac_script.sh"
-setting=tobias_ATAC_07.26.2021
 
 ### SIGNAL INPUT
 
