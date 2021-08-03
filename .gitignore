@@ -4,6 +4,7 @@
 *.exe
 *.json
 *.pyc
+.ipynb_checkpoints
 
 # Directories #
 GM12878
