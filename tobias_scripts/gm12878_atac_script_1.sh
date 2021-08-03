@@ -5,13 +5,14 @@ cell_line=GM12878
 data_type="ATAC"
 
 date=$(date +'%m.%d.%Y')
-setting=tobias_$data_type"_"$date
-cur_file_name="gm12878_atac_script.sh"
+#setting=with_bias_tobias_$data_type"_"$date
+setting=with_bias_tobias_ATAC_08.01.2021
+cur_file_name="gm12878_atac_script_1.sh"
 
 ### SIGNAL INPUT
 
 uncorrected_bw=$PWD/$cell_line/data/shifted_4_4.sorted.bam.bpnet.unstranded.bw
-bias_bw=$PWD/tobias_scripts/$cell_line/$cell_line.atac.filt.merged_expected.bw
+bias_bw=$PWD/tobias_scripts/$cell_line/$cell_line.atac.filt.merged_bias.bw
 
 overlap_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/5846e593-a935-4bd9-9294-422a05f9f9b8/call-reproducibility_overlap/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/overlap.optimal_peak.narrowPeak
 idr_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/5846e593-a935-4bd9-9294-422a05f9f9b8/call-reproducibility_idr/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/idr.optimal_peak.narrowPeak.gz
@@ -21,12 +22,12 @@ chrom_sizes=$PWD/data/hg38.chrom.sizes
 ref_fasta=/mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
 main_dir=$PWD/tobias_scripts/$cell_line
-data_dir=$PWD/tobias_scripts/$cell_line
+data_dir=$PWD/tobias_scripts/$cell_line/data_bias
 output_dir=$PWD/tobias_scripts/$cell_line/$setting
 
 ### MODEL PARAMS
 
-gpu=0
+gpu=1
 filters=500 
 n_dil_layers=8
 seed=1234 
@@ -47,6 +48,12 @@ else
     mkdir $output_dir
 fi
 
+if [[ -d $data_dir ]] ; then
+    echo "output director already exists"
+else
+    mkdir $data_dir
+fi
+
 
 ### CREATE FOLDER TILEDB AND RUN TILEDB
 
@@ -54,54 +61,35 @@ if [[ -d $data_dir/tiledb ]] ; then
     echo "skipping tiledb"
 else
     mkdir $data_dir/tiledb
-    echo -e "dataset\tnegatives_peak\tidr_peak\toverlap_peak\tambig_peak\tcount_bigwig_unstranded_5p\tcontrol_count_bigwig_unstranded_5p\n"$cell_line"\t"$neg_dir/bpnet.inputs.all.negatives.bed"\t"$idr_peak"\t"$overlap_peak"\t"$blacklist_region"\t"$uncorrected_bw"\t"$bias_bw > $data_dir/tiledb/inputs.tsv
-    echo -e "negatives_peak\toverlap_peak\tbed_summit_from_last_col\nidr_peak\tbed_summit_from_last_col\nambig_peak\tbed_no_summit\ncount_bigwig_unstranded_5p\tbigwig\ncontrol_count_bigwig_unstranded_5p\tbigwig" > $data_dir/tiledb/attribs.txt
+    echo -e "dataset\tidr_peak\toverlap_peak\tambig_peak\tcount_bigwig_unstranded_5p\tcontrol_count_bigwig_unstranded_5p\n"$cell_line"\t"$idr_peak"\t"$overlap_peak"\t"$blacklist_region"\t"$uncorrected_bw"\t"$bias_bw > $data_dir/tiledb/inputs.tsv
+    echo -e "overlap_peak\tbed_summit_from_last_col\nidr_peak\tbed_summit_from_last_col\nambig_peak\tbed_no_summit\ncount_bigwig_unstranded_5p\tbigwig\ncontrol_count_bigwig_unstranded_5p\tbigwig" > $data_dir/tiledb/attribs.txt
     ./main_scripts/db_ingest.sh  $data_dir/tiledb/inputs.tsv $data_dir/tiledb/db $chrom_sizes $data_dir/tiledb/attribs.txt
     cp $PWD/tobias_scripts/$cur_file_name $data_dir/tiledb
 fi
 
 
-## STEP 2 - FIT BIAS on SIGNAL
-
-
-if [[ -d $output_dir/bias_fit ]] ; then
-    echo "skipping model training"
-else
-    mkdir $output_dir/bias_fit
-    bash $PWD/main_scripts/get_loss_weights.sh $data_dir/tiledb/db "chr10" "overlap_peak" "count_bigwig_unstranded_5p" $cell_line $flank_size $output_dir/bias_fit/counts_loss_weight.txt
-    counts_loss_weight_step2=`cat $output_dir/bias_fit/counts_loss_weight.txt`
-    echo -e "counts_loss_weight\t"$counts_loss_weight_step2"\nprofile_loss_weight\t1\nfilters\t"$filters"\nn_dil_layers\t"$n_dil_layers > $output_dir/bias_fit/params.txt
-    params=$output_dir/bias_fit/params.txt
-    for fold in 0
-    do
-        ./tobias_scripts/main_scripts/bias_fit/train.sh $fold $gpu $model_name $seed $output_dir/bias_fit $params  $data_dir/tiledb/db $cell_line $PWD/tobias_scripts/main_scripts/bias_fit/signal_from_bias.py
-        ./tobias_scripts/main_scripts/bias_fit/predict.sh $fold $gpu $model_name $seed  $output_dir/bias_fit  $data_dir/tiledb/db $cell_line $chrom_sizes
-        ./tobias_scripts/main_scripts/bias_fit/score.sh $output_dir/bias_fit $model_name $fold $cell_line $seed
-    done
-    cp $PWD/tobias_scripts/$cur_file_name $output_dir/bias_fit
-fi
 
 ### STEP 3 - FIT BIAS AND SIGNAL MODEL
 
-counts_loss_weight_step2=`cat $output_dir/bias_fit/counts_loss_weight.txt`
-counts_loss_weight_step3=counts_loss_weight_step2
-step2_bias_json=$output_dir/bias_fit/model.0.arch
-step2_bias_weights=$output_dir/bias_fit/model.0.weights
-
-if [[ -d $output_dir/final_model ]] ; then
-    echo "skipping step 3"
+if [[ -d $output_dir/model ]] ; then
+    echo "skipping model training"
 else
-    mkdir $output_dir/final_model
-    echo -e "json_string\t"$step2_bias_json"\nweights\t"$step2_bias_weights"\ncounts_loss_weight\t"$counts_loss_weight_step3"\nprofile_loss_weight\t1\nfilters\t"$filters"\nn_dil_layers\t"$n_dil_layers > $output_dir/final_model/params.txt
-    params=$output_dir/final_model/params.txt
+    mkdir $output_dir/model
+    bash $PWD/main_scripts/get_loss_weights.sh $data_dir/tiledb/db "chr10" "overlap_peak" "count_bigwig_unstranded_5p" $cell_line $flank_size $output_dir/model/counts_loss_weight.txt
+    counts_loss_weight=`cat $output_dir/model/counts_loss_weight.txt`
+    echo -e "counts_loss_weight\t"$counts_loss_weight"\nprofile_loss_weight\t1\nfilters\t"$filters"\nn_dil_layers\t"$n_dil_layers > $output_dir/model/params.txt
+    params=$output_dir/model/params.txt
     for fold in 0
     do
-        ./tobias_scripts/main_scripts/final_model/train.sh $fold $gpu $model_name $seed $output_dir/final_model $params  $data_dir/tiledb/db $cell_line $PWD/main_scripts/final_model/profile_bpnet_dnase_with_bias.py
-        ./tobias_scripts/main_scripts/final_model/predict.sh $fold $gpu $model_name $seed  $output_dir/final_model  $data_dir/tiledb/db $cell_line $chrom_sizes
-        ./tobias_scripts/main_scripts/final_model/score.sh $output_dir/final_model $model_name $fold $cell_line $seed
+        ./tobias_scripts/main_scripts/model/train.sh $fold $gpu $model_name $seed $output_dir/model $params  $data_dir/tiledb/db $cell_line $PWD/tobias_scripts/main_scripts/model/profile_bpnet_dnase_with_bias.py
+        ./tobias_scripts/main_scripts/model/predict.sh $fold $gpu $model_name $seed  $output_dir/model  $data_dir/tiledb/db $cell_line $chrom_sizes
+        ./tobias_scripts/main_scripts/model/score.sh $output_dir/model $model_name $fold $cell_line $seed
     done
-    cp $PWD/tobias_scripts/$cur_file_name $output_dir/final_model
+    cp $PWD/tobias_scripts/$cur_file_name $output_dir/model
 fi
+
+fold=0
+./tobias_scripts/main_scripts/model/score.sh $output_dir/model $model_name $fold $cell_line $seed
 
 
 ## UNPLUG MODEL
