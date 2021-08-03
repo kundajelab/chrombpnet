@@ -31,7 +31,7 @@ output_dir=$PWD/$cell_line/$setting
 
 ### MODEL PARAMS
 
-gpu=0
+gpu=2
 filters=500 
 n_dil_layers=8
 seed=1234 
@@ -260,6 +260,41 @@ else
     cp  $cell_line/$setting/final_model_step3/unplug/deepshap/20K.fold0.deepSHAP $modisco_dir_final
 fi
 
+if [[ -d $naked_data_dir/naked_bias_model_step1/deepshap ]] ; then
+    echo "skipping interpretations"
+else
+    mkdir $naked_data_dir/naked_bias_model_step1/deepshap
+    bed_file=$data_dir/$cell_line"_idr_split"
+
+    for fold in 0
+    do
+        ./main_scripts/interpret/interpret_weight.sh $naked_data_dir/naked_bias_model_step1/$model_name.$fold $bed_file xaa $naked_data_dir/tiledb/db $chrom_sizes $naked_data_dir/naked_bias_model_step1/deepshap $cell_line $gpu $fold
+        ./main_scripts/interpret/interpret_weight.sh $naked_data_dir/naked_bias_model_step1/$model_name.$fold $bed_file xab $naked_data_dir/tiledb/db $chrom_sizes $naked_data_dir/naked_bias_model_step1/deepshap $cell_line $gpu $fold
+        ./main_scripts/interpret/interpret_weight.sh $naked_data_dir/naked_bias_model_step1/$model_name.$fold $bed_file xac $naked_data_dir/tiledb/db $chrom_sizes $naked_data_dir/naked_bias_model_step1/deepshap $cell_line $gpu $fold
+    done
+
+    python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $naked_data_dir/naked_bias_model_step1/deepshap --target $naked_data_dir/naked_bias_model_step1/deepshap --type 20k
+    cp $PWD/naked_dna_scripts/$cur_file_name $naked_data_dir/naked_bias_model_step1/deepshap
+
+fi
+
+
+
+modisco_sig_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/BIAS/
+if [[ -d $modisco_sig_dir/naked_dna ]] ; then
+    echo "modisco dir already exists"
+else
+    mkdir $modisco_sig_dir/naked_dna
+fi
+
+
+if [[ -d $modisco_sig_dir/naked_dna/$setting/ ]] ; then
+    echo "modisco dir already exists"
+else
+    mkdir $modisco_sig_dir/naked_dna/$setting/
+    modisco_dir_final=$modisco_sig_dir/naked_dna/$setting/
+    cp  $naked_data_dir/naked_bias_model_step1/deepshap/20K.fold0.deepSHAP $modisco_dir_final
+fi
 
 
 ### RUN MODISCO
