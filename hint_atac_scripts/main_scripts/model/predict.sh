@@ -41,7 +41,7 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_predict_tdb \
 		    --tdb_output_source_attribute count_bigwig_unstranded_5p count_bigwig_unstranded_5p \
 		    --tdb_output_flank 500 500 \
 		    --tdb_output_aggregation None sum \
-		    --tdb_output_transformation None log \
+		    --tdb_output_transformation round log \
 		    --num_inputs 1 \
 		    --num_outputs 2 \
 		    --chrom_sizes $chrom_sizes \
