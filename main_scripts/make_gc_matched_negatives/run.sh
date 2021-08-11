@@ -19,7 +19,7 @@ echo "got gc content of the positive sequences"
 bash $PWD/main_scripts/make_gc_matched_negatives/get_genomewide_gc_bins.sh $ref_fasta $chromo_sizes $output_prefix $flank_size $stride
 echo "got genome wide GC tracks"
 
-bash $PWD/main_scripts/make_gc_matched_negatives/get_all_negatives.sh $task $idr $output_prefix.tsv
+bash $PWD/main_scripts/make_gc_matched_negatives/get_all_negatives.sh $task $idr $output_prefix.tsv $chromo_sizes $flank_size
 echo "got candidate negative set" 
 
 bash $PWD/main_scripts/make_gc_matched_negatives/get_chrom_gc_region_dict.sh $task
