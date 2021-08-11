@@ -166,6 +166,7 @@ def getModelGivenModelOptionsAndWeightInits(args):
     print("got model")
     #load the weights from the bias-corrected model
     for layer in model.layers:
+        '''
         if layer.name == "profile_predictions":
             w1=pretrained_model.get_layer(name=layer.name).get_weights()[0][:,0:1,:]
             w2=pretrained_model.get_layer(name=layer.name).get_weights()[1]
@@ -174,8 +175,13 @@ def getModelGivenModelOptionsAndWeightInits(args):
             w1=pretrained_model.get_layer(name=layer.name).get_weights()[0][0:500,:]
             w2=pretrained_model.get_layer(name=layer.name).get_weights()[1]
             layer.set_weights([w1,w2])
+        elif layer.name=="adding_profile_bias":
+            pass
+        elif layer.name=="adding_bias":
+            pass        
         else:
-            layer.set_weights(pretrained_model.get_layer(name=layer.name).get_weights())    
+        '''
+        layer.set_weights(pretrained_model.get_layer(name=layer.name).get_weights())    
     model.compile(optimizer=Adam(),
                     loss=[MultichannelMultinomialNLL(1),'mse'],
                     loss_weights=[profile_loss_weight,counts_loss_weight])

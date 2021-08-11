@@ -155,8 +155,6 @@ def getModelGivenModelOptionsAndWeightInits(args):
     
     #define inputs
     inp = Input(shape=(seq_len, 4),name='sequence')    
-    bias_profile_input=Input(shape=(out_pred_len,1),name='control_profile')
-    bias_counts_input=Input(shape=(1,),name='control_logcount')
 
     # first convolution without dilation
     first_conv = Conv1D(filters,
@@ -216,23 +214,26 @@ def getModelGivenModelOptionsAndWeightInits(args):
                                      name='prof_out_crop2match_output')(profile_out_prebias)
 
     #ADD IN THE BIAS
-    bias_output=pretrained_bias_model([bias_profile_input, bias_counts_input])
+    bias_output=pretrained_bias_model(inp)
     #concatenate bias output with profile_out_prebias
     #concat_with_bias_prof=Concatenate(axis=-1)([profile_out_prebias,bias_output[0]])
+
     profile_out_in = Conv1D(filters=num_tasks,
                          kernel_size=1,
                          name="profile_predictions")(profile_out_prebias)
-    
-    profile_out = Add(name="adding_profile_bias")([profile_out_in,bias_output[0]])
 
+    profile_out = Add(name="adding_profile_bias")([profile_out_in,bias_output[0]])
+    
     #COUNTS ARM 
     gap_combined_conv = GlobalAveragePooling1D(name='gap')(combined_conv)
     #concatenate gap_combined_conv with bias output
     #concat_with_bias_count=Concatenate(axis=-1)([gap_combined_conv,bias_output[1]])
+    #count_out = Dense(num_tasks, name="logcount_predictions")(concat_with_bias_count)
     count_out_in = Dense(num_tasks, name="logcount_predictions")(gap_combined_conv)
     count_out = Add(name="adding_bias")([count_out_in,bias_output[1]])
 
-    model=Model(inputs=[inp, bias_profile_input, bias_counts_input],outputs=[profile_out,count_out])
+    model=Model(inputs=[inp],outputs=[profile_out,
+                                     count_out])
     print("got model") 
     model.compile(optimizer=Adam(),
                     loss=[MultichannelMultinomialNLL(1),'mse'],

@@ -112,7 +112,6 @@ def getModelGivenModelOptionsAndWeightInits(args):
     model_params=get_model_param_dict(args.model_params)
     profile_loss_weight=float(model_params['profile_loss_weight'])
     counts_loss_weight=float(model_params['counts_loss_weight'])
-    pretrained_bias_model=load_pretrained_bias(model_params['json_string'], model_params["weights"])
     print("loaded pre-trained bias model with frozen layers")
     
     #read in arguments
@@ -132,8 +131,8 @@ def getModelGivenModelOptionsAndWeightInits(args):
     print(out_pred_len)
 
     #define inputs
-    bias_counts_input=Input(shape=(1,),name='control_logcount')
     bias_profile_input=Input(shape=(out_pred_len,1),name='control_profile')
+    bias_counts_input=Input(shape=(1,),name='control_logcount')
 
     # conv layer without activation 
     profile_out = Conv1D(1,
@@ -142,7 +141,7 @@ def getModelGivenModelOptionsAndWeightInits(args):
                          activation=None,
                          name='profile_out')(bias_profile_input)
     count_out=Dense(1,activation=None,name='count_out')(bias_counts_input)
-    model=Model(inputs=[inp],outputs=[profile_out,
+    model=Model(inputs=[bias_profile_input, bias_counts_input],outputs=[profile_out,
                                      count_out])
     print("got model") 
     model.compile(optimizer=Adam(),

@@ -4,7 +4,9 @@ from keras.backend import int_shape
 from sklearn.metrics import average_precision_score
 from kerasAC.metrics import * 
 from kerasAC.custom_losses import *
+
 import keras;
+
 #import the various keras layers 
 from keras.layers import Dense,Activation,Dropout,Flatten,Reshape,Input, Concatenate, Cropping1D, Add
 from keras.layers.core import Dropout, Reshape, Dense, Activation, Flatten
@@ -18,47 +20,8 @@ from keras.regularizers import l1, l2
 
 from keras.models import Model
 
-from keras.models import Model
-from tensorflow.keras.models import load_model, model_from_json
-
-def load_model_weights(weight_file,model):
-    if weight_file is None:
-        #nothing to do
-        return model
-    #sync the model locally if it's on AWS
-    if weight_file.startswith("s3://"):
-        s3_model_weights=download_s3_file(weight_file)
-    else:
-        s3_model_weights=weight_file
-    import  h5py
-    try:
-        model.load_weights(s3_model_weights)#,by_name=True)
-    except:
-        with h5py.File(s3_model_weights,'r') as file:
-            weight_file=file['model_1']
-            for layer in model.layers:
-                try:
-                    layer_weights=weight_file[layer.name]
-                except:
-                    print('no weights files saved for layer:'+str(layer.name))
-                    continue
-                try:
-                    weights = []
-                    # Extract weights
-                    for term in layer_weights:
-                        if isinstance(layer_weights[term], h5py.Dataset):
-                            # Convert weights to numpy array and prepend to list
-                            weights.insert(0, np.array(layer_weights[term]))
-                    # Load weights to model
-                    layer.set_weights(weights)
-                    print("loaded weights for layer:"+str(layer.name))
-                except Exception as e:
-                    print("Error: Could not load weights for layer:"+str(layer.name))
-                    raise e
-    return model
-
-def load_pretrained_bias(json_string, weights, model_hdf5=None):
-    from keras.models import load_model
+def load_pretrained_model(model_hdf5,arch,weights):
+    from keras.models import load_model, model_from_json
     from keras.utils.generic_utils import get_custom_objects
     custom_objects={"recall":recall,
                     "sensitivity":recall,
@@ -72,21 +35,13 @@ def load_pretrained_bias(json_string, weights, model_hdf5=None):
                     "ambig_mean_squared_error":ambig_mean_squared_error,
                     "MultichannelMultinomialNLL":MultichannelMultinomialNLL}
     get_custom_objects().update(custom_objects)
-    if model_hdf5:
-        model=load_model(args.model_hdf5)
-        print(model.summary())
+    if model_hdf5 is not None:
+        pretrained_model=load_model(model_hdf5)
     else:
-        model=model_from_json(open(json_string,"r").read())
-        model=load_model_weights(weights,model)
-
-    pretrained_bias_model=model
-
-    #freeze the model
-    num_layers=len(pretrained_bias_model.layers)
-    for i in range(num_layers):
-        pretrained_bias_model.layers[i].trainable=False
-    return pretrained_bias_model
-
+        import json
+        pretrained_model=model_from_json(open(arch,'r').read())
+        pretrained_model.load_weights(weights)
+    return pretrained_model 
 
 def get_model_param_dict(param_file):
     '''
@@ -99,7 +54,6 @@ def get_model_param_dict(param_file):
         tokens=line.split('\t')
         params[tokens[0]]=tokens[1]
     return params 
-
 
 def getModelGivenModelOptionsAndWeightInits(args):
     #default params (can be overwritten by providing model_params file as input to the training function)
@@ -137,26 +91,23 @@ def getModelGivenModelOptionsAndWeightInits(args):
     print("profile_loss_weight:"+str(profile_loss_weight))
     
     #read in arguments
-    seed=int(args.seed)
+    seed=args.seed
     init_weights=args.init_weights 
-    sequence_flank=int(args.tdb_input_flank[0])
-    num_tasks=int(args.num_tasks)
+    sequence_flank=args.tdb_input_flank[0]
+    num_tasks=args.num_tasks
     
     seq_len=2*sequence_flank
-    out_flank=int(args.tdb_output_flank[0])
+    out_flank=args.tdb_output_flank[0]
     out_pred_len=2*out_flank
     print(seq_len)
     print(out_pred_len)
 
-    #load the pretrained bias model
-    pretrained_bias_model=load_pretrained_bias(model_params['json_string'], model_params["weights"])
-    print(pretrained_bias_model.summary())
-    #print(pretrained_bias_model.summary())
+    #load the pretrained bias-corrected model
+    pretrained_model=load_pretrained_model(None,model_params['json_string'],model_params['weights'])
+
     
     #define inputs
     inp = Input(shape=(seq_len, 4),name='sequence')    
-    bias_profile_input=Input(shape=(out_pred_len,1),name='control_profile')
-    bias_counts_input=Input(shape=(1,),name='control_logcount')
 
     # first convolution without dilation
     first_conv = Conv1D(filters,
@@ -167,13 +118,15 @@ def getModelGivenModelOptionsAndWeightInits(args):
     # 6 dilated convolutions with resnet-style additions
     # each layer receives the sum of feature maps 
     # from all previous layers
-    res_layers = [(first_conv, '0_non_dil')] 
+    res_layers = [(first_conv, '0_non_dil')] # on a quest to have meaninful
+                                           # layer names
     layer_names = [str(i)+"_dil" for i in range(1,n_dil_layers+1)]
     for i in range(1, n_dil_layers + 1):
         if i == 1:
             res_layers_sum = first_conv
         else:
             res_layers_sum = Add(name='add'+str(i))([l for l, _ in res_layers])
+
 
         # dilated convolution
         conv_layer_name = '{}conv'.format(layer_names[i-1])
@@ -184,8 +137,6 @@ def getModelGivenModelOptionsAndWeightInits(args):
                              dilation_rate=2**i,
                              name=conv_layer_name)(res_layers_sum)
 
-        # get shape of latest layer and crop 
-        # all other previous layers in the list to that size
         conv_output_shape =int_shape(conv_output)
         cropped_layers = []
         for lyr, name in res_layers:
@@ -195,45 +146,27 @@ def getModelGivenModelOptionsAndWeightInits(args):
             cropped_layers.append((Cropping1D(cropsize,
                                               name=lyr_name)(lyr),
                                   lyr_name))
-        
-        # append to the list of previous layers
         cropped_layers.append((conv_output, conv_layer_name))
         res_layers = cropped_layers
-
-    # the final output from the 6 dilated convolutions 
-    # with resnet-style connections
     combined_conv = Add(name='combined_conv')([l for l, _ in res_layers])
     profile_out_prebias = Conv1D(filters=num_tasks,
                                  kernel_size=profile_kernel_size,
                                  padding='valid',
                                  name='profile_out_prebias')(combined_conv)
-    # Step 1.2 - Crop to match size of the required output size, a minimum
-    #            difference of 346 is required between input seq len and ouput len
     profile_out_prebias_shape =int_shape(profile_out_prebias)
     cropsize = int(profile_out_prebias_shape[1]/2)-int(out_pred_len/2)
-    assert cropsize>=0
-    profile_out_prebias = Cropping1D(cropsize,
-                                     name='prof_out_crop2match_output')(profile_out_prebias)
-
-    #ADD IN THE BIAS
-    bias_output=pretrained_bias_model([bias_profile_input, bias_counts_input])
-    #concatenate bias output with profile_out_prebias
-    #concat_with_bias_prof=Concatenate(axis=-1)([profile_out_prebias,bias_output[0]])
-    profile_out_in = Conv1D(filters=num_tasks,
+    profile_out = Conv1D(filters=num_tasks,
                          kernel_size=1,
                          name="profile_predictions")(profile_out_prebias)
-    
-    profile_out = Add(name="adding_profile_bias")([profile_out_in,bias_output[0]])
+    gap_combined_conv = GlobalAveragePooling1D(name='gap')(combined_conv) # acronym - gapcc
+    count_out = Dense(num_tasks, name="logcount_predictions")(gap_combined_conv)
 
-    #COUNTS ARM 
-    gap_combined_conv = GlobalAveragePooling1D(name='gap')(combined_conv)
-    #concatenate gap_combined_conv with bias output
-    #concat_with_bias_count=Concatenate(axis=-1)([gap_combined_conv,bias_output[1]])
-    count_out_in = Dense(num_tasks, name="logcount_predictions")(gap_combined_conv)
-    count_out = Add(name="adding_bias")([count_out_in,bias_output[1]])
-
-    model=Model(inputs=[inp, bias_profile_input, bias_counts_input],outputs=[profile_out,count_out])
-    print("got model") 
+    model=Model(inputs=[inp],outputs=[profile_out,
+                                     count_out])
+    print("got model")
+    #load the weights from the bias-corrected model
+    for layer in model.layers:
+        layer.set_weights(pretrained_model.get_layer(name=layer.name).get_weights())    
     model.compile(optimizer=Adam(),
                     loss=[MultichannelMultinomialNLL(1),'mse'],
                     loss_weights=[profile_loss_weight,counts_loss_weight])
@@ -246,13 +179,15 @@ if __name__=="__main__":
     parser=argparse.ArgumentParser(description="view model arch")
     parser.add_argument("--seed",type=int,default=1234)
     parser.add_argument("--init_weights",default=None)
-    parser.add_argument("--tdb_input_flank",nargs="+",default=["1057"])
-    parser.add_argument("--tdb_output_flank",nargs="+",default=["500"])
+    parser.add_argument("--tdb_input_flank",nargs="+",default=[1057])
+    parser.add_argument("--tdb_output_flank",nargs="+",default=[500])
     parser.add_argument("--num_tasks",type=int,default=1)
     parser.add_argument("--model_params",default=None)
-    
+    parser.add_argument("--outf") 
     args=parser.parse_args()
     model=getModelGivenModelOptionsAndWeightInits(args)
     print(model.summary())
-    pdb.set_trace() 
+    #save the model to hdf5
+    model.save(args.outf)
+
     

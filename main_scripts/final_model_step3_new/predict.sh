@@ -34,15 +34,15 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_predict_tdb \
 		    --tdb_partition_attribute_for_upsample idr_peak \
 		    --tdb_partition_thresh_for_upsample 2 \
 		    --tdb_partition_datasets_for_upsample $cell_line \
-		    --tdb_input_source_attribute seq control_count_bigwig_unstranded_5p control_count_bigwig_unstranded_5p \
-		    --tdb_input_aggregation None None sum \
-		    --tdb_input_transformation None None log \
-		    --tdb_input_flank 1057 500 500 \
+		    --tdb_input_source_attribute seq \
+		    --tdb_input_aggregation None \
+		    --tdb_input_transformation None \
+		    --tdb_input_flank 1057 \
 		    --tdb_output_source_attribute count_bigwig_unstranded_5p count_bigwig_unstranded_5p \
 		    --tdb_output_flank 500 500 \
 		    --tdb_output_aggregation None sum \
 		    --tdb_output_transformation None log \
-		    --num_inputs 3 \
+		    --num_inputs 1 \
 		    --num_outputs 2 \
 		    --chrom_sizes $chrom_sizes \
 		    --tiledb_stride 50 \
@@ -52,7 +52,7 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_predict_tdb \
 		    --predictions_and_labels_hdf5 $outdir/$model_name.$fold \
 		    --json $outdir/$model_name.$fold.arch \
 		    --weights $outdir/$model_name.$fold.weights \
-		    --tdb_input_datasets seq $cell_line $cell_line \
+		    --tdb_input_datasets seq \
 		    --tdb_output_datasets $cell_line $cell_line \
 		    --upsample_threads 1 \
 		    --tdb_ambig_attribute ambig_peak \
