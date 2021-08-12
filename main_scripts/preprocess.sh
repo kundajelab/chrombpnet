@@ -9,12 +9,16 @@ samtools_flag=$3
 is_filtered=$4
 type=$5
 neg_shift=$6
+chrom_sizes=$7
 
+echo $chrom_sizes
 ## shift bam files
 
 if [ "$type" = DNASE ] ; then
     echo "shift DNASE data"
-    alignmentSieve -p 56 -b $in_bam -o $interm/shifted_0_1.bam --shift 0 1 --filterMetrics $interm/log_0_1.txt
+    samtools view -b -@50 -F780 -q30  $in_bam | bedtools bamtobed -i stdin > $interm/data.bed
+    awk -F $'\t' 'BEGIN {OFS = FS}{ if ($6 == "+") {$2 = $2} else if ($6 == "-") {$3 = $3 + 1} print $0}' $interm/data.bed > $interm/shifted.bed
+    bedToBam -i $interm/shifted.bed -g  $chrom_sizes  > $interm/shifted_0_1.bam
     shifted_bam=$interm/shifted_0_1
 else
     echo "shift ATAC data"
