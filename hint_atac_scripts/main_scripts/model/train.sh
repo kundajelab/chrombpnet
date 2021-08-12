@@ -46,7 +46,7 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --tdb_output_source_attribute count_bigwig_unstranded_5p count_bigwig_unstranded_5p \
 		    --tdb_output_flank 500 500 \
 		    --tdb_output_aggregation None sum \
-		    --tdb_output_transformation round log \
+		    --tdb_output_transformation None log \
 		    --tdb_ambig_attribute ambig_peak \
 		    --tdb_input_min None \
 		    --tdb_input_max None \
