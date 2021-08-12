@@ -14,7 +14,7 @@ in_bam=/oak/stanford/groups/akundaje/projects/atlas/dnase_processed/dnase/13da5e
 overlap_peak=/oak/stanford/groups/akundaje/projects/atlas/dnase_processed/dnase/13da5ebe-0941-4855-8599-40bbcc5c58b4/call-reproducibility_overlap/execution/optimal_peak.narrowPeak.gz
 #.gz file?
 idr_peak=/oak/stanford/groups/akundaje/projects/atlas/dnase_processed/dnase/13da5ebe-0941-4855-8599-40bbcc5c58b4/call-reproducibility_idr/execution/optimal_peak.narrowPeak.gz
-is_filtered=False
+is_filtered=True
 samtools_flag=780
 
 blacklist_region=$PWD/data/all_three_blacklists.bed
@@ -28,6 +28,7 @@ output_dir=$PWD/$cell_line/$setting
 
 ### MODEL PARAMS
 
+neg_shift=1
 gpu=7
 filters=500 
 n_dil_layers=8
@@ -78,7 +79,8 @@ if [[ -d $data_dir ]] ; then
     echo "skipping bigwig creation"
 else
     mkdir $data_dir
-    ./main_scripts/dnase_preprocess.sh $in_bam $data_dir $chrom_sizes
+#    ./main_scripts/dnase_preprocess.sh $in_bam $data_dir $chrom_sizes
+    ./main_scripts/preprocess.sh $in_bam $data_dir $samtools_flag $is_filtered $data_type $neg_shift $chrom_sizes
     cp $PWD/$cur_file_name $data_dir
 fi
 
@@ -289,6 +291,49 @@ else
     modisco_dir_final=$modisco_sig_dir/$cell_line/$setting"_new"/
     cp  $cell_line/$setting/final_model_step3_new/unplug/deepshap/20K.fold0.deepSHAP $modisco_dir_final
 fi
+
+##BIAS INTERPRETATIONS
+
+
+if  [[ -d $output_dir/invivo_bias_model_step1/ ]]
+then
+    if [[ -d $output_dir/invivo_bias_model_step1/deepshap ]] ; then
+        echo "skipping bias interpretations"
+    else
+        mkdir $output_dir/invivo_bias_model_step1/deepshap
+        bed_file=$data_dir/$cell_line"_idr_split"
+
+        for fold in 0
+        do
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
+        done
+
+        python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/invivo_bias_model_step1/deepshap --target $output_dir/invivo_bias_model_step1/deepshap --type 20k
+        cp $PWD/$cur_file_name $output_dir/invivo_bias_model_step1/deepshap
+    fi
+else
+    echo "skipping step1 interpretations - input bias model given"
+fi
+
+
+
+modisco_bias_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/BIAS/
+if [[ -d $modisco_bias_dir/$cell_line ]] ; then
+    echo "modisco dir already exists"
+else
+    mkdir $modisco_bias_dir/$cell_line
+fi
+
+if [[ -d $modisco_bias_dir/$cell_line/$setting"_new"/ ]] ; then
+    echo "modisco dir already exists"
+else
+    mkdir $modisco_bias_dir/$cell_line/$setting"_new"/
+    modisco_dir_final=$modisco_bias_dir/$cell_line/$setting"_new"/
+    cp  $cell_line/$setting/invivo_bias_model_step1/deepshap/20K.fold0.deepSHAP $modisco_dir_final
+fi
+
 
 
 
