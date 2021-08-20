@@ -296,6 +296,28 @@ else
     echo "skipping step1 interpretations - input bias model given"
 fi
 
+if  [[ -d $output_dir/bias_fit_on_signal_step2/ ]]  
+then
+    if [[ -d $output_dir/bias_fit_on_signal_step2/deepshap ]] ; then
+        echo "skipping bias interpretations"
+    else
+        mkdir $output_dir/bias_fit_on_signal_step2/deepshap
+        bed_file=$data_dir/$cell_line"_idr_split"
+
+        for fold in 0
+        do
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/bias_fit_on_signal_step2/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/bias_fit_on_signal_step2/deepshap $cell_line $gpu $fold
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/bias_fit_on_signal_step2/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/bias_fit_on_signal_step2/deepshap $cell_line $gpu $fold
+            ./main_scripts/interpret/interpret_weight.sh $output_dir/bias_fit_on_signal_step2/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/bias_fit_on_signal_step2/deepshap $cell_line $gpu $fold
+        done
+
+        python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/bias_fit_on_signal_step2/deepshap --target $output_dir/bias_fit_on_signal_step2/deepshap --type 20k
+        cp $PWD/$cur_file_name $output_dir/bias_fit_on_signal_step2/deepshap
+    fi
+else
+    echo "skipping step1 interpretations - input bias model given"
+fi
+
 
 
 modisco_bias_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/BIAS/
@@ -311,6 +333,14 @@ else
     mkdir $modisco_bias_dir/$cell_line/$setting"_new"/
     modisco_dir_final=$modisco_bias_dir/$cell_line/$setting"_new"/
     cp  $cell_line/$setting/invivo_bias_model_step1/deepshap/20K.fold0.deepSHAP $modisco_dir_final
+fi
+
+if [[ -d $modisco_bias_dir/$cell_line/$setting"_biasfit"/ ]] ; then
+    echo "modisco dir already exists"
+else
+    mkdir $modisco_bias_dir/$cell_line/$setting"_biasfit"/
+    modisco_dir_final=$modisco_bias_dir/$cell_line/$setting"_biasfit"/
+    cp  $cell_line/$setting/bias_fit_on_signal_step2/deepshap/20K.fold0.deepSHAP $modisco_dir_final
 fi
 
 
