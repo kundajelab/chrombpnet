@@ -1,21 +1,21 @@
 #!/bin/bash
 ##TODO flank_size and ref_fasta files in scripts 
 
-cell_line=GM12878
+cell_line=IMR90
 data_type="ATAC"
 neg_shift=4
 
 date=$(date +'%m.%d.%Y')
 #setting=naked_bias_4_$neg_shift"_shifted_"$data_type"_"$date
-cur_file_name="gm12878_atac_script_new.sh"
+cur_file_name="imr90_atac_script_new.sh"
 setting=naked_bias_4_4_shifted_ATAC_07.29.2021
 ### SIGNAL INPUT
 
 naked_bam=/oak/stanford/groups/akundaje/projects/enzymatic_bias_correction/pipeline_out/atac/SRR072187/call-filter/shard-0/execution/SRR072187.4_1.merged.nodup.no_chrM_MT.bam
-in_bam=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/merged_data/GM12878.atac.filt.merged.bam
-overlap_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/5846e593-a935-4bd9-9294-422a05f9f9b8/call-reproducibility_overlap/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/overlap.optimal_peak.narrowPeak
+in_bam=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/merged_data/IMR90.atac.filt.merged.bam
+overlap_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/277549db-c2d8-49d3-ace0-81ad5d4088fb/call-reproducibility_overlap/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/overlap.optimal_peak.narrowPeak
 #.gz file?
-idr_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/5846e593-a935-4bd9-9294-422a05f9f9b8/call-reproducibility_idr/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/idr.optimal_peak.narrowPeak.gz
+idr_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/277549db-c2d8-49d3-ace0-81ad5d4088fb/call-reproducibility_idr/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/idr.optimal_peak.narrowPeak.gz
 is_filtered=True
 samtools_flag=None
 
@@ -31,7 +31,7 @@ output_dir=$PWD/$cell_line/$setting
 
 ### MODEL PARAMS
 
-gpu=0
+gpu=2
 filters=500 
 n_dil_layers=8
 seed=1234 
@@ -193,9 +193,6 @@ else
     cp $PWD/naked_dna_scripts/$cur_file_name $output_dir/final_model_step3_new
 fi
 
-fold=0
-./main_scripts/final_model_step3_new/score.sh $output_dir/final_model_step3_new $model_name $fold $cell_line $seed
-
 
 ## UNPLUG MODEL
 
@@ -217,8 +214,6 @@ else
     done
     cp $PWD/naked_dna_scripts/$cur_file_name $output_dir/final_model_step3_new/unplug
 fi
-
-./main_scripts/unplug/score.sh $output_dir/final_model_step3_new/unplug $model_name $fold $cell_line $seed
 
 
 ### GET INTERPRETATIONS
