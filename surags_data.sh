@@ -6,8 +6,9 @@ data_type="ATAC"
 neg_shift=4
 
 date=$(date +'%m.%d.%Y')
-setting=4_$neg_shift"_shifted_"$data_type"_"$date
+#setting=4_$neg_shift"_shifted_"$data_type"_"$date
 cur_file_name="surags_data.sh"
+setting=4_4_shifted_ATAC_08.12.2021
 
 ### SIGNAL INPUT
 
@@ -147,7 +148,7 @@ if [[ -d $data_dir/$cell_line"_idr_split" ]] ; then
     echo "skipping creating idr splits for interpretation"
 else
     mkdir  $data_dir/$cell_line"_idr_split" 
-    zcat $idr_peak | shuf  > $data_dir/$cell_line"_idr_split/temp.txt"
+    cat $idr_peak | shuf  > $data_dir/$cell_line"_idr_split/temp.txt"
     split -l 10000 $data_dir/$cell_line"_idr_split/temp.txt" $data_dir/$cell_line"_idr_split/x"
     rm  $data_dir/$cell_line"_idr_split/temp.txt"
 fi
@@ -242,22 +243,6 @@ fi
 
 ## UNPLUG MODEL
 
-if [[ -d $output_dir/final_model_step3_new/unplug1 ]] ; then
-    echo "skipping unplugging"
-else
-    mkdir $output_dir/final_model_step3_new/unplug1
-    unplug_bias_json=$output_dir/final_model_step3_new/model.0.arch
-    unplug_bias_weights=$output_dir/final_model_step3_new/model.0.weights
-    echo -e "json_string\t"$unplug_bias_json"\nweights\t"$unplug_bias_weights"\ncounts_loss_weight\t"$counts_loss_weight_step3"\nprofile_loss_weight\t1\nfilters\t"$filters"\nn_dil_layers\t"$n_dil_layers > $output_dir/final_model_step3_new/unplug1/params.txt
-
-    params=$output_dir/final_model_step3_new/unplug1/params.txt
-
-    for fold in 0
-    do
-        CUDA_VISIBLE_DEVICES=$gpu python ./main_scripts/unplug1_new/get_model_with_bias_unplugged.py --model_params $params --outf $output_dir/final_model_step3_new/unplug1/$model_name.$fold.hdf5 
-    done
-    cp $PWD/$cur_file_name $output_dir/final_model_step3_new/unplug1
-fi
 
 #fold=0
 #./main_scripts/unplug/predict.sh $fold $gpu $model_name $seed $output_dir/final_model_step3_new/unplug $data_dir/tiledb/db $cell_line $chrom_sizes
@@ -269,7 +254,7 @@ if [[ -d $data_dir/$cell_line"_idr_split" ]] ; then
     echo "skipping creating idr splits for interpretation"
 else
     mkdir  $data_dir/$cell_line"_idr_split" 
-    zcat $idr_peak | shuf  > $data_dir/$cell_line"_idr_split/temp.txt"
+    cat $idr_peak | shuf  > $data_dir/$cell_line"_idr_split/temp.txt"
     split -l 10000 $data_dir/$cell_line"_idr_split/temp.txt" $data_dir/$cell_line"_idr_split/x"
     rm  $data_dir/$cell_line"_idr_split/temp.txt"
 fi

@@ -3,11 +3,11 @@
 
 cell_line=GM12878
 data_type="DNASE"
+filters=100
 
 date=$(date +'%m.%d.%Y')
-setting=$data_type"_"$date
-cur_file_name="gm12878_dnase_script.sh"
-setting=DNASE_08.11.2021
+setting=$data_type"_"$date"_bias_filters_"$filters
+cur_file_name="gm12878_dnase_script_filters_"$filters".sh"
 ### SIGNAL INPUT
 
 in_bam=/oak/stanford/groups/akundaje/projects/atlas/dnase_processed/dnase/13da5ebe-0941-4855-8599-40bbcc5c58b4/call-bowtie2/shard-0/execution/ENCSR000EMT.merged.bam
@@ -29,8 +29,7 @@ output_dir=$PWD/$cell_line/$setting
 ### MODEL PARAMS
 
 neg_shift=1
-gpu=7
-filters=500 
+gpu=1
 n_dil_layers=8
 seed=1234 
 model_name=model 
@@ -201,6 +200,7 @@ fi
 #counts_loss_weight_step2=`cat $output_dir/bias_fit_on_signal_step2/counts_loss_weight.txt`
 #counts_loss_weight_step3=$counts_loss_weight_step2
 
+filters=500
 
 ### STEP 3 - FIT BIAS AND SIGNAL MODEL
 
@@ -350,44 +350,6 @@ else
     modisco_dir_final=$modisco_sig_dir/$cell_line/$setting"_new"/
     cp  $cell_line/$setting/final_model_step3_new/unplug/deepshap/20K.fold0.deepSHAP $modisco_dir_final
 fi
-
-
-
-
-##UNCORRECTED MODEL INTERPRETATIONS
-
-
-if  [[ -d $output_dir/final_model_step3_new/ ]]  
-then
-    if [[ -d $output_dir/final_model_step3_new/deepshap ]] ; then
-        echo "skipping bias interpretations"
-    else
-        mkdir $output_dir/final_model_step3_new/deepshap
-        bed_file=$data_dir/$cell_line"_idr_split"
-
-        for fold in 0
-        do
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/final_model_step3_new/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/final_model_step3_new/deepshap $cell_line $gpu $fold
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/final_model_step3_new/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/final_model_step3_new/deepshap $cell_line $gpu $fold
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/final_model_step3_new/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/final_model_step3_new/deepshap $cell_line $gpu $fold
-        done
-
-        python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/final_model_step3_new/deepshap --target $output_dir/final_model_step3_new/deepshap --type 20k
-        cp $PWD/$cur_file_name $output_dir/final_model_step3_new/deepshap
-    fi
-else
-    echo "skipping step1 interpretations - input bias model given"
-fi
-
-
-if [[ -d $modisco_bias_dir/$cell_line/$setting"_new_uncorrected"/ ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_bias_dir/$cell_line/$setting"_new_uncorrected"/
-    modisco_dir_final=$modisco_bias_dir/$cell_line/$setting"_new_uncorrected"/
-    cp  $cell_line/$setting/final_model_step3_new/deepshap/20K.fold0.deepSHAP $modisco_dir_final
-fi
-
 ### RUN MODISCO
 
 

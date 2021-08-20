@@ -5,9 +5,9 @@ cell_line=GM12878
 data_type="DNASE"
 
 date=$(date +'%m.%d.%Y')
-setting=hintatac_$data_type"_"$date
+#setting=hintatac_$data_type"_"$date
 cur_file_name="gm12878_dnase_script.sh"
-
+setting=hintatac_DNASE_08.12.2021
 ### SIGNAL INPUT
 
 corrected_bw=$PWD/hint_atac_scripts/$cell_line/DNASE/bias_corrected_dnase.bw
@@ -93,7 +93,7 @@ if [[ -d $output_dir/model/deepshap ]] ; then
     echo "skipping interpretations"
 else
     mkdir $output_dir/model/deepshap
-    bed_file=$PWD/$cell_line/data/$cell_line"_idr_split"
+    bed_file=$PWD/$cell_line/DNASE_data/$cell_line"_idr_split"
 
     for fold in 0
     do

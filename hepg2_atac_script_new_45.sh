@@ -1,40 +1,40 @@
 #!/bin/bash
-##TODO flank_size and ref_fasta files in scripts
+##TODO flank_size and ref_fasta files in scripts 
 
-cell_line=GM12878
-data_type="DNASE"
+cell_line=HEPG2
+data_type="ATAC"
+neg_shift=5
 
 date=$(date +'%m.%d.%Y')
-setting=$data_type"_"$date
-cur_file_name="gm12878_dnase_script.sh"
-setting=DNASE_08.11.2021
-### SIGNAL INPUT
+#setting=4_$neg_shift"_shifted_"$data_type"_"$date
+cur_file_name="hepg2_atac_script_new_45.sh"
+setting=4_5_shifted_ATAC_07.28.2021
 
-in_bam=/oak/stanford/groups/akundaje/projects/atlas/dnase_processed/dnase/13da5ebe-0941-4855-8599-40bbcc5c58b4/call-bowtie2/shard-0/execution/ENCSR000EMT.merged.bam
-overlap_peak=/oak/stanford/groups/akundaje/projects/atlas/dnase_processed/dnase/13da5ebe-0941-4855-8599-40bbcc5c58b4/call-reproducibility_overlap/execution/optimal_peak.narrowPeak.gz
+### SIGNAL INPUT
+in_bam=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/merged_data/HEPG2.atac.filt.merged.bam
+overlap_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/25b3429e-5864-4e8d-a475-a92df8938887/call-reproducibility_overlap/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/overlap.optimal_peak.narrowPeak.gz
 #.gz file?
-idr_peak=/oak/stanford/groups/akundaje/projects/atlas/dnase_processed/dnase/13da5ebe-0941-4855-8599-40bbcc5c58b4/call-reproducibility_idr/execution/optimal_peak.narrowPeak.gz
+idr_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/25b3429e-5864-4e8d-a475-a92df8938887/call-reproducibility_idr/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/idr.optimal_peak.narrowPeak.gz
 is_filtered=True
-samtools_flag=780
+samtools_flag=None
 
 blacklist_region=$PWD/data/all_three_blacklists.bed
 chrom_sizes=$PWD/data/hg38.chrom.sizes
 ref_fasta=/mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
 main_dir=$PWD/$cell_line
-data_dir=$PWD/$cell_line/$data_type"_data"
+data_dir=$PWD/$cell_line/data_$data_type"_4_"$neg_shift
 output_dir=$PWD/$cell_line/$setting
 
 
 ### MODEL PARAMS
 
-neg_shift=1
-gpu=7
+gpu=5
 filters=500 
 n_dil_layers=8
 seed=1234 
 model_name=model 
-neg_dir=$main_dir/$data_type"_negatives_data"
+neg_dir=$main_dir/neg_data
 flank_size=1057
 
 ## CREATE DIRS
@@ -53,6 +53,7 @@ fi
 
 ## MAKE NEGATIVES BED FILE
 
+neg_dir=$main_dir/negatives_data
 stride=50
 
 if [[ -d $neg_dir ]] ; then
@@ -79,8 +80,7 @@ if [[ -d $data_dir ]] ; then
     echo "skipping bigwig creation"
 else
     mkdir $data_dir
-#    ./main_scripts/dnase_preprocess.sh $in_bam $data_dir $chrom_sizes
-    ./main_scripts/preprocess.sh $in_bam $data_dir $samtools_flag $is_filtered $data_type $neg_shift $chrom_sizes
+    ./main_scripts/preprocess.sh $in_bam $data_dir $samtools_flag $is_filtered $data_type $neg_shift
     cp $PWD/$cur_file_name $data_dir
 fi
 
@@ -108,20 +108,20 @@ else
 
     if test -z "$bias_json" 
     then
-        mkdir $output_dir/invivo_bias_model_step1
+    	mkdir $output_dir/invivo_bias_model_step1
 
         bash main_scripts/get_loss_weights.sh $data_dir/tiledb/db "chr10" "negatives_peak" "count_bigwig_unstranded_5p" $cell_line $flank_size $output_dir/invivo_bias_model_step1/counts_loss_weight.txt
         counts_loss_weight_step1=`cat $output_dir/invivo_bias_model_step1/counts_loss_weight.txt`
  
-    echo -e "counts_loss_weight\t"$counts_loss_weight_step1"\nprofile_loss_weight\t1\nfilters\t"$filters"\nn_dil_layers\t"$n_dil_layers > $output_dir/invivo_bias_model_step1/params.txt
-        params=$output_dir/invivo_bias_model_step1/params.txt
-        for fold in 0
-        do
+   	echo -e "counts_loss_weight\t"$counts_loss_weight_step1"\nprofile_loss_weight\t1\nfilters\t"$filters"\nn_dil_layers\t"$n_dil_layers > $output_dir/invivo_bias_model_step1/params.txt
+    	params=$output_dir/invivo_bias_model_step1/params.txt
+    	for fold in 0
+    	do
             ./main_scripts/invivo_bias_model_step1/train.sh $fold $gpu $model_name $seed $output_dir/invivo_bias_model_step1 $params  $data_dir/tiledb/db $cell_line profile_bpnet_dnase $neg_bed_train
             ./main_scripts/invivo_bias_model_step1/predict.sh $fold $gpu $model_name $seed  $output_dir/invivo_bias_model_step1  $data_dir/tiledb/db $cell_line $chrom_sizes $neg_bed_test
             ./main_scripts/invivo_bias_model_step1/score.sh $output_dir/invivo_bias_model_step1 $model_name $fold $cell_line $seed
-        done
-        cp $PWD/$cur_file_name $output_dir/invivo_bias_model_step1
+    	done
+    	cp $PWD/$cur_file_name $output_dir/invivo_bias_model_step1
         bias_json=$output_dir/invivo_bias_model_step1/model.0.arch
         bias_weights=$output_dir/invivo_bias_model_step1/model.0.weights
     else
@@ -131,48 +131,6 @@ else
 fi
 
 
-
-##BIAS INTERPRETATIONS
-
-
-if  [[ -d $output_dir/invivo_bias_model_step1/ ]]  
-then
-    if [[ -d $output_dir/invivo_bias_model_step1/deepshap ]] ; then
-        echo "skipping bias interpretations"
-    else
-        mkdir $output_dir/invivo_bias_model_step1/deepshap
-        bed_file=$data_dir/$cell_line"_idr_split"
-
-        for fold in 0
-        do
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
-        done
-
-        python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/invivo_bias_model_step1/deepshap --target $output_dir/invivo_bias_model_step1/deepshap --type 20k
-        cp $PWD/$cur_file_name $output_dir/invivo_bias_model_step1/deepshap
-    fi
-else
-    echo "skipping step1 interpretations - input bias model given"
-fi
-
-
-
-modisco_bias_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/BIAS/
-if [[ -d $modisco_bias_dir/$cell_line ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_bias_dir/$cell_line
-fi
-
-if [[ -d $modisco_bias_dir/$cell_line/$setting"_new"/ ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_bias_dir/$cell_line/$setting"_new"/
-    modisco_dir_final=$modisco_bias_dir/$cell_line/$setting"_new"/
-    cp  $cell_line/$setting/invivo_bias_model_step1/deepshap/20K.fold0.deepSHAP $modisco_dir_final
-fi
 
 
 ### STEP 2 - FIT BIAS MODEL ON SIGNAL
@@ -198,8 +156,9 @@ else
     cp $PWD/$cur_file_name $output_dir/bias_fit_on_signal_step2
 fi
 
-#counts_loss_weight_step2=`cat $output_dir/bias_fit_on_signal_step2/counts_loss_weight.txt`
-#counts_loss_weight_step3=$counts_loss_weight_step2
+
+counts_loss_weight_step2=`cat $output_dir/bias_fit_on_signal_step2/counts_loss_weight.txt`
+counts_loss_weight_step3=$counts_loss_weight_step2
 
 
 ### STEP 3 - FIT BIAS AND SIGNAL MODEL
@@ -241,9 +200,6 @@ else
     cp $PWD/$cur_file_name $output_dir/final_model_step3_new/unplug
 fi
 
-#fold=0
-#./main_scripts/unplug/predict.sh $fold $gpu $model_name $seed $output_dir/final_model_step3_new/unplug $data_dir/tiledb/db $cell_line $chrom_sizes
-#./main_scripts/unplug/score.sh $output_dir/final_model_step3_new/unplug $model_name $fold $cell_line $seed
 
 ### GET INTERPRETATIONS
 
@@ -295,7 +251,7 @@ fi
 ##BIAS INTERPRETATIONS
 
 
-if  [[ -d $output_dir/invivo_bias_model_step1/ ]]
+if  [[ -d $output_dir/invivo_bias_model_step1/ ]]  
 then
     if [[ -d $output_dir/invivo_bias_model_step1/deepshap ]] ; then
         echo "skipping bias interpretations"
@@ -326,66 +282,12 @@ else
     mkdir $modisco_bias_dir/$cell_line
 fi
 
-if [[ -d $modisco_bias_dir/$cell_line/$setting"_new"/ ]] ; then
+if [[ -d $modisco_bias_dir/$cell_line/$setting/ ]] ; then
     echo "modisco dir already exists"
 else
-    mkdir $modisco_bias_dir/$cell_line/$setting"_new"/
-    modisco_dir_final=$modisco_bias_dir/$cell_line/$setting"_new"/
+    mkdir $modisco_bias_dir/$cell_line/$setting/
+    modisco_dir_final=$modisco_bias_dir/$cell_line/$setting/
     cp  $cell_line/$setting/invivo_bias_model_step1/deepshap/20K.fold0.deepSHAP $modisco_dir_final
-fi
-
-
-modisco_sig_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/SIGNAL/
-if [[ -d $modisco_sig_dir/$cell_line ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_sig_dir/$cell_line
-fi
-
-
-if [[ -d $modisco_sig_dir/$cell_line/$setting"_new"/ ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_sig_dir/$cell_line/$setting"_new"/
-    modisco_dir_final=$modisco_sig_dir/$cell_line/$setting"_new"/
-    cp  $cell_line/$setting/final_model_step3_new/unplug/deepshap/20K.fold0.deepSHAP $modisco_dir_final
-fi
-
-
-
-
-##UNCORRECTED MODEL INTERPRETATIONS
-
-
-if  [[ -d $output_dir/final_model_step3_new/ ]]  
-then
-    if [[ -d $output_dir/final_model_step3_new/deepshap ]] ; then
-        echo "skipping bias interpretations"
-    else
-        mkdir $output_dir/final_model_step3_new/deepshap
-        bed_file=$data_dir/$cell_line"_idr_split"
-
-        for fold in 0
-        do
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/final_model_step3_new/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/final_model_step3_new/deepshap $cell_line $gpu $fold
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/final_model_step3_new/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/final_model_step3_new/deepshap $cell_line $gpu $fold
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/final_model_step3_new/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/final_model_step3_new/deepshap $cell_line $gpu $fold
-        done
-
-        python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/final_model_step3_new/deepshap --target $output_dir/final_model_step3_new/deepshap --type 20k
-        cp $PWD/$cur_file_name $output_dir/final_model_step3_new/deepshap
-    fi
-else
-    echo "skipping step1 interpretations - input bias model given"
-fi
-
-
-if [[ -d $modisco_bias_dir/$cell_line/$setting"_new_uncorrected"/ ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_bias_dir/$cell_line/$setting"_new_uncorrected"/
-    modisco_dir_final=$modisco_bias_dir/$cell_line/$setting"_new_uncorrected"/
-    cp  $cell_line/$setting/final_model_step3_new/deepshap/20K.fold0.deepSHAP $modisco_dir_final
 fi
 
 ### RUN MODISCO
