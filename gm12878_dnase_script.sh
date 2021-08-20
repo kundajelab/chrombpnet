@@ -7,7 +7,7 @@ data_type="DNASE"
 date=$(date +'%m.%d.%Y')
 setting=$data_type"_"$date
 cur_file_name="gm12878_dnase_script.sh"
-
+setting=DNASE_08.11.2021
 ### SIGNAL INPUT
 
 in_bam=/oak/stanford/groups/akundaje/projects/atlas/dnase_processed/dnase/13da5ebe-0941-4855-8599-40bbcc5c58b4/call-bowtie2/shard-0/execution/ENCSR000EMT.merged.bam
@@ -334,6 +334,22 @@ else
     cp  $cell_line/$setting/invivo_bias_model_step1/deepshap/20K.fold0.deepSHAP $modisco_dir_final
 fi
 
+
+modisco_sig_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/SIGNAL/
+if [[ -d $modisco_sig_dir/$cell_line ]] ; then
+    echo "modisco dir already exists"
+else
+    mkdir $modisco_sig_dir/$cell_line
+fi
+
+
+if [[ -d $modisco_sig_dir/$cell_line/$setting"_new"/ ]] ; then
+    echo "modisco dir already exists"
+else
+    mkdir $modisco_sig_dir/$cell_line/$setting"_new"/
+    modisco_dir_final=$modisco_sig_dir/$cell_line/$setting"_new"/
+    cp  $cell_line/$setting/final_model_step3_new/unplug/deepshap/20K.fold0.deepSHAP $modisco_dir_final
+fi
 
 
 
