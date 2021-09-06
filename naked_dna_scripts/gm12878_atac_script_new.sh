@@ -144,6 +144,9 @@ else
 
 fi
 
+fold=0
+./main_scripts/invivo_bias_model_step1/predict_inpeak.sh $fold $gpu $model_name $seed  $naked_data_dir/naked_bias_model_step1  $data_dir/tiledb/db $cell_line $chrom_sizes
+./main_scripts/invivo_bias_model_step1/score_inpeak.sh $naked_data_dir/naked_bias_model_step1 $model_name $fold $cell_line $seed
 
 bias_json=$naked_data_dir/naked_bias_model_step1/model.0.arch
 bias_weights=$naked_data_dir/naked_bias_model_step1/model.0.weights
