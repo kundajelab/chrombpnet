@@ -118,7 +118,8 @@ else
 fi
 
 
-
+bias_json=""
+bias_weights=""
 
 ### STEP 2 - FIT BIAS MODEL ON SIGNAL
 
