@@ -18,4 +18,5 @@ naked_dna_scripts/data
 naked_dna_scripts/DNASE_data
 main_scripts/script.sh
 tracks
+experimental_scripts
 
