@@ -6,9 +6,9 @@ data_type="ATAC"
 neg_shift=4
 
 date=$(date +'%m.%d.%Y')
-#setting=4_$neg_shift"_shifted_"$data_type"_"$date
-cur_file_name="gm12878_atac_script.sh"
-setting=ATAC_07.22.2021
+setting=4_$neg_shift"_shifted_"$data_type"_"$date
+cur_file_name="gm12878_atac_script_new.sh"
+#setting=ATAC_07.22.2021
 
 ### SIGNAL INPUT
 
