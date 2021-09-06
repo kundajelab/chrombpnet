@@ -7,16 +7,8 @@
 .ipynb_checkpoints
 
 # Directories #
-SURAG
-GM12878
-K562
-IMR90
-H1
-HEPG2
 logs
-naked_dna_scripts/data
-naked_dna_scripts/DNASE_data
-main_scripts/script.sh
-tracks
+results
 experimental_scripts
-
+tracks
+/src/models/main_scripts/script.sh
