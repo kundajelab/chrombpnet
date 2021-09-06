@@ -78,11 +78,12 @@ def load_model_wrapper(model_hdf5=None,json_string=None, weights=None):
     else:
         model=model_from_json(open(json_string,"r").read())
         model=load_model_weights(weights,model)
-        #print(model.summary())
+        print(model.summary())
         #print(model.layers[-5].name)
         model_new=model
         #print(model.inputs)
         #print(model.outputs[1])
         #model_new = Model(inputs=[model.inputs[0], model.inputs[2]],outputs=[model.layers[-5].output, model.output[1]])
+        #model_new = Model(inputs=model.inputs,outputs=[model.layers[-5].output, model.output[1]])
     return model_new
 

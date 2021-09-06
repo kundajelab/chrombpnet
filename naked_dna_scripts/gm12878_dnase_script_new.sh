@@ -6,8 +6,9 @@ data_type="DNASE"
 neg_shift=4
 
 date=$(date +'%m.%d.%Y')
-setting=naked_bias_4_$neg_shift"_shifted_"$data_type"_"$date
+#setting=naked_bias_4_$neg_shift"_shifted_"$data_type"_"$date
 cur_file_name="gm12878_dnase_script_new.sh"
+setting=naked_bias_4_4_shifted_DNASE_08.19.2021
 ### SIGNAL INPUT
 
 naked_bam=/oak/stanford/groups/akundaje/projects/enzymatic_bias_correction/pipeline_out/atac/merged.SRR1565781.SRR1565782.bam
@@ -143,6 +144,9 @@ else
 
 fi
 
+fold=0
+./main_scripts/naked_bias_model_step1/score.sh $naked_data_dir/naked_bias_model_step1 $model_name $fold $cell_line $seed
+
 
 bias_json=$naked_data_dir/naked_bias_model_step1/model.0.arch
 bias_weights=$naked_data_dir/naked_bias_model_step1/model.0.weights
@@ -173,6 +177,7 @@ fi
 counts_loss_weight_step2=`cat $output_dir/bias_fit_on_signal_step2/counts_loss_weight.txt`
 counts_loss_weight_step3=$counts_loss_weight_step2
 
+./main_scripts/bias_fit_on_signal_step2/score.sh $output_dir/bias_fit_on_signal_step2 $model_name $fold $cell_line $seed
 
 
 ### STEP 3 - FIT BIAS AND SIGNAL MODEL
