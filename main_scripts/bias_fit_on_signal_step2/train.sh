@@ -34,6 +34,7 @@ echo "outdir:$outdir"
 
 CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --seed $seed \
+                    --revcomp \
 		    --batch_size 25 \
 		    --ref_fasta /mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta \
 		    --tdb_array $tdb_array \
