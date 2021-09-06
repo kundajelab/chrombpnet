@@ -6,8 +6,9 @@ data_type="DNASE"
 filters=50
 
 date=$(date +'%m.%d.%Y')
-setting=$data_type"_"$date"_bias_filters_"$filters
+#setting=$data_type"_"$date"_bias_filters_"$filters
 cur_file_name="gm12878_dnase_script_filters_"$filters".sh"
+setting=DNASE_08.19.2021_bias_filters_50
 ### SIGNAL INPUT
 
 in_bam=/oak/stanford/groups/akundaje/projects/atlas/dnase_processed/dnase/13da5ebe-0941-4855-8599-40bbcc5c58b4/call-bowtie2/shard-0/execution/ENCSR000EMT.merged.bam
@@ -197,8 +198,8 @@ else
     cp $PWD/$cur_file_name $output_dir/bias_fit_on_signal_step2
 fi
 
-#counts_loss_weight_step2=`cat $output_dir/bias_fit_on_signal_step2/counts_loss_weight.txt`
-#counts_loss_weight_step3=$counts_loss_weight_step2
+counts_loss_weight_step2=`cat $output_dir/bias_fit_on_signal_step2/counts_loss_weight.txt`
+counts_loss_weight_step3=$counts_loss_weight_step2
 
 filters=500
 

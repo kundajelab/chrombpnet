@@ -5,7 +5,7 @@ cell_line=GM12878
 data_type="DNASE"
 
 date=$(date +'%m.%d.%Y')
-setting=$data_type"_"$date
+#setting=$data_type"_"$date
 cur_file_name="gm12878_dnase_script.sh"
 setting=DNASE_08.11.2021
 ### SIGNAL INPUT
@@ -130,6 +130,9 @@ else
 
 fi
 
+fold=0
+./main_scripts/invivo_bias_model_step1/score.sh $output_dir/invivo_bias_model_step1 $model_name $fold $cell_line $seed
+
 
 
 ##BIAS INTERPRETATIONS
@@ -198,6 +201,8 @@ else
     cp $PWD/$cur_file_name $output_dir/bias_fit_on_signal_step2
 fi
 
+./main_scripts/bias_fit_on_signal_step2/score.sh $output_dir/bias_fit_on_signal_step2 $model_name $fold $cell_line $seed
+
 #counts_loss_weight_step2=`cat $output_dir/bias_fit_on_signal_step2/counts_loss_weight.txt`
 #counts_loss_weight_step3=$counts_loss_weight_step2
 
@@ -218,6 +223,8 @@ else
     done
     cp $PWD/$cur_file_name $output_dir/final_model_step3_new
 fi
+
+./main_scripts/final_model_step3_new/score.sh $output_dir/final_model_step3_new $model_name $fold $cell_line $seed
 
 
 ## UNPLUG MODEL
@@ -243,7 +250,7 @@ fi
 
 #fold=0
 #./main_scripts/unplug/predict.sh $fold $gpu $model_name $seed $output_dir/final_model_step3_new/unplug $data_dir/tiledb/db $cell_line $chrom_sizes
-#./main_scripts/unplug/score.sh $output_dir/final_model_step3_new/unplug $model_name $fold $cell_line $seed
+./main_scripts/unplug/score.sh $output_dir/final_model_step3_new/unplug $model_name $fold $cell_line $seed
 
 ### GET INTERPRETATIONS
 
@@ -267,128 +274,4 @@ else
     for fold in 0
     do
         ./main_scripts/interpret/interpret.sh $output_dir/final_model_step3_new/unplug/$model_name.$fold.hdf5 $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/final_model_step3_new/unplug/deepshap $cell_line $gpu $fold
-        ./main_scripts/interpret/interpret.sh $output_dir/final_model_step3_new/unplug/$model_name.$fold.hdf5 $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/final_model_step3_new/unplug/deepshap $cell_line $gpu $fold
-        ./main_scripts/interpret/interpret.sh $output_dir/final_model_step3_new/unplug/$model_name.$fold.hdf5 $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/final_model_step3_new/unplug/deepshap $cell_line $gpu $fold
-    done
-
-    python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/final_model_step3_new/unplug/deepshap --target $output_dir/final_model_step3_new/unplug/deepshap --type 20k
-    cp $PWD/$cur_file_name $output_dir/final_model_step3_new/unplug/deepshap
-
-fi
-
-modisco_sig_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/SIGNAL/
-if [[ -d $modisco_sig_dir/$cell_line ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_sig_dir/$cell_line
-fi
-
-
-if [[ -d $modisco_sig_dir/$cell_line/$setting"_new"/ ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_sig_dir/$cell_line/$setting"_new"/
-    modisco_dir_final=$modisco_sig_dir/$cell_line/$setting"_new"/
-    cp  $cell_line/$setting/final_model_step3_new/unplug/deepshap/20K.fold0.deepSHAP $modisco_dir_final
-fi
-
-##BIAS INTERPRETATIONS
-
-
-if  [[ -d $output_dir/invivo_bias_model_step1/ ]]
-then
-    if [[ -d $output_dir/invivo_bias_model_step1/deepshap ]] ; then
-        echo "skipping bias interpretations"
-    else
-        mkdir $output_dir/invivo_bias_model_step1/deepshap
-        bed_file=$data_dir/$cell_line"_idr_split"
-
-        for fold in 0
-        do
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
-        done
-
-        python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/invivo_bias_model_step1/deepshap --target $output_dir/invivo_bias_model_step1/deepshap --type 20k
-        cp $PWD/$cur_file_name $output_dir/invivo_bias_model_step1/deepshap
-    fi
-else
-    echo "skipping step1 interpretations - input bias model given"
-fi
-
-
-
-modisco_bias_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/BIAS/
-if [[ -d $modisco_bias_dir/$cell_line ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_bias_dir/$cell_line
-fi
-
-if [[ -d $modisco_bias_dir/$cell_line/$setting"_new"/ ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_bias_dir/$cell_line/$setting"_new"/
-    modisco_dir_final=$modisco_bias_dir/$cell_line/$setting"_new"/
-    cp  $cell_line/$setting/invivo_bias_model_step1/deepshap/20K.fold0.deepSHAP $modisco_dir_final
-fi
-
-
-modisco_sig_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/SIGNAL/
-if [[ -d $modisco_sig_dir/$cell_line ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_sig_dir/$cell_line
-fi
-
-
-if [[ -d $modisco_sig_dir/$cell_line/$setting"_new"/ ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_sig_dir/$cell_line/$setting"_new"/
-    modisco_dir_final=$modisco_sig_dir/$cell_line/$setting"_new"/
-    cp  $cell_line/$setting/final_model_step3_new/unplug/deepshap/20K.fold0.deepSHAP $modisco_dir_final
-fi
-
-
-
-
-##UNCORRECTED MODEL INTERPRETATIONS
-
-
-if  [[ -d $output_dir/final_model_step3_new/ ]]  
-then
-    if [[ -d $output_dir/final_model_step3_new/deepshap ]] ; then
-        echo "skipping bias interpretations"
-    else
-        mkdir $output_dir/final_model_step3_new/deepshap
-        bed_file=$data_dir/$cell_line"_idr_split"
-
-        for fold in 0
-        do
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/final_model_step3_new/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/final_model_step3_new/deepshap $cell_line $gpu $fold
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/final_model_step3_new/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/final_model_step3_new/deepshap $cell_line $gpu $fold
-            ./main_scripts/interpret/interpret_weight.sh $output_dir/final_model_step3_new/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/final_model_step3_new/deepshap $cell_line $gpu $fold
-        done
-
-        python $PWD/main_scripts/interpret/combine_shap_pickle.py --source $output_dir/final_model_step3_new/deepshap --target $output_dir/final_model_step3_new/deepshap --type 20k
-        cp $PWD/$cur_file_name $output_dir/final_model_step3_new/deepshap
-    fi
-else
-    echo "skipping step1 interpretations - input bias model given"
-fi
-
-
-if [[ -d $modisco_bias_dir/$cell_line/$setting"_new_uncorrected"/ ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_bias_dir/$cell_line/$setting"_new_uncorrected"/
-    modisco_dir_final=$modisco_bias_dir/$cell_line/$setting"_new_uncorrected"/
-    cp  $cell_line/$setting/final_model_step3_new/deepshap/20K.fold0.deepSHAP $modisco_dir_final
-fi
-
-### RUN MODISCO
-
-
-
+        ./main_scripts/interpret/interpret.sh $output_dir/final_model_step3_new/unplug/$model_name.$fold.hdf5 $bed_file xab $data_
