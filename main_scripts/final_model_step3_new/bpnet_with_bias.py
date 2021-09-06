@@ -10,7 +10,7 @@ import random as rn
 import os
 
 #import the various keras layers 
-from keras.layers import Dense,Activation,Dropout,Flatten,Reshape,Input, Concatenate, Cropping1D, Add
+from keras.layers import Dense,Activation,Dropout,Flatten,Reshape,Input, Concatenate, Cropping1D, Add, Lambda
 from keras.layers.core import Dropout, Reshape, Dense, Activation, Flatten
 from keras.layers.convolutional import Conv1D
 from keras.layers.pooling import GlobalMaxPooling1D,MaxPooling1D,GlobalAveragePooling1D
@@ -23,6 +23,7 @@ from keras.regularizers import l1, l2
 from keras.models import Model
 
 from tensorflow.keras.models import load_model, model_from_json
+import  keras.backend as K
 
 os.environ['PYTHONHASHSEED'] = '0'
 
@@ -203,13 +204,16 @@ def getModelGivenModelOptionsAndWeightInits(args):
     #concatenate gap_combined_conv with bias output
 
     count_out_in = Dense(num_tasks, name="logcount_predictions")(gap_combined_conv)
-    count_out = Add(name="adding_count_bias")([count_out_in,bias_output[1]])
+    concat_counts = Concatenate(axis=-1)([count_out_in, bias_output[1]])
+    count_out = Lambda(lambda x: K.logsumexp(x, axis=-1, keepdims=True),
+                        name="adding_logcounts_with_bias")(concat_counts)
+
 
     model=Model(inputs=[inp],outputs=[profile_out,
                                      count_out])
     print("got model") 
     model.compile(optimizer=Adam(),
-                    loss=[MultichannelMultinomialNLL(1),'mse'],
+                    loss=[MultichannelMultinomialNLL(num_tasks),'mse'],
                     loss_weights=[profile_loss_weight,counts_loss_weight])
     print("compiled model")
     return model 

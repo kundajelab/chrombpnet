@@ -101,7 +101,7 @@ def getModelGivenModelOptionsAndWeightInits(args):
 
     #define inputs
     inp = Input(shape=(seq_len, 4),name='sequence')    
-    bias_output = pretrained_bias_model (inp)
+    bias_output = pretrained_bias_model(inp)
     # conv layer without activation 
     profile_out = Conv1D(1,
                          kernel_size=20,
