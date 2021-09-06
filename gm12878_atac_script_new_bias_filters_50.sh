@@ -9,6 +9,7 @@ filters=50
 date=$(date +'%m.%d.%Y')
 setting=4_$neg_shift"_shifted_"$data_type"_"$date"_bias_filters_"$filters
 cur_file_name="gm12878_atac_script_new_bias_filters_"$filters".sh"
+setting=4_4_shifted_ATAC_08.28.2021_bias_filters_50
 
 ### SIGNAL INPUT
 
@@ -30,7 +31,7 @@ output_dir=$PWD/$cell_line/$setting
 
 ### MODEL PARAMS
 
-gpu=2
+gpu=0
 n_dil_layers=8
 seed=1234 
 model_name=model 
@@ -131,6 +132,8 @@ else
 fi
 
 
+fold=0
+./main_scripts/invivo_bias_model_step1/score.sh $output_dir/invivo_bias_model_step1 $model_name $fold $cell_line $seed
 
 
 ### STEP 2 - FIT BIAS MODEL ON SIGNAL
@@ -158,6 +161,8 @@ fi
 
 #counts_loss_weight_step2=`cat $output_dir/bias_fit_on_signal_step2/counts_loss_weight.txt`
 #counts_loss_weight_step3=$counts_loss_weight_step2
+fold=0
+./main_scripts/bias_fit_on_signal_step2/score.sh $output_dir/bias_fit_on_signal_step2 $model_name $fold $cell_line $seed
 
 
 filters=500 
@@ -179,6 +184,8 @@ else
     cp $PWD/$cur_file_name $output_dir/final_model_step3_new
 fi
 
+fold=0
+./main_scripts/final_model_step3_new/score.sh $output_dir/final_model_step3_new $model_name $fold $cell_line $seed
 
 ## UNPLUG MODEL
 
@@ -200,6 +207,8 @@ else
     done
     cp $PWD/$cur_file_name $output_dir/final_model_step3_new/unplug
 fi
+
+./main_scripts/unplug/score.sh $output_dir/final_model_step3_new/unplug $model_name $fold $cell_line $seed
 
 
 ### GET INTERPRETATIONS

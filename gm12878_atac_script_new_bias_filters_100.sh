@@ -131,6 +131,9 @@ else
 fi
 
 
+fold=0
+./main_scripts/invivo_bias_model_step1/score.sh $output_dir/invivo_bias_model_step1 $model_name $fold $cell_line $seed
+
 
 
 ### STEP 2 - FIT BIAS MODEL ON SIGNAL
@@ -156,6 +159,9 @@ else
     cp $PWD/$cur_file_name $output_dir/bias_fit_on_signal_step2
 fi
 
+fold=0
+./main_scripts/bias_fit_on_signal_step2/score.sh $output_dir/bias_fit_on_signal_step2 $model_name $fold $cell_line $seed
+
 #counts_loss_weight_step2=`cat $output_dir/bias_fit_on_signal_step2/counts_loss_weight.txt`
 #counts_loss_weight_step3=$counts_loss_weight_step2
 
@@ -179,6 +185,8 @@ else
     cp $PWD/$cur_file_name $output_dir/final_model_step3_new
 fi
 
+./main_scripts/final_model_step3_new/score.sh $output_dir/final_model_step3_new $model_name $fold $cell_line $seed
+
 
 ## UNPLUG MODEL
 
@@ -201,6 +209,7 @@ else
     cp $PWD/$cur_file_name $output_dir/final_model_step3_new/unplug
 fi
 
+./main_scripts/unplug/score.sh $output_dir/final_model_step3_new/unplug $model_name $fold $cell_line $seed
 
 ### GET INTERPRETATIONS
 
