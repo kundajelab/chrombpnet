@@ -4,8 +4,6 @@ import tensorflow as tf
 import random as rn
 import os
 
-os.environ['PYTHONHASHSEED'] = '0'
-
 from keras.backend import int_shape
 from sklearn.metrics import average_precision_score
 from kerasAC.metrics import * 
@@ -27,40 +25,10 @@ from keras.regularizers import l1, l2
 from keras.models import Model
 from tensorflow.keras.models import load_model, model_from_json
 
+os.environ['PYTHONHASHSEED'] = '0'
+
 def load_model_weights(weight_file,model):
-    if weight_file is None:
-        #nothing to do
-        return model
-    #sync the model locally if it's on AWS
-    if weight_file.startswith("s3://"):
-        s3_model_weights=download_s3_file(weight_file)
-    else:
-        s3_model_weights=weight_file
-    import  h5py
-    try:
-        model.load_weights(s3_model_weights)#,by_name=True)
-    except:
-        with h5py.File(s3_model_weights,'r') as file:
-            weight_file=file['model_1']
-            for layer in model.layers:
-                try:
-                    layer_weights=weight_file[layer.name]
-                except:
-                    print('no weights files saved for layer:'+str(layer.name))
-                    continue
-                try:
-                    weights = []
-                    # Extract weights
-                    for term in layer_weights:
-                        if isinstance(layer_weights[term], h5py.Dataset):
-                            # Convert weights to numpy array and prepend to list
-                            weights.insert(0, np.array(layer_weights[term]))
-                    # Load weights to model
-                    layer.set_weights(weights)
-                    print("loaded weights for layer:"+str(layer.name))
-                except Exception as e:
-                    print("Error: Could not load weights for layer:"+str(layer.name))
-                    raise e
+    model.load_weights(weight_file)
     return model
 
 def load_pretrained_bias(json_string, weights, model_hdf5=None):
@@ -80,11 +48,11 @@ def load_pretrained_bias(json_string, weights, model_hdf5=None):
     get_custom_objects().update(custom_objects)
     if model_hdf5:
         model=load_model(args.model_hdf5)
-        print(model.summary())
     else:
         model=model_from_json(open(json_string,"r").read())
         model=load_model_weights(weights,model)
 
+    print(model.summary())
     pretrained_bias_model=model
 
     #freeze the model
@@ -117,37 +85,39 @@ def getModelGivenModelOptionsAndWeightInits(args):
     
     #read in arguments
     seed=int(args.seed)
-    init_weights=args.init_weights 
-    sequence_flank=int(args.tdb_input_flank[0])
-    num_tasks=int(args.num_tasks)
-
     np.random.seed(seed)
     tf.random.set_seed(seed)
     rn.seed(seed)
+
+    init_weights=args.init_weights 
+    sequence_flank=int(args.tdb_input_flank[0])
+    num_tasks=int(args.num_tasks)
     
     seq_len=2*sequence_flank
     out_flank=int(args.tdb_output_flank[0])
     out_pred_len=2*out_flank
-    print(seq_len)
-    print(out_pred_len)
+    #print(seq_len)
+    #print(out_pred_len)
+
     #define inputs
     inp = Input(shape=(seq_len, 4),name='sequence')    
     bias_output = pretrained_bias_model (inp)
-    print(bias_output[0].shape)
-    print(bias_output[1].shape)
     # conv layer without activation 
     profile_out = Conv1D(1,
                          kernel_size=20,
                          padding='same',
                          activation=None,
                          name='profile_out')(bias_output[0])
+
     count_out=Dense(1,activation=None,name='count_out')(bias_output[1])
+
     model=Model(inputs=[inp],outputs=[profile_out,
                                      count_out])
     print("got model") 
     model.compile(optimizer=Adam(),
                     loss=[MultichannelMultinomialNLL(1),'mse'],
                     loss_weights=[profile_loss_weight,counts_loss_weight])
+
     print("compiled model")
     return model 
 

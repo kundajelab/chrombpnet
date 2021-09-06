@@ -37,9 +37,9 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --batch_size 25 \
 		    --ref_fasta /mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta \
 		    --tdb_array $tdb_array \
-                    --bed_regions $neg_bed \
-                    --bed_regions_center random \
-                    --bed_regions_jitter 10 \
+            --bed_regions $neg_bed \
+            --bed_regions_center random \
+            --bed_regions_jitter 10 \
 		    --tdb_input_source_attribute seq \
 		    --tdb_input_aggregation None \
 		    --tdb_input_transformation None \
