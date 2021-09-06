@@ -7,7 +7,7 @@
 .ipynb_checkpoints
 
 # Directories #
-logs
+#logs
 results
 experimental_scripts
 tracks
