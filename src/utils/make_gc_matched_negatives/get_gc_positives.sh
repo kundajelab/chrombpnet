@@ -5,7 +5,7 @@ for split in 0
 do
     for dataset in train test
     do
-	python $PWD/main_scripts/make_gc_matched_negatives/get_gc_content.py \
+	python $PWD/src/utils/make_gc_matched_negatives/get_gc_content.py \
 	       --input_bed $task/bpnet.peaks.$dataset.$split \
 	       --ref_fasta $ref_fasta \
 	       --out_prefix $task/bpnet.peaks.$dataset.$split.gc.seq \
