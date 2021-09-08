@@ -4,12 +4,12 @@
 cell_line=GM12878
 data_type="ATAC"
 neg_shift=4
-filters=50
+filters=500
+n_dil_layers=2
 
 date=$(date +'%m.%d.%Y')
-#setting=4_$neg_shift"_shifted_"$data_type"_"$date"_bias_filters_"$filters
-cur_file_name="gm12878_atac_bias_filters_"$filters".sh"
-setting=4_4_shifted_ATAC_09.06.2021_bias_filters_50
+setting=4_$neg_shift"_shifted_"$data_type"_"$date"_bias_dilations_"$n_dil_layers
+cur_file_name="gm12878_atac_dil_layers_"$n_dil_layers".sh"
 ### SIGNAL INPUT
 
 in_bam=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/merged_data/GM12878.atac.filt.merged.bam
@@ -28,8 +28,7 @@ output_dir=$PWD/results/chrombpnet/$data_type/$cell_line/$setting
 
 ### MODEL PARAMS
 
-gpu=3
-n_dil_layers=8
+gpu=2
 seed=1234 
 model_name=model 
 neg_dir=$main_dir/negatives_data
@@ -114,6 +113,8 @@ else
             bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/train.sh $fold $gpu $model_name $seed $output_dir/invivo_bias_model_step1 $params  $data_dir/tiledb/db $cell_line $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/bpnet_model.py $neg_bed_train
             bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/predict.sh $fold $gpu $model_name $seed  $output_dir/invivo_bias_model_step1  $data_dir/tiledb/db $cell_line $chrom_sizes $neg_bed_test
             bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/score.sh $output_dir/invivo_bias_model_step1 $model_name $fold $cell_line $seed
+            bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/predict_inpeak.sh $fold $gpu $model_name $seed  $output_dir/invivo_bias_model_step1  $data_dir/tiledb/db $cell_line $chrom_sizes
+            bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/score_inpeak.sh $output_dir/invivo_bias_model_step1 $model_name $fold $cell_line $seed
         done
         cp $PWD/$cur_file_name $output_dir/invivo_bias_model_step1
         bias_json=$output_dir/invivo_bias_model_step1/model.0.arch
@@ -124,13 +125,12 @@ else
 
 fi
 
-
 fold=0
-bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/predict_inpeak.sh $fold $gpu $model_name $seed  $output_dir/invivo_bias_model_step1  $data_dir/tiledb/db $cell_line $chrom_sizes
 bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/score_inpeak.sh $output_dir/invivo_bias_model_step1 $model_name $fold $cell_line $seed
 
 
 filters=500 
+n_dil_layers=8
 step2_bias_json=$output_dir/invivo_bias_model_step1//model.0.arch
 step2_bias_weights=$output_dir/invivo_bias_model_step1/model.0.weights
 ### STEP 3 - FIT BIAS AND SIGNAL MODEL
@@ -152,7 +152,7 @@ else
     cp $PWD/$cur_file_name $output_dir/final_model_step3
 fi
 
-
+bash $PWD/src/models/chrombpnet_scripts/final_model_step3/score.sh $output_dir/final_model_step3 $model_name $fold $cell_line $seed
 
 ## UNPLUG MODEL
 
@@ -175,6 +175,7 @@ else
     cp $PWD/$cur_file_name $output_dir/final_model_step3/unplug
 fi
 
+bash  $PWD/src/models/chrombpnet_scripts/unplug/score.sh $output_dir/final_model_step3/unplug $model_name $fold $cell_line $seed
 ### GET INTERPRETATIONS
 
 if [[ -d $data_dir/$cell_line"_idr_split" ]] ; then
