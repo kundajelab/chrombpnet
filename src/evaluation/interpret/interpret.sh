@@ -9,7 +9,7 @@ output_dir=$6
 cell_line=$7
 gpu=$8
 fold=$9
-CUDA_VISIBLE_DEVICES=$gpu python $PWD/main_scripts/interpret/bpnet_shap_wrapper.py \
+CUDA_VISIBLE_DEVICES=$gpu python $PWD/src/evaluation/interpret/bpnet_shap_wrapper.py \
                         --model_hdf5 $model_name \
                         --ref_fasta /mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta \
                         --bed_regions $bed_regions/$split \
