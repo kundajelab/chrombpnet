@@ -8,8 +8,9 @@ filters=500
 n_dil_layers=2
 
 date=$(date +'%m.%d.%Y')
-setting=4_$neg_shift"_shifted_"$data_type"_"$date"_bias_dilations_"$n_dil_layers
+#setting=4_$neg_shift"_shifted_"$data_type"_"$date"_bias_dilations_"$n_dil_layers
 cur_file_name="gm12878_atac_dil_layers_"$n_dil_layers".sh"
+setting=4_4_shifted_ATAC_09.08.2021_bias_dilations_2
 ### SIGNAL INPUT
 
 in_bam=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/merged_data/GM12878.atac.filt.merged.bam
@@ -252,8 +253,14 @@ if [[ -d $modisco_bias_dir/$cell_line/$setting/ ]] ; then
 else
     mkdir $modisco_bias_dir/$cell_line/$setting/
     modisco_dir_final=$modisco_bias_dir/$cell_line/$setting/
-    cp  $cell_line/$setting/invivo_bias_model_step1/deepshap/20K.fold0.deepSHAP $modisco_dir_final
+    cp  $output_dir/invivo_bias_model_step1/deepshap/20K.fold0.deepSHAP $modisco_dir_final
 fi
 
 ## MAKE FOOTPRINTS
+
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs tn5_c --model_dir $output_dir/final_model_step3/unplug/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs gm12878_motifs_set1 --model_dir $output_dir/final_model_step3/unplug/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs gm12878_motifs_set2 --model_dir $output_dir/final_model_step3/unplug/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs tn5 --model_dir $output_dir/invivo_bias_model_step1/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs gm12878_motifs_set2 --model_dir $output_dir/invivo_bias_model_step1/
 
