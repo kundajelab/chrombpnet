@@ -31,6 +31,18 @@ def load_model_weights(weight_file,model):
     model.load_weights(weight_file)
     return model
 
+class BiasLayer(keras.layers.Layer):
+    def __init__(self, *args, **kwargs):
+        super(BiasLayer, self).__init__(*args, **kwargs)
+
+    def build(self, input_shape):
+        self.bias = self.add_weight('bias',
+                                    shape=input_shape[1:],
+                                    initializer='zeros',
+                                    trainable=True)
+    def call(self, x):
+        return x + self.bias
+
 def load_pretrained_bias(json_string, weights, model_hdf5=None):
     from keras.models import load_model
     from keras.utils.generic_utils import get_custom_objects
@@ -44,6 +56,7 @@ def load_pretrained_bias(json_string, weights, model_hdf5=None):
                     "ambig_binary_crossentropy":ambig_binary_crossentropy,
                     "ambig_mean_absolute_error":ambig_mean_absolute_error,
                     "ambig_mean_squared_error":ambig_mean_squared_error,
+                    "BiasLayer":BiasLayer,
                     "MultichannelMultinomialNLL":MultichannelMultinomialNLL}
     get_custom_objects().update(custom_objects)
     if model_hdf5:

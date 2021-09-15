@@ -27,6 +27,19 @@ from tensorflow.keras.models import load_model, model_from_json
 
 os.environ['PYTHONHASHSEED'] = '0'
 
+
+class BiasLayer(keras.layers.Layer):
+    def __init__(self, *args, **kwargs):
+        super(BiasLayer, self).__init__(*args, **kwargs)
+
+    def build(self, input_shape):
+        self.bias = self.add_weight('bias',
+                                    shape=input_shape[1:],
+                                    initializer='zeros',
+                                    trainable=True)
+    def call(self, x):
+        return x + self.bias
+
 def load_model_weights(weight_file,model):
     model.load_weights(weight_file)
     return model
@@ -109,7 +122,8 @@ def getModelGivenModelOptionsAndWeightInits(args):
                          activation=None,
                          name='profile_out')(bias_output[0])
 
-    count_out=Dense(1,activation=None,name='count_out')(bias_output[1])
+    #count_out=Dense(1,activation=None,name='count_out')(bias_output[1])
+    count_out=BiasLayer()(bias_output[1])
 
     model=Model(inputs=[inp],outputs=[profile_out,
                                      count_out])

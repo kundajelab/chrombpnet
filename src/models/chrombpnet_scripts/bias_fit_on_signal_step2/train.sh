@@ -25,22 +25,22 @@ then
 else
     outdir=$5
 fi
+echo "outdir:$outdir"
 params=$6
 tdb_array=$7
 cell_line=$8
 arch_file=$9
-
-echo "outdir:$outdir"
+neg_bed=${10}
 
 CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --seed $seed \
-                    --revcomp \
+            --revcomp \
 		    --batch_size 25 \
 		    --ref_fasta /mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta \
 		    --tdb_array $tdb_array \
-		    --tdb_partition_attribute_for_upsample overlap_peak \
-		    --tdb_partition_thresh_for_upsample 1 \
-		    --tdb_partition_datasets_for_upsample $cell_line \
+            --bed_regions $neg_bed \
+            --bed_regions_center random \
+            --bed_regions_jitter 10 \
 		    --tdb_input_source_attribute seq \
 		    --tdb_input_aggregation None \
 		    --tdb_input_transformation None \
@@ -52,16 +52,14 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --tdb_ambig_attribute ambig_peak \
 		    --tdb_input_min None \
 		    --tdb_input_max None \
-		    --tdb_output_min None 4.0 \
+		    --tdb_output_min None 2.3 \
 		    --tdb_output_max None 11.5 \
 		    --num_inputs 1 \
 		    --num_outputs 2 \
-		    --tdb_input_datasets seq \
-		    --tdb_output_datasets $cell_line $cell_line \
 		    --fold $fold \
 		    --genome hg38 \
-		    --num_train 10000 \
-		    --num_valid 1000 \
+		    --num_train 100000 \
+		    --num_valid 10000 \
 		    --num_tasks 1 \
 		    --upsample_threads 24 \
 		    --threads 0 \
@@ -71,7 +69,9 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --model_prefix $outdir/$model_name.$fold \
 		    --architecture_from_file $arch_file \
 		    --model_params $params \
-		    --upsample_ratio_list_train 1.0 \
-		    --upsample_ratio_list_eval 1.0 \
+		    --tdb_input_datasets seq \
+		    --tdb_output_datasets $cell_line $cell_line \
+		    --upsample_ratio_list_train 0.0 \
+		    --upsample_ratio_list_eval 0.0 \
 		    --trackables logcount_predictions_loss loss profile_predictions_loss val_logcount_predictions_loss val_loss val_profile_predictions_loss
 
