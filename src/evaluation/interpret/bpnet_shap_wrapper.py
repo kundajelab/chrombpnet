@@ -18,6 +18,16 @@ from kerasAC.custom_losses import *
 from tensorflow.keras.models import load_model, model_from_json
 #from bpnet_shap_weighted import *
 from keras_genomics.layers.convolutional import RevCompConv1D
+import os
+import numpy as np
+import random as rn
+import tensorflow as tf
+
+os.environ['PYTHONHASHSEED'] = '0'
+seed=1234
+np.random.seed(seed)
+tf.random.set_seed(seed)
+rn.seed(seed)
 
 def load_model_weights(weight_file,model):
     if weight_file is None:
