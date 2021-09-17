@@ -4,16 +4,14 @@
 cell_line=K562
 data_type="ATAC"
 neg_shift=4
-filters=500
 
 date=$(date +'%m.%d.%Y')
-#setting=4_$neg_shift"_shifted_"$data_type"_"$date"_bias_filters_"$filters
-cur_file_name="withgm12878bias_k562_atac_bias_filters_"$filters".sh"
-setting=4_4_shifted_ATAC_09.06.2021_bias_filters_500
+setting=4_$neg_shift"_shifted_"$data_type"_"$date"_subsample_100M"
+cur_file_name="withgm12878bias_k562_atac_subsample_100M.sh"
 
 ### SIGNAL INPUT
 
-in_bam=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/merged_data/bigwig/K562.filtered.merged.bam
+in_bam=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/subsampled_ATAC_K562/bulk/K562.filtered.merged.1.82e-1.bam
 overlap_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/K562/call-reproducibility_overlap/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/overlap.optimal_peak.narrowPeak.gz
 idr_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/K562/call-reproducibility_idr/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/idr.optimal_peak.narrowPeak.gz
 is_filtered=True
@@ -24,17 +22,18 @@ chrom_sizes=$PWD/data/hg38.chrom.sizes
 ref_fasta=/mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
 main_dir=$PWD/results/chrombpnet/$data_type/$cell_line
-data_dir=$PWD/results/chrombpnet/$data_type/$cell_line/data
+data_dir=$PWD/results/chrombpnet/$data_type/$cell_line/data_subsample_100M
 output_dir=$PWD/results/chrombpnet/$data_type/$cell_line/$setting
 
 ### MODEL PARAMS
 
-gpu=0
-n_dil_layers=8
+gpu=2
 seed=1234 
 model_name=model 
 neg_dir=$main_dir/negatives_data
 flank_size=1057
+n_dil_layers=8
+filters=500
 
 ## CREATE DIRS
 
@@ -102,8 +101,8 @@ filters=500
 
 ### STEP 2 - FIT BIAS MODEL ON SIGNAL
 
-bias_json=$PWD/results/chrombpnet/$data_type/GM12878/$setting/invivo_bias_model_step1//model.0.arch
-bias_weights=$PWD/results/chrombpnet/$data_type/GM12878/$setting/invivo_bias_model_step1/model.0.weights
+bias_json=$PWD/results/chrombpnet/$data_type/GM12878/4_4_shifted_ATAC_09.06.2021_bias_filters_500/invivo_bias_model_step1//model.0.arch
+bias_weights=$PWD/results/chrombpnet/$data_type/GM12878/4_4_shifted_ATAC_09.06.2021_bias_filters_500/invivo_bias_model_step1/model.0.weights
 
 if [[ -d $output_dir/gm12878_bias_fit_on_signal_step2 ]] ; then
     echo "skipping step 2"
@@ -118,9 +117,11 @@ else
     params=$output_dir/gm12878_bias_fit_on_signal_step2/params.txt
     for fold in 0
     do
-        bash $PWD/src/models/chrombpnet_scripts/bias_fit_on_signal_step2/train.sh $fold $gpu $model_name $seed $output_dir/gm12878_bias_fit_on_signal_step2 $params  $data_dir/tiledb/db $cell_line $PWD/src/models/chrombpnet_scripts/bias_fit_on_signal_step2/signal_from_bias.py $neg_bed_train
+        min_logcount=0.0
+        max_logcount=11.5
+        bash $PWD/src/models/chrombpnet_scripts/bias_fit_on_signal_step2/train.sh $fold $gpu $model_name $seed $output_dir/gm12878_bias_fit_on_signal_step2 $params  $data_dir/tiledb/db $cell_line $PWD/src/models/chrombpnet_scripts/bias_fit_on_signal_step2/signal_from_bias.py $neg_bed_train $min_logcount $max_logcount
         bash $PWD/src/models/chrombpnet_scripts/bias_fit_on_signal_step2/predict.sh $fold $gpu $model_name $seed  $output_dir/gm12878_bias_fit_on_signal_step2  $data_dir/tiledb/db $cell_line $chrom_sizes $neg_bed_test
-        bash $PWD/src/models/chrombpnet_scripts/bias_fit_on_signal_step2/score.sh $output_dir/gm12878_bias_fit_on_signal_step2 $model_name $fold $cell_line $seed
+        bash $PWD/src/models/chrombpnet_scripts/bias_fit_on_signal_step2/score.sh $output_dir/gm12878_bias_fit_on_signal_step2 $model_name $fold $cell_line $seed $min_logcount $max_logcount
     done
     cp $PWD/$cur_file_name $output_dir/gm12878_bias_fit_on_signal_step2
 fi
@@ -148,9 +149,11 @@ else
     params=$output_dir/with_gm12878_bias_final_model/params.txt
     for fold in 0
     do
-        bash $PWD/src/models/chrombpnet_scripts/final_model_step3/train.sh $fold $gpu $model_name $seed $output_dir/with_gm12878_bias_final_model $params  $data_dir/tiledb/db $cell_line $PWD/src/models/chrombpnet_scripts/final_model_step3/bpnet_with_bias.py
+        min_logcount=0.0
+        max_logcount=11.5
+        bash $PWD/src/models/chrombpnet_scripts/final_model_step3/train.sh $fold $gpu $model_name $seed $output_dir/with_gm12878_bias_final_model $params  $data_dir/tiledb/db $cell_line $PWD/src/models/chrombpnet_scripts/final_model_step3/bpnet_with_bias.py $min_logcount $max_logcount
         bash $PWD/src/models/chrombpnet_scripts/final_model_step3/predict.sh $fold $gpu $model_name $seed  $output_dir/with_gm12878_bias_final_model  $data_dir/tiledb/db $cell_line $chrom_sizes
-        bash $PWD/src/models/chrombpnet_scripts/final_model_step3/score.sh $output_dir/with_gm12878_bias_final_model $model_name $fold $cell_line $seed
+        bash $PWD/src/models/chrombpnet_scripts/final_model_step3/score.sh $output_dir/with_gm12878_bias_final_model $model_name $fold $cell_line $seed $min_logcount $max_logcount
     done
     cp $PWD/$cur_file_name $output_dir/with_gm12878_bias_final_model
 fi
@@ -172,9 +175,11 @@ else
 
     for fold in 0
     do
-        CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/models/chrombpnet_scripts/unplug/get_model_with_bias_unplugged.py --model_params $params --outf $output_dir/with_gm12878_bias_final_model/unplug/$model_name.$fold.hdf5 
+        min_logcount=0.0
+        max_logcount=11.5
+        CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/models/chrombpnet_scripts/unplug/get_model_with_bias_unplugged.py --model_params $params --outf $output_dir/with_gm12878_bias_final_model/unplug/$model_name.$fold.hdf5
         bash  $PWD/src/models/chrombpnet_scripts/unplug/predict.sh $fold $gpu $model_name $seed $output_dir/with_gm12878_bias_final_model/unplug $data_dir/tiledb/db $cell_line $chrom_sizes
-        bash  $PWD/src/models/chrombpnet_scripts/unplug/score.sh $output_dir/with_gm12878_bias_final_model/unplug $model_name $fold $cell_line $seed
+        bash  $PWD/src/models/chrombpnet_scripts/unplug/score.sh $output_dir/with_gm12878_bias_final_model/unplug $model_name $fold $cell_line $seed $min_logcount $max_logcount
     done
     cp $PWD/$cur_file_name $output_dir/with_gm12878_bias_final_model/unplug
 fi
@@ -187,7 +192,7 @@ if [[ -d $output_dir/with_gm12878_bias_final_model/unplug/deepshap ]] ; then
     echo "skipping interpretations"
 else
     mkdir $output_dir/with_gm12878_bias_final_model/unplug/deepshap
-    bed_file=$data_dir/$cell_line"_idr_split"
+    bed_file=$PWD/results/chrombpnet/$data_type/$cell_line/data/$cell_line"_idr_split"
 
     for fold in 0
     do
@@ -203,14 +208,13 @@ fi
 
 modisco_sig_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/SIGNAL/
 
-if [[ -d $modisco_sig_dir/$cell_line/$setting"_withgm12878bias"/ ]] ; then
+if [[ -d $modisco_sig_dir/$cell_line/$setting"_gm12878biasfit"/ ]] ; then
     echo "modisco dir already exists"
 else
-    mkdir $modisco_sig_dir/$cell_line/$setting"_withgm12878bias"/
-    modisco_dir_final=$modisco_sig_dir/$cell_line/$setting"_withgm12878bias"/
+    mkdir $modisco_sig_dir/$cell_line/$setting"_gm12878biasfit"/
+    modisco_dir_final=$modisco_sig_dir/$cell_line/$setting"_gm12878biasfit"/
     cp  $output_dir/with_gm12878_bias_final_model/unplug/deepshap/20K.fold0.deepSHAP $modisco_dir_final
 fi
-
 
 
 ## MAKE FOOTPRINTS

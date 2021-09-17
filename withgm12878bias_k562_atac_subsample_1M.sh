@@ -7,12 +7,13 @@ neg_shift=4
 filters=500
 
 date=$(date +'%m.%d.%Y')
-setting=4_$neg_shift"_shifted_"$data_type"_"$date"_subsample_25M"
-cur_file_name="withgm12878bias_k562_atac_subsample_25M.sh"
+setting=4_$neg_shift"_shifted_"$data_type"_"$date"_subsample_1M"
+cur_file_name="withgm12878bias_k562_atac_subsample_1M.sh"
+setting=4_4_shifted_ATAC_09.15.2021_subsample_1M
 
 ### SIGNAL INPUT
 
-in_bam=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/subsampled_ATAC_K562/bulk/K562.filtered.merged.4.57e-2.bam
+in_bam=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/subsampled_ATAC_K562/bulk/K562.filtered.merged.1.82e-3.bam
 overlap_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/K562/call-reproducibility_overlap/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/overlap.optimal_peak.narrowPeak.gz
 idr_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/K562/call-reproducibility_idr/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/idr.optimal_peak.narrowPeak.gz
 is_filtered=True
@@ -23,12 +24,12 @@ chrom_sizes=$PWD/data/hg38.chrom.sizes
 ref_fasta=/mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
 main_dir=$PWD/results/chrombpnet/$data_type/$cell_line
-data_dir=$PWD/results/chrombpnet/$data_type/$cell_line/data_subsample_25M
+data_dir=$PWD/results/chrombpnet/$data_type/$cell_line/data_subsample_1M
 output_dir=$PWD/results/chrombpnet/$data_type/$cell_line/$setting
 
 ### MODEL PARAMS
 
-gpu=1
+gpu=3
 n_dil_layers=8
 seed=1234 
 model_name=model 
@@ -186,7 +187,7 @@ if [[ -d $output_dir/with_gm12878_bias_final_model/unplug/deepshap ]] ; then
     echo "skipping interpretations"
 else
     mkdir $output_dir/with_gm12878_bias_final_model/unplug/deepshap
-    bed_file=$data_dir/$cell_line"_idr_split"
+    bed_file=$PWD/results/chrombpnet/$data_type/$cell_line/data/$cell_line"_idr_split"
 
     for fold in 0
     do
@@ -210,41 +211,6 @@ else
     cp  $output_dir/with_gm12878_bias_final_model/unplug/deepshap/20K.fold0.deepSHAP $modisco_dir_final
 fi
 
-
-#BIAS INTERPRETATIONS
-
-
-if  [[ -d $output_dir/invivo_bias_model_step1/ ]]  
-then
-    if [[ -d $output_dir/invivo_bias_model_step1/deepshap ]] ; then
-        echo "skipping bias interpretations"
-    else
-        mkdir $output_dir/invivo_bias_model_step1/deepshap
-        bed_file=$data_dir/$cell_line"_idr_split"
-
-        for fold in 0
-        do
-            bash $PWD/src/evaluation/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xaa $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
-            bash $PWD/src/evaluation/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
-            bash $PWD/src/evaluation/interpret/interpret_weight.sh $output_dir/invivo_bias_model_step1/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/invivo_bias_model_step1/deepshap $cell_line $gpu $fold
-        done
-
-        python $PWD/src/evaluation/interpret/combine_shap_pickle.py --source $output_dir/invivo_bias_model_step1/deepshap --target $output_dir/invivo_bias_model_step1/deepshap --type 20k
-        cp $PWD/$cur_file_name $output_dir/invivo_bias_model_step1/deepshap
-    fi
-else
-    echo "skipping step1 interpretations - input bias model given"
-fi
-
-modisco_bias_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/BIAS/
-
-if [[ -d $modisco_bias_dir/$cell_line/$setting/ ]] ; then
-    echo "modisco dir already exists"
-else
-    mkdir $modisco_bias_dir/$cell_line/$setting/
-    modisco_dir_final=$modisco_bias_dir/$cell_line/$setting/
-    cp  $output_dir/invivo_bias_model_step1/deepshap/20K.fold0.deepSHAP $modisco_dir_final
-fi
 
 ## MAKE FOOTPRINTS
 
