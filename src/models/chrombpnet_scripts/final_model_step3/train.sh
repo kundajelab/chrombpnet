@@ -29,6 +29,8 @@ params=$6
 tdb_array=$7
 cell_line=$8
 arch_file=$9
+min_logcount=${10}
+max_logcount=${11}
 
 echo "outdir:$outdir"
 CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
@@ -51,8 +53,8 @@ CUDA_VISIBLE_DEVICES=$gpu kerasAC_train \
 		    --tdb_ambig_attribute ambig_peak \
 		    --tdb_input_min None \
 		    --tdb_input_max None \
-		    --tdb_output_min None 4.0 \
-		    --tdb_output_max None 11.5 \
+		    --tdb_output_min None $min_logcount \
+		    --tdb_output_max None $max_logcount \
 		    --num_inputs 1 \
 		    --num_outputs 2 \
 		    --fold $fold \
