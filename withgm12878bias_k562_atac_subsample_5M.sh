@@ -8,7 +8,7 @@ neg_shift=4
 date=$(date +'%m.%d.%Y')
 setting=4_$neg_shift"_shifted_"$data_type"_"$date"_subsample_5M"
 cur_file_name="withgm12878bias_k562_atac_subsample_5M.sh"
-
+setting=4_4_shifted_ATAC_09.16.2021_subsample_5M
 ### SIGNAL INPUT
 
 in_bam=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/subsampled_ATAC_K562/bulk/K562.filtered.merged.9.14e-3.bam
@@ -27,7 +27,7 @@ output_dir=$PWD/results/chrombpnet/$data_type/$cell_line/$setting
 
 ### MODEL PARAMS
 
-gpu=0
+gpu=3
 seed=1234 
 model_name=model 
 neg_dir=$main_dir/negatives_data
@@ -127,6 +127,10 @@ else
 fi
 
 fold=0
+min_logcount=0.0
+max_logcount=11.5
+#bash $PWD/src/models/chrombpnet_scripts/bias_fit_on_signal_step2/score.sh $output_dir/gm12878_bias_fit_on_signal_step2 $model_name $fold $cell_line $seed $min_logcount $max_logcount
+
 #bash $PWD/src/models/chrombpnet_scripts/bias_fit_on_signal_step2/predict.sh $fold $gpu $model_name $seed  $output_dir/gm12878_bias_fit_on_signal_step2  $data_dir/tiledb/db $cell_line $chrom_sizes $neg_bed_test
 #bash $PWD/src/models/chrombpnet_scripts/bias_fit_on_signal_step2/score.sh $output_dir/gm12878_bias_fit_on_signal_step2 $model_name $fold $cell_line $seed
 
@@ -158,6 +162,8 @@ else
     cp $PWD/$cur_file_name $output_dir/with_gm12878_bias_final_model
 fi
 
+#bash $PWD/src/models/chrombpnet_scripts/final_model_step3/score.sh $output_dir/with_gm12878_bias_final_model $model_name $fold $cell_line $seed $min_logcount $max_logcount
+
 #bash $PWD/src/models/chrombpnet_scripts/final_model_step3/score.sh $output_dir/with_gm12878_bias_final_model $model_name $fold $cell_line $seed
 
 
@@ -184,6 +190,7 @@ else
     cp $PWD/$cur_file_name $output_dir/with_gm12878_bias_final_model/unplug
 fi
 
+#bash  $PWD/src/models/chrombpnet_scripts/unplug/score.sh $output_dir/with_gm12878_bias_final_model/unplug $model_name $fold $cell_line $seed $min_logcount $max_logcount
 #bash  $PWD/src/models/chrombpnet_scripts/unplug/score.sh $output_dir/with_gm12878_bias_final_model/unplug $model_name $fold $cell_line $seed
 
 ### GET INTERPRETATIONS
@@ -219,9 +226,9 @@ fi
 
 ## MAKE FOOTPRINTS
 
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs tn5_c --model_dir $output_dir/with_gm12878_bias_final_model/unplug/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs k562_motifs_set1 --model_dir $output_dir/with_gm12878_bias_final_model/unplug/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs k562_motifs_set2 --model_dir $output_dir/with_gm12878_bias_final_model/unplug/
 
-#CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs tn5_c --model_dir $output_dir/with_gm12878_bias_final_model/unplug/
-#CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs gm12878_motifs_set1 --model_dir $output_dir/with_gm12878_bias_final_model/unplug/
-#CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs gm12878_motifs_set2 --model_dir $output_dir/with_gm12878_bias_final_model/unplug/
 #CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs tn5 --model_dir $output_dir/invivo_bias_model_step1/
 #CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs gm12878_motifs_set2 --model_dir $output_dir/invivo_bias_model_step1/
