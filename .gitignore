@@ -5,6 +5,7 @@
 *.json
 *.pyc
 .ipynb_checkpoints
+.pkl
 
 # Directories #
 #logs
