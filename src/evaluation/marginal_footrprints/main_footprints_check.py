@@ -74,7 +74,7 @@ if args.motifs == "tn5":
     #Tn5
 elif args.motifs == "tn5_c":
     motifs_to_test = ["GCACAGTACAGAGCTG", "GTGCACAGTTCTAGAGTGTGCAG", "CCTCTACACTGTGCAGAA", "GCACAGTTCTAGACTGTGCAG", "CTGCACAGTGTAGAGTTGTGC"]
-    ylims=[0.0015,0.0015,0.0015,0.0015, 0.0015] 
+    ylims=[0.06, 0.06,0.06,0.06, 0.06] 
 elif args.motifs == "dnase1":
     motifs_to_test = ["TTTACAAGTCCA", "TGTACTTACGAA"]
     #DNASE
@@ -85,10 +85,17 @@ elif args.motifs == "gm12878_motifs_set1":
 elif args.motifs == "gm12878_motifs_set2":
     motifs_to_test =  ["AAGGGGGCGGGGCCTAA", "CCCTAACCACAGCCC", "GCAAGGGAAATTCCCCAGG", "GATGG"]
     ylims=[0.002,0.002,0.003,0.002] 
-
     #SPI1, RUNX, NFKB, GATA1
+elif args.motifs == "k562_motifs_set1":
+    motifs_to_test = ["CCGGCCACTAGGGGGCGCTATA", "CCAGGCCCCGCCCCCTG", "GCGCCACTGCACTCCAGCCTGGGCG", "CCGGGCTGAGTCATCCCG"]
+    ylims=[0.02,0.004,0.004,0.004] 
+elif args.motifs == "k562_motifs_set2": 
+    motifs_to_test = ["GGCAGATAAGGCC", "CCGCTGATTGGCCGGGG", "GGCCACTTCCGGCTGC", "CCGTTGGACTTTGGACCCTG"]
+    ylims=[0.004,0.004,0.004,0.004] 
 else:
     pass
+
+
 
 #motifs_to_test = ["ATAGCGCCCCCTAGTGGCCAA", "TTGGCCACTAGGGGGCGCTAT"]
 #motifs_to_test = ["CCATTGTTATGCAAAT"]

@@ -18,7 +18,7 @@ from kerasAC.custom_losses import *
 from tensorflow.keras.models import load_model, model_from_json
 #from bpnet_shap_weighted import *
 from keras_genomics.layers.convolutional import RevCompConv1D
-
+import keras
 def load_model_weights(weight_file,model):
     if weight_file is None:
         #nothing to do
@@ -55,6 +55,17 @@ def load_model_weights(weight_file,model):
                     raise e
     return model
 
+class BiasLayer(keras.layers.Layer):
+    def __init__(self, *args, **kwargs):
+        super(BiasLayer, self).__init__(*args, **kwargs)
+
+    def build(self, input_shape):
+        self.bias = self.add_weight('bias',
+                                    shape=input_shape[1:],
+                                    initializer='zeros',
+                                    trainable=True)
+    def call(self, x):
+        return x + self.bias
 
 def load_model_wrapper(model_hdf5=None,json_string=None, weights=None): 
     custom_objects={"recall":recall,
@@ -69,6 +80,7 @@ def load_model_wrapper(model_hdf5=None,json_string=None, weights=None):
                         "ambig_mean_squared_error":ambig_mean_squared_error,
                         "MultichannelMultinomialMSE":MultichannelMultinomialMSE,
                         "RevCompConv1D":RevCompConv1D,
+                        "BiasLayer": BiasLayer,
                         "MultichannelMultinomialNLL":MultichannelMultinomialNLL}
     get_custom_objects().update(custom_objects)
     if model_hdf5:
