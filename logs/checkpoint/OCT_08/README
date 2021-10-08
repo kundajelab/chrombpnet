@@ -1,0 +1,7 @@
+Some changes in these scripts
+
+- added min_logcount and max_logcount limits
+- subsampling experients on k562 using k562 500M bias and GM12878 bias (GM12878 undercorrected and K562 500M was fine)
+- added get_loss weights with count thresholdign - but need to update these scripts
+- invivo footprinting codes taken from Alex and tried running that
+- K562 and GM12878 ATAC/DNASE experiments done
