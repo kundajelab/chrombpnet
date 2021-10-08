@@ -131,7 +131,8 @@ def get_counts_loss_weight(tdb_path,chroms,ambig_attribute,label_attribute,upsam
         #summarize counts
         median_counts=np.median(counts)
         scaled_counts=median_counts/10
-        return scaled_counts
+        counts_threshold=np.log(np.amin(counts)/2+0.001)
+        return scaled_counts, counts_threshold
     except KeyboardInterrupt:
         kill_child_processes(os.getpid())
         pool.terminate()
@@ -143,7 +144,7 @@ def get_counts_loss_weight(tdb_path,chroms,ambig_attribute,label_attribute,upsam
 
 def main():
     args=parse_args()
-    counts_loss_weight=get_counts_loss_weight(tdb_path=args.tdb_array,
+    counts_loss_weight, counts_threshold=get_counts_loss_weight(tdb_path=args.tdb_array,
                                               chroms=args.chroms,
                                               ambig_attribute=args.ambig_attribute,
                                               label_attribute=args.label_attribute,
@@ -157,6 +158,8 @@ def main():
     #print("counts_loss_weight:"+str(counts_loss_weight))
     f = open(args.outf, "w")
     f.write(str(counts_loss_weight))
+    f.write("\n")
+    f.write(str(counts_threshold))
     f.close()
 
 if __name__=="__main__":
