@@ -4,8 +4,8 @@
 *.exe
 *.json
 *.pyc
-.ipynb_checkpoints
-.pkl
+*.ipynb_checkpoints
+*.pkl
 
 # Directories #
 #logs
