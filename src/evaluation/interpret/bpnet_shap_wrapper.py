@@ -22,6 +22,7 @@ import os
 import numpy as np
 import random as rn
 import tensorflow as tf
+import keras
 
 os.environ['PYTHONHASHSEED'] = '0'
 seed=1234
@@ -96,6 +97,19 @@ def parse_args():
     parser.add_argument("--task_index",type=int)
     parser.add_argument("--num_threads",type=int)
     return parser.parse_args() 
+
+
+class BiasLayer(keras.layers.Layer):
+    def __init__(self, *args, **kwargs):
+        super(BiasLayer, self).__init__(*args, **kwargs)
+
+    def build(self, input_shape):
+        self.bias = self.add_weight('bias',
+                                    shape=input_shape[1:],
+                                    initializer='zeros',
+                                    trainable=True)
+    def call(self, x):
+        return x + self.bias
 	
 def load_model_wrapper(args): 
     custom_objects={"recall":recall,
@@ -110,6 +124,7 @@ def load_model_wrapper(args):
                         "ambig_mean_squared_error":ambig_mean_squared_error,
                         "MultichannelMultinomialMSE":MultichannelMultinomialMSE,
                         "RevCompConv1D":RevCompConv1D,
+                        "BiasLayer":BiasLayer,
                         "MultichannelMultinomialNLL":MultichannelMultinomialNLL}
     get_custom_objects().update(custom_objects)
     if args.model_hdf5:
