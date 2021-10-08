@@ -11,7 +11,7 @@ from kerasAC.interpret.deepshap import *
 from kerasAC.interpret.profile_shap import * 
 from kerasAC.helpers.transform_bpnet_io import *
 #load the model!
-from keras.models import load_model
+#from keras.models import load_model
 from keras.utils.generic_utils import get_custom_objects
 from kerasAC.metrics import * 
 from kerasAC.custom_losses import * 

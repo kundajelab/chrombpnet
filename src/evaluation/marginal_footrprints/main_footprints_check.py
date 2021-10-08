@@ -1,3 +1,4 @@
+
 import pyBigWig
 import pandas as pd
 import numpy as np
@@ -77,6 +78,7 @@ elif args.motifs == "tn5_c":
     ylims=[0.06, 0.06,0.06,0.06, 0.06] 
 elif args.motifs == "dnase1":
     motifs_to_test = ["TTTACAAGTCCA", "TGTACTTACGAA"]
+    ylims=[0.06, 0.06] 
     #DNASE
 elif args.motifs == "gm12878_motifs_set1":
     motifs_to_test = ["GCGCATGCGC", "CGATATGACTCATCCC", "TTGGCCACTAGGGGGCGCTAT", "CCGAAAGCGGAAGTGAGAC"]
@@ -87,11 +89,13 @@ elif args.motifs == "gm12878_motifs_set2":
     ylims=[0.002,0.002,0.003,0.002] 
     #SPI1, RUNX, NFKB, GATA1
 elif args.motifs == "k562_motifs_set1":
-    motifs_to_test = ["CCGGCCACTAGGGGGCGCTATA", "CCAGGCCCCGCCCCCTG", "GCGCCACTGCACTCCAGCCTGGGCG", "CCGGGCTGAGTCATCCCG"]
-    ylims=[0.02,0.004,0.004,0.004] 
+    motifs_to_test = ["CCGGCCACTAGGGGGCGCTATA", "CCAGGCCCCGCCCCCTG", "GGCAGATAAGGCC", "GGCTGGGGGGGGCAGATAAGGCC"]
+    ylims=[0.02,0.004,0.004,0.004]
+    #CTCF, SP1, GATA, GATA+TAL 
 elif args.motifs == "k562_motifs_set2": 
-    motifs_to_test = ["GGCAGATAAGGCC", "CCGCTGATTGGCCGGGG", "GGCCACTTCCGGCTGC", "CCGTTGGACTTTGGACCCTG"]
-    ylims=[0.004,0.004,0.004,0.004] 
+    motifs_to_test = ["GGCTGGG", "CCAGCCAATCAGAGC", "GAAACCGGAAGTGGCC" ,"AACTGCTGAGTCATCCCG", "CCCCGCGCATGCGCAGTGC", "CCGTTGGACTTTGGACCCTG"]
+    #TAL, NFYB, GABPA, BACH1+MAFK, NRF1, HNF4G
+    ylims=[0.004,0.004,0.004,0.008, 0.008,0.004] 
 else:
     pass
 
@@ -112,7 +116,7 @@ def plot_tracks(pred_unplug_bias, ax=None, ylim=0.01, start=500-100+5, end=500+1
     ax.set_ylim(0,ylim)   
     #plt.legend()
 
-plt.rcParams["figure.figsize"] = (7*len(motifs_to_test),4)
+plt.rcParams["figure.figsize"] = (7*len(motifs_to_test),len(motifs_to_test))
 fig, axs = plt.subplots(1, len(motifs_to_test))
  
 i=0
@@ -122,7 +126,7 @@ for pred_unplug_bias in predictions_motifs:
 
 plt.savefig(os.path.join(path,args.motifs+"_footprint.png"))
 #plt.show()
-#p#kl.dump(pred_unplug_bias, open(output_file, "wb"))
+pkl.dump(predictions_motifs, open(os.path.join(path,args.motifs+"_data"), "wb"))
 
 
 
