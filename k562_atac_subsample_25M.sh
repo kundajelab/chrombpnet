@@ -7,11 +7,10 @@ neg_shift=4
 filters=500
 
 date=$(date +'%m.%d.%Y')
-setting=4_$neg_shift"_shifted_"$data_type"_"$date"_bias_filters_"$filters
-cur_file_name="k562_atac_bias_filters_"$filters".sh"
-setting=4_4_shifted_ATAC_09.29.2021_bias_filters_500
+setting=4_$neg_shift"_shifted_"$data_type"_"$date"_bias_filters_"$filters"_subsample_25M"
+cur_file_name="k562_atac_subsample_25M.sh"
+setting=4_4_shifted_ATAC_10.04.2021_bias_filters_500_subsample_25M
 ### SIGNAL INPUT
-in_bam=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/merged_data/K562.filtered.merged.bam
 overlap_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/K562/call-reproducibility_overlap/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/overlap.optimal_peak.narrowPeak.gz
 idr_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/K562/call-reproducibility_idr/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/idr.optimal_peak.narrowPeak.gz
 is_filtered=True
@@ -22,7 +21,7 @@ chrom_sizes=$PWD/data/hg38.chrom.sizes
 ref_fasta=/mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
 main_dir=$PWD/results/chrombpnet/$data_type/$cell_line
-data_dir=$PWD/results/chrombpnet/$data_type/$cell_line/data
+data_dir=$PWD/results/chrombpnet/$data_type/$cell_line/data_subsample_25M
 output_dir=$PWD/results/chrombpnet/$data_type/$cell_line/$setting
 
 ### MODEL PARAMS
@@ -91,7 +90,6 @@ else
 fi
 
 
-#bash withgm12878bias_k562_atac_bias_filters_500.sh
 
 ### STEP 1 -  TRAIN BIAS MODEL
 
@@ -105,14 +103,14 @@ else
         mkdir $output_dir/invivo_bias_model_step1
 
         bash $PWD/src/models/chrombpnet_scripts/get_loss_weights.sh $data_dir/tiledb/db "chr10" "negatives_peak" "count_bigwig_unstranded_5p" $cell_line $flank_size $output_dir/invivo_bias_model_step1/counts_loss_weight.txt
-        counts_loss_weight_step1=`cat $output_dir/invivo_bias_model_step1/counts_loss_weight.txt`
+        counts_loss_weight_step1=`head -n 1 $output_dir/invivo_bias_model_step1/counts_loss_weight.txt`
  
         echo -e "counts_loss_weight\t"$counts_loss_weight_step1"\nprofile_loss_weight\t1\nfilters\t"$filters"\nn_dil_layers\t"$n_dil_layers > $output_dir/invivo_bias_model_step1/params.txt
         params=$output_dir/invivo_bias_model_step1/params.txt
         for fold in 0
         do
             min_logcount=0.0
-            max_logcount=5.0
+            max_logcount=2.5
             bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/train.sh $fold $gpu $model_name $seed $output_dir/invivo_bias_model_step1 $params  $data_dir/tiledb/db $cell_line $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/bpnet_model.py $neg_bed_train $min_logcount $max_logcount
             bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/predict.sh $fold $gpu $model_name $seed  $output_dir/invivo_bias_model_step1  $data_dir/tiledb/db $cell_line $chrom_sizes $neg_bed_test
             bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/score.sh $output_dir/invivo_bias_model_step1 $model_name $fold $cell_line $seed $min_logcount $max_logcount
@@ -130,9 +128,6 @@ fold=0
 #bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/predict_inpeak.sh $fold $gpu $model_name $seed  $output_dir/invivo_bias_model_step1  $data_dir/tiledb/db $cell_line $chrom_sizes
 #bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/score_inpeak.sh $output_dir/invivo_bias_model_step1 $model_name $fold $cell_line $seed
 #bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/score.sh $output_dir/invivo_bias_model_step1 $model_name $fold $cell_line $seed 0.0 11.5
-min_logcount=0.0
-max_logcount=5.0
-bash $PWD/src/models/chrombpnet_scripts/invivo_bias_model_step1/score.sh $output_dir/invivo_bias_model_step1 $model_name $fold $cell_line $seed $min_logcount $max_logcount
 
 
 filters=500 
@@ -145,7 +140,7 @@ if [[ -d $output_dir/final_model_step3 ]] ; then
 else
     mkdir $output_dir/final_model_step3
     bash $PWD/src/models/chrombpnet_scripts/get_loss_weights.sh $data_dir/tiledb/db "chr10" "overlap_peak" "count_bigwig_unstranded_5p" $cell_line $flank_size $output_dir/final_model_step3/counts_loss_weight.txt
-    counts_loss_weight_step3=`cat $output_dir/final_model_step3/counts_loss_weight.txt`
+    counts_loss_weight_step3=`head -n 1 $output_dir/final_model_step3/counts_loss_weight.txt`
     echo -e "json_string\t"$step2_bias_json"\nweights\t"$step2_bias_weights"\ncounts_loss_weight\t"$counts_loss_weight_step3"\nprofile_loss_weight\t1\nfilters\t"$filters"\nn_dil_layers\t"$n_dil_layers > $output_dir/final_model_step3/params.txt
     params=$output_dir/final_model_step3/params.txt
     for fold in 0
@@ -160,9 +155,6 @@ else
 fi
 
 #bash $PWD/src/models/chrombpnet_scripts/final_model_step3/score.sh $output_dir/final_model_step3 $model_name $fold $cell_line $seed 0.0 11.5
-min_logcount=0.0
-max_logcount=11.5
-bash $PWD/src/models/chrombpnet_scripts/final_model_step3/score.sh $output_dir/final_model_step3 $model_name $fold $cell_line $seed $min_logcount $max_logcount
 
 
 ## UNPLUG MODEL
@@ -171,7 +163,7 @@ if [[ -d $output_dir/final_model_step3/unplug ]] ; then
     echo "skipping unplugging"
 else
     mkdir $output_dir/final_model_step3/unplug
-    counts_loss_weight_step3=`cat $output_dir/final_model_step3/counts_loss_weight.txt`
+    counts_loss_weight_step3=`head -n 1 $output_dir/final_model_step3/counts_loss_weight.txt`
     unplug_bias_json=$output_dir/final_model_step3/model.0.arch
     unplug_bias_weights=$output_dir/final_model_step3/model.0.weights
     echo -e "json_string\t"$unplug_bias_json"\nweights\t"$unplug_bias_weights"\ncounts_loss_weight\t"$counts_loss_weight_step3"\nprofile_loss_weight\t1\nfilters\t"$filters"\nn_dil_layers\t"$n_dil_layers > $output_dir/final_model_step3/unplug/params.txt
@@ -190,7 +182,6 @@ else
 fi
 
 #bash  $PWD/src/models/chrombpnet_scripts/unplug/score.sh $output_dir/final_model_step3/unplug $model_name $fold $cell_line $seed
-bash  $PWD/src/models/chrombpnet_scripts/unplug/score.sh $output_dir/final_model_step3/unplug $model_name $fold $cell_line $seed $min_logcount $max_logcount
 
 
 if [[ -d $data_dir/$cell_line"_idr_split" ]] ; then
@@ -293,9 +284,9 @@ fi
 ## MAKE FOOTPRINTS
 
 
-#CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs tn5_c --model_dir $output_dir/final_model_step3/unplug/
-#CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs k562_motifs_set1 --model_dir $output_dir/final_model_step3/unplug/
-#CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs k562_motifs_set2 --model_dir $output_dir/final_model_step3/unplug/
-#CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs tn5 --model_dir $output_dir/invivo_bias_model_step1/
-#CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs k562_motifs_set2 --model_dir $output_dir/invivo_bias_model_step1/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs k562_motifs_set1 --model_dir $output_dir/final_model_step3/unplug/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs k562_motifs_set2 --model_dir $output_dir/final_model_step3/unplug/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs tn5_c --model_dir $output_dir/final_model_step3/unplug/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs tn5 --model_dir $output_dir/invivo_bias_model_step1/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs k562_motifs_set2 --model_dir $output_dir/invivo_bias_model_step1/
 
