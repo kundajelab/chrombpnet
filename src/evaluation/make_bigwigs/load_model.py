@@ -11,7 +11,7 @@ from kerasAC.interpret.deepshap import *
 from kerasAC.interpret.profile_shap import * 
 from kerasAC.helpers.transform_bpnet_io import *
 #load the model!
-from keras.models import load_model
+#from keras.models import load_model
 from keras.utils.generic_utils import get_custom_objects
 from kerasAC.metrics import * 
 from kerasAC.custom_losses import * 
@@ -69,10 +69,10 @@ def load_model_wrapper(model_hdf5=None,json_string=None, weights=None):
                         "ambig_mean_absolute_error":ambig_mean_absolute_error,
                         "ambig_mean_squared_error":ambig_mean_squared_error,
                         "MultichannelMultinomialMSE":MultichannelMultinomialMSE,
-                        "RevCompConv1D":RevCompConv1D,
                         "MultichannelMultinomialNLL":MultichannelMultinomialNLL}
     get_custom_objects().update(custom_objects)
     if model_hdf5:
+        print(model_hdf5)
         model_new=load_model(model_hdf5)
         #print(model.summary())
     else:
