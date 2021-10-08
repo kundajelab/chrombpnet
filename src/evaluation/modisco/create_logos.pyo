@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 
 setting="SIGNAL"
 in_dataset=["K562"]
-in_mode=["4_4_shifted_ATAC_10.05.2021_bias_filters_500subsample_50M_new"]
+in_mode=["4_4_shifted_ATAC_09.30.2021_subsample_5M_k562biasfit"]
 
 input_dir = '/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/'+setting
 modisco_dir = '/oak/stanford/groups/akundaje/projects/chrombpnet_paper/modisco/flank_len_500/'+setting

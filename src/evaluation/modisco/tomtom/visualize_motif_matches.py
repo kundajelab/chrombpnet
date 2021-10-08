@@ -13,7 +13,7 @@ pd.options.display.max_colwidth = 500
 
 setting="SIGNAL"
 in_dataset=["K562"]
-in_mode=["4_4_shifted_ATAC_09.12.2021_bias_filters_500_new"]
+in_mode=["4_4_shifted_ATAC_10.05.2021_bias_filters_500subsample_50M_new"]
 
 input_dir = '/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/'+setting
 modisco_dir = '/oak/stanford/groups/akundaje/projects/chrombpnet_paper/modisco/flank_len_500/'+setting
