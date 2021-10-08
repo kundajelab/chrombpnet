@@ -6,12 +6,12 @@ data_type="ATAC"
 neg_shift=4
 
 date=$(date +'%m.%d.%Y')
-setting=4_$neg_shift"_shifted_"$data_type"_"$date"_subsample_25M"
-cur_file_name="withk562bias_k562_atac_subsample_25M.sh"
-setting=4_4_shifted_ATAC_09.30.2021_subsample_25M
+setting=4_$neg_shift"_shifted_"$data_type"_"$date"_subsample_50M"
+cur_file_name="withk562bias_k562_atac_subsample_50M.sh"
+setting=4_4_shifted_ATAC_10.01.2021_subsample_50M
 ### SIGNAL INPUT
 
-in_bam=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/subsampled_ATAC_K562/bulk/K562.filtered.merged.4.57e-2.bam
+in_bam=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/subsampled_ATAC_K562/bulk/K562.filtered.merged.9.14e-2.bam
 overlap_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/K562/call-reproducibility_overlap/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/overlap.optimal_peak.narrowPeak.gz
 idr_peak=/oak/stanford/groups/akundaje/projects/atlas/atac/caper_out/K562/call-reproducibility_idr/glob-1b1244d5baf1a7d98d4b7b76d79e43bf/idr.optimal_peak.narrowPeak.gz
 is_filtered=True
@@ -22,12 +22,12 @@ chrom_sizes=$PWD/data/hg38.chrom.sizes
 ref_fasta=/mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 
 main_dir=$PWD/results/chrombpnet/$data_type/$cell_line
-data_dir=$PWD/results/chrombpnet/$data_type/$cell_line/data_subsample_25M
+data_dir=$PWD/results/chrombpnet/$data_type/$cell_line/data_subsample_50M
 output_dir=$PWD/results/chrombpnet/$data_type/$cell_line/$setting
 
 ### MODEL PARAMS
 
-gpu=0
+gpu=3
 seed=1234 
 model_name=model 
 neg_dir=$main_dir/negatives_data
@@ -93,6 +93,7 @@ fi
 
 
 
+gpu=3
 
 filters=500 
 
@@ -128,8 +129,6 @@ fi
 fold=0
 min_logcount=0.0
 max_logcount=11.5
-#bash $PWD/src/models/chrombpnet_scripts/bias_fit_on_signal_step2/score.sh $output_dir/k562_bias_fit_on_signal_step2 $model_name $fold $cell_line $seed $min_logcount $max_logcount
-
 counts_loss_weight_step3=`head -n 1 $output_dir/k562_bias_fit_on_signal_step2/inpeaks_counts_loss_weight.txt`
 
 ### STEP 3 - FIT BIAS AND SIGNAL MODEL
@@ -153,7 +152,6 @@ else
     done
     cp $PWD/$cur_file_name $output_dir/with_k562_bias_final_model
 fi
-#bash $PWD/src/models/chrombpnet_scripts/final_model_step3/score.sh $output_dir/with_k562_bias_final_model $model_name $fold $cell_line $seed $min_logcount $max_logcount
 
 
 ## UNPLUG MODEL
@@ -178,8 +176,6 @@ else
     done
     cp $PWD/$cur_file_name $output_dir/with_k562_bias_final_model/unplug
 fi
-
-#bash  $PWD/src/models/chrombpnet_scripts/unplug/score.sh $output_dir/with_k562_bias_final_model/unplug $model_name $fold $cell_line $seed $min_logcount $max_logcount
 
 ### GET INTERPRETATIONS
 
@@ -214,11 +210,10 @@ fi
 
 ## MAKE FOOTPRINTS
 
-#CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs tn5_c --model_dir $output_dir/with_k562_bias_final_model/unplug/
-#CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs k562_motifs_set1 --model_dir $output_dir/with_k562_bias_final_model/unplug/
-#CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs k562_motifs_set2 --model_dir $output_dir/with_k562_bias_final_model/unplug/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs tn5_c --model_dir $output_dir/with_k562_bias_final_model/unplug/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs k562_motifs_set1 --model_dir $output_dir/with_k562_bias_final_model/unplug/
+CUDA_VISIBLE_DEVICES=$gpu python  $PWD/src/evaluation/marginal_footrprints/main_footprints_check.py --ref_fasta $ref_fasta --gc_neg $neg_bed_test --motifs k562_motifs_set2 --model_dir $output_dir/with_k562_bias_final_model/unplug/
 
-#bash withk562bias_k562_atac_subsample_5M.sh
 
 if [[ -d $output_dir/with_k562_bias_final_model/deepshap ]] ; then
     echo "skipping interpretations"
@@ -235,11 +230,12 @@ else
 
     python $PWD/src/evaluation/interpret/combine_shap_pickle.py --source $output_dir/with_k562_bias_final_model/deepshap --target $output_dir/with_k562_bias_final_model/deepshap --type 20k
     cp $PWD/$cur_file_name $output_dir/with_k562_bias_final_model/deepshap
-
 fi
 
 fold=0
 bed_file=$PWD/results/chrombpnet/$data_type/$cell_line/data/$cell_line"_idr_split"
-#bash $PWD/src/evaluation/interpret/interpret_weight.sh $output_dir/with_k562_bias_final_model/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/with_k562_bias_final_model/deepshap $cell_line $gpu $fold
+bash $PWD/src/evaluation/interpret/interpret_weight.sh $output_dir/with_k562_bias_final_model/$model_name.$fold $bed_file xab $data_dir/tiledb/db $chrom_sizes $output_dir/with_k562_bias_final_model/deepshap $cell_line $gpu $fold
 bash $PWD/src/evaluation/interpret/interpret_weight.sh $output_dir/with_k562_bias_final_model/$model_name.$fold $bed_file xac $data_dir/tiledb/db $chrom_sizes $output_dir/with_k562_bias_final_model/deepshap $cell_line $gpu $fold
 python $PWD/src/evaluation/interpret/combine_shap_pickle.py --source $output_dir/with_k562_bias_final_model/deepshap --target $output_dir/with_k562_bias_final_model/deepshap --type 20k
+
+bash withk562bias_k562_atac_subsample_5M.sh
