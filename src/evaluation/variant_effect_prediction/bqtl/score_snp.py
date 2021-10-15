@@ -21,6 +21,7 @@ import argparse
 parser=argparse.ArgumentParser(description="variant effect scoring on dsQTLS")
 parser.add_argument("--model_file")
 parser.add_argument("--output_path")
+parser.add_argument("--subsample",action="store_true")
 args = parser.parse_args()
 
 output_path=args.output_path
@@ -28,18 +29,22 @@ model_file=args.model_file
 
 flank=500
 
-ref_file="/mnt/lab_data3/anusri/histone_expts/all_qtl_analysis/dnase_qtl/data/hg18.fa"
+ref_file="/mnt/data/male.hg19.fa"
 inpath = os.path.join(output_path, "formatted.csv")
-snps=pd.read_csv("/mnt/lab_data3/anusri/histone_expts/all_qtl_analysis/gm12878_sequence_sets/test_set/deltasv,/41588_2015_BFng3331_MOESM26_ESM.csv",header=0,sep=',')
-snps["Chr"] = snps["chrom_hg18"].astype(str) 
-snps["Pos0"] = snps["pos_hg18"].astype(int) - 1
-snps['POSTallele']= snps["allele1"].astype(str)
-snps['ALTallele']= snps["allele2"].astype(str)
-snps['logratio']=snps['abs_gkm_SVM'].astype(float)
-snps['pvalue']=[1.000000e-100 ]*snps.shape[0]
+snps=pd.read_csv("/mnt/lab_data3/anusri/histone_expts/all_qtl_analysis/bqtl/pu1/annas_run//pu1.txt",header=0,sep='\t')
+strand_include=False
+snps['Pos0']=snps['position']-1
 snps['rsid']=snps['Chr'].astype(str)+'_'+snps['Pos0'].astype(str)+'_'+snps['POSTallele'].astype(str)+'_'+snps['ALTallele'].astype('str')
-snps.to_csv(inpath,header=True,index=False,sep='\t')
+snps['logratio']=np.log2((snps['prechipfreq']+.01)/(snps['POSTfreq']+0.01))
+snps['pvalue'] = snps['pvalue'].astype(float)
 
+if args.subsample:
+    high_sig=snps.nsmallest(100,'pvalue')
+    non_sig=snps.nlargest(200,'pvalue')
+    non_sig = non_sig.sample(100, random_state=0)
+    snps=pd.concat((high_sig,non_sig),axis=0)
+
+snps.to_csv(inpath,header=True,index=False,sep='\t')
 print(snps.head())
 print("total data size",snps.shape)
 
