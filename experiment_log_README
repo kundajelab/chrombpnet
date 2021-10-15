@@ -1,0 +1,29 @@
+October 8 log
+
+- running universal atac models on the 5 cell-lines accounting for counts
+
+October 9-11 log
+
+- run universal atac models - but retrain them in the background
+- run invivo mode for all cell lines with 128 filters and 4 dilations layers
+- invivo - all done  
+- retrain univ - all done
+- wrap up invivo footprinting
+
+October 12-14
+
+- dsqtl plots with new models
+- bqtl plots with new models
+
+October 14 log
+
+- train k562 invivo models with different threshold and 128 filters and 4 dilation layers
+- train a full-blown bpnet bias model on universal atac - at mnt location
+- train a full atac model on same threshold (min threshold)
+- get invivo hits on subsampled experiments
+
+
+TODO -
+
+Get tracks for K562 ATAC and DNASE
+
