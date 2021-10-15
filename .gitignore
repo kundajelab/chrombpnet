@@ -6,7 +6,7 @@
 *.pyc
 *.ipynb_checkpoints
 *.pkl
-
+*.npy
 # Directories #
 #logs
 results
