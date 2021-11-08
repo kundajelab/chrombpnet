@@ -131,8 +131,8 @@ def get_counts_loss_weight(tdb_path,chroms,ambig_attribute,label_attribute,upsam
         #summarize counts
         median_counts=np.median(counts)
         scaled_counts=median_counts/10
-        counts_threshold=np.log(np.amin(counts)/2+0.001)
-        #counts_threshold=np.log(np.quantile(counts, 0.1)/2+0.001)
+        #counts_threshold=np.log(np.amin(counts)/2+0.001)
+        counts_threshold=np.log(np.quantile(counts, 0.1)/2+0.001)
         return scaled_counts, counts_threshold
     except KeyboardInterrupt:
         kill_child_processes(os.getpid())
