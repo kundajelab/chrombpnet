@@ -11,9 +11,9 @@ from plotnine import *
 
 pd.options.display.max_colwidth = 500
 
-setting="SIGNAL"
+setting="BIAS"
 in_dataset=["K562"]
-in_mode=["4_4_shifted_ATAC_10.05.2021_bias_filters_500subsample_50M_new"]
+in_mode=["ATAC_10.14.2021_withinvivobias", "ATAC_10.14.2021_withinvivobias_500filts_mincount"]
 
 input_dir = '/oak/stanford/groups/akundaje/projects/chrombpnet_paper/importance_scores/'+setting
 modisco_dir = '/oak/stanford/groups/akundaje/projects/chrombpnet_paper/modisco/flank_len_500/'+setting
