@@ -4,7 +4,7 @@ import numpy as np
 import random
 import math
 import pysam
-from ..util import *
+from util import *
 import threading
 import pickle
 import pdb
@@ -68,13 +68,14 @@ class SNPGenerator(Sequence):
             cur_seq=left_flank+snp_allele+right_flank
             #print(snp_allele, entry[self.rsid_col])
             if len(cur_seq) != 2*self.flank_size:
-                print(cur_chrom,cur_pos)
-                print(self.ref.fetch(cur_chrom,left_flank_start,left_flank_end+2))
-                print(entry[self.rsid_col])
-                print(cur_seq)
-                print(len(cur_seq))
+                print("exception input size is not 2114 - border case")
+                print("location ",cur_chrom,cur_pos)
+                #print(self.ref.fetch(cur_chrom,left_flank_start,left_flank_end+2))
+                print("rsid ",entry[self.rsid_col])
+                #print(cur_seq)
+                print("input length at exception locus",len(cur_seq))
+                continue
             
-            assert(len(cur_seq)==2*self.flank_size)
             seqs.append(cur_seq)
             if self.compute_gc==True:
                 cur_gc=self.compute_gc_func(cur_seq)

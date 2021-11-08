@@ -41,82 +41,6 @@ from abstention.calibration import PlattScaling, IsotonicRegression
 import random
 import pdb 
 
-def parse_args():
-    parser=argparse.ArgumentParser(description='Provide model files  & a dataset, get model predictions')
-    parser.add_argument('--ref_fasta')
-
-    tiledbgroup=parser.add_argument_group("tiledb")
-    tiledbgroup.add_argument("--tdb_array",help="name of tdb array to use")
-    
-    tiledbgroup.add_argument("--tdb_output_source_attribute",nargs="+",default=None,help="tiledb attribute for use in label generation i.e. fc_bigwig")
-    tiledbgroup.add_argument("--tdb_output_datasets",nargs="+",default=None,help="dataset column from db_ingest; comma separated across channels; space separated across outputs")    
-    tiledbgroup.add_argument("--tdb_output_min",nargs="*", default=None)
-    tiledbgroup.add_argument("--tdb_output_max",nargs="*", default=None)        
-    tiledbgroup.add_argument("--tdb_output_flank",nargs="+",help="flank around bin center to use in generating outputs")
-    tiledbgroup.add_argument("--tdb_output_aggregation",nargs="+",default=None,help="method for output aggreagtion; one of None, 'avg','max'")
-    tiledbgroup.add_argument("--tdb_output_transformation",nargs="+",default=None,help="method for output transformation; one of None, 'log','log10','asinh'")
-
-    tiledbgroup.add_argument("--tdb_input_source_attribute",nargs="+",help="attribute to use for generating model input, or 'seq' for one-hot-encoded sequence")
-    tiledbgroup.add_argument("--tdb_input_min",nargs="*", default=None)
-    tiledbgroup.add_argument("--tdb_input_max",nargs="*", default=None)    
-    tiledbgroup.add_argument("--tdb_input_datasets",nargs="+",default=None,help="dataset column from db_ingest; comma separated across channels; space separated across inputs")
-    tiledbgroup.add_argument("--tdb_input_flank",nargs="+",help="length of sequence around bin center to use for input")
-    tiledbgroup.add_argument("--tdb_input_aggregation",nargs="+",default=None,help="method for input aggregation; one of 'None','avg','max'")
-    tiledbgroup.add_argument("--tdb_input_transformation",nargs="+",default=None,help="method for input transformation; one of None, 'log','log10','asinh'")
-    tiledbgroup.add_argument("--tdb_transformation_pseudocount",type=float,default=1)
-    
-    tiledbgroup.add_argument("--tdb_partition_attribute_for_upsample",default="idr_peak",help="tiledb attribute to use for upsampling, i.e. idr_peak")
-    tiledbgroup.add_argument("--tdb_partition_thresh_for_upsample",type=float,default=1,help="values >= partition_thresh_for_upsample within the partition_attribute_for_upsample will be upsampled during training")
-    tiledbgroup.add_argument("--tdb_partition_datasets_for_upsample",nargs="+")
-    
-    tiledbgroup.add_argument("--upsample_ratio_list_predict",type=float,nargs="*")
-    tiledbgroup.add_argument("--tdb_ambig_attribute",default=None,help="attribute indicating ambiguous regions to not train on")
-    tiledbgroup.add_argument("--chrom_sizes",default=None,help="chromsizes file for use with tiledb generator")
-    tiledbgroup.add_argument("--tiledb_stride",type=int,default=1)
-    tiledbgroup.add_argument("--upsample_threads",type=int,default=1)
-    tiledbgroup.add_argument("--revcomp",action="store_true")
-    input_filtering_params=parser.add_argument_group("input_filtering_params")    
-    input_filtering_params.add_argument('--predict_chroms',nargs="*",default=None)
-    input_filtering_params.add_argument("--genome",default=None)
-    input_filtering_params.add_argument("--fold",type=int,default=None)
-    input_filtering_params.add_argument("--bed_regions",default=None) 
-    input_filtering_params.add_argument('--bed_regions_center', choices=['random','center','summit'],default=None)
-    input_filtering_params.add_argument("--datasets",nargs="*",default=None)
-    input_filtering_params.add_argument("--dataset_indices",nargs="*",default=None)
-    
-    output_params=parser.add_argument_group("output_params")
-    output_params.add_argument('--predictions_and_labels_hdf5',help='name of hdf5 to save predictions',default=None)
-    calibration_params=parser.add_argument_group("calibration_params")
-    calibration_params.add_argument("--calibrate_classification",action="store_true",default=False)
-    calibration_params.add_argument("--calibrate_regression",action="store_true",default=False)        
-    
-    weight_params=parser.add_argument_group("weight_params")
-    weight_params.add_argument('--w1',nargs="*",type=float)
-    weight_params.add_argument('--w0',nargs="*",type=float)
-    weight_params.add_argument("--w1_w0_file",default=None)
-
-
-    model_params=parser.add_argument_group("model_params")
-    model_params.add_argument('--load_model_hdf5',help='hdf5 file that stores the model')
-    model_params.add_argument('--weights',help='weights file for the model')
-    model_params.add_argument('--yaml',help='yaml file for the model')
-    model_params.add_argument('--json',help='json file for the model')
-    model_params.add_argument('--functional',default=False,help='use this flag if your model is a functional model',action="store_true")
-    model_params.add_argument('--squeeze_input_for_gru',action='store_true')
-    model_params.add_argument("--num_inputs",type=int)
-    model_params.add_argument("--num_outputs",type=int)
-    model_params.add_argument("--num_gpus",type=int,default=1)
-    
-    snp_params=parser.add_argument_group("snp_params")
-    snp_params.add_argument('--background_freqs',default=None)
-    snp_params.add_argument('--flank',default=500,type=int)
-    snp_params.add_argument('--mask',default=10,type=int)
-    snp_params.add_argument('--ref_col',type=int,default=None)
-    snp_params.add_argument('--alt_col',type=int,default=None)
-
-    parser.add_argument('--batch_size',type=int,help='batch size to use to make model predictions',default=50)
-    return parser.parse_args()
-
 def write_predictions(args):
     '''
     keys lab_i, pred_i indicate the labels and predictions matrices for loss i. 
@@ -335,16 +259,6 @@ def predict(args):
     #get the model
     #if calibration is to be done, get the preactivation model 
     model=get_model(args)
-    perform_calibration=args.calibrate_classification or args.calibrate_regression
-    if perform_calibration==True:
-        if args.calibrate_classification==True:
-            print("getting logits")
-            model=Model(inputs=model.input,
-                               outputs=model.layers[-2].output)
-        elif args.calibrate_regression==True:
-            print("getting pre-relu outputs (preacts)")
-            model=Model(inputs=model.input,
-                        outputs=model.layers[-1].output)
             
     #call the predict_on_batch_wrapper
     predict_on_batch_wrapper(args,model,test_generator)
@@ -360,28 +274,10 @@ def predict(args):
     print("joining prediction writer") 
     writer.join()
     
-    #sync files to s3 if needed
-    if args.predictions_and_labels_hdf5.startswith('s3://'):
-        #use a local version of the file and upload to s3 when finished
-        out_predictions_prefix=args.predictions_and_labels_hdf5+".predictions"
-        #upload outputs for all tasks
-        import glob
-        to_upload=[]
-        for f in glob.glob(out_predictions_prefix+"*"):
-            s3_path='/'.join(out_predictions_prefix.split('/')[0:-1]+[f.split('/')[-1]])
-            print(f+'-->'+s3_path)
-            upload_s3_file(s3_path,f)
-        
-    #perform calibration, if specified
-    if perform_calibration is True:
-        print("calibrating")
-        calibrate(args)
 
-    #clean up any s3 artifacts:
-    run_cleanup()
     
 def main():
-    args=parse_args()
+    args=predict_parse_args()
     predict(args)
 
 
