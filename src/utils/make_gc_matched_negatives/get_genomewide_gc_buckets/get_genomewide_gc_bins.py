@@ -5,13 +5,12 @@ import pdb
 from tqdm import tqdm
 
 def parse_args():
-    parser=argparse.ArgumentParser(description="get gc content from a bed file")
-    parser.add_argument("--chrom_sizes")
-    parser.add_argument("--ref_fasta")
-    parser.add_argument("--out_prefix")
-    parser.add_argument("--region_size",type=int,default=1000)
-    parser.add_argument("--stride",type=int,default=50)
-    parser.add_argument("--output_format",choices=['tsv','hdf5'],help="store output track as either a .tsv or an .hdf5 file")
+    parser=argparse.ArgumentParser(description="get gc content after binning the entire genome into bins")
+    parser.add_argument("-g","--ref_fasta", help="reference genome file")
+    parser.add_argument("-c","--chrom_sizes", help="chromosome sizes file for reference genome (contains chr and chrom size seperated by tab)")
+    parser.add_argument("-o","--out_prefix", help="output prefix path to store the gc content of binned genome")
+    parser.add_argument("-f","--flank_size",type=int,default=1057, help="flank size to use to find gc content")
+    parser.add_argument("-s","--stride",type=int,default=50, help="stride to use for shifting the bins")
     return parser.parse_args()
 
 
@@ -25,26 +24,21 @@ def main():
         print(chrom) 
         chrom_size=row[1]
         for bin_start in tqdm(range(0,chrom_size,args.stride)):
-            #if bin_start%1000000==0:
-            #    print(str(bin_start))
-            bin_end=bin_start+2*args.region_size
+            bin_end=bin_start+2*args.flank_size
             seq=ref.fetch(chrom,bin_start,bin_end).upper()
             g=seq.count('G')
             c=seq.count('C')
             gc=g+c
-            fract=round(gc/(2*args.region_size),2)
+            fract=round(gc/(2*args.flank_size),2)
             region_dict[tuple([chrom,bin_start,bin_end])]=fract
+
     #generate pandas df from dict
     print("making df") 
     df=pd.DataFrame.from_dict(region_dict,orient='index')
     print("made df")
     new_index=pd.MultiIndex.from_tuples(df.index, names=('CHR', 'START','END'))
     df = pd.DataFrame(df[0], new_index)
-    if args.output_format=="tsv":
-        df.to_csv(args.out_prefix+".tsv",sep='\t', header=True, index=True, index_label=['CHROM','START','END'])
-    else:
-        assert args.output_format=="hdf5"
-        df.to_hdf(args.out_prefix+".hdf5",key='data',mode='w',append=False,format='table',min_itemsize=30)                
-        
+    df.to_csv(args.out_prefix+".bed",sep='\t', header=True, index=True, index_label=['CHROM','START','END'])
+  
 if __name__=="__main__":
     main()

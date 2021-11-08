@@ -1,14 +1,14 @@
-import pandas as pd
 import pysam
 import argparse
 from tqdm import tqdm 
+import pandas as pd
 
 def parse_args():
     parser=argparse.ArgumentParser(description="get gc content from a foreground bed file")
-    parser.add_argument("--input_bed")
-    parser.add_argument("--ref_fasta")
-    parser.add_argument("--out_prefix")
-    parser.add_argument("--flank_size",type=int,default=500)
+    parser.add_argument("-i","--input_bed", help="bed file in narrow peak format - we will find gc content of these regions centered on the summit")
+    parser.add_argument("-g", "--ref_fasta", help="reference genome fasta")
+    parser.add_argument("-o", "--out_prefix", help="output file prefix for storing gc-content values of given foreground bed")
+    parser.add_argument("-f","--flank_size",type=int,default=1057, help="flank size to use to fine gc-content")
     return parser.parse_args()
 
 def main():
@@ -20,7 +20,6 @@ def main():
     print("num_rows:"+num_rows) 
 
     outf=open(args.out_prefix,'w')
-
     for index,row in tqdm(data.iterrows()):
         chrom=row[0]
         start=row[1]
@@ -30,6 +29,7 @@ def main():
         start=summit-args.flank_size
         end=summit+args.flank_size
 
+        # calculate gc content when centered at summit
         seq=ref.fetch(chrom,start,end).upper()
         g=seq.count('G')
         c=seq.count('C')

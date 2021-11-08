@@ -1,24 +1,27 @@
 import argparse
-import pickle
+import pandas as pd
 from tqdm import tqdm
+import random
+import csv 
 
 def parse_args():
-    parser=argparse.ArgumentParser(description="generate a bed file for negatives which are gc-matched with foreground")
-    parser.add_argument("--candidate_negatives",help="bed file with gc content in 4th column rounded to 2 decimals")
-    parser.add_argument("--foreground_gc_bed")
-    parser.add_argument("--out_prefix")
+    parser=argparse.ArgumentParser(description="generate a bed file of non-peak regions that are gc-matched with foreground")
+    parser.add_argument("-c","--candidate_negatives",help="candidate negatives bed file with gc content in 4th column rounded to 2 decimals")
+    parser.add_argument("-f","--foreground_gc_bed", help="regions with their corresponding gc fractions for matching, 4th column has gc content value rounded to 2 decimals")
+    parser.add_argument("-o","--out_prefix", help="gc-matched non-peaks output file name")
     return parser.parse_args()
 
-def make_gc_dict():
+def make_gc_dict(candidate_negatives):
     """
-    Imports the TF-MoDISco hits as a single Pandas DataFrame.
-    The `key` column is the name of the originating PFM, and `peak_index` is the
-    index of the peak file from which it was originally found.
+    Imports the candidate negatives into a dictionary structure.
+    The `key` is the gc content fraction, and the `values` are a list 
+    containing the (chrom,start,end) of a region with the corresponding 
+    gc content fraction.
     """
-    data=open(args.candidate_negatives,'r')
+    data=open(candidate_negatives,'r').readlines()
     gc_dict={}
     index=0 
-    for line in tqdm(data):
+    for line in tqdm(list(data)):
         line=line.strip('\n') 
         index+=1
         tokens=line.split('\t')
@@ -31,10 +34,13 @@ def make_gc_dict():
         if gc not in gc_dict[chrom]:
             gc_dict[chrom][gc]=[(chrom,start,end)]
         else:
-            gc_dict[chrom][gc].append([(chrom,start,end)])
-        return gc_dict
+            gc_dict[chrom][gc].append((chrom,start,end))
+    return gc_dict
 
 def scale_gc(cur_gc):
+    """
+    Randomly increase/decrease the gc-fraction value by 0.01
+    """
     if random.random()>0.5:
         cur_gc+=0.01
     else:
@@ -49,7 +55,12 @@ def scale_gc(cur_gc):
     return cur_gc 
 
 def adjust_gc(chrom,cur_gc,negatives,used_negatives):
-    #verify that cur_gc is in negatives dict
+    """
+    Function that checks if (1) the given gc fraction value is available
+    in the negative candidates or (2) if the given gc fraction value has 
+    candidates not already sampled. If eitheir of the condition fails we  
+    sample the neighbouring gc_fraction value by randomly scaling with 0.01.
+    """
     if chrom  not in used_negatives:
         used_negatives[chrom]={}
 
@@ -57,31 +68,29 @@ def adjust_gc(chrom,cur_gc,negatives,used_negatives):
         used_negatives[chrom][cur_gc]=[]
 
     while (cur_gc not in negatives[chrom]) or (len(used_negatives[chrom][cur_gc])>=len(negatives[chrom][cur_gc])):
-        #all options for this gc value have been used up. Adjust the gc
         cur_gc=scale_gc(cur_gc)
         if cur_gc not in used_negatives[chrom]:
-            used_negatives[chrom][cur_gc]=dict()
+            used_negatives[chrom][cur_gc]=[]
     return cur_gc,used_negatives 
 
         
-def main():
+    
+if __name__=="__main__":
 
     args=parse_args()
-    negatives=make_gc_dict(args)
+    negatives=make_gc_dict(args.candidate_negatives)
     used_negatives=dict()
-    cur_peaks=pd.read_csv(cur_peaks,header=None,sep='\t')
- 
-    for index,row in tqdm(cur_peaks.iterrows()): 
+    cur_peaks=pd.read_csv(args.foreground_gc_bed,header=None,sep='\t')
+    negatives_bed = []
+    outf=open(args.out_prefix,'w')
+    print(len(list(cur_peaks.iterrows())))
+    for index,row in tqdm(list(cur_peaks.iterrows())): 
         chrom=row[0]
         start=row[1]
         end=row[2]
         gc_value=row[3]
 
         cur_gc,used_negatives=adjust_gc(chrom,gc_value,negatives,used_negatives)
-        
-        header='_'.join([str(i) for i in [chrom,start,end,row[3]]])
-        #get matched negative sequence
-
         num_candidates=len(negatives[chrom][cur_gc])
         rand_neg_index=random.randint(0,num_candidates-1)
         while rand_neg_index in used_negatives[chrom][cur_gc]:
@@ -90,17 +99,13 @@ def main():
             rand_neg_index=random.randint(0,num_candidates-1)
 
         used_negatives[chrom][cur_gc].append(rand_neg_index)
-        neg_tuple=negatives[chrom][cur_gc][rand_neg_index][0]
+        neg_tuple=negatives[chrom][cur_gc][rand_neg_index]
         neg_chrom=neg_tuple[0]
         neg_start=neg_tuple[1]
         neg_end=neg_tuple[2]
-        
-        neg_header='_'.join([str(i) for i in [neg_chrom,neg_start,neg_end,cur_gc]])
+        negatives_bed.append([neg_chrom,int(neg_start),int(neg_end), cur_gc])        
+       
+    negatives_bed = pd.DataFrame(negatives_bed)
+    negatives_bed.to_csv(args.out_prefix, sep='\t', index=False, header=False, quoting=csv.QUOTE_NONE)
 
-def main():
-    args=parse_args()
-
-    
-if __name__=="__main__":
-    main()
     
