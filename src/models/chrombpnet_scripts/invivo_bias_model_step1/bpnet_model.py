@@ -45,7 +45,7 @@ def getModelGivenModelOptionsAndWeightInits(args):
     counts_loss_weight=1
     profile_loss_weight=1
     
-    model_params=get_model_param_dict(args.model_params)
+    model_params=get_model_param_dict(args.params)
     if 'filters' in model_params:
         filters=int(model_params['filters'])
     if 'n_dil_layers' in model_params:
@@ -56,8 +56,8 @@ def getModelGivenModelOptionsAndWeightInits(args):
         profile_kernel_size=int(model_params['profile_kernel_size'])
     if 'control_smoothing' in model_params:
         control_smoothing=[int(i) for i in model_params['control_smoothing'].split(',')]
-    if 'counts_loss_weight' in model_params:
-        counts_loss_weight=float(model_params['counts_loss_weight'])
+    if 'cnts_loss_weight' in model_params:
+        counts_loss_weight=float(model_params['cnts_loss_weight'])
     if 'profile_loss_weight' in model_params:
         profile_loss_weight=float(model_params['profile_loss_weight'])
 
@@ -76,19 +76,12 @@ def getModelGivenModelOptionsAndWeightInits(args):
     tf.random.set_seed(seed)
     rn.seed(seed)
 
-    init_weights=args.init_weights
-    sequence_flank=int(args.tdb_input_flank[0].split(',')[0])
-    num_tasks=args.num_tasks
-    seq_len=2*sequence_flank
-    out_flank=int(args.tdb_output_flank[0].split(',')[0])
-    out_pred_len=2*out_flank
-    #print("seq_len:"+str(seq_len))
-    #print("out_pred_len:"+str(out_pred_len))
-
-
+    num_tasks=1
+    sequence_len=int(args.inputlen)
+    out_pred_len=int(args.outputlen)
 
     #define inputs
-    inp = Input(shape=(seq_len, 4),name='sequence')    
+    inp = Input(shape=(sequence_len, 4),name='sequence')    
 
     # first convolution without dilation
     first_conv = Conv1D(filters,
@@ -170,25 +163,10 @@ def getModelGivenModelOptionsAndWeightInits(args):
     model=Model(inputs=[inp],outputs=[profile_out,
                                      count_out])
     print("got model") 
-    model.compile(optimizer=Adam(),
+    model.compile(optimizer=Adam(learning_rate=args.learning_rate),
                     loss=[MultichannelMultinomialNLL(num_tasks),'mse'],
-                    loss_weights=[profile_loss_weight,counts_loss_weight])
+                    loss_weights=[1,counts_loss_weight])
     print("compiled model")
     return model 
 
 
-if __name__=="__main__":
-    import argparse
-    parser=argparse.ArgumentParser(description="view model arch")
-    parser.add_argument("--seed",type=int,default=1234)
-    parser.add_argument("--init_weights",default=None)
-    parser.add_argument("--tdb_input_flank",nargs="+",default=["1057"])
-    parser.add_argument("--tdb_output_flank",nargs="+",default=["500"])
-    parser.add_argument("--num_tasks",type=int,default=1)
-    parser.add_argument("--model_params",default=None)
-    
-    args=parser.parse_args()
-    model=getModelGivenModelOptionsAndWeightInits(args)
-    print(model.summary())
-    pdb.set_trace() 
-    
