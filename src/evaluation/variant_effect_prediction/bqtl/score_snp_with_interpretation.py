@@ -29,6 +29,11 @@ model_file=args.model_file
 
 flank=500
 
+## load data
+
+ref_file="/mnt/data/male.hg19.fa"
+inpath = os.path.join(output_path, "formatted.csv")
+
 ref_file="/mnt/data/male.hg19.fa"
 inpath = os.path.join(output_path, "formatted.csv")
 snps=pd.read_csv("/mnt/lab_data3/anusri/histone_expts/all_qtl_analysis/bqtl/pu1/annas_run//pu1.txt",header=0,sep='\t')
@@ -43,11 +48,36 @@ if args.subsample:
     non_sig=snps.nlargest(200,'pvalue')
     non_sig = non_sig.sample(100, random_state=0)
     snps=pd.concat((high_sig,non_sig),axis=0)
-o
+
 
 snps.to_csv(inpath,header=True,index=False,sep='\t')
 print(snps.head())
 print("total data size",snps.shape)
+
+
+## load model
+
+try:
+   model=load_model_wrapper(model_hdf5=model_file)
+except:
+   model=load_model_wrapper(json_string=model_file+"model.0.arch", weights=model_file+"model.0.weights")
+
+## define explainers
+
+from tensorflow.compat.v1.keras.backend import get_session
+tensorflow.compat.v1.disable_v2_behavior()
+from kerasAC.interpret.deepshap import *
+from kerasAC.interpret.profile_shap import *
+import tensorflow as tf
+import keras
+
+task_index=0
+create_background_counts=create_background_atac
+model_wrapper_for_counts=(model.input, model.outputs[1][:,task_index:task_index+1])
+prof_explainer = create_explainer(model,ischip=False,task_index=0)
+count_explainer=shap.DeepExplainer(model_wrapper_for_counts,data=create_background_counts,combine_mult_and_diffref=combine_mult_and_diffref_1d)
+print("got count explainer")
+print("got profile explainer")
 
 #reference allele sequence generator 
 ref_gen=SNPGenerator(bed_path=inpath,
@@ -71,13 +101,12 @@ alt_gen=SNPGenerator(bed_path=inpath,
                  batch_size=200,
                  expand_dims=False)
 
-try:
-    model=load_model_wrapper(model_hdf5=model_file)
-except:
-    model=load_model_wrapper(json_string=model_file.replace("model.0.hdf5", "model.0.arch"), weights=model_file.replace("model.0.hdf5", "model.0.weights"))
+
 #get the reference allele predictions 
 count_preds={} 
 profile_preds={} 
+profile_shap={}
+count_shap={}
 final_scores={}
 snp_to_seq={} 
 
@@ -90,6 +119,9 @@ for i in range(len(ref_gen)):
     batch_preds=model.predict(cur_x[1])
     batch_preds_profile=batch_preds[0]
     batch_preds_count=batch_preds[1] 
+    count_explanations=count_explainer.shap_values(cur_x[1])[0]
+    profile_explanations=prof_explainer(cur_x[1], None)
+
     for batch_index in range(len(batch_rsids)): 
         cur_rsid=batch_rsids[batch_index]
         snp_to_seq[cur_rsid]={} 
@@ -100,6 +132,11 @@ for i in range(len(ref_gen)):
         count_preds[cur_rsid]['ref']=cur_pred_count[0]
         profile_preds[cur_rsid]={}
         profile_preds[cur_rsid]['ref']=cur_pred_profile 
+        profile_shap[cur_rsid]={}
+        profile_shap[cur_rsid]['ref']=np.sum(profile_explanations[batch_index,:,:]*cur_x[1][batch_index,:,:], axis=1)
+        count_shap[cur_rsid]={}
+        count_shap[cur_rsid]['ref']=np.sum(count_explanations[batch_index,:,:]*cur_x[1][batch_index,:,:], axis=1)
+
 
 #get the alternate allele predictions 
 for i in range(len(alt_gen)):
@@ -111,6 +148,9 @@ for i in range(len(alt_gen)):
     batch_preds=model.predict(cur_x[1]) 
     batch_preds_profile=batch_preds[0]
     batch_preds_count=batch_preds[1] 
+    count_explanations=count_explainer.shap_values(cur_x[1])[0]
+    profile_explanations=prof_explainer(cur_x[1], None)
+
     for batch_index in range(len(batch_rsids)): 
         cur_rsid=batch_rsids[batch_index]
         snp_to_seq[cur_rsid]['alt']=cur_x[1][batch_index,:,:]
@@ -118,6 +158,8 @@ for i in range(len(alt_gen)):
         cur_pred_count=batch_preds_count[batch_index,:]
         count_preds[cur_rsid]['alt']=cur_pred_count[0]
         profile_preds[cur_rsid]['alt']=cur_pred_profile 
+        profile_shap[cur_rsid]['alt']=np.sum(profile_explanations[batch_index,:,:]*cur_x[1][batch_index,:,:], axis=1)
+        count_shap[cur_rsid]['alt']=np.sum(count_explanations[batch_index,:,:]*cur_x[1][batch_index,:,:], axis=1)
 
         ref_preds=np.array(softmax(profile_preds[cur_rsid]['ref'][:,0],axis=0))
         alt_preds=np.array(softmax(profile_preds[cur_rsid]['alt'][:,0],axis=0))
@@ -137,6 +179,12 @@ count_preds_df.to_csv(os.path.join(output_path, "count_predictions_alt_and_ref.t
 
 #Store profile preds 
 pickle.dump(profile_preds, open(os.path.join(output_path,"profile_predictions.pkl"), "wb" )) 
+
+#Store profile shap 
+pickle.dump(profile_shap, open(os.path.join(output_path,"profile_shap.pkl"), "wb" )) 
+
+#Store count shap
+pickle.dump(count_shap, open(os.path.join(output_path,"count_shap.pkl"), "wb" )) 
 
 #Store variant scores
 final_scores_df=pd.DataFrame.from_dict(final_scores,orient='index')
