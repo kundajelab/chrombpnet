@@ -1,0 +1,44 @@
+October 8 log
+
+- running universal atac models on the 5 cell-lines accounting for counts
+
+October 9-11 log
+
+- run universal atac models - but retrain them in the background
+- run invivo mode for all cell lines with 128 filters and 4 dilations layers
+- invivo - all done  
+- retrain univ - all done
+- wrap up invivo footprinting
+
+October 12-14
+
+- dsqtl plots with new models
+- bqtl plots with new models
+
+October 14 log - running
+
+- train k562 invivo models with different threshold and 128 filters and 4 dilation layers
+- train a full-blown bpnet bias model on universal atac - at mnt location
+- train a full atac model on same threshold (min threshold)
+- get invivo hits on subsampled experiments
+- do variant analysis on gtex-variants form jesse
+- ATAC_10.14.2021_withinvivobias_500filts_mincount - 500filter, 8 dilation layers, with min count same as before (mincount/2)
+- ATAC_10.14.2021_withinvivobias - 128 filters, 4 dilation layers - np.quantile(0.1)//2
+
+TODO -
+
+- Get tracks for K562 ATAC and DNASE
+- do variant analysis on pu1 whole data
+- compare modisco hits across subsampled experiments
+
+October 17 -
+
+(post midnight)
+- k562 with 128 filters and 4 dilaton layers - mincount threshold - quantile //2
+- k562 with 256 filters and 4 dilaton layers - mincount threshold - quantile //2
+- k562 with 512 filters and 4 dilaton layers - mincount threshold - quantile // 2
+
+October 18 -
+
+- 
+
