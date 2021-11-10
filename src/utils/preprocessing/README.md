@@ -38,21 +38,21 @@ The following assumptions are made with this script - make changes accordingly i
 
 ##### PWM from unstranded ATAC bigwig with +4/-4 shift on forward/reverse strand respectively 
 
-![Image](images/atac_44_shift.jpg)
+![Image](images/atac_44_shift.png)
 
 ##### PWM from unstranded ATAC bigwig with +4/-5 shift on forward/reverse strand respectively
 
-![Image](images/atac_45_shift.jpg)
+![Image](images/atac_45_shift.png)
 
 
 ##### PWM from unstranded DNASE bigwig with no shift on forward/reverse strand respectively
 
-![Image](images/dnase_no_shift.jpg)
+![Image](images/dnase_no_shift.png)
 
 
 ##### PWM from unstranded DNASE bigwig with 0/+1 shift on forward/reverse strand respectively
 
-![Image](images/dnase_01_shift.jpg)
+![Image](images/dnase_01_shift.png)
 
 [url1]: https://github.com/ENCODE-DCC/atac-seq-pipeline
 [url2]: https://broadinstitute.github.io/picard/explain-flags.html
