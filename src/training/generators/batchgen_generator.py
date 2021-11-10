@@ -9,6 +9,8 @@ import math
 import os
 import json
 
+os.environ['PYTHONHASHSEED'] = '0'
+
 def subsample_nonpeak_data(nonpeak_seqs, nonpeak_cts, nonpeak_coords, peak_data_size, negative_sampling_ratio):
     #Randomly samples a portion of the non-peak data to use in training
     num_nonpeak_samples = int(negative_sampling_ratio * peak_data_size)
@@ -48,6 +50,7 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         self.batch_size = batch_size
         self.add_revcomp = add_revcomp
         self.return_coords = return_coords
+        self.seed=seed
 
 
         # random crop training data to the desired sizes, revcomp augmentation
@@ -60,28 +63,29 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
     def crop_revcomp_data(self):
         # random crop training data to inputlen and outputlen (with corresponding offsets), revcomp augmentation
         # shuffle required since otherwise peaks and nonpeaks will be together
-
         #Sample a fraction of the negative samples according to the specified ratio
-        if self.nonpeak_seqs is not None:
-            if self.negative_sampling_ratio<1.0:
-                self.sampled_nonpeak_seqs, self.sampled_nonpeak_cts, self.sampled_nonpeak_coords = subsample_nonpeak_data(self.nonpeak_seqs, self.nonpeak_cts, self.nonpeak_coords, len(self.peak_seqs), self.negative_sampling_ratio)
-                self.seqs = np.vstack([self.peak_seqs, self.sampled_nonpeak_seqs])
-                self.cts = np.vstack([self.peak_cts, self.sampled_nonpeak_cts])
-                self.coords = np.vstack([self.peak_coords, self.sampled_nonpeak_coords])
-            else:
-                self.seqs = np.vstack([self.peak_seqs, self.nonpeak_seqs])
-                self.cts = np.vstack([self.peak_cts, self.nonpeak_cts])
-                self.coords = np.vstack([self.peak_coords, self.nonpeak_coords])
-        else:
+
+        if (self.peak_seqs is not None) and (self.nonpeak_seqs is not None):
+            self.sampled_nonpeak_seqs, self.sampled_nonpeak_cts, self.sampled_nonpeak_coords = subsample_nonpeak_data(self.nonpeak_seqs, self.nonpeak_cts, self.nonpeak_coords, len(self.peak_seqs), self.negative_sampling_ratio)
+            self.seqs = np.vstack([self.peak_seqs, self.sampled_nonpeak_seqs])
+            self.cts = np.vstack([self.peak_cts, self.sampled_nonpeak_cts])
+            self.coords = np.vstack([self.peak_coords, self.sampled_nonpeak_coords])
+        elif self.peak_seqs is not None:
             self.seqs = self.peak_seqs
             self.cts = self.peak_cts
             self.coords = self.peak_coords
+        elif self.nonpeak_seqs is not None:
+            self.seqs = self.nonpeak_seqs
+            self.cts = self.nonpeak_cts
+            self.coords = self.nonpeak_coords
+        else :
+            print("Both peak and non-peak arrays are empty")
 
 
         if self.add_revcomp:
             self.cur_seqs, self.cur_cts, self.cur_coords = augment.crop_revcomp_augment(
                                              self.seqs, self.cts, self.coords, self.inputlen, self.outputlen, 
-                                             shuffle=True
+                                             seed=self.seed, shuffle=True
                                           )
         else:
             self.cur_seqs, self.cur_cts, self.cur_coords = self.seqs, self.cts, self.coords

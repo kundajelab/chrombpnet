@@ -51,7 +51,7 @@ def random_rev_comp(seqs, labels, frac=0.5):
 
     return seqs, labels
 
-def crop_revcomp_augment(seqs, labels, coords, seq_crop_width, label_crop_width, rc_frac=0.5, shuffle=False):
+def crop_revcomp_augment(seqs, labels, coords, seq_crop_width, label_crop_width, rc_frac=0.5, seed=1, shuffle=False):
     """
     seqs: B x IL x 4
     labels: B x OL
@@ -59,6 +59,7 @@ def crop_revcomp_augment(seqs, labels, coords, seq_crop_width, label_crop_width,
     Applies random crop to seqs and labels and reverse complements rc_frac. 
     """
 
+    np.random.seed(seed)
     assert(seqs.shape[0]==labels.shape[0])
 
     # this does not modify seqs and labels

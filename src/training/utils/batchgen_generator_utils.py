@@ -42,7 +42,7 @@ def get_coords(peaks_df):
     for i, r in peaks_df.iterrows():
         vals.append((r['chr'], r['start']+r['summit']))
 
-    return vals
+    return np.array(vals)
 
 def get_seq_cts_coords(peaks_df, genome, bw, input_width, output_width):
     seq = get_seq(peaks_df, genome, input_width)
@@ -69,8 +69,10 @@ def load_data(bed_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen,
 
     train_peaks_seqs=None
     train_peaks_cts=None
+    train_peaks_coords=None
     train_nonpeaks_seqs=None
     train_nonpeaks_cts=None
+    train_nonpeaks_coords=None
 
     if bed_regions is not None:
         train_peaks_seqs, train_peaks_cts, train_peaks_coords = get_seq_cts_coords(bed_regions,
@@ -78,6 +80,20 @@ def load_data(bed_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen,
                                               cts_bw,
                                               inputlen+2*max_jitter,
                                               outputlen+2*max_jitter)
+
+        if cts_sum_min_thresh.lower() !=  "none":
+            midpoint=(outputlen+2*max_jitter)//2
+            train_peaks_subset = train_peaks_cts[:,midpoint-outputlen//2:midpoint+outputlen//2].sum(-1) > float(cts_sum_min_thresh)
+            train_peaks_seqs = train_peaks_seqs[train_peaks_subset]
+            train_peaks_cts = train_peaks_cts[train_peaks_subset]
+            train_peaks_coords = train_peaks_coords[train_peaks_subset]
+
+        if cts_sum_max_thresh.lower() != "none":
+            midpoint=(outputlen+2*max_jitter)//2
+            train_peaks_subset = train_peaks_cts[:,midpoint-outputlen//2:midpoint+outputlen//2].sum(-1) < float(cts_sum_max_thresh)
+            train_peaks_seqs = train_peaks_seqs[train_peaks_subset]
+            train_peaks_cts = train_peaks_cts[train_peaks_subset]
+            train_peaks_coords = train_peaks_coords[train_peaks_subset]
     
     if nonpeak_regions is not None:
         train_nonpeaks_seqs, train_nonpeaks_cts, train_nonpeaks_coords = get_seq_cts_coords(nonpeak_regions,
@@ -86,34 +102,23 @@ def load_data(bed_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen,
                                               inputlen+2*max_jitter,
                                               outputlen+2*max_jitter)
 
+        if cts_sum_min_thresh.lower() !=  "none":
+            midpoint=(outputlen+2*max_jitter)//2
+            train_nonpeaks_subset = train_nonpeaks_cts[:,midpoint-outputlen//2:outputlen+outputlen//2].sum(-1) >= float(cts_sum_min_thresh)
+            train_nonpeaks_seqs = train_nonpeaks_seqs[train_nonpeaks_subset]
+            train_nonpeaks_cts = train_nonpeaks_cts[train_nonpeaks_subset]
+            train_nonpeaks_coords = train_nonpeaks_coords[train_nonpeaks_subset]
+
+        if cts_sum_max_thresh.lower() != "none":
+            midpoint=(outputlen+2*max_jitter)//2
+            train_nonpeaks_subset = train_nonpeaks_cts[:,midpoint-outputlen//2:outputlen+outputlen//2].sum(-1) <= float(cts_sum_max_thresh)
+            train_nonpeaks_seqs = train_nonpeaks_seqs[train_nonpeaks_subset]
+            train_nonpeaks_cts = train_nonpeaks_cts[train_nonpeaks_subset]
+            train_nonpeaks_coords = train_nonpeaks_coords[train_nonpeaks_subset]
+        
+
     cts_bw.close()
     genome.close()
-
-
-    if cts_sum_min_thresh.lower() !=  "none":
-        cts_sum_min_thresh  = float(cts_sum_min_thresh)
-        train_peaks_subset = train_peaks_cts.sum(-1) > cts_sum_min_thresh
-        train_nonpeaks_subset = train_nonpeaks_cts.sum(-1) > cts_sum_min_thresh
-       
-        train_peaks_seqs = train_peaks_seqs[train_peaks_subset]
-        train_peaks_cts = train_peaks_cts[train_peaks_subset]
-        train_peaks_coords = train_peaks_coords[train_peaks_subset]
-        train_nonpeaks_seqs = train_nonpeaks_seqs[train_nonpeaks_subset]
-        train_nonpeaks_cts = train_nonpeaks_cts[train_nonpeaks_subset]
-        train_nonpeaks_coords = train_nonpeaks_coords[train_nonpeaks_subset]
-
-    if cts_sum_max_thresh.lower() != "none":
-        cts_sum_max_thresh  = float(cts_sum_max_thresh)
-        train_peaks_subset = train_peaks_cts.sum(-1) < cts_sum_max_thresh
-        train_nonpeaks_subset = train_nonpeaks_cts.sum(-1) < cts_sum_max_thresh
-       
-        train_peaks_seqs = train_peaks_seqs[train_peaks_subset]
-        train_peaks_cts = train_peaks_cts[train_peaks_subset]
-        train_peaks_coords = train_peaks_coords[train_peaks_subset]
-        train_nonpeaks_seqs = train_nonpeaks_seqs[train_nonpeaks_subset]
-        train_nonpeaks_cts = train_nonpeaks_cts[train_nonpeaks_subset]
-        train_nonpeaks_coords = train_nonpeaks_coords[train_nonpeaks_subset]
-
 
     return (train_peaks_seqs, train_peaks_cts, train_peaks_coords,
             train_nonpeaks_seqs, train_nonpeaks_cts, train_nonpeaks_coords)

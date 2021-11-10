@@ -32,7 +32,6 @@ class MultichannelMultinomialNLL(object):
 
     def __call__(self, true_counts, logits):
         for i in range(self.n):
-            print(true_counts[..., i], logits[..., i])
             loss = multinomial_nll(true_counts[..., i], logits[..., i])
             #print(loss)
             if i == 0:
