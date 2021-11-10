@@ -15,7 +15,7 @@ The following assumptions are made with this script - make changes accordingly i
 - The ATAC input bams are +4 shifted on positive strand and -4 shifted on negative strand.
 - When PE is considered we used filtered bams. Filtered bams are obtained from the [ENCODE ATAC-seq pipeline][url1]. 
 - When SE is considered we start from unfiltered bams. We then use samtools flag `780` to do filtering. Refer to the following [link][url2] to understand what this flag means.
-- Scripts are run from the main `chrombpnet_paper` repo. You can run these scripts from within this directort - just updated the python paths in the script.
+- Scripts are assumed to be run from the main `chrombpnet_paper` repo. You can run these scripts from within this directory too - just update the python paths in the script.
 
 #### Input Format
 
@@ -28,6 +28,31 @@ The following assumptions are made with this script - make changes accordingly i
 
 - Generates a unstranded bigwig file with +4/-4 shift applied on ATAC datasets and 0/+1 shift applied on DNASE datasets.
 
+#### Disucssion
+
+- Wondering why we are using the  +4/-4 ATAC shift (instead of the popular +4/-5 ATAC shift) and 0/+1 DNASE shift (instead of the popular no shift)? Here we show you how a PWM built from unstranded bigwigs look like when considering different shifts. To convert bigwigs to PWM use the scripts provided in the `analysis/` directory.
+
+##### PWM from unstranded ATAC bigwig with no shift
+
+![Image](images/atac_no_shift.png)
+
+##### PWM from unstranded ATAC bigwig with +4/-4 shift on forward/reverse strand respectively 
+
+![Image](images/atac_44_shift.jpg)
+
+##### PWM from unstranded ATAC bigwig with +4/-5 shift on forward/reverse strand respectively
+
+![Image](images/atac_45_shift.jpg)
+
+
+##### PWM from unstranded DNASE bigwig with no shift on forward/reverse strand respectively
+
+![Image](images/dnase_no_shift.jpg)
+
+
+##### PWM from unstranded DNASE bigwig with 0/+1 shift on forward/reverse strand respectively
+
+![Image](images/dnase_01_shift.jpg)
 
 [url1]: https://github.com/ENCODE-DCC/atac-seq-pipeline
 [url2]: https://broadinstitute.github.io/picard/explain-flags.html
