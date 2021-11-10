@@ -15,6 +15,7 @@ The following assumptions are made with this script - make changes accordingly i
 - The ATAC input bams are +4 shifted on positive strand and -4 shifted on negative strand.
 - When PE is considered we used filtered bams. Filtered bams are obtained from the [ENCODE ATAC-seq pipeline][url1]. 
 - When SE is considered we start from unfiltered bams. We then use samtools flag `780` to do filtering. Refer to the following [link][url2] to understand what this flag means.
+- Scripts are run from the main `chrombpnet_paper` repo. You can run these scripts from within this directort - just updated the python paths in the script.
 
 #### Input Format
 
