@@ -36,7 +36,7 @@ The following assumptions are made with this script - make changes accordingly i
 
 ### Wondering why we are using the  +4/-4 ATAC shift (instead of the popular +4/-5 ATAC shift) and 0/+1 DNASE shift (instead of the popular no shift)? 
 
-Here we show you what a PWM built from unstranded bigwigs look like when considering different shifts. To convert bigwigs to PWM use the scripts provided in the `analysis/` directory. From the below images we see that the signal on forward and revere strand reinforce themselves when we consider +4/-4 shift giving us the Tn5/DNASE-I bias motif PWM that we know of in literature (Figure 1 in HINT-ATAC [url3] paper).
+Here we show you what a PWM built from unstranded bigwigs look like when considering different shifts. To convert bigwigs to PWM use the scripts provided in the `analysis/` directory. From the below images we see that the signal on forward and revere strand reinforce themselves when we consider +4/-4 shift giving us the Tn5/DNASE-I bias motif PWM that we know of in literature ([Figure 1 in HINT-ATAC] [url3] paper).
 
 
 #### PWM from unstranded ATAC bigwig with no shift
