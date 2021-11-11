@@ -9,7 +9,7 @@ def parse_args():
     parser.add_argument("-g","--ref_fasta", help="reference genome file")
     parser.add_argument("-c","--chrom_sizes", help="chromosome sizes file for reference genome (contains chr and chrom size seperated by tab)")
     parser.add_argument("-o","--out_prefix", help="output prefix path to store the gc content of binned genome")
-    parser.add_argument("-f","--flank_size",type=int,default=1057, help="flank size to use to find gc content")
+    parser.add_argument("-f","--inputlen",type=int,default=2114, help="inputlen to use to find gc content")
     parser.add_argument("-s","--stride",type=int,default=50, help="stride to use for shifting the bins")
     return parser.parse_args()
 
@@ -24,12 +24,12 @@ def main():
         print(chrom) 
         chrom_size=row[1]
         for bin_start in tqdm(range(0,chrom_size,args.stride)):
-            bin_end=bin_start+2*args.flank_size
+            bin_end=bin_start+args.inputlen
             seq=ref.fetch(chrom,bin_start,bin_end).upper()
             g=seq.count('G')
             c=seq.count('C')
             gc=g+c
-            fract=round(gc/(2*args.flank_size),2)
+            fract=round(gc/(args.inputlen),2)
             region_dict[tuple([chrom,bin_start,bin_end])]=fract
 
     #generate pandas df from dict
