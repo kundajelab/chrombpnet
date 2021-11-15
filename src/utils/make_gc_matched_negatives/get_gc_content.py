@@ -15,6 +15,7 @@ def main():
     args=parse_args()
     ref=pysam.FastaFile(args.genome)
     data=pd.read_csv(args.input_bed,header=0,sep='\t')
+    assert(args.inputlen%2 == 0) # for symmtery
 
     num_rows=str(data.shape[0])
     print("num_rows:"+num_rows) 
@@ -26,8 +27,8 @@ def main():
         end=row[2] 
 
         summit=start+row[9]
-        start=summit-args.inputlen
-        end=summit+args.inputlen
+        start=summit-args.inputlen//2
+        end=summit+args.inputlen//2
 
         # calculate gc content when centered at summit
         seq=ref.fetch(chrom,start,end).upper()
