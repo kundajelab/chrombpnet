@@ -82,7 +82,6 @@ if __name__=="__main__":
     used_negatives=dict()
     cur_peaks=pd.read_csv(args.foreground_gc_bed,header=None,sep='\t')
     negatives_bed = []
-    outf=open(args.out_prefix,'w')
     print(len(list(cur_peaks.iterrows())))
     for index,row in tqdm(list(cur_peaks.iterrows())): 
         chrom=row[0]
@@ -106,6 +105,6 @@ if __name__=="__main__":
         negatives_bed.append([neg_chrom,int(neg_start),int(neg_end), cur_gc])        
        
     negatives_bed = pd.DataFrame(negatives_bed)
-    negatives_bed.to_csv(args.out_prefix, sep='\t', index=False, header=False, quoting=csv.QUOTE_NONE)
+    negatives_bed.to_csv(args.output_prefix, sep='\t', index=False, header=False, quoting=csv.QUOTE_NONE)
 
     
