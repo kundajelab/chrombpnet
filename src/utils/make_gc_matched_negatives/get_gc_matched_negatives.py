@@ -8,7 +8,7 @@ def parse_args():
     parser=argparse.ArgumentParser(description="generate a bed file of non-peak regions that are gc-matched with foreground")
     parser.add_argument("-c","--candidate_negatives",help="candidate negatives bed file with gc content in 4th column rounded to 2 decimals")
     parser.add_argument("-f","--foreground_gc_bed", help="regions with their corresponding gc fractions for matching, 4th column has gc content value rounded to 2 decimals")
-    parser.add_argument("-o","--out_prefix", help="gc-matched non-peaks output file name")
+    parser.add_argument("-o","--output_prefix", help="gc-matched non-peaks output file name")
     return parser.parse_args()
 
 def make_gc_dict(candidate_negatives):
