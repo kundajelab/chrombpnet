@@ -12,7 +12,7 @@ def parse_args():
     parser.add_argument("-g", "--genome", required=True, help="reference genome fasta")
     parser.add_argument("-o", "--output_prefix", required=True,  help="output dir for storing pwm")
     parser.add_argument("-c","--chr",type=str, required=True, help="chromosome to build pwm, the name should be present in the chrom sizes file and bigwig you will provide")
-    parser.add_argument("-cz","--chrom_sizes_file",type=str, required=True, help="TSV file with chromosome name in first column and size in the second column")
+    parser.add_argument("-cz","--chrom_sizes",type=str, required=True, help="TSV file with chromosome name in first column and size in the second column")
     parser.add_argument("-pw","--pwm_width",type=int, default=24, required=False, help="width of pwm matrix")
     return parser.parse_args()
 
@@ -49,7 +49,7 @@ if __name__=="__main__":
 
     ## find given chromosome size
 
-    chrom_sizes_dict = {line.strip().split("\t")[0]:int(line.strip().split("\t")[1]) for line in open(args.chrom_sizes_file).readlines()}
+    chrom_sizes_dict = {line.strip().split("\t")[0]:int(line.strip().split("\t")[1]) for line in open(args.chrom_sizes).readlines()}
     chr_size = chrom_sizes_dict[args.chr]
 
     # fetch values in the given chromsome and for the given chromsome region
