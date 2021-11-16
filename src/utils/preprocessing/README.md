@@ -19,7 +19,7 @@ The following assumptions are made with this script - make changes accordingly i
 - The ATAC input bams are +4 shifted on positive strand and -4 shifted on negative strand.
 - When PE is considered we used **filtered bams**. Filtered bams are obtained from the [ENCODE ATAC-seq pipeline][url1]. 
 - When SE is considered we start from **unfiltered bams**. We then use samtools flag `780` to do filtering. Refer to the following [link][url2] to understand what this flag means.
-- To understand the intuition behind performing this different filtering step on SE and PE please refer to the discussion section [below](#what-is-the-intuition-behind-performing-the-different-filtering-step-on-pe-and-se?). 
+- To understand the intuition behind performing this different filtering step on SE and PE please refer to the discussion section [below](#discussion). 
 - The script generates an unstranded bigwig - that is forward and reverse strand are not considered seperately but are combined into one.
 
 ## Example Usage
