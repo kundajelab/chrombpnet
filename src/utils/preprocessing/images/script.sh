@@ -17,7 +17,7 @@ echo "Generate images for dnase with no shift"
 samtools view -b -@50 -F780 -q30  out.bam | bedtools bamtobed -i stdin | awk -v OFS="\t" '{if ($6=="-"){print $1,$2,$3,$4,$5,$6} else if ($6=="+") {print $1,$2,$3,$4,$5,$6}}' | bedtools genomecov -bg -5 -i stdin -g $chrom_sizes | bedtools sort -i stdin > tmp2
 bedGraphToBigWig tmp2 $chrom_sizes shifted.sorted.bam.chrombpnet.unstranded.bw
 rm tmp2
-python ../analysis/build_pwm_from_bigwig.py -i  shifted.sorted.bam.chrombpnet.unstranded.bw -i shifted.sorted.bam.chrombpnet.unstranded.bw -g $genome -o dnase_no_shift.png -c "chr20" -cz 64444167 
+python ../analysis/build_pwm_from_bigwig.py -i  shifted.sorted.bam.chrombpnet.unstranded.bw -i shifted.sorted.bam.chrombpnet.unstranded.bw -g $genome -o dnase_no_shift.png -c "chr20" -cz /mnt/data/annotations/by_release/hg38/hg38.chrom.sizes 
 rm shifted.sorted.bam.chrombpnet.unstranded.bw
 
 
@@ -26,7 +26,7 @@ echo "Generate images for dnase with 0/1 shift"
 samtools view -b -@50 -F780 -q30  out.bam | bedtools bamtobed -i stdin | awk -v OFS="\t" '{if ($6=="-"){print $1,$2,$3+1,$4,$5,$6} else if ($6=="+") {print $1,$2,$3,$4,$5,$6}}' | bedtools genomecov -bg -5 -i stdin -g $chrom_sizes | bedtools sort -i stdin > tmp2
 bedGraphToBigWig tmp2 $chrom_sizes shifted.sorted.bam.chrombpnet.unstranded.bw
 rm tmp2
-python ../analysis/build_pwm_from_bigwig.py -i  shifted.sorted.bam.chrombpnet.unstranded.bw -i shifted.sorted.bam.chrombpnet.unstranded.bw -g $genome -o dnase_01_shift.png -c "chr20" -cz 64444167 
+python ../analysis/build_pwm_from_bigwig.py -i  shifted.sorted.bam.chrombpnet.unstranded.bw -i shifted.sorted.bam.chrombpnet.unstranded.bw -g $genome -o dnase_01_shift.png -c "chr20" -cz /mnt/data/annotations/by_release/hg38/hg38.chrom.sizes 
 rm shifted.sorted.bam.chrombpnet.unstranded.bw
 
 rm out.bam
@@ -41,7 +41,7 @@ echo "Generate images for atac with no shift"
 samtools view -b -@50 out.bam | bedtools bamtobed -i stdin | awk -v OFS="\t" '{if ($6=="-"){print $1,$2,$3,$4,$5,$6} else if ($6=="+") {print $1,$2,$3,$4,$5,$6}}' | bedtools genomecov -bg -5 -i stdin -g $chrom_sizes | bedtools sort -i stdin > tmp2
 bedGraphToBigWig tmp2 $chrom_sizes shifted.sorted.bam.chrombpnet.unstranded.bw
 rm tmp2
-python ../analysis/build_pwm_from_bigwig.py -i  shifted.sorted.bam.chrombpnet.unstranded.bw -i shifted.sorted.bam.chrombpnet.unstranded.bw -g $genome -o atac_no_shift.png -c "chr20" -cz 64444167 
+python ../analysis/build_pwm_from_bigwig.py -i  shifted.sorted.bam.chrombpnet.unstranded.bw -i shifted.sorted.bam.chrombpnet.unstranded.bw -g $genome -o atac_no_shift.png -c "chr20" -cz /mnt/data/annotations/by_release/hg38/hg38.chrom.sizes 
 rm shifted.sorted.bam.chrombpnet.unstranded.bw
 
 
@@ -50,7 +50,7 @@ echo "Generate images for dnase with +4/-4 shift"
 samtools view -b -@50 out.bam | bedtools bamtobed -i stdin | awk -v OFS="\t" '{if ($6=="-"){print $1,$2,$3-4,$4,$5,$6} else if ($6=="+") {print $1,$2+4,$3,$4,$5,$6}}' | bedtools genomecov -bg -5 -i stdin -g $chrom_sizes | bedtools sort -i stdin > tmp2
 bedGraphToBigWig tmp2 $chrom_sizes shifted.sorted.bam.chrombpnet.unstranded.bw
 rm tmp2
-python ../analysis/build_pwm_from_bigwig.py -i  shifted.sorted.bam.chrombpnet.unstranded.bw -i shifted.sorted.bam.chrombpnet.unstranded.bw -g $genome -o atac_44_shift.png -c "chr20" -cz 64444167 
+python ../analysis/build_pwm_from_bigwig.py -i  shifted.sorted.bam.chrombpnet.unstranded.bw -i shifted.sorted.bam.chrombpnet.unstranded.bw -g $genome -o atac_44_shift.png -c "chr20" -cz /mnt/data/annotations/by_release/hg38/hg38.chrom.sizes 
 rm shifted.sorted.bam.chrombpnet.unstranded.bw
 
 
@@ -59,7 +59,7 @@ echo "Generate images for dnase with +4/-5 shift"
 samtools view -b -@50 out.bam | bedtools bamtobed -i stdin | awk -v OFS="\t" '{if ($6=="-"){print $1,$2,$3-5,$4,$5,$6} else if ($6=="+") {print $1,$2+4,$3,$4,$5,$6}}' | bedtools genomecov -bg -5 -i stdin -g $chrom_sizes | bedtools sort -i stdin > tmp2
 bedGraphToBigWig tmp2 $chrom_sizes shifted.sorted.bam.chrombpnet.unstranded.bw
 rm tmp2
-python ../analysis/build_pwm_from_bigwig.py -i  shifted.sorted.bam.chrombpnet.unstranded.bw -i shifted.sorted.bam.chrombpnet.unstranded.bw -g $genome -o atac_45_shift.png -c "chr20" -cz 64444167 
+python ../analysis/build_pwm_from_bigwig.py -i  shifted.sorted.bam.chrombpnet.unstranded.bw -i shifted.sorted.bam.chrombpnet.unstranded.bw -g $genome -o atac_45_shift.png -c "chr20" -cz /mnt/data/annotations/by_release/hg38/hg38.chrom.sizes 
 rm shifted.sorted.bam.chrombpnet.unstranded.bw
 
 rm out.bam
