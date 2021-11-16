@@ -7,7 +7,12 @@ The following scripts will be used in ChromBPNet to ensure that the bigwigs are 
 Build a PWM matrix centering at the non-zero entries in a bigwig. 
 
 ```
-python build_pwm_from_bigwig.py [bigwig] [genome] [output_prefix] [chr] [chr_size] [pwm_width]
+python build_pwm_from_bigwig.py -i [bigwig] -g [genome] -o [output_prefix] -c [chr] -cz [chrom_sizes_file] -pw [pwm_width]
+```
+## Example Usage
+
+```
+python build_pwm_from_bigwig.py -i unstranded.bw -g GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta -o /path/name_of_pwm.png -c chr20 -cz  hg38.chrom.sizes -pw 24
 ```
 
 ## Input
@@ -15,10 +20,11 @@ python build_pwm_from_bigwig.py [bigwig] [genome] [output_prefix] [chr] [chr_siz
 - bigwig: Path to ATAC/DNASE data in bigwig format
 - genome: Path to reference genome fasta
 - output_prefix: Output prefix path to use for image storage. If prefix includes a directory path make sure it already exists.
-- chr: A string value of chromsome to use to build a pwm
-- chr_size: An integer value of size of the chromsome to be used for building the PWM. The user should make sure that this size wont exceed the chromsome size length.
+- chr: A string value of chromsome to use to build a pwm. This name should be present in both the bigwig file and also should be present in column one of the `chrom_sizes_file`
+- chrom_sizes_file: Path to a TSV file that has chromosomes in the first column and their sizes in the second column.
 - pwm_width: An integer value of PWM width to consider. This defaults to 24.
 
 ## Output
 
 Output an PWM image file with the name `output_prefix`.
+

@@ -2,9 +2,9 @@
 
 The following scripts in this folder are some pre-processing steps to train chrombpnet models
 
-## Requiremnts
+## Requirements
 
-To run these scripts you will need the `samtools` and `bedGraphToBigWig` (from ucsc) tools.
+To run these scripts you will need the `samtools` and `bedGraphToBigWig` (from ucsc) tools. These scripts are currently tested **only for bulk ATAC-seq**. If you want to use these for sc-ATAC please make appropriate changes. I will try to add scripts that will work with sc-ATAC soon.
 
 ## Bam to Bigwig (+4/-4 shift for ATAC and 0/+1 shift for DNASE)
 
@@ -17,9 +17,16 @@ The following assumptions are made with this script - make changes accordingly i
 - PE stands for paired-end and SE stands for single-end.
 - The DNASE input bams are +1 shifted on negative strand.
 - The ATAC input bams are +4 shifted on positive strand and -4 shifted on negative strand.
-- When PE is considered we used filtered bams. Filtered bams are obtained from the [ENCODE ATAC-seq pipeline][url1]. 
-- When SE is considered we start from unfiltered bams. We then use samtools flag `780` to do filtering. Refer to the following [link][url2] to understand what this flag means.
+- When PE is considered we used **filtered bams**. Filtered bams are obtained from the [ENCODE ATAC-seq pipeline][url1]. 
+- When SE is considered we start from **unfiltered bams**. We then use samtools flag `780` to do filtering. Refer to the following [link][url2] to understand what this flag means.
+- To understand the intuition behind performing this different filtering step on SE and PE please refer to the discussion section [below](#what-is-the-intuition-behind-performing-the-different-filtering-step-on-pe-and-se?). 
 - The script generates an unstranded bigwig - that is forward and reverse strand are not considered seperately but are combined into one.
+
+## Example Usage
+
+```
+bash bam_to_bigwig.sh input.bam /path/to/dir/ ATAC_PE hg38.chrom.sizes
+```
 
 ## Input Format
 
