@@ -23,7 +23,7 @@ The following assumptions are made with this script - make changes accordingly i
 ## Example Usage
 
 ```
-python snp_scoring.py -i /mnt/lab_data2/anusri/variant_effect_prediction_example/subsample_test.csv -g /mnt/data/male.hg19.fa -m /path/to/model.hdf5 -o /path/to/store/output -bs 64
+python snp_scoring.py -i /mnt/lab_data2/anusri/variant_effect_prediction_example/subsample_test.csv -g /mnt/data/male.hg19.fa -m /path/to/model.hdf5 -o /path/to/store/output -bs 64 -dm 0
 ```
 
 ## Input Format
