@@ -12,4 +12,5 @@
 results
 experimental_scripts
 tracks
-/src/models/main_scripts/script.sh
+needs_cleanup
+gtex_variants
