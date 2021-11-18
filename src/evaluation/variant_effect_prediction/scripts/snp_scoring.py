@@ -19,6 +19,7 @@ def fetch_variant_args():
     parser.add_argument("-m","--model_h5", type=str, required=True, help="Path to model hdf5")
     parser.add_argument("-o","--output_dir", type=str, required=True, help="Path to storing snp effect score predictions from the script, directory should already exist")
     parser.add_argument("-bs","--batch_size", type=int, default=64, help="Batch size to use for model")
+    parser.add_argument("-dm","--debug_mode_on", type=int, default=0, help="Use this mode to print the flanks of first five SNP insert locations")
     args = parser.parse_args()
     return args
 
@@ -31,11 +32,10 @@ def load_model_wrapper(args):
     custom_objects={"MultichannelMultinomialNLL": losses.MultichannelMultinomialNLL}    
     get_custom_objects().update(custom_objects)    
     model=load_model(args.model_h5)
-    print("got the model")
-    model.summary()
+    print("model loaded succesfully")
     return model
 
-def fetch_snp_predictions(snp_regions, inputlen, genome_fasta, batch_size):
+def fetch_snp_predictions(snp_regions, inputlen, genome_fasta, batch_size, debug_mode_on=False):
     '''
     Returns model predictions (counts and profile probability predictions) at the given reference and alternate snp alleles.
     Please note that if the SNP location is at the edge - i.e we are unable to form a given inputlen of sequence - we skip predictions at this SNP
@@ -64,7 +64,8 @@ def fetch_snp_predictions(snp_regions, inputlen, genome_fasta, batch_size):
     snp_gen=SNPGenerator(snp_regions=snp_regions,
                         inputlen=inputlen,
                         genome_fasta=genome_fasta,
-                        batch_size=batch_size)
+                        batch_size=batch_size,
+                        debug_mode_on=debug_mode_on)
 
     for i in range(len(snp_gen)):
 
@@ -97,10 +98,8 @@ def predict_snp_effect_scores(rsids, ref_count_preds, alt_count_preds, ref_prob_
         log_counts_diff: difference in log count predictions of alternate and reference allele (N,)
         log_probs_diff_abs_sum: Sum of absolute difference in log probability prediction of alternate and reference allele per base. (N,)
         probs_jsd_diff: Jensenshannon distance between probability predictions of alternate and reference allele (N,)
-  
     '''
     log_counts_diff = alt_count_preds - ref_count_preds
-    print(np.abs(np.log(alt_prob_preds) -  np.log(ref_prob_preds)).shape)
     log_probs_diff_abs_sum =  np.sum(np.abs(np.log(alt_prob_preds) -  np.log(ref_prob_preds)),axis=1)
     probs_jsd_diff = np.array([jensenshannon(x,y) for x,y in zip(alt_prob_preds, ref_prob_preds)])
 
@@ -110,32 +109,37 @@ def predict_snp_effect_scores(rsids, ref_count_preds, alt_count_preds, ref_prob_
 if __name__=="__main__":
 
     args = fetch_variant_args()
+    debug_mode_on = args.debug_mode_on
 
     # load the model
     model = load_model_wrapper(args)
 
     # load the snp data
     snp_regions=pd.read_csv(args.snp_data,header=None,sep='\t', names=SNP_SCHEMA)
-    snp_regions['RSID']=snp_regions['CHR'].astype(str)+'_'+snp_regions['POS0'].astype(str)+'_'+snp_regions['REF'].astype(str)+'_'+snp_regions['ALT'].astype('str')
-    print(snp_regions.head())
+    snp_regions["META_DATA"].fillna('', inplace=True)
+    snp_regions['RSID']=snp_regions['CHR'].astype(str)+'_'+snp_regions['POS0'].astype(str)+'_'+snp_regions['REF'].astype(str)+'_'+snp_regions['ALT'].astype('str')+"_"+snp_regions['META_DATA'].astype('str')
+    print("printing first 5 rows of the input SNP data provided..")
+    print(snp_regions.head(5))
+
+    if debug_mode_on:
+        snp_regions = snp_regions.head(5)
 
     # infer input length
     inputlen=model.input_shape[1]
     print("input length inferred from the model: ", inputlen)
 
     # fetch model prediction on snps
-    rsids, ref_logcount_preds, alt_logcount_preds, ref_prob_preds, alt_prob_preds = fetch_snp_predictions(snp_regions, inputlen, args.genome, args.batch_size)
+    rsids, ref_logcount_preds, alt_logcount_preds, ref_prob_preds, alt_prob_preds = fetch_snp_predictions(snp_regions, inputlen, args.genome, args.batch_size, debug_mode_on)
 
     # find varaint effect scores at snps
     log_counts_diff, log_probs_diff_abs_sum, probs_jsd_diff = predict_snp_effect_scores(rsids, ref_logcount_preds, alt_logcount_preds, ref_prob_preds, alt_prob_preds)
 
     # unpack rsids to write outputs and write score to output
     snp_effect_scores_pd=pd.DataFrame()
-    snp_effect_scores_pd[["CHR", "POS0", "REF", "ALT"]] = pd.Series(rsids).str.split('_', expand=True)
+    snp_effect_scores_pd[["CHR", "POS0", "REF", "ALT", "META_DATA"]] = pd.Series(rsids).str.split('_', expand=True)
     snp_effect_scores_pd["log_counts_diff"] = log_counts_diff
     snp_effect_scores_pd["log_probs_diff_abs_sum"] = log_probs_diff_abs_sum
     snp_effect_scores_pd["probs_jsd_diff"] = probs_jsd_diff
-    snp_effect_scores_pd["META_DATA"] = [snp_regions[snp_regions["RSID"]==rsid]["META_DATA"].values[0] for rsid in rsids]
 
     snp_effect_scores_pd.to_csv(os.path.join(args.output_dir, "variant_scores.tsv"), sep="\t", index=False)
 

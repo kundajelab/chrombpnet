@@ -10,13 +10,15 @@ class SNPGenerator(Sequence):
                  snp_regions,
                  inputlen,
                  genome_fasta,
-                 batch_size=50):
+                 batch_size=50,
+                 debug_mode_on=False):
 
         self.snp_regions=snp_regions
         self.num_snps=self.snp_regions.shape[0]
         self.inputlen=inputlen
         self.batch_size=batch_size
         self.genome=pyfaidx.Fasta(genome_fasta)
+        self.debug_mode_on=debug_mode_on
 
     def __getitem__(self,idx):
         
@@ -33,7 +35,9 @@ class SNPGenerator(Sequence):
             cur_pos=int(entry["POS0"])
             ref_snp=str(entry["REF"])
             alt_snp=str(entry["ALT"])
-            rsid=cur_chrom+"_"+str(cur_pos)+"_"+ref_snp+"_"+alt_snp
+            meta=str(entry["META_DATA"])
+
+            rsid=cur_chrom+"_"+str(cur_pos)+"_"+ref_snp+"_"+alt_snp+"_"+meta
 
             # get all regions left of snp insert locus
             left_flank_start=max([0,cur_pos-flank_size])
@@ -48,6 +52,11 @@ class SNPGenerator(Sequence):
             # insert snp
             cur_ref_seq=left_flank+ref_snp+right_flank
             cur_alt_seq=left_flank+alt_snp+right_flank
+
+            if self.debug_mode_on:
+                print("CHR_POS_REF_ALT_META : " + cur_chrom+"_"+str(cur_pos)+"_"+ref_snp+"_"+alt_snp+"_"+meta + "\n")
+                print("reference/alternate allele right flank : " +  right_flank + "\n")
+                print("reference/alternate allele left flank : " + left_flank + "\n")
            
             if len(cur_ref_seq) != self.inputlen or len(cur_alt_seq) != self.inputlen:
                 print("Exception input size is not 2114 - skipping snp")
