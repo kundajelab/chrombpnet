@@ -23,7 +23,7 @@ The following assumptions are made with this script - make changes accordingly i
 ## Example Usage
 
 ```
-python snp_scoring.py -i /mnt/lab_data2/anusri/variant_effect_prediction_example/subsample_test.csv -g /mnt/data/male.hg19.fa -m /path/to/model.hdf5 -o /path/to/store/output -bs 64 -dm 0
+python snp_scoring.py -i /mnt/lab_data2/anusri/variant_effect_prediction_example/subsample_test.csv -g /mnt/data/male.hg19.fa -m /path/to/model.hdf5 -o /path/to/store/output -bs 64
 ```
 
 ## Input Format
@@ -36,7 +36,7 @@ python snp_scoring.py -i /mnt/lab_data2/anusri/variant_effect_prediction_example
 - model_hdf5: Model in hdf5 format.
 - output_dir: Directory to store the output files. Make sure the directory already exists. The code generates two output files described below in output format section.
 - batch_size: Batch size to use for model predictions.
-- debug_mode_on: Takes a value of 1 or 0. This is by default set to 0. When this is set to 1 the code prints to the console the right and left flank of the locus where the SNP is being inserted in. We do this for the first 5 SNPs in `snp_data_tsv`. You can check if these flanks match with the flanks as reported in existing databases such as dbSNP (https://www.ncbi.nlm.nih.gov/snp/).
+- debug_mode_on: Takes a value of 1 or 0. This is by default set to 0. When set to 1 we score only the first 5 SNPs in `snp_data_tsv`. In addition we also print to the console the right and left flank of the locus where the SNP is being inserted in. You can check if these flanks match with the flanks as reported in existing databases such as dbSNP (https://www.ncbi.nlm.nih.gov/snp/). If it does not your position values in `snp_data_tsv` will need correction.
 
 
 ## Output Format

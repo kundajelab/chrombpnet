@@ -45,6 +45,7 @@ def fetch_snp_predictions(snp_regions, inputlen, genome_fasta, batch_size, debug
         inputlen: integer representing the input length to use, snp is inserted in the middle
         genome_fasta: path to reference genome
         batch_size: integer value with batch size to use for the model
+        debug_mode_on: Takes 0/1 value. Set this  to 1 to print the flanks of first five SNP insert locations. Predictions will be provided only on the these 5 locations.
     
     Returns:
        rsids: Numpy array with (N,) SNP ids. SNP id is a string with the following values "CHR", "POS0", "REF", "ALT" concatenated with delimiter "_". 
