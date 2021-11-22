@@ -101,8 +101,8 @@ def predict_snp_effect_scores(rsids, ref_count_preds, alt_count_preds, ref_prob_
         probs_jsd_diff: Jensenshannon distance between probability predictions of alternate and reference allele (N,)
     '''
     log_counts_diff = alt_count_preds - ref_count_preds
-    log_probs_diff_abs_sum =  np.sum(np.abs(np.log(alt_prob_preds) -  np.log(ref_prob_preds)),axis=1)
-    probs_jsd_diff = np.array([jensenshannon(x,y) for x,y in zip(alt_prob_preds, ref_prob_preds)])
+    log_probs_diff_abs_sum =  np.sum(np.abs(np.log(alt_prob_preds) -  np.log(ref_prob_preds)),axis=1)*np.sign(log_counts_diff)
+    probs_jsd_diff = np.array([jensenshannon(x,y) for x,y in zip(alt_prob_preds, ref_prob_preds)])*np.sign(log_counts_diff)
 
     return log_counts_diff, log_probs_diff_abs_sum, probs_jsd_diff
 
@@ -142,7 +142,7 @@ if __name__=="__main__":
     snp_effect_scores_pd["log_probs_diff_abs_sum"] = log_probs_diff_abs_sum
     snp_effect_scores_pd["probs_jsd_diff"] = probs_jsd_diff
 
-    snp_effect_scores_pd.to_csv(os.path.join(args.output_dir, "variant_scores.tsv"), sep="\t", index=False)
+    snp_effect_scores_pd.to_csv(os.path.join(args.output_dir, "snp_scores.tsv"), sep="\t", index=False)
 
     # store predictions at snps too - can compute variant effect metrics of your interest - let me know if you find something interesting :)
     data={}
