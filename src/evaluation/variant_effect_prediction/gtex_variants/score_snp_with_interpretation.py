@@ -30,12 +30,15 @@ flank=500
 
 ## load data
 
-ref_file="/mnt/data/male.hg19.fa"
+#ref_file="/mnt/data/male.hg19.fa"
+ref_file="/mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta"
 inpath = os.path.join(output_path, "formatted.csv")
 
-snps=pd.read_csv("/mnt/lab_data3/anusri/histone_expts/all_qtl_analysis/gtex_variants/LCL.variants.hg38.full.tsv",header=0,sep='\t')
-snps["Chr"]=snps["chr.19"]
-snps["Pos0"]=snps["start.19"]
+snps_old=pd.read_csv("/mnt/lab_data3/anusri/histone_expts/all_qtl_analysis/gtex_variants/LCL.variants.hg38.full.tsv",header=0,sep='\t')
+
+snps=pd.read_csv("temp.intersect.atac.bed",names=snps_old.columns,sep='\t')
+snps["Chr"]=snps["chr.38"]
+snps["Pos0"]=snps["start.38"]
 snps["POSTallele"]=snps["ref"]
 snps["ALTallele"]=snps["alt"]
 print(snps.shape)

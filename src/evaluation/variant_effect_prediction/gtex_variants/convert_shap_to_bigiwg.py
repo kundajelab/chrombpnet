@@ -43,6 +43,32 @@ def main():
     ref_count_shap.addHeader(chromsizes)
     alt_count_shap=pyBigWig.open(os.path.join(args.output_dir,'count_shap_alt.bw'),'w')
     alt_count_shap.addHeader(chromsizes)
+
+    ref_allele_bw=pyBigWig.open(os.path.join(args.output_dir,'ref_allele.bw'),'w')
+    ref_allele_bw.addHeader(chromsizes)
+    alt_allele_bw=pyBigWig.open(os.path.join(args.output_dir,'alt_allele.bw'),'w')
+    alt_allele_bw.addHeader(chromsizes)
+
+    ref_profile1_bw=pyBigWig.open(os.path.join(args.output_dir,'profile1_ref.bw'),'w')
+    ref_profile1_bw.addHeader(chromsizes)
+    alt_profile1_bw=pyBigWig.open(os.path.join(args.output_dir,'profile1_alt.bw'),'w')
+    alt_profile1_bw.addHeader(chromsizes)
+    diff_profile1_bw=pyBigWig.open(os.path.join(args.output_dir,'profile1_diff.bw'),'w')
+    diff_profile1_bw.addHeader(chromsizes)
+    ref_profile1_shap=pyBigWig.open(os.path.join(args.output_dir,'profile1_shap_ref.bw'),'w')
+    ref_profile1_shap.addHeader(chromsizes)
+    alt_profile1_shap=pyBigWig.open(os.path.join(args.output_dir,'profile1_shap_alt.bw'),'w')
+    alt_profile1_shap.addHeader(chromsizes)
+    ref_count1_shap=pyBigWig.open(os.path.join(args.output_dir,'count1_shap_ref.bw'),'w')
+    ref_count1_shap.addHeader(chromsizes)
+    alt_count1_shap=pyBigWig.open(os.path.join(args.output_dir,'count1_shap_alt.bw'),'w')
+    alt_count1_shap.addHeader(chromsizes)
+
+
+    ref_allele1_bw=pyBigWig.open(os.path.join(args.output_dir,'ref_allele1.bw'),'w')
+    ref_allele1_bw.addHeader(chromsizes)
+    alt_allele1_bw=pyBigWig.open(os.path.join(args.output_dir,'alt_allele1.bw'),'w')
+    alt_allele1_bw.addHeader(chromsizes)
     
     prev_chr=""
     keys = count_preds["rsid"].values
@@ -56,10 +82,11 @@ def main():
         chrom=temp[0]
         Pos0=int(temp[1])
         prof_flank=500
-        shap_flank=500
+        shap_flank=1057
         curr_chrom=chrom
         if prev_chr != curr_chrom:
             cur_pos=0
+            cur_pos_1=0
             prev_chr=curr_chrom
 
         ref_profile_prof = np.array(softmax(profile_preds[key]['ref'][:,0],axis=0))
@@ -82,7 +109,7 @@ def main():
         #print(profile_shap_ref.shape)
         #print(cur_pos)
         #print(Pos0-int(prof_flank))
-        if Pos0-int(prof_flank) >= cur_pos:
+        if Pos0-int(shap_flank) >= cur_pos:
             ref_profile_bw.addEntries(chrom,Pos0-int(prof_flank),values=ref_profile,span=1,step=1)
             alt_profile_bw.addEntries(chrom,Pos0-int(prof_flank),values=alt_profile,span=1,step=1)
             diff_profile_bw.addEntries(chrom,Pos0-int(prof_flank),values=diff_prof_ref_alt,span=1,step=1)
@@ -90,18 +117,19 @@ def main():
             alt_profile_shap.addEntries(chrom,Pos0-int(shap_flank),values=profile_shap_alt[1057-shap_flank:1057+shap_flank],span=1,step=1)
             ref_count_shap.addEntries(chrom,Pos0-int(shap_flank),values=count_shap_ref[1057-shap_flank:1057+shap_flank],span=1,step=1)
             alt_count_shap.addEntries(chrom,Pos0-int(shap_flank),values=count_shap_alt[1057-shap_flank:1057+shap_flank],span=1,step=1)
-            cur_pos = Pos0 + int(prof_flank)
+            cur_pos = Pos0 + int(shap_flank)
         else:
-            offset=cur_pos-(Pos0-int(prof_flank))
+            #offset=cur_pos-(Pos0-int(prof_flank))
+            offset=0
             print(offset)
-            ref_profile_bw.addEntries(chrom,Pos0-int(prof_flank)+offset,values=ref_profile[offset:],span=1,step=1)
-            alt_profile_bw.addEntries(chrom,Pos0-int(prof_flank)+offset,values=alt_profile[offset:],span=1,step=1)
-            diff_profile_bw.addEntries(chrom,Pos0-int(prof_flank)+offset,values=diff_prof_ref_alt[offset:],span=1,step=1)
-            ref_profile_shap.addEntries(chrom,Pos0-int(shap_flank)+offset,values=profile_shap_ref[1057-shap_flank+offset:1057+shap_flank],span=1,step=1)
-            alt_profile_shap.addEntries(chrom,Pos0-int(shap_flank)+offset,values=profile_shap_alt[1057-shap_flank+offset:1057+shap_flank],span=1,step=1)
-            ref_count_shap.addEntries(chrom,Pos0-int(shap_flank)+offset,values=count_shap_ref[1057-shap_flank+offset:1057+shap_flank],span=1,step=1)
-            alt_count_shap.addEntries(chrom,Pos0-int(shap_flank)+offset,values=count_shap_alt[1057-shap_flank+offset:1057+shap_flank],span=1,step=1)
-            cur_pos = Pos0 + int(prof_flank)
+            ref_profile1_bw.addEntries(chrom,Pos0-int(prof_flank)+offset,values=ref_profile[offset:],span=1,step=1)
+            alt_profile1_bw.addEntries(chrom,Pos0-int(prof_flank)+offset,values=alt_profile[offset:],span=1,step=1)
+            diff_profile1_bw.addEntries(chrom,Pos0-int(prof_flank)+offset,values=diff_prof_ref_alt[offset:],span=1,step=1)
+            ref_profile1_shap.addEntries(chrom,Pos0-int(shap_flank)+offset,values=profile_shap_ref[1057-shap_flank+offset:1057+shap_flank],span=1,step=1)
+            alt_profile1_shap.addEntries(chrom,Pos0-int(shap_flank)+offset,values=profile_shap_alt[1057-shap_flank+offset:1057+shap_flank],span=1,step=1)
+            ref_count1_shap.addEntries(chrom,Pos0-int(shap_flank)+offset,values=count_shap_ref[1057-shap_flank+offset:1057+shap_flank],span=1,step=1)
+            alt_count1_shap.addEntries(chrom,Pos0-int(shap_flank)+offset,values=count_shap_alt[1057-shap_flank+offset:1057+shap_flank],span=1,step=1)
+            cur_pos_1 = Pos0 + int(shap_flank)
 
     ref_profile_bw.close()
     alt_profile_bw.close()
@@ -110,6 +138,14 @@ def main():
     alt_profile_shap.close()
     ref_count_shap.close()
     alt_count_shap.close()
+
+    ref_profile1_bw.close()
+    alt_profile1_bw.close()
+    diff_profile1_bw.close()
+    ref_profile1_shap.close()
+    alt_profile1_shap.close()
+    ref_count1_shap.close()
+    alt_count1_shap.close()
 
 
 
