@@ -8,11 +8,9 @@
 *.pkl
 *.npy
 # Directories #
-#logs
+# logs
 results
 experimental_scripts
 tracks
 needs_cleanup
-gtex_variants
-bqtl
-dsqtl
+old

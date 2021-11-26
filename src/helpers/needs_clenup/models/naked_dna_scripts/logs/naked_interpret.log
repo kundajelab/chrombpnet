@@ -1,0 +1,204 @@
+main director already exists
+output director already exists
+skipping bigwig creation
+skipping tiledb
+skipping naked dna bigwig creation
+skipping naked tiledb
+skipping step 1 - directory present 
+skipping step 2
+skipping step 3
+skipping unplugging
+skipping creating idr splits for interpretation
+skipping interpretations
+modisco dir already exists
+modisco dir already exists
+opening:/srv/scratch/anusri/chrombpnet_paper/naked_dna_scripts/data/tiledb/db for reading...
+success!
+got indices for used chroms
+identified input dataset indices:[[]]
+identified output dataset indices:[[0], [0]]
+loaded bed regions
+created generator
+created predict generator
+created generator
+loaded model
+got count explainer
+got profile explainer
+0/50
+1/50
+2/50
+3/50
+4/50
+5/50
+6/50
+7/50
+8/50
+9/50
+10/50
+11/50
+12/50
+13/50
+14/50
+15/50
+16/50
+17/50
+18/50
+19/50
+20/50
+21/50
+22/50
+23/50
+24/50
+25/50
+26/50
+27/50
+28/50
+29/50
+30/50
+31/50
+32/50
+33/50
+34/50
+35/50
+36/50
+37/50
+38/50
+39/50
+40/50
+41/50
+42/50
+43/50
+44/50
+45/50
+46/50
+47/50
+48/50
+49/50
+finished with interpretations
+opening:/srv/scratch/anusri/chrombpnet_paper/naked_dna_scripts/data/tiledb/db for reading...
+success!
+got indices for used chroms
+identified input dataset indices:[[]]
+identified output dataset indices:[[0], [0]]
+loaded bed regions
+created generator
+created predict generator
+created generator
+loaded model
+got count explainer
+got profile explainer
+0/50
+1/50
+2/50
+3/50
+4/50
+5/50
+6/50
+7/50
+8/50
+9/50
+10/50
+11/50
+12/50
+13/50
+14/50
+15/50
+16/50
+17/50
+18/50
+19/50
+20/50
+21/50
+22/50
+23/50
+24/50
+25/50
+26/50
+27/50
+28/50
+29/50
+30/50
+31/50
+32/50
+33/50
+34/50
+35/50
+36/50
+37/50
+38/50
+39/50
+40/50
+41/50
+42/50
+43/50
+44/50
+45/50
+46/50
+47/50
+48/50
+49/50
+finished with interpretations
+opening:/srv/scratch/anusri/chrombpnet_paper/naked_dna_scripts/data/tiledb/db for reading...
+success!
+got indices for used chroms
+identified input dataset indices:[[]]
+identified output dataset indices:[[0], [0]]
+loaded bed regions
+created generator
+created predict generator
+created generator
+loaded model
+got count explainer
+got profile explainer
+0/50
+1/50
+2/50
+3/50
+4/50
+5/50
+6/50
+7/50
+8/50
+9/50
+10/50
+11/50
+12/50
+13/50
+14/50
+15/50
+16/50
+17/50
+18/50
+19/50
+20/50
+21/50
+22/50
+23/50
+24/50
+25/50
+26/50
+27/50
+28/50
+29/50
+30/50
+31/50
+32/50
+33/50
+34/50
+35/50
+36/50
+37/50
+38/50
+39/50
+40/50
+41/50
+42/50
+43/50
+44/50
+45/50
+46/50
+47/50
+48/50
+49/50
+finished with interpretations
+30000
