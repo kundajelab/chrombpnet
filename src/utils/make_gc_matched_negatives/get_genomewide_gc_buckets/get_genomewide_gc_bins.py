@@ -6,9 +6,9 @@ from tqdm import tqdm
 
 def parse_args():
     parser=argparse.ArgumentParser(description="get gc content after binning the entire genome into bins")
-    parser.add_argument("-g","--ref_fasta", help="reference genome file")
+    parser.add_argument("-g","--genome", help="reference genome file")
     parser.add_argument("-c","--chrom_sizes", help="chromosome sizes file for reference genome (contains chr and chrom size seperated by tab)")
-    parser.add_argument("-o","--out_prefix", help="output prefix path to store the gc content of binned genome")
+    parser.add_argument("-o","--output_prefix", help="output prefix path to store the gc content of binned genome")
     parser.add_argument("-f","--inputlen",type=int,default=2114, help="inputlen to use to find gc content")
     parser.add_argument("-s","--stride",type=int,default=50, help="stride to use for shifting the bins")
     return parser.parse_args()
@@ -16,7 +16,7 @@ def parse_args():
 
 def main():
     args=parse_args()
-    ref=pysam.FastaFile(args.ref_fasta)
+    ref=pysam.FastaFile(args.genome)
     chrom_sizes=pd.read_csv(args.chrom_sizes,header=None,sep='\t')
     region_dict=dict()
     for index,row in chrom_sizes.iterrows():
@@ -38,7 +38,7 @@ def main():
     print("made df")
     new_index=pd.MultiIndex.from_tuples(df.index, names=('CHR', 'START','END'))
     df = pd.DataFrame(df[0], new_index)
-    df.to_csv(args.out_prefix+".bed",sep='\t', header=True, index=True, index_label=['CHROM','START','END'])
+    df.to_csv(args.output_prefix+".bed",sep='\t', header=True, index=True, index_label=['CHROM','START','END'])
   
 if __name__=="__main__":
     main()

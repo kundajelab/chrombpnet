@@ -3,7 +3,7 @@ Scripts to get  non-peak regions gc-matched with a given foreground (or peak) se
 ### Usage
 
 ```bash 
-bash  run.sh [foreground_bed] [exclude_bed] [inputlen] [output_dir] [reference_fasta] [genomewide_gc]
+bash  run.sh [foreground_bed] [exclude_bed] [inputlen] [output_dir] [genome] [genomewide_gc]
 ```
 
 The above script runs two python scripts `get_gc_content.py` and `get_gc_matched_negatives.py` and a `bedtools` operation. Briefly `get_gc_content.py` finds the gc content distribution of the given foreground regions.  The bedtools operation keeps only those genomewide bins that do not fall in exclude bed as candidate negatives for gc-matching. `get_gc_matched_negatives.py` filters the candidate negatives list to as many negative regions as foreround regions such that they are gc-mactched with foreground.
@@ -16,8 +16,8 @@ NOTE: Here I assume the script `run.sh` is executed from the main chrombpnet_pap
 - exclude_bed: Must be in bed format, with values minimally for chr, start and end. These are the regions that we do not want in our negatives e.g. blacklist regions, peak regions for ATAC/DNASE bias model training etc.
 - inputlen: The input length to consider for foreground gc-fraction calculation.
 - output_dir: Directory to store the output files. Make sure the directory already exists. The code generates three output files described below in output format section.
-- reference_fasta: Reference geneome fasta.
-- genomewide_gc: Must be TSV file containing chr, start, end and gc_content. These are genome wide regions binned into `inputlen` regions and with a given stride. This pickle file can be generated using the scripts at `get_genomewide_gc_buckets/run.sh`. If you are using hg38 human reference genome and are (1) using a  `inputlen` of 2114 you can use the pre-generated pickle file saved on the cluster `/oak/stanford/groups/akundaje/anusri/refs/genomewide_gc_hg38_stride_50_flank_size_1057.bed` OR (2) if you are using a `inputlen` of 1000 you can use the pre-generated pickle file saved on the cluster `/oak/stanford/groups/akundaje/anusri/refs/genomewide_gc_hg38_stride_50_flank_size_1057.bed`
+- genome: Reference geneome fasta.
+- genomewide_gc: Must be TSV file containing chr, start, end and gc_content. These are genome wide regions binned into `inputlen` regions and with a given stride. This pickle file can be generated using the scripts at `get_genomewide_gc_buckets/run.sh`. If you are using hg38 human reference genome and are (1) using a  `inputlen` of 2114 you can use the pre-generated pickle file saved on the cluster `/oak/stanford/groups/akundaje/anusri/refs/genomewide_gc_hg38_stride_50_inputlen_1057.bed` OR (2) if you are using a `inputlen` of 1000 you can use the pre-generated pickle file saved on the cluster `/oak/stanford/groups/akundaje/anusri/refs/genomewide_gc_hg38_stride_50_inputlen_1057.bed`
 
 ### Output format:
 
