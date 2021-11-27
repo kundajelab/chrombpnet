@@ -1,7 +1,8 @@
-# ChromBPNet: Deep learning models of base-resolution chromatin profiles  reveal cis-regulatory syntax and regulatory variation
+# ChromBPNet: Deep learning models of base-resolution chromatin profiles
                 This repo is under construction. Please check back in a week
 
 - This repo contains code for the chrombpnet paper Anusri Pampari*, Anna Shcherbina*, Anshul Kundaje. (*authors contributed equally to the work)  
+- Most have these scripts have been derived from an earlier repo (KerasAC) made by Anna Scherbina.
 - General queries/thoughts have been addressed in the discussion section below.
 - Please contact [Anusri Pampari] (\<first-name\>@stanford.edu)  for suggestions and comments. More instructions about reporting bugs detailed below.
 
