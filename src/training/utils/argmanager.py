@@ -26,17 +26,6 @@ def update_model_args(parser):
     parser.add_argument("-ol", "--outputlen", type=int, default=1000, help="Prediction output length")
     parser.add_argument("-a","--architecture_from_file",type=str,required=True, default=None, help="Model to use for training")
 
-def fetch_train_bias_args():
-    parser = argparse.ArgumentParser()
-    update_data_args(parser)
-    update_train_args(parser)
-    update_model_args(parser)
-
-    parser.add_argument("-t", "--threshold-factor", type=float, default=0.5, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions)")
-    parser.add_argument("-j", "--max-jitter", type=int, default=100, help="Maximum jitter applied on either side of region (default 100 for bias model)")
-    args = parser.parse_args()
-    return args
-
 def fetch_train_chrombpnet_args():
     parser = argparse.ArgumentParser()
     update_data_args(parser)
@@ -44,45 +33,24 @@ def fetch_train_chrombpnet_args():
     update_model_args(parser)
 
     # additional arguments for chrombpnet
-    parser.add_argument("-j", "--max-jitter", type=int, default=500, help="Maximum jitter applied on either side of region (default 500 for chrombpnet")
-    #parser.add_argument("-bm", "--bias-model", type=str, required=True, help="Path to bias model hdf5")
-    parser.add_argument("--no-adjust-bias-cts", dest='adjust_bias_cts', action='store_false', 
-                        help="""NOT RECOMMENDED. By default the code adjusts bias predicted counts to 
-                              account for different sequencing depths between bias model source bigwig
-                              and current bigwig. You may choose to not do this if the bias model was 
-                              trained on the same data as the current data, but even then it is recommended 
-                              to adjust counts.""")
-    parser.set_defaults(adjust_bias_cts=True)
-    
+    parser.add_argument("-j", "--max-jitter", type=int, default=500, help="Maximum jitter applied on either side of region (default 500 for chrombpnet")    
     parser.add_argument("-sr", "--negative-sampling-ratio", type=float, default=1.0, help="Ratio of negative to positive samples per epoch")
-    parser.add_argument("--no-negative-sampling", dest='negative_sampling', action='store_false', help="Include this flag if sampling of negatives is not desired. This will use all negatives supplied every epoch.")
     parser.set_defaults(negative_sampling=True)
 
     args = parser.parse_args()
     return args
 
-def fetch_metrics_args():
+def fetch_predict_args():
     parser = argparse.ArgumentParser()
     update_data_args(parser)
-    parser.add_argument("-tc", "--test-chr", nargs="+", required=True, help="Test chromosome/s, e.g. -tc chr1, space separated for more than 1")
-    parser.add_argument("-bm", "--bias-model", type=str, required=True, help="Path to bias model hdf5")
-    parser.add_argument("-cm", "--chrombpnet-model", type=str, required=True, help="Path to chrombpnet model hdf5")
+    parser.add_argument("-m", "--model_h5", type=str, required=True, help="Path to model hdf5")
     parser.add_argument("-bs", "--batch-size", type=int, default=512)
-
+    parser.add_argument("-s", "--seed", type=int, default=1234, help="seed to use for model training")
+    parser.add_argument("-il", "--inputlen", type=int, default=2114, help="Sequence input length")
+    parser.add_argument("-ol", "--outputlen", type=int, default=1000, help="Prediction output length")
     args = parser.parse_args()
     return args
 
-def fetch_interpret_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-g", "--genome", type=str, required=True, help="Genome fasta")
-    parser.add_argument("-r", "--regions", type=str, required=True, help="10 column bed file of peaks. Sequences and labels will be extracted centered at start (2nd col) + summit (10th col).")
-    parser.add_argument("-m", "--model", type=str, required=True, help="Path to trained model, can be both bias or chrombpnet model")
-    parser.add_argument("-o", "--output-prefix", type=str, required=True, help="Output prefix")
-    parser.add_argument("-d", "--debug-chr", nargs="+", type=str, default=None, help="Run for specific chromosomes only (e.g. chr1 chr2) for debugging")
-    parser.add_argument("-p", "--profile-or-counts", nargs="+", type=str, default=["counts", "profile"], choices=["counts", "profile"],
-                        help="use either counts or profile or both for running shap")
-    args = parser.parse_args()
-    return args
 
 def fetch_modisco_args():
     parser = argparse.ArgumentParser()

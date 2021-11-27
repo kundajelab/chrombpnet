@@ -66,10 +66,15 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         #Sample a fraction of the negative samples according to the specified ratio
 
         if (self.peak_seqs is not None) and (self.nonpeak_seqs is not None):
-            self.sampled_nonpeak_seqs, self.sampled_nonpeak_cts, self.sampled_nonpeak_coords = subsample_nonpeak_data(self.nonpeak_seqs, self.nonpeak_cts, self.nonpeak_coords, len(self.peak_seqs), self.negative_sampling_ratio)
-            self.seqs = np.vstack([self.peak_seqs, self.sampled_nonpeak_seqs])
-            self.cts = np.vstack([self.peak_cts, self.sampled_nonpeak_cts])
-            self.coords = np.vstack([self.peak_coords, self.sampled_nonpeak_coords])
+            if self.negative_sampling_ratio < 1.0:
+                self.sampled_nonpeak_seqs, self.sampled_nonpeak_cts, self.sampled_nonpeak_coords = subsample_nonpeak_data(self.nonpeak_seqs, self.nonpeak_cts, self.nonpeak_coords, len(self.peak_seqs), self.negative_sampling_ratio)
+                self.seqs = np.vstack([self.peak_seqs, self.sampled_nonpeak_seqs])
+                self.cts = np.vstack([self.peak_cts, self.sampled_nonpeak_cts])
+                self.coords = np.vstack([self.peak_coords, self.sampled_nonpeak_coords])
+            else:
+                self.seqs = np.vstack([self.peak_seqs, self.nonpeak_seqs])
+                self.cts = np.vstack([self.peak_cts, self.nonpeak_cts])
+                self.coords = np.vstack([self.peak_coords, self.nonpeak_coords])
         elif self.peak_seqs is not None:
             self.seqs = self.peak_seqs
             self.cts = self.peak_cts

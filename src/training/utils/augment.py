@@ -32,7 +32,7 @@ def random_crop(seqs, labels, seq_crop_width, label_crop_width):
 
     return take_per_row(seqs, starts, seq_crop_width), take_per_row(labels, starts, label_crop_width)
 
-def random_rev_comp(seqs, labels, frac=0.5):
+def random_rev_comp(seqs, labels, coords, frac=0.5):
     """
     Data augmentation: applies reverse complement randomly to a fraction of 
     sequences and labels.
@@ -48,6 +48,7 @@ def random_rev_comp(seqs, labels, frac=0.5):
 
     seqs[pos_to_rc] = seqs[pos_to_rc, ::-1, ::-1]
     labels[pos_to_rc] = labels[pos_to_rc, ::-1]
+    coords[pos_to_rc][:,2] =  "r"
 
     return seqs, labels
 
@@ -66,7 +67,7 @@ def crop_revcomp_augment(seqs, labels, coords, seq_crop_width, label_crop_width,
     mod_seqs, mod_labels = random_crop(seqs, labels, seq_crop_width, label_crop_width)
     
     # this modifies mod_seqs, mod_labels in-place
-    mod_seqs, mod_labels = random_rev_comp(mod_seqs, mod_labels, frac=rc_frac)
+    mod_seqs, mod_labels = random_rev_comp(mod_seqs, mod_labels, coords, frac=rc_frac)
 
     if shuffle:
         perm = np.random.permutation(mod_seqs.shape[0])

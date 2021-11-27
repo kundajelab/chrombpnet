@@ -4,7 +4,6 @@ import pyBigWig
 import pyfaidx
 from utils import one_hot
 
-NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 
 def get_seq(peaks_df, genome, width):
     """
@@ -33,21 +32,21 @@ def get_cts(peaks_df, bw, width):
         
     return np.array(vals)
 
-def get_coords(peaks_df):
+def get_coords(peaks_df, peaks_bool):
     """
     Fetch the co-ordinates of the regions in bed file
     returns a list of tuples with (chrom, summit)
     """
     vals = []
     for i, r in peaks_df.iterrows():
-        vals.append((r['chr'], r['start']+r['summit']))
+        vals.append([r['chr'], r['start']+r['summit'], "f", peaks_bool])
 
     return np.array(vals)
 
-def get_seq_cts_coords(peaks_df, genome, bw, input_width, output_width):
+def get_seq_cts_coords(peaks_df, genome, bw, input_width, output_width, peaks_bool):
     seq = get_seq(peaks_df, genome, input_width)
     cts = get_cts(peaks_df, bw, output_width)
-    coords = get_coords(peaks_df)
+    coords = get_coords(peaks_df, peaks_bool)
 
     return seq, cts, coords
 
@@ -79,7 +78,8 @@ def load_data(bed_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen,
                                               genome,
                                               cts_bw,
                                               inputlen+2*max_jitter,
-                                              outputlen+2*max_jitter)
+                                              outputlen+2*max_jitter,
+                                              peaks_bool=1)
 
         if cts_sum_min_thresh.lower() !=  "none":
             midpoint=(outputlen+2*max_jitter)//2
@@ -100,18 +100,19 @@ def load_data(bed_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen,
                                               genome,
                                               cts_bw,
                                               inputlen+2*max_jitter,
-                                              outputlen+2*max_jitter)
+                                              outputlen+2*max_jitter,
+                                              peaks_bool=0)
 
         if cts_sum_min_thresh.lower() !=  "none":
             midpoint=(outputlen+2*max_jitter)//2
-            train_nonpeaks_subset = train_nonpeaks_cts[:,midpoint-outputlen//2:outputlen+outputlen//2].sum(-1) >= float(cts_sum_min_thresh)
+            train_nonpeaks_subset = train_nonpeaks_cts[:,midpoint-outputlen//2:outputlen+outputlen//2].sum(-1) > float(cts_sum_min_thresh)
             train_nonpeaks_seqs = train_nonpeaks_seqs[train_nonpeaks_subset]
             train_nonpeaks_cts = train_nonpeaks_cts[train_nonpeaks_subset]
             train_nonpeaks_coords = train_nonpeaks_coords[train_nonpeaks_subset]
 
         if cts_sum_max_thresh.lower() != "none":
             midpoint=(outputlen+2*max_jitter)//2
-            train_nonpeaks_subset = train_nonpeaks_cts[:,midpoint-outputlen//2:outputlen+outputlen//2].sum(-1) <= float(cts_sum_max_thresh)
+            train_nonpeaks_subset = train_nonpeaks_cts[:,midpoint-outputlen//2:outputlen+outputlen//2].sum(-1) < float(cts_sum_max_thresh)
             train_nonpeaks_seqs = train_nonpeaks_seqs[train_nonpeaks_subset]
             train_nonpeaks_cts = train_nonpeaks_cts[train_nonpeaks_subset]
             train_nonpeaks_coords = train_nonpeaks_coords[train_nonpeaks_subset]
