@@ -1,6 +1,6 @@
 # Scripts to do marginal footprinting using ChromBPNet
 
-The scripts in this folder provide marginal footprints for a given motif and background regions.  Briefly the algorithm can be desicribed in the following three steps -  (1) Insert a given motif in the center of background regions to make synthetic sequences. (2) Find profile probability predictions for the synthetic sequences created for a given motif. (3) Find profile probability predictions for the reverse complement of the given synthetic sequences and then complement the predicionts. (4) Average the prediction in (2) and (3) to get footprinting for a given synthetic sequence. (3) Average the footprints across all the synthetic sequences to get marginal footprint for a given motif.
+The scripts in this folder provide marginal footprints for a given motif and background regions.  Briefly the algorithm can be desicribed in the following three steps -  (1) Insert a given motif's center in the center of background regions to make synthetic sequences. (2) Find profile probability predictions for the synthetic sequences created for a given motif. (3) Find profile probability predictions for the reverse complement of the given synthetic sequences and then complement the predicionts. (4) Average the prediction in (2) and (3) to get footprinting for a given synthetic sequence. (3) Average the footprints across all the synthetic sequences to get marginal footprint for a given motif.
 
 ## Usage
 
