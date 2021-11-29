@@ -10,7 +10,6 @@ import os
 
 os.environ['PYTHONHASHSEED'] = '0'
 
-
 def getModelGivenModelOptionsAndWeightInits(args, model_params):
     #default params (can be overwritten by providing model_params file as input to the training function)
     filters=512
@@ -105,4 +104,8 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
 
     return model 
 
-
+def get_model_without_bias(model, output_prefix):
+    # nothing to do 
+    # all model architectures have this function
+    # defining this tosafeguard if the users uses the arugument save_model_without_bias argument on bias model accidentally 
+    pass
