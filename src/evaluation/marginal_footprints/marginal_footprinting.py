@@ -27,7 +27,7 @@ def fetch_footprinting_args():
     parser.add_argument("-o", "--output_prefix", type=str, required=True, help="Output prefix")
     parser.add_argument("-pwm_f", "--motifs_to_pwm", type=str, required=True, 
                         help="Path to a TSV file containing motifs in first column and motif string to use for footprinting in second column")    
-    parser.add_argument("-mo", "--motifs", nargs="+", type=lambda s: [str(item) for item in s.split(',')], default=["Tn5"],
+    parser.add_argument("-mo", "--motifs", nargs="+", type=lambda s: [str(item.strip()) for item in s.split(',')], default=["Tn5"],
                         help="Input motifs to do marginal footprinting, the motif names input here should be present in the collumn one in motifs_to_pwm file argument")
     
     args = parser.parse_args()

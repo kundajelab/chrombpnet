@@ -11,7 +11,7 @@ python marginal_footprinting.py -g [genome_fasta] -r [regions] -chr [test_chr] -
 ## Example Usage
 
 ```
-python marginal_footprinting.py -g /path/to/genome_fasta -r /path/to/bed_file -chr chr1 -m /path/to/model.h5 -o /path/to/output_dir/outputprefix -pwm_f motif_to_pwm.tsv -mo CTCF Tn5
+python marginal_footprinting.py -g /path/to/genome_fasta -r /path/to/bed_file -chr chr1 -m /path/to/model.h5 -o /path/to/output_dir/outputprefix -pwm_f motif_to_pwm.tsv -mo CTCF,RUNX
 ```
 
 ## Input Format
@@ -23,7 +23,7 @@ python marginal_footprinting.py -g /path/to/genome_fasta -r /path/to/bed_file -c
 - batch_size: Batch size to use for model predictions.
 - output_prefix: Output prefix path and name to use. See Output format section below to understand how this is used.
 - motifs_to_pwm_file: Path to a TSV file containing motifs in first column (e.g. `Tn5`) and motif string (e.g. `GCACAGTACAGAGCTG`) to use for footprinting in second column. 
-- motifs: The motifs to filter from `motifs_to_pwm_file` for footprinting. We will find footprints only for the motifs mentioned here. Make sure that the motif names mentioned here are present in the column 1 of `motifs_to_pwm_file`. Provide more than one motif - seperate them by space.
+- motifs: The motifs to filter from `motifs_to_pwm_file` for footprinting. We will find footprints only for the motifs mentioned here. Make sure that the motif names mentioned here are present in the column 1 of `motifs_to_pwm_file`. Provide more than one motif - seperate them by comma.
 
 
 ## Output Format
