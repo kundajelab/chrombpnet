@@ -9,46 +9,86 @@
 ## Quick Links
 
 - [About](#chrombpnet)
-- [Pipeline Overview](#pipeline-overview)
-- [Training ChromBPNet](#training-chrombpent)
-- [Testing ChromBpet ](#testing-chrombpnet)
-- [Validation Experiments](#validation-experiemnts)
-- [Helper Scripts](#helper-scripts)
+- [Installation](#installation)
+- [Tutorial](#tutorial-on-how-to-train-chrombpnet-models)
+    - [Preprocessing](#preprocessing)
+    - [Train and Evaluate Bias Model](#train-and-evaluate-bias-model)
+    - [Train and Evaluate ChromBPNet Model](#train-and-evaluate-chrombpnet-model)
+- [Variant Effect Prediction](#variant-effect-prediction)
+- [Generate Genome Wide Browser Tracks](#generate-genome-wide-browser-tracks)
+- [Invivo Footprinting](#invivo-footprinting)
 - [Discussion](#discussion)
 - [Report a bug](#chrombpnet-bugs)
 
 ##  ChromBPNet
 
+Chromatin profiles (DNASE-seq and ATAC-seq) exhibit multi-resolution shapes and spans regulated by co-operative binding of transcription factors (TFs). This complexity is further difficult to mine because of confounding bias from enzymes (DNASE-I/Tn5) used in these assays. Existing methods do not account for this complexity at base-resolution and do not account for enzyme bias correctly, thus missing the high-resolution architecture of these profile. Here we introduce ChromBPNet to address both these aspects.
 
-##  Pipeline Overview
+ChromBPNet (shown in the image as `chrombpnet model`) is a fully convolutional neural network that uses dilated convolutions with residual connections to enable large receptive fields with efficient parameterization. It also performs automatic assay bias correction in two steps, first by learning simple model on chromatin background that captures the enzyme effect (called `bias model` in the image). Then we use this model to regress out the effect of the enzyme from the ATAC-seq/Dnase-seq profiles. This two step process ensures that the sequence component of the ChromBPNet model (called `sequence model`) does not learn enzymatic bias. 
 
-Refer to `testing.sh` for an example script to run the entire pipeline from end-to-end.
+![Image](images/chrombpnet_arch.png)
+
+If you are interested in learning more about the detailed architctures used, please refer to the following architecture files - 
+
+- bias model:
+- chrombpnet model:
+
+##  Tutorial on how to train chrombpnet models
+
+Here we provide a step-by-step guide to training and evaluating chrombpnet models using the GM12878 ATAC-seq data (ENCSR095QNB) [here][url1].
 
 
-##  Training ChromBPNet
+###  Preprocessing
+
+#### Step 1: Download experimental data
+
+We will first start by creating a directory named `data` and downloading the corresponding files (bams, overlap and idr peak sets) for ENCSR095QNB ENCODE dataset. 
+```
+bash step1_download_bams_and_peaks.sh
+
+```
+
+(define overlap and idr)
+
+#### Step 2: Make 
 
 
-##  Testing ChromBPNet
+#### Step 3: 
 
 
-##  Validation Experiments
+###  Train and Evaluate Bias Model
 
-- Interpretations
-- Modisco/TomTom
-- Marginal footprinting
-- Invivo footprinting
-- Variant Effect Prediction
 
-##  Helper Scripts
+#### Step 4: Train Bias Model
 
-- Preprocessing: Refer to the folder `src/utils/preprocessing/` for the following scrips (1) to convert bams to bigwigs (2) To generate tiledb database.
-- Importance of correct shift: To understand why we are using +4/-4 shift for ATAC instead of the te popularly used +4/-5 shift refer to the scripts here - `src/utils/preprocessing/analysis` for the following scripts (1) Build PWM, (2) Train a simple model on random regions 
-- Generate GC-Matched Negatives: To generate negatives that gc-match a given forground peak set refer to the folder `src/utils/preprocessing/make_gc_matched_negatives` 
-- Choosing Hyperparameters: 
-- Data generator examples: To get an understanding of the generators used in chrombpnet refer to the scripts here `src/utils/data_generator_examples`.
+
+#### Step 5: Interpret bias model
+
+
+#### Step 6: Scale bias model
+
+
+###  Train and Evaluate ChromBPNet Model
+
+
+#### Step 7: Train ChromBPNet Model (This step will also generate the sequence model)
+
+
+#### Step 8: Interpret chrombpnet model and sequence model
+
+
+#### Step 9: Marginal footprinting using bias, chrombpnet ans sequence model
+
+
+##  Variant Effect Prediction
+
+## Generate Genome Wide Browser Tracks
+
 
 ##  Discusssion
 
-#### 
 
 ##  ChromBPNet bugs
+
+
+[url1]: https://www.encodeproject.org/experiments/ENCSR095QNB/
