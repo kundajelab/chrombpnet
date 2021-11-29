@@ -4,7 +4,7 @@ import tensorflow.keras.callbacks as tfcallbacks
 import utils.argmanager as argmanager
 import utils.losses as losses
 import utils.callbacks as callbacks
-import generators.initializers
+import data_generators.initializers as initializers
 import pandas as pd
 import splits
 import os
@@ -80,8 +80,8 @@ def main():
     model=get_model(args, parameters)
 
     # initialize generators to load data
-    train_generator = initializers.initialize_generators(args, "train", args.generator, parameters, False)
-    valid_generator = initializers.initialize_generators(args, "valid", args.generator, parameters, False)
+    train_generator = initializers.initialize_generators(args, "train", parameters, return_coords=False)
+    valid_generator = initializers.initialize_generators(args, "valid", parameters, return_coords=False)
 
     # train the model using the generators
     fit_and_evaluate(model, train_generator, valid_generator, args)

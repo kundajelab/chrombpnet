@@ -51,28 +51,69 @@ def profile_metrics(true_counts,pred_probs):
     jsd_norm = []
     jsd_rnd = []
     jsd_rnd_norm = []
+    mnll_rnd = []
+    mnll_rnd_norm = []
 
     num_regions = true_counts.shape[0]
     for idx in range(num_regions):
-        curr_mnll = mnll(true_counts[idx,:],  probs=pred_probs[idx,:])
-        min_mnll, max_mnll = mnll_min_max_bounds(true_counts[idx,:])
-        curr_mnll_norm = get_min_max_normalized_value(curr_mnll, min_mnll, max_mnll)
-        mnll_pw.append(curr_mnll)
-        mnll_norm.append(curr_mnll_norm)
+        # mnll
+        #curr_mnll = mnll(true_counts[idx,:],  probs=pred_probs[idx,:])
+        #mnll_pw.append(curr_mnll)
+        # normalized mnll
+        #min_mnll, max_mnll = mnll_min_max_bounds(true_counts[idx,:])
+        #curr_mnll_norm = get_min_max_normalized_value(curr_mnll, min_mnll, max_mnll)
+        #mnll_norm.append(curr_mnll_norm)
 
+        # jsd
         cur_jsd=jensenshannon(true_counts[idx,:]/np.nansum(true_counts[idx,:]),pred_probs[idx,:])
+        jsd_pw.append(cur_jsd)
+        # normalized jsd
         min_jsd, max_jsd = jsd_min_max_bounds(true_counts[idx,:])
         curr_jsd_norm = get_min_max_normalized_value(cur_jsd, min_jsd, max_jsd)
-        jsd_pw.append(cur_jsd)
         jsd_norm.append(curr_jsd_norm)
 
+        # get random shuffling on labels for a worst case performance on metrics - labels versus shuffled labels
         shuffled_labels=np.random.permutation(true_counts[idx,:])
         shuffled_labels_prob=shuffled_labels/np.nansum(shuffled_labels)
+
+        # mnll random
+        #curr_rnd_mnll = mnll(true_counts[idx,:],  probs=shuffled_labels_prob)
+        #mnll_rnd.append(curr_rnd_mnll)
+        # normalized mnll random
+        #curr_rnd_mnll_norm = get_min_max_normalized_value(curr_rnd_mnll, min_mnll, max_mnll)
+        #mnll_rnd_norm.append(curr_rnd_mnll_norm)   
+
+        # jsd random
         curr_jsd_rnd=jensenshannon(true_counts[idx,:]/np.nansum(true_counts[idx,:]),shuffled_labels_prob)
         jsd_rnd.append(curr_jsd_rnd)
+        # normalized jsd random
         curr_rnd_jsd_norm = get_min_max_normalized_value(curr_jsd_rnd, min_jsd, max_jsd)
         jsd_rnd_norm.append(curr_rnd_jsd_norm)
 
-    return np.array(mnll_pw), np.array(mnll_norm), np.array(jsd_pw), np.array(jsd_norm), np.array(jsd_rnd), np.array(jsd_rnd_norm)
+    return np.array(mnll_pw), np.array(mnll_norm), np.array(jsd_pw), np.array(jsd_norm), np.array(jsd_rnd), np.array(jsd_rnd_norm), np.array(mnll_rnd), np.array(mnll_rnd_norm)
+
+def plot_histogram(region_jsd, shuffled_labels_jsd, output_prefix, title):
+
+    #generate histogram distributions 
+    num_bins=100
+    plt.rcParams["figure.figsize"]=8,8
+    
+    #plot mnnll histogram 
+    #plt.figure()
+    #n,bins,patches=plt.hist(mnnll_vals,num_bins,facecolor='blue',alpha=0.5,label="Predicted vs Labels")
+    #n1,bins1,patches1=plt.hist(shuffled_labels_mnll,num_bins,facecolor='black',alpha=0.5,label='Shuffled Labels vs Labels')
+    #plt.xlabel('Multinomial Negative LL Profile Labels and Predictions in Probability Space')
+    #plt.title("MNNLL: "+ tile)
+    #plt.legend(loc='best')
+    #plt.savefig(output_prefix+".mnnll.png",format='png',dpi=300)
+    
+    #plot jsd histogram
+    plt.figure()
+    n,bins,patches=plt.hist(region_jsd,num_bins,facecolor='blue',alpha=0.5,label="Predicted vs Labels")
+    n1,bins1,patches1=plt.hist(shuffled_labels_jsd,num_bins,facecolor='black',alpha=0.5,label='Shuffled Labels vs Labels')
+    plt.xlabel('Jensen Shannon Distance Profile Labels and Predictions in Probability Space')
+    plt.title("JSD Dist: "+title)
+    plt.legend(loc='best')
+    plt.savefig(output_prefix+".jsd.png",format='png',dpi=300)
 
 
