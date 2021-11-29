@@ -29,7 +29,6 @@ def random_crop(seqs, labels, seq_crop_width, label_crop_width):
     max_start = seqs.shape[1] - seq_crop_width # This should be the same for both input and output
 
     starts = np.random.choice(range(max_start+1), size=seqs.shape[0], replace=True)
-
     return take_per_row(seqs, starts, seq_crop_width), take_per_row(labels, starts, label_crop_width)
 
 def random_rev_comp(seqs, labels, coords, frac=0.5):
@@ -52,7 +51,7 @@ def random_rev_comp(seqs, labels, coords, frac=0.5):
 
     return seqs, labels
 
-def crop_revcomp_augment(seqs, labels, coords, seq_crop_width, label_crop_width, rc_frac=0.5, seed=1, shuffle=False):
+def crop_revcomp_augment(seqs, labels, coords, seq_crop_width, label_crop_width, add_revcomp, rc_frac=0.5, seed=1, shuffle=False):
     """
     seqs: B x IL x 4
     labels: B x OL
@@ -67,7 +66,8 @@ def crop_revcomp_augment(seqs, labels, coords, seq_crop_width, label_crop_width,
     mod_seqs, mod_labels = random_crop(seqs, labels, seq_crop_width, label_crop_width)
     
     # this modifies mod_seqs, mod_labels in-place
-    mod_seqs, mod_labels = random_rev_comp(mod_seqs, mod_labels, coords, frac=rc_frac)
+    if add_revcomp:
+        mod_seqs, mod_labels = random_rev_comp(mod_seqs, mod_labels, coords, frac=rc_frac)
 
     if shuffle:
         perm = np.random.permutation(mod_seqs.shape[0])

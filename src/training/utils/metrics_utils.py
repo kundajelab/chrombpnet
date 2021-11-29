@@ -71,6 +71,7 @@ def density_scatter(x, y, xlab, ylab, ax = None, sort = True, bins = 20):
     return ax
  
 #https://github.com/kundajelab/basepairmodels/blob/cf8e346e9df1bad9e55bd459041976b41207e6e5/basepairmodels/cli/metrics.py#L18
+# replacing TracebackExceptions with assertions
 def mnll(true_counts, logits=None, probs=None):
     """
         Compute the multinomial negative log-likelihood between true
@@ -95,10 +96,8 @@ def mnll(true_counts, logits=None, probs=None):
     if logits is not None:
         
         # check for length mismatch
-        if len(logits) != len(true_counts):
-            raise NoTracebackException(
-                "Length of logits does not match length of true_counts")
-        
+        assert (len(logits) == len(true_counts))
+    
         # convert logits to softmax probabilities
         probs = logits - logsumexp(logits)
         probs = np.exp(probs)
@@ -106,15 +105,12 @@ def mnll(true_counts, logits=None, probs=None):
     elif probs is not None:      
         
         # check for length mistmatch
-        if len(probs) != len(true_counts):
-            raise NoTracebackException(
-                "Length of probs does not match length of true_counts")
-        
+        assert(len(probs) == len(true_counts))
+    
         # check if probs sums to 1
-        if abs(1.0 - np.sum(probs)) > 1e-3:
-            raise NoTracebackException(
-                "'probs' array does not sum to 1")   
-           
+        # why is this nans sometimes
+        assert( abs(1.0 - np.sum(probs)) < 1e-1)
+         
     else:
         
         # both 'probs' and 'logits' are None
@@ -178,10 +174,7 @@ def mnll_min_max_bounds(profile):
 
     # mnll of profile with uniform profile
     max_mnll = mnll(profile, probs=uniform_profile)
-    
-    if math.isnan(max_mnll):
-        print("max_mnll is nan")
-        
+
     return (min_mnll, max_mnll)
 
 #https://github.com/kundajelab/basepairmodels/blob/cf8e346e9df1bad9e55bd459041976b41207e6e5/basepairmodels/cli/fastpredict.py#L131
@@ -209,26 +202,3 @@ def jsd_min_max_bounds(profile):
     min_jsd = 0.0
 
     return (min_jsd, max_jsd)
-
-def plot_histogram():
-
-    #generate histogram distributions 
-    num_bins=100
-    plt.rcParams["figure.figsize"]=8,8
-    
-    #plot mnnll histogram 
-    plt.figure()
-    n,bins,patches=plt.hist(mnnll_vals,num_bins,facecolor='blue',alpha=0.5,label="Predicted vs Labels")
-    plt.xlabel('Multinomial Negative LL Profile Labels and Preds in Probability Space')
-    plt.title("MNNLL:"+title)
-    plt.legend(loc='best')
-    plt.savefig(outf_prefix+".mnnll.png",format='png',dpi=300)
-    
-    #plot jsd histogram
-    plt.figure()
-    n,bins,patches=plt.hist(region_jsd,num_bins,facecolor='blue',alpha=0.5,label="Predicted vs Labels")
-    n3,bins3,patches3=plt.hist(shuffled_labels_jsd,num_bins,facecolor='black',alpha=0.5,label='Labels vs Shuffled Labels')
-    plt.xlabel('Jensen Shannon Distance Profile Labels and Preds in Probability Space')
-    plt.title("JSD Dist.:"+title)
-    plt.legend(loc='best')
-    plt.savefig(outf_prefix+".jsd.png",format='png',dpi=300)

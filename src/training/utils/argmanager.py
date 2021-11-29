@@ -8,7 +8,6 @@ def update_data_args(parser):
     parser.add_argument("-p", "--peaks", type=str, required=True, help="10 column bed file of peaks. Sequences and labels will be extracted centered at start (2nd col) + summit (10th col).")
     parser.add_argument("-n", "--nonpeaks", type=str, required=True, help="10 column bed file of non-peak regions, centered at summit (10th column)")
     parser.add_argument("-o", "--output_prefix", type=str, required=True, help="Output prefix")
-    parser.add_argument("-gen", "--generator", type=str, required=True, help="Generator to use - tiledb or batchgen")
     parser.add_argument("-fl", "--fold", type=str, required=True, help="Fold information - see splits.py to set folds")
     parser.add_argument("--trackables",nargs="*",default=['loss','val_loss'], help="list of things to track per batch, such as logcount_predictions_loss,loss,profile_predictions_loss,val_logcount_predictions_loss,val_loss,val_profile_predictions_loss")
 
@@ -48,6 +47,7 @@ def fetch_predict_args():
     parser.add_argument("-s", "--seed", type=int, default=1234, help="seed to use for model training")
     parser.add_argument("-il", "--inputlen", type=int, default=2114, help="Sequence input length")
     parser.add_argument("-ol", "--outputlen", type=int, default=1000, help="Prediction output length")
+    parser.add_argument("-pf", "--params", type=str, required=True, default=None)
     args = parser.parse_args()
     return args
 
@@ -62,33 +62,3 @@ def fetch_modisco_args():
 
     args = parser.parse_args()
     return args
-
-
-def update_tiledb_args():
-    # freeze tiledb to use only one dataset
-    parser=argparse.ArgumentParser()
-    
-    parser.add_argument("--num_inputs",type=int, default=1)
-    parser.add_argument("--num_outputs",type=int, default=2)
-
-    tiledbgroup=parser.add_argument_group('tiledb')
-    tiledbgroup.add_argument("-tdb", "--tiledb_array", type=str, required=False, help="Needed if tiledb generator is used")
-    tiledbgroup.add_argument("--tdb_output_datasets",nargs="+", required=False, default=None, help="dataset column from db_ingest; comma separated across channels; space separated across outputs")
-    tiledbgroup.add_argument("--tdb_output_source_attribute", required=False, nargs="+",help="tiledb attribute for use in label generation i.e. fc_bigwig")        
-
-    tiledbgroup.add_argument("--tdb_input_datasets",nargs="+",default=None,help="dataset column from db_ingest; comma separated across channels; space separated across inputs")
-    tiledbgroup.add_argument("--tdb_input_source_attribute",nargs="+",help="attribute to use for generating model input, or 'seq' for one-hot-encoded sequence")
-
-    arch_params.add_argument("--model_params",type=str,default=None,help="2-column file with param name in column 1 and param value in column 2")
-    arch_params.add_argument("--datasets",nargs="*",default=None,help="list of tasks to train on, by name")
-
-    batch_params=parser.add_argument_group("batch_params")
-    batch_params.add_argument("--batch_size",type=int,default=1000)
-    batch_params.add_argument("--revcomp",action="store_true")
-
-    parallelization_params=parser.add_argument_group("parallelization")
-    parallelization_params.add_argument("--threads",type=int,default=1)
-    parallelization_params.add_argument("--max_queue_size",type=int,default=100)
-
-    vis_params.add_argument("--trackables",nargs="*",default=['loss','val_loss'], help="list of things to track per batch, such as logcount_predictions_loss,loss,profile_predictions_loss,val_logcount_predictions_loss,val_loss,val_profile_predictions_loss")
-    return parser.parse_args()
