@@ -87,19 +87,23 @@ TODO -
     - (define unstranded)
     - write analysis script to tell yes or no
 
-#### Step 3: Step 3: Generate background regions gc-matched with the peaks
+#### Step 3: SGenerate background regions gc-matched with the peaks
 
-Here we will generate non-peak background regions that gc-match with the peak regions. We will use thee regions to train and evaluate a bias model. We will also use these regions as bacjground regions tos get marginal footprints.
+Here we will generate non-peak background regions that gc-match with the peak regions. We will use the regions to train and evaluate a bias model. We will also use these regions as background regions to get marginal footprints.
 
-First we will start by dividing the entire genome into overlapping bins of `inputlen` regions. ChromBpnet models are trained on `inputlen` of 2114 on human genome datasets. This value was chosen such that all chromatin features are captures and performance saturates. This step takes several hours (Sorry never got to speeding this step sinece its a one-time step, if you have ways to speed this step please contribute.) For conveinve the human genome data we use is provided here - . But if you want to make this file from scratch follow these steps
+First we will start by dividing the entire genome into overlapping bins of `inputlen` regions. ChromBpnet models are trained on `inputlen` of 2114 on human genome datasets. This value was chosen such that all chromatin features are captures and performance saturates. This step takes several hours (Sorry never got to speeding this step sinece its a one-time step, if you have ways to speed this step please contribute.) For conveinve the human genome (hg38) data we use is provided here -  /oak/stanford/groups/akundaje/anusri/refs/genomewide_gc_hg38_stride_50_inputlen_2114.bed. But if you want to make this file from scratch follow these steps
 
+```
+python src/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py -g data/hg38.fa -c data/hg38.chrom.sizes -o data/genomewide_gc_hg38_stride_50_inputlen_2114.bed -il 2114 --s 50
+```
 
 Now we will find the regions from this genome-wide bucket that do not fall in overlap-peaks or blacklist bed but have same gc-disribution as the overlap-peak set
 
 ```
-bash step3_get_background_regions.sh data/merged.bam data/ ATAC_PE data/hg38.fa data/hg38.chrom.sizes
+bash step3_get_background_regions.sh data/hg38.fa data/hg38.chrom.sizes data/blacklist.bed.gz data/overlap.bed.gz 2114 data/ /oak/stanford/groups/akundaje/anusri/refs/genomewide_gc_hg38_stride_50_inputlen_2114.bed
 ```
 
+TODO - provide link for all the documentation
 
 ###  Train and Evaluate Bias Model
 
