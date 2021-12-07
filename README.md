@@ -87,7 +87,7 @@ TODO -
     - (define unstranded)
     - write analysis script to tell yes or no
 
-#### Step 3: SGenerate background regions gc-matched with the peaks
+#### Step 3: Generate background regions gc-matched with the peaks
 
 Here we will generate non-peak background regions that gc-match with the peak regions. We will use the regions to train and evaluate a bias model. We will also use these regions as background regions to get marginal footprints.
 
@@ -107,20 +107,60 @@ TODO - provide link for all the documentation
 
 ###  Train and Evaluate Bias Model
 
-We are now ready to train a bias model! 
+We are now ready to train a bias model! We will first define how we want to split the dataset by menitoning out splits in `splits.py` and generating the corresponding json. If you want to mention custom splits please edit the `splits.py` file directly. This will generate five json files each with a different fold information. You can choose any fold for model training further. For the purpose of this tutorial we will use `fold_0.json`
 
+```
+mkdir data/splits
+python src/helpers/make_chr_splits/splits.py -o data/splits
+```
 
 #### Step 4: Train Bias Model
 
+This creates a directory `output/bias_model` and stores output here
+This step consists of three steps - (1) Generate hyperparmeters file for bias model (2) Train bias model and (3) Predict and evaluate bias model. It is very improtant to read thhis section about the bias hyper-paramters - explain the threshold factor
+
+```
+bash step4_train_bias_model.sh data/shifted.sorted.bam.chrombpnet.unstranded.bw data/overlap.bed.gz data/negatives_with_summit.bed data/hg38.fa 0.9 2114 1000 data/splits/fold_0.json
+
+```
+
+How to interpret the output information. Important information about how bias model can catch motifs. So we will do Step 5 - If bias model catches motifs come back here and reduce the threshold and retrain. Careful not to use too few peaks. What worked for me best? 
 
 #### Step 5: Interpret bias model
 
+We can do this on the entire peak set - but we will do this on some subsampled data for a validation step.
+subsample some peaks for interpretation and modisco - this is mostly for time purposes - we will subsample to 30K peaks. We will make sure that the peaks we choose dont overlap with the blacklist regions. 
 
-#### Step 6: Scale bias model
+```
+inputlen=2114
+blacklist_region=data/blacklist.bed.gz
+chrom_sizes=data/hg38.chrom.sizes
+overlap_peak=data/overlap.bed.gz
+
+mkdir data/subsample_overlap
+
+flank_size=$(( inputlen/2 ))
+bedtools slop -i $blacklist_region -g $chrom_sizes -b $flank_size > data/subsample_overlap/temp.txt
+bedtools intersect -v -a $overlap_peak -b data/subsample_overlap/temp.txt | shuf  > data/subsample_overlap/temp_n.txt
+shuf -n 30000 data/subsample_overlap/temp_n.txt > data/subsample_overlap/30K.subsample.overlap.bed
+rm  data/subsample_overlap/temp.txt
+rm data/subsample_overlap/temp_n.txt
+```
+
+Interpretation 
+
+```
+
+```
+
+#### Step 6: Scale bias model (IMPORTANT IF THE BIAS MODEL IS BEING TRANSFERED FROM A DIFFERENT EXPERIMENT)
+
+This step is needed if we are transferring a bias model - this will normalize for the difference in read depth If the bias model is trained on an experiment on one read depth versus being used on another read depth. We are testing how well bias models generally transfer - one quick check is build the bias PWM on both the orginal experiment and transfer experiments and make sure the tn5 motifs looks similar.
 
 
 ###  Train and Evaluate ChromBPNet Model
 
+Now that we have a bias model we will use it to regeress out the bias from the ATAC-seq and DNAE-seq signal so that the sequence component of the model can have bias free signal.
 
 #### Step 7: Train ChromBPNet Model (This step will also generate the sequence model)
 
@@ -135,6 +175,8 @@ We are now ready to train a bias model!
 
 ## Generate Genome Wide Browser Tracks
 
+
+## Invivo Footprinting
 
 ##  Discusssion
 
