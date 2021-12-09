@@ -132,9 +132,9 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
     return model 
 
 
-def get_model_without_bias(model, output_prefix):
+def save_model_without_bias(model, output_prefix):
     profile_output_without_bias = model.get_layer("chrombpnet_logits_profile_predictions").output
     counts_output_without_bias = model.get_layer("chrombpnet_logcount_predictions").output
     model_without_bias = Model(inputs=model.inputs,outputs=[profile_output_without_bias, counts_output_without_bias])
     print('save model without bias') 
-    model_without_bias.save(args.output_prefix+"wo_bias.h5")
+    model_without_bias.save(args.output_prefix+"_wo_bias.h5")
