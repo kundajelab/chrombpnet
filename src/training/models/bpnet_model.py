@@ -104,8 +104,8 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
 
     return model 
 
-def get_model_without_bias(model, output_prefix):
+def save_model_without_bias(model, output_prefix):
     # nothing to do 
     # all model architectures have this function
     # defining this tosafeguard if the users uses the arugument save_model_without_bias argument on bias model accidentally 
-    pass
+    return
