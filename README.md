@@ -17,8 +17,6 @@
 - [Variant Effect Prediction](#variant-effect-prediction)
 - [Generate Genome Wide Browser Tracks](#generate-genome-wide-browser-tracks)
 - [Invivo Footprinting](#invivo-footprinting)
-- [Discussion](#discussion)
-- [Report a bug](#chrombpnet-bugs)
 
 
 ##  ChromBPNet
@@ -44,7 +42,7 @@ in a new conda environment preferably. See this link to find the appropriate CUD
 TODO -
 setup conda environment
 setup docker
-testsetup in a new environment
+test setup in a new environment
 	
 ##  Tutorial on how to train chrombpnet models
 
@@ -117,7 +115,7 @@ python src/helpers/make_chr_splits/splits.py -o data/splits
 #### Step 4: Train Bias Model
 
 This creates a directory `output/bias_model` and stores output here
-This step consists of three steps - (1) Generate hyperparmeters file for bias model (2) Train bias model and (3) Predict and evaluate bias model. It is very improtant to read thhis section about the bias hyper-paramters - explain the threshold factor
+This step consists of three steps - (1) Generate hyperparmeters file for bias model (2) Train bias model and (3) Predict and evaluate bias model. It is very improtant to read this section about the bias hyper-paramters - explain the threshold factor
 
 ```
 bash step4_train_bias_model.sh data/shifted.sorted.bam.chrombpnet.unstranded.bw data/overlap.bed.gz data/negatives_with_summit.bed data/hg38.fa 0.9 2114 1000 data/splits/fold_0.json
@@ -150,38 +148,64 @@ rm data/subsample_overlap/temp_n.txt
 Interpretation 
 
 ```
-
+bash step5_interpret_bias_model.sh  data/hg38.fa data/subsample_overlap/30K.subsample.overlap.bed  output/bias_model/model.0.h5
 ```
+
+This will generate images - make sure you see only tn5 motif and no bias model.
 
 #### Step 6: Scale bias model (IMPORTANT IF THE BIAS MODEL IS BEING TRANSFERED FROM A DIFFERENT EXPERIMENT)
 
 This step is needed if we are transferring a bias model - this will normalize for the difference in read depth If the bias model is trained on an experiment on one read depth versus being used on another read depth. We are testing how well bias models generally transfer - one quick check is build the bias PWM on both the orginal experiment and transfer experiments and make sure the tn5 motifs looks similar.
 
 
+similar to bias odel training above additionally we will priovide the bias model that we want to train as an argument.
+) Generate hyperparmeters file for bias model (2) Train bias model and
+
+For the purpose of this tutorial we will performing scaling of our model in step 6 to show a demo. In reality this si not needed unless you are transferring a bias model.
+
+```
+bash step4_train_bias_model.sh data/shifted.sorted.bam.chrombpnet.unstranded.bw data/overlap.bed.gz data/negatives_with_summit.bed data/hg38.fa 0.9 2114 1000 data/splits/fold_0.json output/bias_model/model.0.h5
+
+```
+
+TODO - 
+make output dir and provide as input for all the above
+Test this step add scale model in models
+
 ###  Train and Evaluate ChromBPNet Model
 
-Now that we have a bias model we will use it to regeress out the bias from the ATAC-seq and DNAE-seq signal so that the sequence component of the model can have bias free signal.
+Now that we have a bias model we will use it to regress out the bias from the ATAC-seq and DNAE-seq signal so that the sequence component of the model can have bias free signal.
+
+
 
 #### Step 7: Train ChromBPNet Model (This step will also generate the sequence model)
 
 
+```
+bash step7_train_chrombpnet_model.sh data/shifted.sorted.bam.chrombpnet.unstranded.bw data/overlap.bed.gz data/negatives_with_summit.bed data/hg38.fa 0.9 2114 1000 data/splits/fold_0.json output/bias_model/model.0.h5
+
+```
+
+This will output 2 models one is chrombpnet model (this is the model with bias) and the other is the sequence model (this is the moel without the bias)
+
 #### Step 8: Interpret chrombpnet model and sequence model
 
+We will now interpret on the same peak regions that we used for interpreting the bias model.
 
-#### Step 9: Marginal footprinting using bias, chrombpnet ans sequence model
+```
+bash step5_interpret_bias_model.sh  data/hg38.fa data/subsample_overlap/30K.subsample.overlap.bed  output/chrombpnet_model/model_wo_bias.0.h5
+```
 
+In the images produced here you should not see the bias motif and should only see the cell-type specfic motifs in the profile modisco.
 
-##  Variant Effect Prediction
+#### Step 9: Marginal footprinting using bias, chrombpnet and sequence model
 
-## Generate Genome Wide Browser Tracks
+This is another quick test to make sure the bias correction is working - do footprinting on the following motifs
 
+Run this on bias model, chrombpnet model,
+```
 
-## Invivo Footprinting
+```
 
-##  Discusssion
+## Variant Effect Prediction
 
-
-##  ChromBPNet bugs
-
-
-[url1]: https://www.encodeproject.org/experiments/ENCSR095QNB/
