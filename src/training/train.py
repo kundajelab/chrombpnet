@@ -6,7 +6,6 @@ import utils.losses as losses
 import utils.callbacks as callbacks
 import data_generators.initializers as initializers
 import pandas as pd
-import splits
 import os
 import json
 
@@ -19,9 +18,9 @@ def get_model(args, parameters):
     model=architecture_module.getModelGivenModelOptionsAndWeightInits(args, parameters)
     print("got the model")
     model.summary()
-    return model
+    return model, architecture_module
 
-def fit_and_evaluate(model,train_gen,valid_gen,args):
+def fit_and_evaluate(model,train_gen,valid_gen,args,architecture_module):
     model_output_path_string = args.output_prefix
     model_output_path_h5_name=model_output_path_string+".h5"
     model_output_path_logs_name=model_output_path_string+".log"
@@ -48,11 +47,12 @@ def fit_and_evaluate(model,train_gen,valid_gen,args):
     print('save model') 
     model.save(model_output_path_h5_name)
 
-    model.save_weights(model_output_path_weights_name)
+    architecture_module.save_model_without_bias(model, model_output_path_string)
 
-    architecture_string=model.to_json()
-    with open(model_output_path_arch_name,'w') as outf:
-        outf.write(architecture_string)
+    #model.save_weights(model_output_path_weights_name)
+    #architecture_string=model.to_json()
+    #with open(model_output_path_arch_name,'w') as outf:
+    #    outf.write(architecture_string)
 
 def get_model_param_dict(param_file):
     '''
@@ -77,14 +77,14 @@ def main():
     print(parameters)
 
     # get model architecture to load
-    model=get_model(args, parameters)
+    model, architecture_module=get_model(args, parameters)
 
     # initialize generators to load data
     train_generator = initializers.initialize_generators(args, "train", parameters, return_coords=False)
     valid_generator = initializers.initialize_generators(args, "valid", parameters, return_coords=False)
 
     # train the model using the generators
-    fit_and_evaluate(model, train_generator, valid_generator, args)
+    fit_and_evaluate(model, train_generator, valid_generator, args, architecture_module)
 
     # store args and and store params to checkpoint
     with open(args.output_prefix+'.args.json', 'w') as fp:

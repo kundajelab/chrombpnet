@@ -1,11 +1,11 @@
 import data_generators.batchgen_generator as batchgen_generator
 from utils import data_utils
 import pandas as pd
-import splits
+import json
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 
-def fetch_params_based_on_mode(mode, args, parameters, nonpeak_regions):
+def fetch_data_and_model_params_based_on_mode(mode, args, parameters, nonpeak_regions):
 
     if mode=="train":
         # read params based on used defined values
@@ -15,6 +15,8 @@ def fetch_params_based_on_mode(mode, args, parameters, nonpeak_regions):
         negative_sampling_ratio=args.negative_sampling_ratio
         add_revcomp=True
         shuffle_at_epoch_start=True
+        inputlen=int(parameters["inputlen"])
+        outputlen=int(parameters["outputlen"])
 
     elif mode=="valid":
         # do not jitter at valid time - we are testing only at summits
@@ -29,6 +31,9 @@ def fetch_params_based_on_mode(mode, args, parameters, nonpeak_regions):
         cts_sum_max_thresh=parameters["counts_sum_max_thresh"]
         # no need to shuffle
         shuffle_at_epoch_start=False
+        inputlen=int(parameters["inputlen"])
+        outputlen=int(parameters["outputlen"])
+        
 
     elif mode=="test":
         # no jitter at valid time - we are testing only at summits
@@ -37,46 +42,60 @@ def fetch_params_based_on_mode(mode, args, parameters, nonpeak_regions):
         add_revcomp=False
         # no subsampling of negatives - test on all positives and negatives
         negative_sampling_ratio=1.0
-        # filtering of data points based on outliers - need to discuss how to do this
+        # do not filter data at test time
         cts_sum_min_thresh="None"
         cts_sum_max_thresh="None"
         # no need to shuffle
         shuffle_at_epoch_start=False
+        inputlen=args.inputlen
+        outputlen=args.outputlen
+
     else:
         print("mode not defined - only train, valid, test are allowed")
 
     return cts_sum_min_thresh,cts_sum_max_thresh,max_jitter,add_revcomp,nonpeak_regions,negative_sampling_ratio, shuffle_at_epoch_start
 
+
+def get_bed_regions_for_fold_split(bed_regions, mode, splits_dict):
+    chroms_to_keep=splits_dict[mode]
+    bed_regions_to_keep=bed_regions[bed_regions["chr"].isin(chroms_to_keep)]
+    print("got split:"+str(mode)+" for bed regions:"+str(bed_regions_to_keep.shape))
+    return bed_regions_to_keep, chroms_to_keep
+
 def initialize_generators(args, mode, parameters, return_coords):
 
-    assert(args.inputlen%2==0)
-    assert(args.outputlen%2==0)
 
     # defaults
     peak_regions=None
     nonpeak_regions=None
 
     # get only those peak/non peak regions corresponding to train/valid/test set
-    if args.peaks != "None":
+    splits_dict=json.load(open(args.chr_fold_path))
+
+    if args.peaks.lower() != "none":
         print("loading peaks...")
         peak_regions=pd.read_csv(args.peaks,header=None,sep='\t',names=NARROWPEAK_SCHEMA)
-        peak_regions, chroms=splits.get_bed_regions_for_fold_split(peak_regions, args.fold, mode)
+        peak_regions, chroms=get_bed_regions_for_fold_split(peak_regions, mode, splits_dict)
 
-    if args.nonpeaks != "None":
+    if args.nonpeaks.lower() != "none":
         print("loading nonpeaks...")
         nonpeak_regions=pd.read_csv(args.nonpeaks,header=None,sep='\t',names=NARROWPEAK_SCHEMA)
-        nonpeak_regions, chroms=splits.get_bed_regions_for_fold_split(nonpeak_regions, args.fold, mode) 
+        nonpeak_regions, chroms=get_bed_regions_for_fold_split(nonpeak_regions, mode, splits_dict) 
 
-    cts_sum_min_thresh, cts_sum_max_thresh, max_jitter, add_revcomp, nonpeak_regions, negative_sampling_ratio, shuffle_at_epoch_start =  \
-                                                                            fetch_params_based_on_mode(mode, args, parameters, nonpeak_regions)
+    cts_sum_min_thresh, cts_sum_max_thresh, inputlen, outputlen,\
+    add_revcomp, max_jitter, shuffle_at_epoch_start \
+    nonpeak_regions, negative_sampling_ratio  =  fetch_data_and_model_params_based_on_mode(mode, args, parameters, nonpeak_regions)
+
+    assert(inputlen%2==0)
+    assert(outputlen%2==0)
 
     generator=batchgen_generator.ChromBPNetBatchGenerator(
                                     peak_regions=peak_regions,
                                     nonpeak_regions=nonpeak_regions,
                                     genome_fasta=args.genome,
                                     batch_size=args.batch_size,
-                                    inputlen=args.inputlen,                                        
-                                    outputlen=args.outputlen,
+                                    inputlen=inputlen,                                        
+                                    outputlen=outputlen,
                                     max_jitter=max_jitter,
                                     negative_sampling_ratio=negative_sampling_ratio,
                                     cts_sum_min_thresh=cts_sum_min_thresh,

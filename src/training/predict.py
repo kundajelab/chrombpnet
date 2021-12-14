@@ -4,7 +4,6 @@ from keras.utils.generic_utils import get_custom_objects
 from tensorflow.keras.models import load_model
 from scipy import nanmean, nanstd
 import pandas as pd
-import splits
 import os
 import scipy.stats
 import metrics
@@ -55,18 +54,6 @@ def predict_on_batch_wrapper(model,test_generator):
 
     return np.array(true_counts), np.array(profile_probs_predictions), np.array(true_counts_sum), np.array(counts_sum_predictions), np.array(coordinates)
 
-def get_model_param_dict(param_file):
-    '''
-    param_file has 2 columns -- param name in column 1, and param value in column 2
-    You can pass model specfic parameters to design your own model with this
-    '''
-    params={}
-    if param_file is None:
-        return  params
-    for line in open(param_file,'r').read().strip().split('\n'):
-        tokens=line.split('\t')
-        params[tokens[0]]=tokens[1]
-    return params 
 
 def main():
 
@@ -77,15 +64,10 @@ def main():
     # get model architecture to load - can load .hdf5 and .weights/.arch
     model=load_model_wrapper(args)
 
-    #parameters = get_model_param_dict(args.params)
-    parameters=None
-
-    test_generator = initializers.initialize_generators(args, mode="test", parameters=parameters, return_coords=True)
+    test_generator = initializers.initialize_generators(args, mode="test", parameters=None, return_coords=True)
 
     # generate prediction on test set and store metrics
     true_counts, profile_probs_predictions, true_counts_sum, counts_sum_predictions, coordinates = predict_on_batch_wrapper(model, test_generator)
-
-    #true_counts = scipy.ndimage.gaussian_filter1d(true_counts, 7,axis=1, truncate=(80 / 14))
  
     # store regions, their predictions and corresponding pointwise metrics
     mnll_pw, mnll_norm, jsd_pw, jsd_norm, jsd_rnd, jsd_rnd_norm, mnll_rnd, mnll_rnd_norm =  metrics.profile_metrics(true_counts,profile_probs_predictions)
@@ -148,7 +130,7 @@ def main():
             json.dump(metrics_dictionary, fp,  indent=4)
 
     # store region-wise values
-    outf=h5py.File(args.output_prefix+"region_wise_predictions_and_metrics.h5",'w')
+    outf=h5py.File(args.output_prefix+"/region_wise_predictions_and_metrics.h5",'w')
     outf.create_dataset("true_counts",data=true_counts)
     outf.create_dataset("profile_probs_predictions",data=profile_probs_predictions)
     outf.create_dataset("true_counts_sum",data=true_counts_sum)
