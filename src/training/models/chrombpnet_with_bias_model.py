@@ -1,9 +1,9 @@
 import numpy as np ;
 from keras.backend import int_shape
-from keras.layers import Input, Cropping1D, add, Conv1D, GlobalAvgPool1D, Dense, Add, Concatenate, Lambda
+from keras.layers import Input, Cropping1D, add, Conv1D, GlobalAvgPool1D, Dense, Add, Concatenate, Lambda, Flatten
 from keras.optimizers import Adam
 from keras.models import Model
-from utils.losses import MultichannelMultinomialNLL
+from utils.losses import multinomial_nll
 import tensorflow as tf
 import random as rn
 import os 
@@ -14,7 +14,7 @@ os.environ['PYTHONHASHSEED'] = '0'
 def load_pretrained_bias(model_hdf5):
     from keras.models import load_model
     from keras.utils.generic_utils import get_custom_objects
-    custom_objects={"MultichannelMultinomialNLL": MultichannelMultinomialNLL}    
+    custom_objects={"multinomial_nll":multinomial_nll, "tf":tf}    
     get_custom_objects().update(custom_objects)
     pretrained_bias_model=load_model(model_hdf5)
     #freeze the model
@@ -24,46 +24,11 @@ def load_pretrained_bias(model_hdf5):
     return pretrained_bias_model
 
 
-def getModelGivenModelOptionsAndWeightInits(args, model_params):
-    #default params (can be overwritten by providing model_params file as input to the training function)
-    filters=512
-    n_dil_layers=8
+def bpnet_model(filters, n_dil_layers, sequence_len, out_pred_len):
+
     conv1_kernel_size=21
     profile_kernel_size=75
-    counts_loss_weight=1
     num_tasks=1 # not using multi tasking
-    
-    if 'filters' in model_params:
-        filters=int(model_params['filters'])
-    if 'n_dil_layers' in model_params:
-        n_dil_layers=int(model_params['n_dil_layers'])
-    if 'conv1_kernel_size' in model_params:
-        conv1_kernel_size=int(model_params['conv1_kernel_size'])
-    if 'profile_kernel_size' in model_params:
-        profile_kernel_size=int(model_params['profile_kernel_size'])
-    if 'cnts_loss_weight' in model_params:
-        counts_loss_weight=float(model_params['counts_loss_weight'])
-    if 'bias_model_path' in model_params:
-        bias_model_path=model_params['bias_model_path']
-    else:
-        print("Bias model hdf5 path expected")
-
-    bias_model = load_pretrained_bias(bias_model_path)
-
-    print("params:")
-    print("filters:"+str(filters))
-    print("n_dil_layers:"+str(n_dil_layers))
-    print("conv1_kernel_size:"+str(conv1_kernel_size))
-    print("profile_kernel_size:"+str(profile_kernel_size))
-    print("counts_loss_weight:"+str(counts_loss_weight))
-    
-    #read in arguments
-    seed=args.seed
-    np.random.seed(seed)    
-    tf.random.set_seed(seed)
-    rn.seed(seed)
-    sequence_len=int(args.inputlen)
-    out_pred_len=int(args.outputlen)
 
     #define inputs
     inp = Input(shape=(sequence_len, 4),name='sequence')    
@@ -73,12 +38,12 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
                 kernel_size=conv1_kernel_size,
                 padding='valid', 
                 activation='relu',
-                name='chrombpnet_1st_conv')(inp)
+                name='wo_bias_bpnet_1st_conv')(inp)
 
     layer_names = [str(i) for i in range(1,n_dil_layers+1)]
     for i in range(1, n_dil_layers + 1):
         # dilated convolution
-        conv_layer_name = 'chrombpnet_{}conv'.format(layer_names[i-1])
+        conv_layer_name = 'wo_bias_bpnet_{}conv'.format(layer_names[i-1])
         conv_x = Conv1D(filters, 
                         kernel_size=3, 
                         padding='valid',
@@ -90,7 +55,7 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
         conv_x_len = int_shape(conv_x)[1]
         assert((x_len - conv_x_len) % 2 == 0) # Necessary for symmetric cropping
 
-        x = Cropping1D((x_len - conv_x_len) // 2, name="chrombpnet_{}crop".format(layer_names[i-1]))(x)
+        x = Cropping1D((x_len - conv_x_len) // 2, name="wo_bias_bpnet_{}crop".format(layer_names[i-1]))(x)
         x = add([conv_x, x])
 
     # Branch 1. Profile prediction
@@ -98,14 +63,17 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
     prof_out_precrop = Conv1D(filters=num_tasks,
                         kernel_size=profile_kernel_size,
                         padding='valid',
-                        name='chrombpnet_prof_out_precrop')(x)
+                        name='wo_bias_bpnet_prof_out_precrop')(x)
 
     # Step 1.2 - Crop to match size of the required output size
     cropsize = int(int_shape(prof_out_precrop)[1]/2)-int(out_pred_len/2)
     assert cropsize>=0
     assert (cropsize % 2 == 0) # Necessary for symmetric cropping
-    profile_out_prebias = Cropping1D(cropsize,
-                name='chrombpnet_logits_profile_predictions')(prof_out_precrop)
+
+    prof = Cropping1D(cropsize,
+                name='wo_bias_bpnet_logitt_before_flatten')(prof_out_precrop)
+    
+    profile_out = Flatten(name="wo_bias_bpnet_logits_profile_predictions")(prof)
 
     # Branch 2. Counts prediction
     # Step 2.1 - Global average pooling along the "length", the result
@@ -113,12 +81,50 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
     gap_combined_conv = GlobalAvgPool1D(name='gap')(x) # acronym - gapcc
 
     # Step 2.3 Dense layer to predict final counts
-    count_out_prebias = Dense(num_tasks, name="chrombpnet_logcount_predictions")(gap_combined_conv)
+    count_out = Dense(num_tasks, name="wo_bias_bpnet_logcount_predictions")(gap_combined_conv)
+
+    # instantiate keras Model with inputs and outputs
+    model=Model(inputs=[inp],outputs=[profile_out, count_out], name="model_wo_bias")
+
+    return model
+
+
+def getModelGivenModelOptionsAndWeightInits(args, model_params):   
+    
+    assert("bias_model_path" in model_params.keys()) # bias model path not specfied for model
+    filters=int(model_params['filters'])
+    n_dil_layers=int(model_params['n_dil_layers'])
+    counts_loss_weight=float(model_params['counts_loss_weight'])
+    bias_model_path=model_params['bias_model_path']
+    sequence_len=int(model_params['inputlen'])
+    out_pred_len=int(model_params['outputlen'])
+
+
+    bias_model = load_pretrained_bias(bias_model_path)
+    bpnet_model_wo_bias = bpnet_model(filters, n_dil_layers, sequence_len, out_pred_len)
+
+    #read in arguments
+    seed=args.seed
+    np.random.seed(seed)    
+    tf.random.set_seed(seed)
+    rn.seed(seed)
+    
+    inp = Input(shape=(sequence_len, 4),name='sequence')    
 
     ## get bias output
     bias_output=bias_model(inp)
-    profile_out = Add(name="logits_profile_predictions")([profile_out_prebias,bias_output[0]])
-    concat_counts = Concatenate(axis=-1)([count_out_prebias, bias_output[1]])
+    ## get wo bias output
+    output_wo_bias=bpnet_model_wo_bias(inp)
+    assert(len(bias_output[1].shape)==2) # bias model counts head is of incorrect shape (None,1) expected
+    assert(len(bias_output[0].shape)==2) # bias model profile head is of incorrect shape (None,out_pred_len) expected
+    assert(len(output_wo_bias[0].shape)==2)
+    assert(len(output_wo_bias[1].shape)==2)
+    assert(bias_output[1].shape[1]==1) #  bias model counts head is of incorrect shape (None,1) expected
+    assert(bias_output[0].shape[1]==out_pred_len) # bias model profile head is of incorrect shape (None,out_pred_len) expected
+
+
+    profile_out = Add(name="logits_profile_predictions")([output_wo_bias[0],bias_output[0]])
+    concat_counts = Concatenate(axis=-1)([output_wo_bias[1], bias_output[1]])
     count_out = Lambda(lambda x: tf.math.reduce_logsumexp(x, axis=-1, keepdims=True),
                         name="logcount_predictions")(concat_counts)
 
@@ -126,15 +132,15 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
     model=Model(inputs=[inp],outputs=[profile_out, count_out])
 
     model.compile(optimizer=Adam(learning_rate=args.learning_rate),
-                    loss=[MultichannelMultinomialNLL(num_tasks),'mse'],
+                    loss=[multinomial_nll,'mse'],
                     loss_weights=[1,counts_loss_weight])
 
     return model 
 
 
 def save_model_without_bias(model, output_prefix):
-    profile_output_without_bias = model.get_layer("chrombpnet_logits_profile_predictions").output
-    counts_output_without_bias = model.get_layer("chrombpnet_logcount_predictions").output
-    model_without_bias = Model(inputs=model.inputs,outputs=[profile_output_without_bias, counts_output_without_bias])
+    model_wo_bias = model.get_layer("model_wo_bias").output
+    #counts_output_without_bias = model.get_layer("wo_bias_bpnet_logcount_predictions").output
+    model_without_bias = Model(inputs=model.get_layer("model_wo_bias").inputs,outputs=[model_wo_bias[0], model_wo_bias[1]])
     print('save model without bias') 
-    model_without_bias.save(args.output_prefix+"_wo_bias.h5")
+    model_without_bias.save(output_prefix+"_wo_bias.h5")

@@ -26,7 +26,7 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
     every epoch, and calls bias model on it, whose outputs (bias profile logits 
     and bias logcounts) are fed as input to the chrombpnet model.
     """
-    def __init__(self, peak_regions, nonpeak_regions, genome_fasta, batch_size, inputlen, outputlen, max_jitter, negative_sampling_ratio, cts_sum_min_thresh, cts_sum_max_thresh, cts_bw_file, seed, add_revcomp, return_coords, shuffle_at_epoch_start):
+    def __init__(self, peak_regions, nonpeak_regions, genome_fasta, batch_size, inputlen, outputlen, max_jitter, negative_sampling_ratio, cts_bw_file, seed, add_revcomp, return_coords, shuffle_at_epoch_start):
         """
         seqs: B x L' x 4
         cts: B x M'
@@ -39,7 +39,7 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         random.seed(seed)
         tf.random.set_seed(seed)
 
-        peak_seqs, peak_cts, peak_coords, nonpeak_seqs, nonpeak_cts, nonpeak_coords, = data_utils.load_data(peak_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen, outputlen, max_jitter, cts_sum_min_thresh, cts_sum_max_thresh)
+        peak_seqs, peak_cts, peak_coords, nonpeak_seqs, nonpeak_cts, nonpeak_coords, = data_utils.load_data(peak_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen, outputlen, max_jitter)
         self.peak_seqs, self.nonpeak_seqs = peak_seqs, nonpeak_seqs
         self.peak_cts, self.nonpeak_cts = peak_cts, nonpeak_cts
         self.peak_coords, self.nonpeak_coords = peak_coords, nonpeak_coords
@@ -58,6 +58,7 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         self.crop_revcomp_data()
 
     def __len__(self):
+
         return math.ceil(self.seqs.shape[0]/self.batch_size)
 
 
@@ -98,9 +99,9 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         batch_coords = self.cur_coords[idx*self.batch_size:(idx+1)*self.batch_size]
 
         if self.return_coords:
-            return (batch_seq, [np.expand_dims(batch_cts,axis=2), np.log(1+batch_cts.sum(-1, keepdims=True))], batch_coords)
+            return (batch_seq, [batch_cts, np.log(1+batch_cts.sum(-1, keepdims=True))], batch_coords)
         else:
-            return (batch_seq, [np.expand_dims(batch_cts,axis=2), np.log(1+batch_cts.sum(-1, keepdims=True))])
+            return (batch_seq, [batch_cts, np.log(1+batch_cts.sum(-1, keepdims=True))])
 
     def on_epoch_end(self):
         self.crop_revcomp_data()

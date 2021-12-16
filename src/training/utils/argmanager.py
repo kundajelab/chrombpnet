@@ -31,12 +31,12 @@ def fetch_train_chrombpnet_args():
 
     # additional arguments for chrombpnet
     parser.add_argument("-j", "--max_jitter", type=int, default=500, help="Maximum jitter applied on either side of region (default 500 for chrombpnet")    
-    parser.add_argument("-sr", "--negative-sampling-ratio", type=float, default=1.0, help="Ratio of negative to positive samples per epoch")
+    parser.add_argument("-sr", "--negative-sampling-ratio", type=float, default=0.1, help="Ratio of negative to positive samples per epoch")
     parser.set_defaults(negative_sampling=True)
 
     args = parser.parse_args()
 
-    assert((args.peaks.lower() != "none" | args.nonpeaks.lower() != "none")) # Both peaks and non-peaks are empty 
+    assert((args.peaks.lower() != "none") or (args.nonpeaks.lower() != "none")) #Both peaks and nonpeaks are empty" 
 
     return args
 
@@ -48,10 +48,10 @@ def fetch_predict_args():
     parser.add_argument("-s", "--seed", type=int, default=1234, help="seed to use for model training")
     parser.add_argument("-il", "--inputlen", type=int, default=2114, help="Sequence input length")
     parser.add_argument("-ol", "--outputlen", type=int, default=1000, help="Prediction output length")
-    parser.add_argument("-pf", "--params", type=str, required=True, default=None)
+    #parser.add_argument("-ol", "--debug_on", type=int, default=0, help="Run predictions in debug mode on")
     args = parser.parse_args()
 
-    assert((args.peaks.lower() != "none" or args.nonpeaks.lower() != "none")) #Both peaks and nonpeaks are empty" 
+    assert((args.peaks.lower() != "none") or (args.nonpeaks.lower() != "none")) #Both peaks and nonpeaks are empty" 
 
     return args
 

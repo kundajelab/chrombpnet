@@ -33,6 +33,7 @@ def fit_and_evaluate(model,train_gen,valid_gen,args,architecture_module):
     csvlogger = tfcallbacks.CSVLogger(model_output_path_logs_name, append=False)
     reduce_lr = tfcallbacks.ReduceLROnPlateau(monitor='val_loss',factor=0.4, patience=args.early_stop-2, min_lr=0.00000001)
     cur_callbacks=[checkpointer,earlystopper,csvlogger,reduce_lr,history]
+    #cur_callbacks=[checkpointer,earlystopper]
 
     model.fit(train_gen,
               validation_data=valid_gen,
@@ -40,8 +41,7 @@ def fit_and_evaluate(model,train_gen,valid_gen,args,architecture_module):
               verbose=1,
               max_queue_size=100,
               workers=10,
-              callbacks=cur_callbacks,
-              shuffle=True)
+              callbacks=cur_callbacks)
 
     print('fit_generator complete') 
     print('save model') 
@@ -49,22 +49,25 @@ def fit_and_evaluate(model,train_gen,valid_gen,args,architecture_module):
 
     architecture_module.save_model_without_bias(model, model_output_path_string)
 
-    #model.save_weights(model_output_path_weights_name)
-    #architecture_string=model.to_json()
-    #with open(model_output_path_arch_name,'w') as outf:
-    #    outf.write(architecture_string)
 
-def get_model_param_dict(param_file):
+def get_model_param_dict(args):
     '''
     param_file has 2 columns -- param name in column 1, and param value in column 2
     You can pass model specfic parameters to design your own model with this
     '''
     params={}
-    if param_file is None:
-        return  params
-    for line in open(param_file,'r').read().strip().split('\n'):
+    for line in open(args.params,'r').read().strip().split('\n'):
         tokens=line.split('\t')
         params[tokens[0]]=tokens[1]
+
+    assert("counts_loss_weight" in params.keys()) # misising counts loss weight to use
+    assert("filters" in params.keys()) # filters to use for the model not provided
+    assert("n_dil_layers" in params.keys()) # n_dil_layers to use for the model not provided
+    assert("inputlen" in params.keys()) # inputlen to use for the model not provided
+    assert("outputlen" in params.keys()) # outputlen to use for the model not provided
+    assert(args.chr_fold_path==params["chr_fold_path"]) # the parameters were generated on a different fold compared to the given fold
+    assert(args.max_jitter==int(params["max_jitter"])) # the parameters were generated on a different jitter compared to the given jitter
+
     return params 
 
 def main():
@@ -73,7 +76,7 @@ def main():
     args=argmanager.fetch_train_chrombpnet_args()
 
     # read tab-seperated paprmeters file
-    parameters = get_model_param_dict(args.params)
+    parameters = get_model_param_dict(args)
     print(parameters)
 
     # get model architecture to load

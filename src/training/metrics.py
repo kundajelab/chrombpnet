@@ -24,9 +24,9 @@ def counts_metrics(labels,preds,outf,title):
     pearson_cor=pearsonr(labels,preds)[0]  
     mse=((labels - preds)**2).mean(axis=0)
 
-    print("spearman:"+str(spearman_cor))
-    print("pearson:"+str(pearson_cor))
-    print("mse:"+str(mse))
+    #print("spearman:"+str(spearman_cor))
+    #print("pearson:"+str(pearson_cor))
+    #print("mse:"+str(mse))
 
     plt.rcParams["figure.figsize"]=8,8
     fig=plt.figure() 

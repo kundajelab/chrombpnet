@@ -18,9 +18,9 @@ class LossHistory(keras.callbacks.Callback):
             self.losses[epoch][trackable]=[]         
         self.cur_epoch=epoch
         
-    def on_batch_end(self, batch, logs={}):
-        for trackable in self.to_track:
-            self.losses[self.cur_epoch][trackable].append(logs.get(trackable))
+    #def on_batch_end(self, batch, logs={}):
+    #    for trackable in self.to_track:
+    #        self.losses[self.cur_epoch][trackable].append(logs.get(trackable))
             
     def on_epoch_end(self,epoch,logs={}):
         marker=self.to_track[0] 
@@ -30,6 +30,7 @@ class LossHistory(keras.callbacks.Callback):
             for trackable in self.to_track:
                 self.outf.write('\t'+str(self.losses[epoch][trackable][i]))
             self.outf.write('\n')
+
         
     def on_train_end(self,logs={}):
         self.outf.close()
