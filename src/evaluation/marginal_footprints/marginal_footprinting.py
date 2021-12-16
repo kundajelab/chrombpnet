@@ -56,7 +56,7 @@ def get_footprint_for_motif(seqs, motif, model, inputlen, batch_size):
     footprint_for_motif_rev = softmax(model.predict(w_mot_seqs_revc, batch_size=batch_size, verbose=True)[0])  
 
     # add fwd sequence predictions and reverse sesquence predictions (not we flip the rev predictions)
-    footprint_for_motif = footprint_for_motif_fwd+footprint_for_motif_rev[:,::-1,:]
+    footprint_for_motif = footprint_for_motif_fwd+footprint_for_motif_rev[:,::-1]
 
     return footprint_for_motif.mean(0)
 
@@ -80,6 +80,7 @@ def main():
 
     footprints_at_motifs = {}
 
+    avg_response_at_tn5 = []
     for motif in args.motifs[0]:
         print("inserting motif: ", motif)
         motif_to_insert_fwd = pwm_df[pwm_df["MOTIF_NAME"]==motif]["MOTIF_PWM_FWD"].values[0]
@@ -88,10 +89,13 @@ def main():
         footprints_at_motifs[motif]=motif_footprint
 
         # plot footprints of center 200bp
+        if "tn5" in motif:
+                avg_response_at_tn5.append(str(np.round(np.max(motif_footprint[outputlen//2-100:outputlen//2+100]),3)))
         plt.figure()
         plt.plot(range(200),motif_footprint[outputlen//2-100:outputlen//2+100])
         plt.savefig(args.output_prefix+".{}.footprint.png".format(motif))
 
+    print(",".join(avg_response_at_tn5))
     print("Saving marginal footprints")
     dd.io.save("{}.footprints.h5".format(args.output_prefix),
         footprints_at_motifs,
