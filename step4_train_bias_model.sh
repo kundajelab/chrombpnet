@@ -1,54 +1,60 @@
-bigwig_path=$1
-overlap_peak=$2
-nonpeaks=$3
-reference_fasta=$4
-threshold_factor=$5
-inputlen=$6
-outputlen=$7
-fold=$8
 
-mkdir output
-mkdir output/bias_model
-output_dir=output/bias_model
+reference_fasta=$1
+bigwig_path=$2
+overlap_peak=$3
+nonpeaks=$4
+fold=$5
+bias_threshold_factor=$6
+output_dir=$7
 
-#creates a bias_params.txt file in the output_dir mentioned
+# defaults
+inputlen=2114
+outputlen=1000
+filters=128
+n_dilation_layers=4
+
+# this script does the following -  
+# (1) filters your peaks/nonpeaks (removes outliers and removes edge cases and creates a new filtered set)
+# (2) filters non peaks based on the given bias threshold factor
+# (3) Calculates the counts loss weight 
+# (4) Creates a TSV file that can be loaded into the next step
 python $PWD/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=$reference_fasta \
        --bigwig=$bigwig_path \
        --peaks=$overlap_peak \
        --nonpeaks=$nonpeaks \
-       --genome=$reference_fasta \
-       --threshold_factor=$threshold_factor  \
+       --outlier_threshold=0.99 \
        --chr_fold_path=$fold \
-       --outputlen=$outputlen \
-       --output_dir=$output_dir 
-
-# trains a bias model and store it in the directory mentioned with the given prefix
-CUDA_VISIBLE_DEVICES=0 python $PWD/src/training/train.py \
-       --genome=$reference_fasta \
-       --nonpeaks=$nonpeaks \
-       --peaks=None \
-       --output_prefix=$output_dir/model.0 \
-       --chr_fold_path=$fold \
-       --epochs=40 \
-       --params=$output_dir/bias_params.txt \
        --inputlen=$inputlen \
        --outputlen=$outputlen \
-       --max_jitter=10 \
-       --batch_size=64 \
+       --max_jitter=50 \
+       --filters=$filters \
+       --n_dilation_layers=$n_dilation_layers \
+       --bias_threshold_factor=$bias_threshold_factor \
+       --output_dir $output_dir 
+
+# this script does the following -  
+# (1) trains a model on the given peaks/nonpeaks
+# (2) The parameters file input to this script should be TSV seperated 
+python $PWD/src/training/train.py \
+       --genome=$reference_fasta \
        --bigwig=$bigwig_path \
+       --nonpeaks=$output_dir/filtered.bias_nonpeaks.bed \
+       --params=$output_dir/bias_model_params.tsv \
+       --output_prefix=$output_dir/bias \
+       --chr_fold_path=$fold \
+       --batch_size=64 \
        --architecture_from_file=$PWD/src/training/models/bpnet_model.py \
        --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss 
 
-# predictions and metrics on the bias model trained
-CUDA_VISIBLE_DEVICES=0 python $PWD/src/training/predict.py \
+# predictions and metrics on the chrombpnet model trained
+python $PWD/src/training/predict.py \
         --genome=$reference_fasta \
-        --peaks=$overlap_peak \
-        --nonpeaks=$nonpeaks \
-        --output_prefix=$output_dir \
+        --bigwig=$bigwig_path \
+        --nonpeaks=$output_dir/filtered.bias_nonpeaks.bed \
         --chr_fold_path=$fold \
         --inputlen=$inputlen \
         --outputlen=$outputlen \
-        --batch_size=64 \
-        --model_h5=$output_dir/model.0.h5 \
-        --params=$output_dir/bias_params.txt \
-        --bigwig=$bigwig_path \
+        --output_prefix=$output_dir/bias \
+        --batch_size=256 \
+        --model_h5=$output_dir/bias.h5 \
