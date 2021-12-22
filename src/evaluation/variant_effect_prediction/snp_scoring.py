@@ -1,6 +1,6 @@
 from snp_generator import SNPGenerator
 from scipy.spatial.distance import jensenshannon
-from keras.utils.generic_utils import get_custom_objects
+from tensorflow.keras.utils import get_custom_objects
 from tensorflow.keras.models import load_model
 import pandas as pd
 import os

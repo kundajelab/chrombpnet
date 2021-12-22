@@ -90,17 +90,24 @@ def main():
 
         # plot footprints of center 200bp
         if "tn5" in motif:
-                avg_response_at_tn5.append(str(np.round(np.max(motif_footprint[outputlen//2-100:outputlen//2+100]),3)))
+                avg_response_at_tn5.append(np.round(np.max(motif_footprint[outputlen//2-100:outputlen//2+100]),3))
         plt.figure()
         plt.plot(range(200),motif_footprint[outputlen//2-100:outputlen//2+100])
         plt.savefig(args.output_prefix+".{}.footprint.png".format(motif))
 
-    print(",".join(avg_response_at_tn5))
+    if np.mean(avg_response_at_tn5) < 0.006:
+        ofile = open("{}_footprints_score.txt".format(args.output_prefix), "w")
+        ofile.write("corrected_"+str(round(np.mean(avg_response_at_tn5),3))+"_"+"/".join(list(map(str,avg_response_at_tn5))))
+        ofile.close()
+    else:
+        ofile = open("{}_footprints_score.txt".format(args.output_prefix), "w")
+        ofile.write("uncorrected:"+str(round(np.mean(avg_response_at_tn5),3))+"/".join(list(map(str,avg_response_at_tn5))))
+        ofile.close()
+
     print("Saving marginal footprints")
-    dd.io.save("{}.footprints.h5".format(args.output_prefix),
+    dd.io.save("{}_footprints.h5".format(args.output_prefix),
         footprints_at_motifs,
         compression='blosc')
-
 
 
 if __name__ == '__main__':

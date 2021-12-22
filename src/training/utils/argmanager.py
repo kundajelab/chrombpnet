@@ -21,7 +21,7 @@ def update_model_args(parser):
     parser.add_argument("-s", "--seed", type=int, default=1234, help="seed to use for model training")
     parser.add_argument("-a","--architecture_from_file",type=str,required=True, default=None, help="Model to use for training")
 
-def fetch_train_chrombpnet_args():
+def fetch_train_args():
     parser = argparse.ArgumentParser()
     update_data_args(parser)
     update_train_args(parser)

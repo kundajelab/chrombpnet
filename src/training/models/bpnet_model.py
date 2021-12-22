@@ -1,9 +1,9 @@
 import numpy as np ;
-from keras.backend import int_shape
-from keras.layers import Input, Cropping1D, add, Conv1D, GlobalAvgPool1D, Dense
-from keras.optimizers import Adam
-from keras.models import Model
-from utils.losses import MultichannelMultinomialNLL
+from tensorflow.keras.backend import int_shape
+from tensorflow.keras.layers import Input, Cropping1D, add, Conv1D, GlobalAvgPool1D, Dense, Flatten
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.models import Model
+from utils.losses import multinomial_nll
 import tensorflow as tf
 import random as rn
 import os 
@@ -12,23 +12,15 @@ os.environ['PYTHONHASHSEED'] = '0'
 
 def getModelGivenModelOptionsAndWeightInits(args, model_params):
     #default params (can be overwritten by providing model_params file as input to the training function)
-    filters=512
-    n_dil_layers=8
     conv1_kernel_size=21
     profile_kernel_size=75
-    counts_loss_weight=1
     num_tasks=1 # not using multi tasking
     
-    if 'filters' in model_params:
-        filters=int(model_params['filters'])
-    if 'n_dil_layers' in model_params:
-        n_dil_layers=int(model_params['n_dil_layers'])
-    if 'conv1_kernel_size' in model_params:
-        conv1_kernel_size=int(model_params['conv1_kernel_size'])
-    if 'profile_kernel_size' in model_params:
-        profile_kernel_size=int(model_params['profile_kernel_size'])
-    if 'cnts_loss_weight' in model_params:
-        counts_loss_weight=float(model_params['counts_loss_weight'])
+    filters=int(model_params['filters'])
+    n_dil_layers=int(model_params['n_dil_layers'])
+    counts_loss_weight=float(model_params['counts_loss_weight'])
+    sequence_len=int(model_params["inputlen"])
+    out_pred_len=int(model_params["outputlen"])
 
     print("params:")
     print("filters:"+str(filters))
@@ -42,8 +34,6 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
     np.random.seed(seed)    
     tf.random.set_seed(seed)
     rn.seed(seed)
-    sequence_len=int(args.inputlen)
-    out_pred_len=int(args.outputlen)
 
     #define inputs
     inp = Input(shape=(sequence_len, 4),name='sequence')    
@@ -84,12 +74,15 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
     cropsize = int(int_shape(prof_out_precrop)[1]/2)-int(out_pred_len/2)
     assert cropsize>=0
     assert (cropsize % 2 == 0) # Necessary for symmetric cropping
-    profile_out = Cropping1D(cropsize,
-                name='logits_profile_predictions')(prof_out_precrop)
+    prof = Cropping1D(cropsize,
+                name='logits_profile_predictions_preflatten')(prof_out_precrop)
 
     # Branch 2. Counts prediction
     # Step 2.1 - Global average pooling along the "length", the result
     #            size is same as "filters" parameter to the BPNet function
+
+    profile_out = Flatten(name="logits_profile_predictions")(prof)
+
     gap_combined_conv = GlobalAvgPool1D(name='gap')(x) # acronym - gapcc
 
     # Step 2.3 Dense layer to predict final counts
@@ -99,7 +92,7 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
     model=Model(inputs=[inp],outputs=[profile_out, count_out])
 
     model.compile(optimizer=Adam(learning_rate=args.learning_rate),
-                    loss=[MultichannelMultinomialNLL(num_tasks),'mse'],
+                    loss=[multinomial_nll,'mse'],
                     loss_weights=[1,counts_loss_weight])
 
     return model 

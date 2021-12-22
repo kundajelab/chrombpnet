@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 import utils.losses as losses
 from utils.data_utils import get_seq as get_seq
 import utils.one_hot as one_hot
-from keras.utils.generic_utils import get_custom_objects
+from tensorflow.keras.utils import get_custom_objects
 from tensorflow.keras.models import load_model
 import tensorflow as tf
 

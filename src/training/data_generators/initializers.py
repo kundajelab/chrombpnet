@@ -74,7 +74,7 @@ def initialize_generators(args, mode, parameters, return_coords):
         nonpeak_regions, chroms=get_bed_regions_for_fold_split(nonpeak_regions, mode, splits_dict) 
 
     inputlen, outputlen, \
-    nonpeak_regions, negative_sampling_ratio \
+    nonpeak_regions, negative_sampling_ratio, \
     max_jitter, add_revcomp, shuffle_at_epoch_start  =  fetch_data_and_model_params_based_on_mode(mode, args, parameters, nonpeak_regions)
 
     generator=batchgen_generator.ChromBPNetBatchGenerator(

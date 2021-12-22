@@ -12,7 +12,7 @@ os.environ['PYTHONHASHSEED'] = '0'
 
 
 def load_pretrained_bias(model_hdf5):
-    from tensforflow.keras.models import load_model
+    from tensorflow.keras.models import load_model
     from tensorflow.keras.utils import get_custom_objects
     custom_objects={"multinomial_nll":multinomial_nll, "tf":tf}    
     get_custom_objects().update(custom_objects)

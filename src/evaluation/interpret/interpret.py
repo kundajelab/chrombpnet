@@ -7,7 +7,7 @@ import tensorflow as tf
 import pandas as pd
 import shap
 from tensorflow import keras
-from keras.utils.generic_utils import get_custom_objects
+from tensorflow.keras.utils import get_custom_objects
 from tensorflow.keras.models import load_model
 import pyfaidx
 import shutil
@@ -37,7 +37,7 @@ def fetch_interpret_args():
 
 def load_model_wrapper(args):
     # read .h5 model
-    custom_objects={"MultichannelMultinomialNLL": context.losses.MultichannelMultinomialNLL, "tf": tf}    
+    custom_objects={"multinomial_nll": context.losses.multinomial_nll, "tf": tf}    
     get_custom_objects().update(custom_objects)    
     model=load_model(args.model_h5)
     print("got the model")
@@ -100,9 +100,6 @@ def interpret(model, seqs, output_prefix, profile_or_counts):
         print("Generating 'profile' shap scores")
         profile_shap_scores = profile_model_profile_explainer.shap_values(
             profile_input, progress_message=100)
-        
-        profile_shap_scores = profile_shap_scores[0]
-        print(profile_shap_scores.shape)
 
         profile_scores_dict = generate_shap_dict(seqs, profile_shap_scores)
 

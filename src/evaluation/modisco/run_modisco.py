@@ -153,7 +153,7 @@ if __name__=="__main__":
         print("pattern idx",idx)
         print(len(pattern.seqlets))
         save_plot(pattern["task0_contrib_scores"].fwd, 
-                  os.path.join(args.output_dir, "untrimmed_logos", 'contrib_{}.png'.format(idx)))
+                  os.path.join(args.output_dir, "untrimmed_logos_"+scoring_type, 'contrib_{}.png'.format(idx)))
         save_plot(pattern["sequence"].fwd,
-                  os.path.join(args.output_dir, "untrimmed_logos", 'sequence_{}.png'.format(idx)))
+                  os.path.join(args.output_dir, "untrimmed_logos_"+scoring_type, 'sequence_{}.png'.format(idx)))
 

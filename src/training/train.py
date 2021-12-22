@@ -44,7 +44,7 @@ def fit_and_evaluate(model,train_gen,valid_gen,args,architecture_module):
     print('save model') 
     model.save(model_output_path_h5_name)
 
-    architecture_module.save_model_without_bias(model, model_output_path_string)
+    architecture_module.save_model_without_bias(model, args.output_prefix)
 
 
 def get_model_param_dict(args):
@@ -66,8 +66,8 @@ def get_model_param_dict(args):
     assert("max_jitter" in params.keys()) # max_jitter to use for the model not provided
     assert(args.chr_fold_path==params["chr_fold_path"]) # the parameters were generated on a different folds compared to the given fold
 
-    assert(parameters["inputlen"] % 2 ==0)
-    assert(parameters["outputlen"] % 2 ==0)
+    assert(int(params["inputlen"])%2==0)
+    assert(int(params["outputlen"])%2==0)
 
     return params 
 
