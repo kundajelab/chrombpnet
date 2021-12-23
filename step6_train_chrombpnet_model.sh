@@ -41,7 +41,7 @@ python $PWD/src/training/train.py \
        --bigwig=$bigwig_path \
        --peaks=$output_dir/filtered.peaks.bed \
        --nonpeaks=$output_dir/filtered.nonpeaks.bed \
-       --params=$output_dir/chrombpnet_model_params.txt \
+       --params=$output_dir/chrombpnet_model_params.tsv \
        --output_prefix=$output_dir/chrombpnet \
        --chr_fold_path=$fold \
        --epochs=40 \
