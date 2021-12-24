@@ -123,10 +123,15 @@ if __name__=="__main__":
     print("Number of nonpeaks after removing outliers: ", nonpeaks.shape[0])
 
     # combine train valid and test peak set and store them in a new file
+    if nonpeaks.shape[0] > peaks.shape[0]:
+        train_nonpeaks = nonpeaks.sample(n=peaks.shape[0], random_state=1)
+    else:
+        train_nonpeaks = nonpeaks
+        
     frames = [peaks, test_peaks]
     all_peaks = pd.concat(frames)
     all_peaks.to_csv(os.path.join(args.output_dir, "filtered.peaks.bed"), sep="\t",  header=False, index=False)
-    frames = [nonpeaks, test_nonpeaks]
+    frames = [train_nonpeaks, test_nonpeaks]
     all_nonpeaks = pd.concat(frames)
     all_nonpeaks.to_csv(os.path.join(args.output_dir, "filtered.nonpeaks.bed"), sep="\t", header=False, index=False)
 
