@@ -158,13 +158,13 @@ def main():
         metrics_dictionary["profile_metrics"]["peaks"]["median_norm_jsd"] = np.nanmedian(jsd_norm[peaks_idx])
         metrics.plot_histogram(jsd_pw[peaks_idx], jsd_rnd[peaks_idx], args.output_prefix+"_only_peaks", "Only peaks")
 
-        ofile = open(args.output_prefix+"_pearson_cor.txt","w")
-        ofile.write(str(round(pearson_cor,2)))
-        ofile.close()
+        #ofile = open(args.output_prefix+"_pearson_cor.txt","w")
+        #ofile.write(str(round(pearson_cor,2)))
+        #ofile.close()
 
-        ofile = open(args.output_prefix+"_norm_jsd.txt","w")
-        ofile.write(str(round(metrics_dictionary["profile_metrics"]["peaks"]["median_norm_jsd"],2)))
-        ofile.close()
+        #ofile = open(args.output_prefix+"_norm_jsd.txt","w")
+        #ofile.write(str(round(metrics_dictionary["profile_metrics"]["peaks"]["median_norm_jsd"],2)))
+        #ofile.close()
     # store dictionary
     with open(args.output_prefix+'_metrics.json', 'w') as fp:
             json.dump(metrics_dictionary, fp,  indent=4)
