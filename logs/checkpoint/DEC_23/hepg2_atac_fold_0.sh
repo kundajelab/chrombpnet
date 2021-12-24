@@ -15,7 +15,7 @@ overlap_peak=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/ENCO
 blacklist_region=/mnt/data/annotations/blacklist/GRch38/GRch38_unified_blacklist.bed.gz
 chrom_sizes=/mnt/data/annotations/by_release/hg38/hg38.chrom.sizes
 ref_fasta=/mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
-genomewide_gc="/srv/scratch/anusri/chrombpnet_paper/data/downloads/genomewide_gc_hg38_stride_50_inputlen_2114_no_header.bed"
+genomewide_gc="/oak/stanford/groups/akundaje/anusri/refs/genomewide_gc_hg38_stride_50_inputlen_2114_no_header.bed"
 fold=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/ENCODE_ATAC_downloads/splits/fold_0.json
 
 main_dir=$PWD/results/chrombpnet/$data_type/$cell_line
