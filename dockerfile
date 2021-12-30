@@ -32,12 +32,16 @@ ENV PATH /opt/conda/bin:$PATH
 # Install SAMtools, BEDtools, and UCSC BedGraphToBigWig
 RUN conda install -y -c bioconda samtools bedtools ucsc-bedgraphtobigwig 
 
-# Install jq .
+# Install jq
 RUN apt-get install -y jq
 
 # Clean up after apt and conda
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN conda clean -tipsy
+
+# Set environment variables for Python
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
 # Copy the entire repo
 RUN mkdir /scratch/chrombpnet
@@ -46,6 +50,4 @@ COPY . /scratch/chrombpnet
 # Install any needed packages specified in requirements.txt
 RUN pip install -r /scratch/chrombpnet/requirements.txt
 
-# Set environment variables for Python
-ENV LC_ALL=C.UTF-8
-ENV LANG=C.UTF-8
+
