@@ -35,13 +35,14 @@ if __name__=="__main__":
     parser = parse_data_args()
     args = parse_model_args(parser)
 
-    # read the fold information - we will evaluate hyperparams on the train+valid set and do nothing on the test set 
+    # read the fold information - we will evaluate hyperparams and filter outliers on the train+valid set 
+    # do nothing on the test set 
     splits_dict=json.load(open(args.chr_fold_path))
     chroms_to_keep=splits_dict["train"]+splits_dict["valid"]
     test_chroms_to_keep=splits_dict["test"]
     print("evaluating hyperparameters on the following chromosomes",chroms_to_keep)
 
-    # read from bigwigw and fasta file
+    # read from bigwigs and fasta file
     bw = pyBigWig.open(args.bigwig) 
     genome = pyfaidx.Fasta(args.genome)
 
@@ -65,29 +66,35 @@ if __name__=="__main__":
     nonpeaks = in_nonpeaks[(in_nonpeaks["chr"].isin(chroms_to_keep))]
     test_nonpeaks = in_nonpeaks[(in_nonpeaks["chr"].isin(test_chroms_to_keep))]
 
-    # step 1 filtering: filter nonpeaks that are in the edges - which prevents us from making the inputlen regions - do this for all splits   
+    # step 1 filtering: filter nonpeaks that are in the edges - prevents us from making the inputlen regions - do this for all train/test/valid   
     nonpeaks = param_utils.filter_edge_regions(nonpeaks, bw, args.inputlen+2*args.max_jitter, peaks_bool=0)
     test_nonpeaks = param_utils.filter_edge_regions(test_nonpeaks, bw, args.inputlen, peaks_bool=0)
 
     peaks = param_utils.filter_edge_regions(peaks, bw, args.inputlen, peaks_bool=1)
 
-    # step 2 filtering: filter nonpeaks that have counts less that threshold_factorx(minimum of peak counts)
+    # step 2 filtering: filter nonpeaks that have counts less than a threshold_factor (minimum of peak counts)
     peak_cnts, peak_seqs = param_utils.get_seqs_cts(genome, bw, peaks, args.inputlen, args.outputlen)
     nonpeak_cnts, nonpeak_seqs = param_utils.get_seqs_cts(genome, bw, nonpeaks, args.inputlen, args.outputlen)    
     assert(len(peak_cnts) == peaks.shape[0])
     assert(len(nonpeak_cnts) == nonpeaks.shape[0])
 
     final_cnts = nonpeak_cnts
-    counts_threshold = np.min(peak_cnts)*args.bias_threshold_factor
+    counts_threshold = np.quantile(peak_cnts,0.01)*args.bias_threshold_factor
+    assert(counts_threshold > 0) # counts threshold is 0 - all non peaks will be filtered!
+   
     final_cnts = final_cnts[final_cnts < counts_threshold]
+
+    print("Upper bound counts cut-off for bias model training: ", counts_threshold)
+    print("Number of nonpeaks after the upper-bount cut-off: ", len(final_cnts))
+    assert(len(final_cnts) > 0) # Upper bound cut-off is too stringent so there are no points left for training
 
     # step 3 filtering: filter nonpeaks that are outliers in train and valid set - no filtering on test set
     upper_thresh = np.quantile(final_cnts, args.outlier_threshold)
     lower_thresh = np.quantile(final_cnts, 1-args.outlier_threshold)
 
-    nonpeaks = nonpeaks[(nonpeak_cnts< upper_thresh) & (nonpeak_cnts>lower_thresh)]
+    nonpeaks = nonpeaks[(nonpeak_cnts<upper_thresh) & (nonpeak_cnts>lower_thresh)]
 
-    print("Number of nonpeaks after removing outliers: ", nonpeaks.shape[0])
+    print("Number of nonpeaks after applying upper-bound cut-off and removing outliers : ", nonpeaks.shape[0])
 
     # combine train valid and test peak set and store them in a new file
     frames = [nonpeaks, test_nonpeaks]
@@ -95,16 +102,12 @@ if __name__=="__main__":
     all_nonpeaks.to_csv(os.path.join(args.output_dir, "filtered.bias_nonpeaks.bed"), sep="\t", header=False, index=False)
 
     # find counts loss weight for model training - using train and validation set
-    counts_loss_weight = np.median(final_cnts[(final_cnts <= upper_thresh) & (final_cnts>=lower_thresh)])/10
+    counts_loss_weight = np.median(final_cnts[(final_cnts < upper_thresh) & (final_cnts>lower_thresh)])/10
     print("counts_loss_weight:", counts_loss_weight)
     assert(counts_loss_weight != 0)
-    assert(counts_loss_weight > 0.5) # counts loss weight can go less than 1.0 if you have very low-read depth - make sure you have enough density in counts
-                                     # check peak-calling
-    if counts_loss_weight < 1.0:
-       counts_loss_weight=1.0
 
     # store the parameters being used  - in a TSV file
-    file = open(os.path.join(args.output_dir, "bpnet_data_params.tsv"),"w")
+    file = open(os.path.join(args.output_dir, "bias_data_params.tsv"),"w")
     file.write("\t".join(["counts_sum_min_thresh", str(round(lower_thresh,2))]))
     file.write("\n")
     file.write("\t".join(["counts_sum_max_thresh", str(round(upper_thresh,2))]))
@@ -128,5 +131,5 @@ if __name__=="__main__":
     file.write("\n")
     file.write("\t".join(["chr_fold_path", str(args.chr_fold_path)]))
     file.write("\n")
-    file.write("\t".join(["negative_sampling_ratio", str(1.0)])) # this is just a dummy variable because the train.py pipeline needs it - all negatives will be used for training
+    file.write("\t".join(["negative_sampling_ratio", str(1.0)])) # this is just a dummy variable because the train.py pipeline needs it - all negatives will be used for bias model training
     file.close()
