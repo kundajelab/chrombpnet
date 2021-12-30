@@ -26,8 +26,8 @@ flank_size=$(( inputlen/2 ))
 echo $( timestamp ): "bedtools slop -i $blacklist_region -g $chrom_sizes -b $flank_size > $output_dir/blacklist_slop1057.bed" | tee -a $logfile
 bedtools slop -i $blacklist_region -g $chrom_sizes -b $flank_size > $output_dir/blacklist_slop1057.bed 
 
-echo $( timestamp ): "bedtools slop -i $overlap_peak -g $chrom_sizes -b $flank_size > $output_dir/peaks_slop1057.bed" | tee -a $logfile
-bedtools slop -i $overlap_peak -g $chrom_sizes -b $flank_size > $output_dir/peaks_slop1057.bed 
+echo $( timestamp ): "bedtools slop -i $overlap_peak -g $chrom_sizes -b $flank_size | cut -d$'\t' -f 1-3 > $output_dir/peaks_slop1057.bed" | tee -a $logfile
+bedtools slop -i $overlap_peak -g $chrom_sizes -b $flank_size | cut -d$'\t' -f 1-3  > $output_dir/peaks_slop1057.bed 
 
 echo $( timestamp ): "cat $output_dir/blacklist_slop1057.bed $output_dir/peaks_slop1057.bed | bedtools sort | bedtools merge -i stdin > $output_dir/exclude.bed" | tee -a $logfile
 cat $output_dir/blacklist_slop1057.bed $output_dir/peaks_slop1057.bed | bedtools sort | bedtools merge -i stdin > $output_dir/exclude.bed
