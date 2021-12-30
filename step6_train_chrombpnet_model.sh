@@ -5,6 +5,7 @@ nonpeaks=$4
 fold=$5
 bias_model=$6
 output_dir=$7
+data_type=$9
 logfile=$9
 
 # defaults
@@ -166,9 +167,31 @@ python $PWD/src/training/predict.py \
         --model_h5=$output_dir/bias_model_scaled.h5 | tee -a $logfile
 
 # marginal footprinting
-echo $( timestamp ): "mkdir $output_dir/tn5_footprints" | tee -a $logfile
-mkdir $output_dir/tn5_footprints
-echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \\
+if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
+        echo $( timestamp ): "mkdir $output_dir/dnase_footprints" | tee -a $logfile
+        mkdir $output_dir/tn5_footprints
+        echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \\
+        -g $reference_fasta \\
+        -r $output_dir/filtered.nonpeaks.bed \\
+        -chr "chr1" \\
+        -m $output_dir/chrombpnet_wo_bias.h5 \\
+        -bs 512 \\
+        -o $output_dir/dnase_footprints/ \\
+        -pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \\
+        -mo dnase_1,dnase_2" | tee -a $logfile
+        python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
+        -g $reference_fasta \
+        -r $output_dir/filtered.nonpeaks.bed \
+        -chr "chr1" \
+        -m $output_dir/chrombpnet_wo_bias.h5 \
+        -bs 512 \
+        -o $output_dir/dnase_footprints/ \
+        -pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \
+        -mo dnase_1,dnase_2 | tee -a $logfile
+elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
+        echo $( timestamp ): "mkdir $output_dir/tn5_footprints" | tee -a $logfile
+        mkdir $output_dir/tn5_footprints
+        echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \\
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
         -chr "chr1" \\
@@ -177,7 +200,7 @@ echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_fo
         -o $output_dir/tn5_footprints/ \\
         -pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \\
         -mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5" | tee -a $logfile
-python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
+        python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
         -g $reference_fasta \
         -r $output_dir/filtered.nonpeaks.bed \
         -chr "chr1" \
@@ -186,4 +209,7 @@ python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
         -o $output_dir/tn5_footprints/ \
         -pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \
         -mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5 | tee -a $logfile
+else
+    echo "ERROR: unknown data type " $data_type | tee -a $logfile
+fi
 
