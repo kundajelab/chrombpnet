@@ -1,16 +1,16 @@
 #!/bin/bash
 
-cell_line=GM12878
-data_type="ATAC_PE"
+cell_line=K562
+data_type="DNASE_SE"
 
 date=$(date +'%m.%d.%Y')
 setting=$data_type"_"$date
-cur_file_name="gm12878_atac_fold_0.sh"
+cur_file_name="k562_dnase_fold_0.sh"
 
 ### SIGNAL INPUT
 
-in_bam=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/ENCODE_ATAC_downloads/GM12878/sorted_merged.bam
-overlap_peak=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/ENCODE_ATAC_downloads/GM12878/peaks.bed.gz
+in_bam=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/DNASE/unfiltered_bams/K562/K562.unfiltered.sorted.bam
+overlap_peak=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/DNASE/optimal_overlap_peaks/K562.overlap.optimal_peak.narrowPeak.gz
 
 blacklist_region=/mnt/data/annotations/blacklist/GRch38/GRch38_unified_blacklist.bed.gz
 chrom_sizes=/mnt/data/annotations/by_release/hg38/hg38.chrom.sizes
@@ -24,7 +24,7 @@ output_dir=$main_dir/$setting
 neg_dir=$main_dir/negatives_data
 bias_threshold_factor=0.5
 inputlen=2114
-gpu=0
+gpu=2
 
 function timestamp {
     # Function to get the current time with the new line character
@@ -154,14 +154,6 @@ else
         --regions=$data_dir/30K.subsample.overlap.bed \
         --output_prefix=$output_dir/chrombpnet_model/interpret/$cell_line \
         --model_h5=$output_dir/chrombpnet_model/chrombpnet_wo_bias.h5  | tee -a $logfile
-fi
-
-if [[ -d $oak_dir/$setting/ ]]; then
-    echo "oak dir exists"
-else
-    mkdir $oak_dir/$setting/
-    mkdir $oak_dir/$setting/BIAS
-    mkdir $oak_dir/$setting/SIGNAL
 fi
 
 oak_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/$data_type/$cell_line/
