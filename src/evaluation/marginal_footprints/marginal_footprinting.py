@@ -7,6 +7,8 @@ import os
 import pyfaidx
 import random
 import pickle as pkl
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import argparse

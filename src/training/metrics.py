@@ -3,6 +3,7 @@ import argparse
 from scipy.stats import spearmanr, pearsonr
 from scipy.spatial.distance import jensenshannon
 import matplotlib
+matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 from matplotlib import cm
 from matplotlib.colors import Normalize 
