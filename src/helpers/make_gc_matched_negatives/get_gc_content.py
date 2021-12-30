@@ -1,4 +1,4 @@
-import pysam
+import pyfaidx
 import argparse
 from tqdm import tqdm 
 import pandas as pd
@@ -15,7 +15,7 @@ def parse_args():
 def main():
     args=parse_args()
     chrom_sizes_dict = {line.strip().split("\t")[0]:int(line.strip().split("\t")[1]) for line in open(args.chrom_sizes).readlines()}
-    ref=pysam.FastaFile(args.genome)
+    ref=pyfaidx.Fasta(args.genome)
     data=pd.read_csv(args.input_bed,header=0,sep='\t')
     assert(args.inputlen%2 == 0) # for symmtery
 
@@ -41,7 +41,7 @@ def main():
             continue
 
         # calculate gc content when centered at summit
-        seq=ref.fetch(chrom,start,end).upper()
+        seq=str(ref[chrom][start:end]).upper()
         g=seq.count('G')
         c=seq.count('C')
         gc=g+c
