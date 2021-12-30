@@ -1,0 +1,17 @@
+h5py==3.1.0
+matplotlib==3.3.1
+matplotlib-venn==0.11.6
+numpy==1.19.5
+pandas==1.1.1 
+pyfaidx==0.6.1
+scikit-learn==0.23.2
+scipy==1.4.1
+tensorflow==2.4.1
+tensorflow-estimator==2.4.0
+tensorflow-probability==0.12.2 
+tqdm==4.48.2
+pyBigWig==0.3.18
+deepdish==0.3.7
+git+https://github.com/AvantiShri/shap.git
+deeplift==0.6.13.0
+modisco==0.5.15.0
