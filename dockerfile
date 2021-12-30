@@ -1,7 +1,6 @@
 # Use the official TensorFlow image as parent
 FROM tensorflow/tensorflow:2.4.1
 
-
 # Set the working directory
 WORKDIR /scratch
 
