@@ -32,7 +32,7 @@ ENV PATH /opt/conda/bin:$PATH
 # Install SAMtools, BEDtools, and UCSC BedGraphToBigWig
 RUN conda install -y -c bioconda samtools bedtools ucsc-bedgraphtobigwig 
 
-# Install jq
+# Install jq .
 RUN apt-get install -y jq
 
 # Clean up after apt and conda
