@@ -5,7 +5,7 @@ nonpeaks=$4
 fold=$5
 bias_model=$6
 output_dir=$7
-data_type=$9
+data_type=$8
 logfile=$9
 
 # defaults
