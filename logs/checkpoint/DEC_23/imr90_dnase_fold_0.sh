@@ -115,22 +115,29 @@ else
         --model_h5=$output_dir/bias_model/bias.h5  | tee -a $logfile
 fi
 
-oak_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/$data_type/$cell_line/
-if [[ -z $oak_dir/$setting/BIAS/$cell_line.counts_scores.h5  || -z $oak_dir/$setting/BIAS/$cell_line.profile_scores.h5 ]] ; then
-    echo "copying counts and profile scores to oak"
+if [[ -d $oak_dir/$setting/ ]]; then
+    echo "dir exists"
+else
     mkdir $oak_dir/$setting/
+    mkdir $oak_dir/$setting/SIGNAL
     mkdir $oak_dir/$setting/BIAS
+fi
+
+if [[ -f $oak_dir/$setting/BIAS/$cell_line.counts_scores.h5  && -f $oak_dir/$setting/BIAS/$cell_line.profile_scores.h5 ]] ; then
+    echo "bias model files already present on oak"
+else
+    echo "copying bias model counts and profile scores to oak"
     cp $output_dir/bias_model/interpret/$cell_line.counts_scores.h5 $oak_dir/$setting/BIAS/
     cp $output_dir/bias_model/interpret/$cell_line.profile_scores.h5 $oak_dir/$setting/BIAS/
 fi
 
-
 ### STEP 2 - TRAIN CHROMBPNET MODEL
+
 if [[ -d $output_dir/chrombpnet_model ]] ; then
     echo "skipping chrombpnet model training  - directory present "
 else
     mkdir $output_dir/chrombpnet_model
-    CUDA_VISIBLE_DEVICES=$gpu bash step6_train_chrombpnet_model.sh $ref_fasta $data_dir"/"$cell_line"_unstranded.bw" $overlap_peak $neg_dir/negatives_with_summit.bed $fold $output_dir/bias_model/bias.h5 $output_dir/chrombpnet_model $data_type 
+    CUDA_VISIBLE_DEVICES=$gpu bash step6_train_chrombpnet_model.sh $ref_fasta $data_dir"/"$cell_line"_unstranded.bw" $overlap_peak $neg_dir/negatives_with_summit.bed $fold $output_dir/bias_model/bias.h5 $output_dir/chrombpnet_model $data_type
 fi
 
 ### INTERPRET SEQUENCE MODEL
@@ -156,10 +163,8 @@ else
         --model_h5=$output_dir/chrombpnet_model/chrombpnet_wo_bias.h5  | tee -a $logfile
 fi
 
-oak_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/$data_type/$cell_line/
-mkdir $oak_dir/$setting/SIGNAL
 if [[ -f $oak_dir/$setting/SIGNAL/$cell_line.counts_scores.h5  && -f $oak_dir/$setting/SIGNAL/$cell_line.profile_scores.h5 ]] ; then
-    echo "file already copied"
+    echo "chrombpnet model files already present on oak"
 else
     echo "copying counts and profile scores to oak"
     cp $output_dir/chrombpnet_model/interpret/$cell_line.counts_scores.h5 $oak_dir/$setting/SIGNAL/
