@@ -169,7 +169,7 @@ python $PWD/src/training/predict.py \
 # marginal footprinting
 if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
         echo $( timestamp ): "mkdir $output_dir/dnase_footprints" | tee -a $logfile
-        mkdir $output_dir/tn5_footprints
+        mkdir $output_dir/dnase_footprints
         echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \\
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
