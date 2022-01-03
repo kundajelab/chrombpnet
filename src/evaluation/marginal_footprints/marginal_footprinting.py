@@ -49,18 +49,21 @@ def get_footprint_for_motif(seqs, motif, model, inputlen, batch_size):
     w_mot_seqs = seqs.copy()
     w_mot_seqs[:, midpoint-len(motif)//2:midpoint-len(motif)//2+len(motif)] = context.one_hot.dna_to_one_hot([motif])
 
-    #midpoint of motif is the midpoint of sequence
-    output=model.predict(w_mot_seqs, batch_size=batch_size, verbose=True)[0]
-    footprint_for_motif_fwd = softmax(output)
+    # midpoint of motif is the midpoint of sequence
+    pred_output=model.predict(w_mot_seqs, batch_size=batch_size, verbose=True)
+    footprint_for_motif_fwd = softmax(pred_output[0])*(np.exp(pred_output[1])-1)
 
     # reverse complement the sequence
     w_mot_seqs_revc = w_mot_seqs[:, ::-1, ::-1]
-    footprint_for_motif_rev = softmax(model.predict(w_mot_seqs_revc, batch_size=batch_size, verbose=True)[0])  
+    pred_output_rev=model.predict(w_mot_seqs_revc, batch_size=batch_size, verbose=True)
+    footprint_for_motif_rev = softmax(pred_output_rev[0])*(np.exp(pred_output_rev[1])-1)
 
     # add fwd sequence predictions and reverse sesquence predictions (not we flip the rev predictions)
-    footprint_for_motif = footprint_for_motif_fwd+footprint_for_motif_rev[:,::-1]
+    counts_for_motif = np.exp(pred_output_rev[1]) - 1 + np.exp(pred_output[1]) - 1
+    footprint_for_motif_tot = footprint_for_motif_fwd+footprint_for_motif_rev[:,::-1]
+    footprint_for_motif =  footprint_for_motif_tot / footprint_for_motif_tot.sum(axis=1)[:, np.newaxis]
 
-    return footprint_for_motif.mean(0)
+    return footprint_for_motif.mean(0), counts_for_motif.mean(0)
 
 def main():
 
@@ -87,11 +90,11 @@ def main():
         print("inserting motif: ", motif)
         motif_to_insert_fwd = pwm_df[pwm_df["MOTIF_NAME"]==motif]["MOTIF_PWM_FWD"].values[0]
         print(motif_to_insert_fwd)
-        motif_footprint = get_footprint_for_motif(regions_seqs, motif_to_insert_fwd, model, inputlen, args.batch_size)
-        footprints_at_motifs[motif]=motif_footprint
+        motif_footprint, motif_counts = get_footprint_for_motif(regions_seqs, motif_to_insert_fwd, model, inputlen, args.batch_size)
+        footprints_at_motifs[motif]=[motif_footprint,motif_counts]
 
         # plot footprints of center 200bp
-        if "tn5" in motif:
+        if ("tn5" in motif) or ("dnase" in motif):
                 avg_response_at_tn5.append(np.round(np.max(motif_footprint[outputlen//2-100:outputlen//2+100]),3))
         plt.figure()
         plt.plot(range(200),motif_footprint[outputlen//2-100:outputlen//2+100])
