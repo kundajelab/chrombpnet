@@ -1,15 +1,18 @@
 data_dir=$1
 
 # download bam
-wget https://www.encodeproject.org/files/ENCFF415FEC/@@download/ENCFF415FEC.bam -O $data_dir/rep1.bam
-wget https://www.encodeproject.org/files/ENCFF646NWY/@@download/ENCFF646NWY.bam -O $data_dir/rep2.bam
-samtools merge -f $data_dir/merged.bam $data_dir/rep1.bam $data_dir/rep2.bam
+wget https://www.encodeproject.org/files/ENCFF077FBI/@@download/ENCFF077FBI.bam -O $data_dir/rep1.bam
+wget https://www.encodeproject.org/files/ENCFF128WZG/@@download/ENCFF128WZG.bam -O $data_dir/rep2.bam
+wget https://www.encodeproject.org/files/ENCFF534DCE/@@download/ENCFF534DCE.bam -O $data_dir/rep3.bam
+
+samtools merge -f $data_dir/merged_unsorted.bam $data_dir/rep1.bam $data_dir/rep2.bam $data_dir/rep3.bam
+samtools sort -@4 merged_unsorted.bam -o merged.bam
 samtools index $data_dir/merged.bam
 
-# download overlap peaks
-wget https://www.encodeproject.org/files/ENCFF470YYO/@@download/ENCFF470YYO.bed.gz -O $data_dir/overlap.bed.gz
+# download overlap peaks (default peaks on ENCODE)
+wget https://www.encodeproject.org/files/ENCFF333TAT/@@download/ENCFF333TAT.bed.gz -O $data_dir/overlap.bed.gz
 
-#download reference data
+# download reference data
 wget https://www.encodeproject.org/files/GRCh38_no_alt_analysis_set_GCA_000001405.15/@@download/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta.gz -O $data_dir/hg38.fa.gz
 gunzip $data_dir/hg38.fa.gz
 
