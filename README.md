@@ -19,7 +19,7 @@
 
 Chromatin profiles (DNASE-seq and ATAC-seq) exhibit multi-resolution shapes and spans regulated by co-operative binding of transcription factors (TFs). This complexity is further difficult to mine because of confounding bias from enzymes (DNASE-I/Tn5) used in these assays. Existing methods do not account for this complexity at base-resolution and do not account for enzyme bias correctly, thus missing the high-resolution architecture of these profile. Here we introduce ChromBPNet to address both these aspects.
 
-ChromBPNet (shown in the image as `chrombpnet model`) is a fully convolutional neural network that uses dilated convolutions with residual connections to enable large receptive fields with efficient parameterization. It also performs automatic assay bias correction in two steps, first by learning simple model on chromatin background that captures the enzyme effect (called `bias model` in the image). Then we use this model to regress out the effect of the enzyme from the ATAC-seq/Dnase-seq profiles. This two step process ensures that the sequence component of the ChromBPNet model (called `sequence model`) does not learn enzymatic bias. 
+ChromBPNet (shown in the image as `chrombpnet model`) is a fully convolutional neural network that uses dilated convolutions with residual connections to enable large receptive fields with efficient parameterization. It also performs automatic assay bias correction in two steps, first by learning simple model on chromatin background that captures the enzyme effect (called `bias model` in the image). Then we use this model to regress out the effect of the enzyme from the ATAC-seq/DNASE-seq profiles. This two step process ensures that the sequence component of the ChromBPNet model (called `sequence model`) does not learn enzymatic bias. 
 
 ![Image](images/chrombpnet_arch.PNG)
 
@@ -94,9 +94,9 @@ This command will generate two important output files - `data/downloads/K562_uns
 
 Following are some things to keep in mind when using custom datasets/downloads -
 
-- **IMPORTANT NOTE 1:** If you are running these commands on custom experimental bam files - *read the documentation* in the directory `$src/helpers/preprocessing/` and  `$src/helpers/preprocessing/analysis/` to make sure you are using this worflow correctly. Always use the scripts in `$src/helpers/preprocessing/analysis/` to make sure that you see Tn5 or DNase-I bias PWM in the output image generated. If you do not see the bias motif it is likely that the bam's that you provided have a shift of some kind. Please provide only unshifted bams to the script. **Do not proceed further if you do not see a Tn5 or DNase-I motif after this step.** 
+- **IMPORTANT NOTE 1:** If you are running these commands on custom experimental bam files - *read the documentation* in the directory `src/helpers/preprocessing/` and  `src/helpers/preprocessing/analysis/` to make sure you are using this worflow correctly. Always use the scripts in `src/helpers/preprocessing/analysis/` to make sure that you see Tn5 or DNASE-I bias PWM in the output image generated. If you do not see the bias motif it is likely that the bam's that you provided have a shift of some kind. Please provide only unshifted bams to the script. **Do not proceed further if you do not see a Tn5 or DNASE-I motif after this step.** 
 
-- **IMPORTANT NOTE 2:** If you are running the pipeline on custom generated bigwigs (without using `$src/helpers/preprocessing/`) make sure the bigwigs are unstranded and the shifts are done correctly. To check this run the scripts in `$src/helpers/preprocessing/analysis/` and make sure that you see the Tn5 or DNase-I bias PWM in the output image generated. **Do not proceed further if you do not see a Tn5 or DNase-I motif after this step.** 
+- **IMPORTANT NOTE 2:** If you are running the pipeline on custom generated bigwigs (without using `src/helpers/preprocessing/`) make sure the bigwigs are unstranded and the shifts are done correctly. To check this run the scripts in `src/helpers/preprocessing/analysis/` and make sure that you see the Tn5 or DNASE-I bias PWM in the output image generated. **Do not proceed further if you do not see a Tn5 or DNASE-I motif after this step.** 
 
 - TODO - add preprocessing scripts for scATAC datasets.
 
@@ -116,6 +116,7 @@ If you want to mention custom splits please edit the `splits.py` file directly a
 Here we will generate non-peak background regions that GC-match with the peak regions. We will use the non-peaks regions to train and evaluate a bias model. We will also use these regions in chrombpnet model training and as background regions to get marginal footprints. There are two key steps to this process - 
 
 Firstly, we will start by dividing the entire genome into overlapping bins of `inputlen` regions. ChromBpnet models are trained on `inputlen` of 2114, so we will divide the entire genome into non-overlapping bins of length of 2114 input length and calculate their gc-fraction value. 
+
 
 For convenience the genome wide buckets we created on human genome (hg38) reference can be downloaded as follows -  
 
@@ -139,7 +140,8 @@ bash step3_get_background_regions.sh data/downloads/hg38.fa data/downloads/hg38.
 Following are some things to keep in mind when using custom datasets 
 
 - `data/negatives_data/negatives_with_summit.bed` is the non-peaks file we will be using for further analysis below.
-- To understand all the outputs generated by these scripts refer to the documentation at `src/helpers/make_gc_matched_negatives`
+- To understand all the outputs generated by these scripts refer to the documentation at `src/helpers/make_gc_matched_negatives`. 
+- The scripts  `src/helpers/make_gc_matched_negatives` filter out peaks for which  `inputlen` (here 2114) region cannot be constructed (this can happen if the summit/center of the peak is on the edge). For custom datasets if the reference genome is very small, than using `inputlen` of 2114 can filter out a lot of peaks - in which case users are encouraged to use smaller `inputlen`.
 
 ###  Train and Evaluate Bias Model
 
@@ -157,13 +159,13 @@ bash step4_train_bias_model.sh data/hg38.fa data/downloads/K562_unstranded.bw da
 ```
 
 The script `step4_train_bias_model.sh` runs the following three steps -  
- 1. Generate hyperparmeters file for bias model: In this step we will filter non-peaks regions for training and also find some important training hyperparameters. Read the documentation in `src/helpers/hyperparameters` to understand both these steps in detail. As a part of the filtration step we will filter out non-peaks regions of length 2114 which have total counts greater than a threshold (given by `min(total counts in peaks)*bias_threshold_factor`). The `min(total counts in peaks)` is the minimum of the total counts in peak regions of length 2114 and the `bias_threshold_factor` is default set to `0.5` and can be adjusted by the user. This step ensures that the bias model training is done only in sufficiently low-count regions so that the bias model captures only the effect of the bias motif and not the effect of cell-type specific motifs.
+ 1. Generate hyperparmeters file for bias model: In this step we will filter non-peaks regions for training and also find some important training hyperparameters. As a part of the filtration step we will filter out (b) non-peak regions that are on the edges of the chromosome (b) non-peak regions which are outliers in total counts and (c) regions of length 2114 which have total counts greater than a threshold (given by `min(total counts in peaks)*bias_threshold_factor`). The `min(total counts in peaks)` is the minimum of the total counts in peak regions of length 2114 and the `bias_threshold_factor` is default set to `0.5` and can be adjusted by the user. This threshold ensures that the bias model training is done only in sufficiently low-count regions so that the bias model captures only the effect of the bias motif and not the effect of cell-type specific motifs.
  2. Train the bias model using the hyper-parameters and filtered regions in train/valid chromosomes mentioned in `data/splits/fold_0.json`. This step will output a bias model  `models/bias_model/bias.h5` in h5py format.
  3. Get predictions on the non-peak regions in test chromosomes in `data/splits/fold_0.json` and report the metrics in `models/bias_model/bias_metrics.json` and the predictions in `models/bias_model/bias_predictions.h5`
 
 Following are some things to keep in mind when using custom datasets -
 
-- **IMPORTANT NOTE 1:** Read the documentation in `src/helpers/hyperparameters` carefully to adapt the bias training hyper-parameters for your datasets. 
+- **IMPORTANT NOTE 1:** Notes on setting the value of `bias_threshold_factor` parameter -
     - If `bias_threshold_factor` is set to very low value you might filter out a lot of non-peak regions and the bias model might be sub-optimal (this will be reflected in the final performance metrics output by the model - poor jsd performance might imply a sub-optimal bias model). 
     - If `bias_threshold_factor` is set to very high you might include non-peak regions with high counts and this might lead to the bias model capturing cell-type specific motifs  (which is not ideal as we want to regress out only the bias motifs effect and not cell-type specific motifs effect). We will do Step 5 of the tutorial to make sure that the bias model captures only bias motifs. If the output in Step 5 shows cell-type specific motifs in addition to the bias motifs you have to repeat bias model training with a lower `bias_threshold_factor`.
 
@@ -189,7 +191,7 @@ rm  data/subsample_peaks/temp.txt
 rm data/subsample_peaks/temp_n.txt
 ```
 
-Once we have the subsampled peak set we will run the script below to first get interpretation scores (as h5 files `models/bias_model/interpret/bias.profile_scores.h5` and `models/bias_model/interpret/bias.counts_scores.h5`) and then summarize the interpretation scores into PWMs (as png images in `models/bias_model/interpret/untrimmed_logos_counts` and `models/bias_model/interpret/untrimmed_logos_profile`). Browse through the images (with prefix name `contrib_`) in both the PWM folders and make sure you only see the bias motif (Tn5/DNase-I) or repeats and not any other cell-type specific motifs.
+Once we have the subsampled peak set we will run the script below to first get interpretation scores (as h5 files `models/bias_model/interpret/bias.profile_scores.h5` and `models/bias_model/interpret/bias.counts_scores.h5`) and then summarize the interpretation scores into PWMs (as png images in `models/bias_model/interpret/untrimmed_logos_counts` and `models/bias_model/interpret/untrimmed_logos_profile`). Browse through the images (with prefix name `contrib_`) in both the PWM folders and make sure you only see the bias motif (Tn5/DNASE-I) or repeats and not any other cell-type specific motifs.
 
 ```
 mkdir models/bias_model/interpret
@@ -198,33 +200,43 @@ bash step5_interpret_bias_model.sh data/downloads/hg38.fa data/subsample_peaks/3
 
 ###  Train and Evaluate ChromBPNet Model
 
-Now that we have a bias model we will use it to regress out the bias enzymes effect from the ATAC-seq and DNAE-seq signal so that the sequence component of the model can capture only the cell-type specific behavior. 
+Now that we have a bias model we will use it to regress out the bias enzymes effect from the ATAC-seq and DNASE-seq signal and fetch the sequence component of the model that captures only the cell-type specific behavior. 
 
 #### Step 6: Train ChromBPNet Model (This step will also generate the sequence model)
 
-We will use the bias model trained in Step 4 to regress out the effect of the bias enzyme,
+We will use the bias model trained in Step 4 to regress out the effect of the bias enzyme by running the command below
 
 ```
-bash step6_train_chrombpnet_model.sh data/downloads/hg38.fa data/downloads/shifted.sorted.bam.chrombpnet.unstranded.bw data/downloads/overlap.bed.gz data/downloads/negatives_with_summit.bed data/splits/fold_0.json models/bias_model/bias.h5
+mkdir models/chrombpnet_model
+bash step6_train_chrombpnet_model.sh data/downloads/hg38.fa data/downloads/K data/downloads/overlap.bed.gz data/downloads/negatives_with_summit.bed data/splits/fold_0.json models/bias_model/bias.h5 models/chrombpnet_model ATAC_PE
 
 ```
 
-The script `step4_train_bias_model.sh` runs the following three steps -  
- 1. Generate hyperparmeters file for bias model: In this step we will filter non-peaks regions for training and also find some important training hyperparameters. Read the documentation in `src/helpers/hyperparameters` to understand both these steps in detail. As a part of the filtration step we will filter out non-peaks regions of length 2114 which have total counts greater than a threshold (given by `min(total counts in peaks)*bias_threshold_factor`). The `min(total counts in peaks)` is the minimum of the total counts in peak regions of length 2114 and the `bias_threshold_factor` is default set to `0.5` and can be adjusted by the user. This step ensures that the bias model training is done only in sufficiently low-count regions so that the bias model captures only the effect of the bias motif and not the effect of cell-type specific motifs.
- 2. Train the bias model using the hyper-paramters and filtered regions from step 1 using the train/valid chromosomes in `data/splits/fold_0.json`. This step will output a bias model  `models/bias_model/bias.h5` in h5py format.
- 3. Get predictions on the non-peak regions in test chromosomes in `data/splits/fold_0.json` and report the metrics in `models/bias_model/bias_metrics.json` and the predictions in `models/bias_model/bias_predictions.h5`
+The script `step4_train_bias_model.sh` runs the following five steps -  
+ 1. Generate hyperparmeters file for chrombpnet model: In this step we will filter peak and non-peaks regions for training and also find some important training hyperparameters. As a part of the filtration step we will filter out (a) peaks and non-peaks regions that are on the edges of the chromosome and (b) peaks and non-peaks which are outliers in total counts.
+ 2. Train the chrombpnet model using the hyper-parameters and filtered regions in train/valid chromosomes mentioned in `data/splits/fold_0.json`. This step will output a scaled bias model `models/chrombpnet_model/bias_model_scaled.h5` , chrombpnet model  `models/chrombpnet_model/chrombpnet.h5` and sequence model `models/chrombpnet_model/chrombpnet_wo_bias.h5` in h5py format. 
+ 3. Get predictions on the peak and non-peak regions in test chromosomes in `data/splits/fold_0.json` and report the metrics in `models/chrombpnet_model/bias_metrics.json`, `models/chrombpnet_model/chrombpnet_metrics.json` and `models/chrombpnet_model/chrombpnet_wo_bias_metrics.json`. The script also stores the predictions in `.h5` format.
+ 4. Get marginal footprints for the `models/chrombpnet_model/chrombpnet.h5` on the bias motif (Tn5 or DNASE-I). You will find the footprint images and scores in `models/chrombpnet_model/footprints/` directory with `uncorrected` prefix.
+ 5. Get marginal footprints for the `models/chrombpnet_model/chrombpnet_wo_bias.h5` on the bias motif (Tn5 or DNASE-I).  You will find the footprint images and scores in `models/chrombpnet_model/footprints/` directory with `corrected` prefix.
 
-This will output 2 models one is chrombpnet model (this is the model with bias) and the other is the sequence model (this is the moel without the bias)
+NOTE: The `models/chrombpnet_model/bias_model_scaled.h5` is the bias model  in use for bias correction - this is different from the input bias model by a scaling factor on the counts head. The user can choose to use a single bias model across different datasets (we empirically observed that bias models can be transferred across datasets) - in which case the script accounts for the difference in read-depths of the current dataset and the bias model training dataset by scaling the bias models counts head.
 
-Following are some things to keep in mind when using custom datasets -
-- 
+Following are some things to keep in mind when using custom datasets:
+- Note that the script `step6_train_chrombpnet_model.sh` inputs an argument `data_type` (8th argument). The user can input the following four values for this argument - `ATAC_PE, DNASE_SE, DNASE_PE, ATAC_SE`. To understand the meaning of these arguments refer to `src/helpers/preprocessing/`.
+- If `models/chrombpnet_model/footprints/corrected_footprints_score.txt` has values greater than 0.003, the chrombpnet models are not fully corrected for the bias. This is possible if the bias model is used incorrectly (if the bias model is transferred it is likely that the transfer has failed).
 
-#### Step 7: Interpret chrombpnet model and sequence model
 
-We will now interpret on the same peak regions that we used for interpreting the bias model.
+#### Step 7: Interpret the sequence model
+
+We will now interpret the sequence model (`models/chrombpnet_model/chrombpnet_wo_bias.h5`) on the same subset of peak regions we used for interpreting the bias model. Here we would like to see only cell-type specific motifs in our output PWMs (no Tn5 or DNASE-I bias motifs).
+
+NOTE: It is computationally expensive to run this step on all the peaks -  since we are looking for a quick bias-correction sanity check for our sequence models we will use a subsampled peak set. The users are encouraged to eventually run this step on all the peak regions for motif discovery.
 
 ```
-bash step5_interpret_bias_model.sh  data/hg38.fa data/subsample_overlap/30K.subsample.overlap.bed  output/chrombpnet_model/model_wo_bias.0.h5
+mkdir models/chrombpnet_model/interpret
+bash step7_interpret_chrombpnet_model.sh  data/downloads/hg38.fa data/subsample_peaks/30K.subsample.overlap.bed models/chrombpnet_model/chrombpnet_wo_bias.h5 models/chrombpnet_model/interpret/
 ```
 
-In the images produced here you should not see the bias motif and should only see the cell-type specfic motifs in the profile modisco.
+The script outputs interpretation scores (as h5 files `models/chrombpnet_model/interpret/corrected.profile_scores.h5` and `models/chrombpnet_model/interpret/corrected.counts_scores.h5`) and then summarizes the interpretation scores into PWMs (as png images in `models/chrombpnet_model/interpret/untrimmed_logos_counts` and `models/chrombpnet_model/interpret/untrimmed_logos_profile`). Browse through the images (with prefix name `contrib_`) in both the PWM folders and make sure you only see cell-type specific motifs (here GATA, SP1) and not bias motifs (Tn5/DNASE-I). 
+
+NOTE: The presence of bias motifs Tn5/DNase-I in the PWMs indicates that the chrombpnet models are not fully corrected for the bias.  This is possible if the bias model is used incorrectly (if the bias model is transferred it is likely that the transfer has failed).
