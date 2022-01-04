@@ -1,5 +1,5 @@
 # ChromBPNet: Deep learning models of base-resolution chromatin profiles
-                This repo is under construction. Please check back in a week
+                This repo is under construction. Incomplete documentation has been flagged as TODO section.
 
 - This repo contains code for the chrombpnet paper Anusri Pampari*, Anna Shcherbina*, Anshul Kundaje. (*authors contributed equally to the work)  
 - General queries/thoughts have been addressed in the discussion section below.
@@ -30,7 +30,7 @@ If you are interested in learning more about the detailed architectures used, pl
 
 ## Installation
 
-This section will discuss the packages needed to train a chrombpnet model. Firstly, it is recommended that you use a GPU for model training and have the necessary NVIDIA drivers already installed. Secondly there are two ways to ensure you have the necessary packages to run train chrombpnet models which we detail below,
+This section will discuss the packages needed to train a chrombpnet model. Firstly, it is recommended that you use a GPU for model training and have the necessary NVIDIA drivers already installed. Secondly there are two ways to ensure you have the necessary packages to train chrombpnet models which we detail below,
 
 ### 1. Installation setup through Docker
 
@@ -60,13 +60,13 @@ pip install git+https://github.com/kundajelab/chrombpnet.git
 	
 ##  Tutorial on how to train chrombpnet models
 
-Here we provide a step-by-step guide to training and evaluating chrombpnet models using the GM12878 ATAC-seq data (ENCSR095QNB) [here][url1] whic is a is bulk ATAC-seq data.
+Here we provide a step-by-step guide to training and evaluating chrombpnet models using the K562 bulk ATAC-seq data <a href="https://www.encodeproject.org/experiments/ENCSR868FGK">(ENCSR868FGK)</a>. Here we assume that all the scripts are being run from the main `chrombpnet` directory.
 
 ###  Preprocessing
 
 #### Step 1: Download experimental data
 
-We will first start by creating a directory named `data/downloads` and downloading the corresponding files (bams and peak files) for ENCSR095QNB ENCODE dataset using the commands in the bash script below. 
+We will start by creating a directory (`data/downloads`) to download the bams and peaks files for ENCSR868FGK ENCODE dataset using the commands in the bash script below. 
 
 ```
 mkdir data
@@ -75,29 +75,28 @@ bash step1_download_bams_and_peaks.sh data/downloads
 ```
 
 Following are some things to keep in mind when using custom datasets/downloads -
-- For bulk ATAC-seq/DNASE-seq dataset we use the latest ENCODE ATAC-seq protocol https://github.com/ENCODE-DCC/atac-seq-pipeline. The pipeline outputs both stringent (IDR peaks) and relaxed (Overlap peak) thresholding of peaks across replicates and we use the relaxed thresholding of peaks.
-- If you are downloading the data from the ENCODE portal you can download the peaks flagged default for ATAC-seq datasets. For DNASE-seq datasets you might have to use the MACS2 protocol to call peaks on the filtered bams (TODO - provide scripts)
-- For paired end data we download the filtered bams output from the pipeline and for single-end data we download the unfiltered bams from the pipeline. Please refer to the documentation below to understand the reason for this difference `src/helpers/preprocessing/`
-- TODO - add notes on how will this be different for scATAC
-
+- For bulk ATAC-seq/DNASE-seq datasets we use the latest <a href="https://github.com/ENCODE-DCC/atac-seq-pipeline ">ENCODE ATAC-seq protocol</a>  for peak-calling. 
+- If you are downloading the data from the ENCODE portal you can download the peaks flagged default for ATAC-seq datasets. For DNASE-seq datasets you might have to use MACS2 and follow the ENCODE ATAC-seq protocol for peak-calling.  (TODO - provide scripts to call peals on filtered bams).
+- For paired end data we download the filtered bams and for single-end data we download the unfiltered bams from the pipeline/ENCODE portal. Please refer to the documentation below to understand the reason for this difference `src/helpers/preprocessing/`
+- TODO - add notes on how this will be different for scATAC.
 
 #### Step 2: Make Bigwigs from bam files (IMPORTANT STEP! PLEASE READ CAREFULLY)
 
-We will now create unstranded bigwigs (i.e. the + and - strand ends are combined into one bigwig) from the downloaded bam files (from step1) using the command below. This script uses the following two commands (1) `src/helpers/preprocessing/bam_to_bigwig.sh`: Considers that the given bam files are *unshifted* and does a shift of +4/-4 and (2) `src/helpers/preprocessing/analysis/build_pwm_from_bigwig.py` generates an image of the bias motif and does a sanity check if the shift is correct/incorrect. 
+We will now create unstranded bigwigs (i.e. the + and - strand ends are combined into one stranded bigwig) from the bam files (downloaded in step1) using the command below. This workflow uses the following two commands (1) `src/helpers/preprocessing/bam_to_bigwig.sh`: Considers that the given bam files are *unshifted* and does a shift of +4/-4 and (2) `src/helpers/preprocessing/analysis/build_pwm_from_bigwig.py` generates an image of the bias motif obtained from the shifted bams. 
 
 ```
-bash step2_make_bigwigs_from_bams.sh data/downloads/merged.bam data/downloads/ ATAC_PE data/downloads/hg38.fa data/downloads/hg38.chrom.sizes
+bash step2_make_bigwigs_from_bams.sh data/downloads/merged.bam data/downloads/K562 ATAC_PE data/downloads/hg38.fa hg38.chrom.sizes
 ```
 
-After running this command open the `bias_pwm.png` image generated by the script in `data/downloads` folder. You will see the following Tn5 motif PWM for this dataset.
+This command will generate two important output files - `data/downloads/K562_unstranded.bw`(unstranded bigwig file) and `data/downloads/K562_bias_pwm.png` (bias motif image). Open the `data/downloads/K562_bias_pwm.png` image generated by the script and you will see the following Tn5 motif PWM for this dataset.
 
 ![Image](images/bias_pwm.png)
 
 Following are some things to keep in mind when using custom datasets/downloads -
 
-- **IMPORTANT NOTE 1:** If you are running these commands on custom experimental bam - *read the documentation* in the directory `$src/helpers/preprocessing/` and  `$src/helpers/analysis/` to make sure you are using the script correctly. Next use this script `$src/helpers/preprocessing/analysis/` and make sure that the script throws no warnings and that you see Tn5 or DNase-I bias pwm in `bias_pwm.png`. If you do not see this it is likely that the bam's that you provided have a shift of some kind. Please provide only unshifted bams to the script. **Do not proceed further if you do not see a Tn5 or DNase-I motif after this step.** 
+- **IMPORTANT NOTE 1:** If you are running these commands on custom experimental bam files - *read the documentation* in the directory `$src/helpers/preprocessing/` and  `$src/helpers/preprocessing/analysis/` to make sure you are using this worflow correctly. Always use the scripts in `$src/helpers/preprocessing/analysis/` to make sure that you see Tn5 or DNase-I bias PWM in the output image generated. If you do not see the bias motif it is likely that the bam's that you provided have a shift of some kind. Please provide only unshifted bams to the script. **Do not proceed further if you do not see a Tn5 or DNase-I motif after this step.** 
 
-- **IMPORTANT NOTE 2:** If you are running the pipeline on custom generated bigwigs (without using `$src/helpers/preprocessing/`) make sure the bigwigs are unstranded and make sure the shifts are done correctly. To check this run the scripts in this directory  `$src/helpers/preprocessing/analysis/` and make sure that the script throws no warnings and you see the Tn5 or DNase-I bias pwm in `bias_pwm.png` output generated. **Do not proceed further if you do not see a Tn5 or DNase-I motif after this step.** 
+- **IMPORTANT NOTE 2:** If you are running the pipeline on custom generated bigwigs (without using `$src/helpers/preprocessing/`) make sure the bigwigs are unstranded and the shifts are done correctly. To check this run the scripts in `$src/helpers/preprocessing/analysis/` and make sure that you see the Tn5 or DNase-I bias PWM in the output image generated. **Do not proceed further if you do not see a Tn5 or DNase-I motif after this step.** 
 
 - TODO - add preprocessing scripts for scATAC datasets.
 
