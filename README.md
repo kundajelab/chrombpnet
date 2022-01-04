@@ -129,7 +129,7 @@ python src/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genom
 ```
 NOTE: The script above can take several hours to complete, but it is a one-time run for every reference genome. Please contribute if you know of ways to speed this step.
 
-Secondly, we will filter the regions from the genome-wide buckets created from step 1 such that they do not fall in peak regions or blacklist regions but have similar GC-distribution as the peaks.
+Secondly, we will filter the regions from the genome-wide buckets created from the above step such that they do not fall in peak regions or blacklist regions but have similar GC-distribution as the peaks.
 
 ```
 mkdir data/negatives_data
@@ -158,20 +158,20 @@ bash step4_train_bias_model.sh data/hg38.fa data/downloads/K562_unstranded.bw da
 
 The script `step4_train_bias_model.sh` runs the following three steps -  
  1. Generate hyperparmeters file for bias model: In this step we will filter non-peaks regions for training and also find some important training hyperparameters. Read the documentation in `src/helpers/hyperparameters` to understand both these steps in detail. As a part of the filtration step we will filter out non-peaks regions of length 2114 which have total counts greater than a threshold (given by `min(total counts in peaks)*bias_threshold_factor`). The `min(total counts in peaks)` is the minimum of the total counts in peak regions of length 2114 and the `bias_threshold_factor` is default set to `0.5` and can be adjusted by the user. This step ensures that the bias model training is done only in sufficiently low-count regions so that the bias model captures only the effect of the bias motif and not the effect of cell-type specific motifs.
- 2. Train the bias model using the hyper-paramters and filtered regions from step 1 using the train/valid chromosomes in `data/splits/fold_0.json`. This step will output a bias model  `models/bias_model/bias.h5` in h5py format.
+ 2. Train the bias model using the hyper-parameters and filtered regions in train/valid chromosomes mentioned in `data/splits/fold_0.json`. This step will output a bias model  `models/bias_model/bias.h5` in h5py format.
  3. Get predictions on the non-peak regions in test chromosomes in `data/splits/fold_0.json` and report the metrics in `models/bias_model/bias_metrics.json` and the predictions in `models/bias_model/bias_predictions.h5`
 
 Following are some things to keep in mind when using custom datasets -
 
 - **IMPORTANT NOTE 1:** Read the documentation in `src/helpers/hyperparameters` carefully to adapt the bias training hyper-parameters for your datasets. 
     - If `bias_threshold_factor` is set to very low value you might filter out a lot of non-peak regions and the bias model might be sub-optimal (this will be reflected in the final performance metrics output by the model - poor jsd performance might imply a sub-optimal bias model). 
-    - If `bias_threshold_factor` is set to very high you might include non-peak regions with high counts and this might lead to the bias model capturing cell-type specific motifs too (which is not ideal as we want to regress out only the bias motifs effect and not cell-type specific motifs effect). We will do Step 5 of the tutorial to make sure we capture only bias motifs. If the output in Step 5 shows cell-type specific motifs in addition to the bias motifs you have to repeat bias model training with a lower `bias_threshold_factor`.
+    - If `bias_threshold_factor` is set to very high you might include non-peak regions with high counts and this might lead to the bias model capturing cell-type specific motifs  (which is not ideal as we want to regress out only the bias motifs effect and not cell-type specific motifs effect). We will do Step 5 of the tutorial to make sure that the bias model captures only bias motifs. If the output in Step 5 shows cell-type specific motifs in addition to the bias motifs you have to repeat bias model training with a lower `bias_threshold_factor`.
 
 #### Step 5: Interpret bias model
 
-In this step we will try to summarize the motifs captured by the bias model by first getting contribution scores (using DeepSHAP) of the bias model in peak regions and then summarizing the contribution scores as PWMs (using TF-MoDISCO algorithm) to identify motifs. For the bias model we expect to find PWMs of only the bias enzyme (Tn5/DNASE-I). If we see any other cell-type specific motifs apart form the bias enzymes me will need to re-do Step 4 with reduced `bias_threshold_factor`.
+In this step we will try to summarize the motifs captured by the bias model by first getting contribution scores (using <a href="https://github.com/kundajelab/shap">DeepSHAP</a>) of the bias model in peak regions and then summarizing the contribution scores as PWMs (using  <a href="https://github.com/kundajelab/tfmodisco">TF-MoDISCO</a>) to identify motifs. For the bias model we expect to find PWMs of only the bias enzyme (Tn5/DNASE-I). If we see any other cell-type specific motifs apart form the bias enzymes me will need to re-do Step 4 with reduced `bias_threshold_factor`.
 
-NOTE: It is computationally expensive to run this step on all the peaks, since we are looking for a quick sanity check for our bias models we will subsample 30K peaks from our original peak set for interpretation. Additionally we will also make sure that this peak set does not overlap with the blacklist regions.
+NOTE: It is computationally expensive to run this step on all the peaks -  since we are looking for a quick sanity check for our bias models we will subsample 30K peaks from our original peak set for interpretation. Additionally we will also make sure that this peak set does not overlap with the blacklist regions as follows.
 
 ```
 inputlen=2114
@@ -189,13 +189,12 @@ rm  data/subsample_peaks/temp.txt
 rm data/subsample_peaks/temp_n.txt
 ```
 
-Once we have the subsampled peak set for interpretation we will run the script below to first get interpretation scores and then summarize the interpretation scores.
+Once we have the subsampled peak set we will run the script below to first get interpretation scores (as h5 files `models/bias_model/interpret/bias.profile_scores.h5` and `models/bias_model/interpret/bias.counts_scores.h5`) and then summarize the interpretation scores into PWMs (as png images in `models/bias_model/interpret/untrimmed_logos_counts` and `models/bias_model/interpret/untrimmed_logos_profile`). Browse through the images (with prefix name `contrib_`) in both the PWM folders and make sure you only see the bias motif (Tn5/DNase-I) or repeats and not any other cell-type specific motifs.
 
 ```
-bash step5_interpret_bias_model.sh  data/hg38.fa data/subsample_overlap/30K.subsample.overlap.bed  output/bias_model/model.0.h5
+mkdir models/bias_model/interpret
+bash step5_interpret_bias_model.sh data/downloads/hg38.fa data/subsample_peaks/30K.subsample.overlap.bed models/bias_model/bias.h5 models/bias_model/interpret/
 ```
-
-The step will generate . browse through the images in both these folders and make sure you only see the bias motif (Tn5/DNase-I) and not any other cell-type specific motifs.
 
 ###  Train and Evaluate ChromBPNet Model
 
