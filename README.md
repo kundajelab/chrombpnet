@@ -26,29 +26,37 @@ ChromBPNet (shown in the image as `chrombpnet model`) is a fully convolutional n
 If you are interested in learning more about the detailed architectures used, please refer to the following architecture files - 
 
 - bias model: https://github.com/kundajelab/chrombpnet/blob/master/src/training/models/bpnet_model.py
-- chrombpnet model: https://github.com/kundajelab/chrombpnet/blob/master/src/training/models/chrombpnetwith_bias_model.py.
+- chrombpnet model: https://github.com/kundajelab/chrombpnet/blob/master/src/training/models/chrombpnet_with_bias_model.py.
 
 ## Installation
 
-This section will discuss the packages needed to train a chrombpnet model. Firstly, it is recommended that you use a GPU and have the necessary NVIDIA drivers already installed and setup as chrombpnet model training is faster on a GPU. Secondly there are two ways to ensure you have the necessary packages to run train chrombpnet models which we detail below,
+This section will discuss the packages needed to train a chrombpnet model. Firstly, it is recommended that you use a GPU for model training and have the necessary NVIDIA drivers already installed. Secondly there are two ways to ensure you have the necessary packages to run train chrombpnet models which we detail below,
 
 ### 1. Installation setup through Docker
 
+Download and install the latest version of Docker for your platform. Here is the link for the installers -<a href="https://docs.docker.com/get-docker/">Docker Installers</a>.  Run the docker run command below to open a environment with all the packages installed and do `cd chrombpnet` to start running the tutorial.
+
 ```
-docker run -it --cpus=8 --memory=100g --gpus device=0  --rm --mount  type=bind,src="chrombpnet_paper",target=/chrombpnet_paper -t vivekramalingam/tf-atlas
+docker run -it --rm --memory=100g --gpus device=0  kundajelab/chrombpnet:dev
 ```
 
 ### 2. Installation setup through Conda
 
-```
-pip install -r requirements.txt
-```
-in a new conda environment preferably. See this link to find the appropriate CUDA and cuDNN versions
+Download and install the latest version of Miniconda for your platform. Here is the link for the installers - <a href="https://docs.conda.io/en/latest/miniconda.html">Miniconda Installers</a>. Using Conda you can setup your own environment from scratch by following the commands in https://github.com/kundajelab/chrombpnet/blob/master/dockerfile.
 
-TODO -
-setup conda environment
-setup docker
-test setup in a new environment
+First create a new virtual environment and activate it as shown below
+
+```
+conda create --name chrombpnet python=3.7.9
+conda activate chrombpnet
+```
+
+Now install the packages required by chrombpnet as follows.
+
+```
+conda install -y -c bioconda samtools bedtools ucsc-bedgraphtobigwig 
+pip install git+https://github.com/kundajelab/chrombpnet.git
+```
 	
 ##  Tutorial on how to train chrombpnet models
 
