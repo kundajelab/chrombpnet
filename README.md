@@ -194,7 +194,7 @@ Once we have the subsampled peak set we will run the script below to first get i
 
 ```
 mkdir models/bias_model/interpret
-bash step5_interpret_bias_model.sh data/downloads/hg38.fa data/subsample_peaks/30K.subsample.overlap.bed models/bias_model/bias.h5 models/bias_model/interpret/
+bash step5_interpret_bias_model.sh data/downloads/hg38.fa data/subsample_peaks/30K.subsample.overlap.bed models/bias_model/bias.h5 models/bias_model/interpret/ /users/kmualim/chrombpnet/
 ```
 
 ###  Train and Evaluate ChromBPNet Model
@@ -207,7 +207,7 @@ We will use the bias model trained in Step 4 to regress out the effect of the bi
 
 ```
 mkdir models/chrombpnet_model
-bash step6_train_chrombpnet_model.sh data/downloads/hg38.fa data/downloads/K data/downloads/overlap.bed.gz data/downloads/negatives_with_summit.bed data/splits/fold_0.json models/bias_model/bias.h5 models/chrombpnet_model ATAC_PE
+bash step6_train_chrombpnet_model.sh data/downloads/hg38.fa data/downloads/K562_unstranded.bw data/downloads/overlap.bed.gz data/downloads/negatives_with_summit.bed data/splits/fold_0.json models/bias_model/bias.h5 models/chrombpnet_model ATAC_PE /users/kmualim/chrombpnet/
 
 ```
 
@@ -233,7 +233,7 @@ NOTE: It is computationally expensive to run this step on all the peaks -  since
 
 ```
 mkdir models/chrombpnet_model/interpret
-bash step7_interpret_chrombpnet_model.sh  data/downloads/hg38.fa data/subsample_peaks/30K.subsample.overlap.bed models/chrombpnet_model/chrombpnet_wo_bias.h5 models/chrombpnet_model/interpret/
+bash step7_interpret_chrombpnet_model.sh  data/downloads/hg38.fa data/subsample_peaks/30K.subsample.overlap.bed models/chrombpnet_model/chrombpnet_wo_bias.h5 models/chrombpnet_model/interpret/ /users/kmualim/chrombpnet/
 ```
 
 The script outputs interpretation scores (as h5 files `models/chrombpnet_model/interpret/corrected.profile_scores.h5` and `models/chrombpnet_model/interpret/corrected.counts_scores.h5`) and then summarizes the interpretation scores into PWMs (as png images in `models/chrombpnet_model/interpret/untrimmed_logos_counts` and `models/chrombpnet_model/interpret/untrimmed_logos_profile`). Browse through the images (with prefix name `contrib_`) in both the PWM folders and make sure you only see cell-type specific motifs (here GATA, SP1) and not bias motifs (Tn5/DNASE-I). 
