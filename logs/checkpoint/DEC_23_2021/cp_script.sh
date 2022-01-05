@@ -1,10 +1,11 @@
-data_type=ATAC_PE
+data_type=DNASE_SE
 cell_line=$1
-setting=ATAC_PE_12.28.2021
+setting=DNASE_SE_12.30.2021
+#setting=DNASE_SE_withk562bias_01.03.2022
 oak_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/$data_type/$cell_line/
 main_dir=$PWD/results/chrombpnet/$data_type/$cell_line
 output_dir=$main_dir/$setting
-if [[ -d $oak_dir/$setting/ ]]; then
+if [[ -d $oak_dir/$setting/SIGNAL ]]; then
     echo "dir exists"
 else
     mkdir $oak_dir/$setting/

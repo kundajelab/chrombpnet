@@ -6,7 +6,7 @@ data_type="ATAC_PE"
 date=$(date +'%m.%d.%Y')
 setting=$data_type"_"$date
 cur_file_name="gm12878_atac_fold_0.sh"
-
+setting=ATAC_PE_12.30.2021
 ### SIGNAL INPUT
 
 in_bam=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/ENCODE_ATAC_downloads/GM12878/sorted_merged.bam
@@ -17,14 +17,14 @@ chrom_sizes=/mnt/data/annotations/by_release/hg38/hg38.chrom.sizes
 ref_fasta=/mnt/data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
 genomewide_gc="/oak/stanford/groups/akundaje/anusri/refs/genomewide_gc_hg38_stride_50_inputlen_2114_no_header.bed"
 fold=/oak/stanford/groups/akundaje/projects/chrombpnet/model_inputs/ENCODE_ATAC_downloads/splits/fold_0.json
-
+oak_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/$data_type/$cell_line/
 main_dir=$PWD/results/chrombpnet/$data_type/$cell_line
 data_dir=$main_dir/data
 output_dir=$main_dir/$setting
 neg_dir=$main_dir/negatives_data
 bias_threshold_factor=0.5
 inputlen=2114
-gpu=0
+gpu=7
 
 function timestamp {
     # Function to get the current time with the new line character
@@ -115,22 +115,29 @@ else
         --model_h5=$output_dir/bias_model/bias.h5  | tee -a $logfile
 fi
 
-oak_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/$data_type/$cell_line/
-if [[ -z $oak_dir/$setting/BIAS/$cell_line.counts_scores.h5  || -z $oak_dir/$setting/BIAS/$cell_line.profile_scores.h5 ]] ; then
-    echo "copying counts and profile scores to oak"
+if [[ -d $oak_dir/$setting/ ]]; then
+    echo "dir exists"
+else
     mkdir $oak_dir/$setting/
+    mkdir $oak_dir/$setting/SIGNAL
     mkdir $oak_dir/$setting/BIAS
+fi
+
+if [[ -f $oak_dir/$setting/BIAS/$cell_line.counts_scores.h5  && -f $oak_dir/$setting/BIAS/$cell_line.profile_scores.h5 ]] ; then
+    echo "bias model files already present on oak"
+else
+    echo "copying bias model counts and profile scores to oak"
     cp $output_dir/bias_model/interpret/$cell_line.counts_scores.h5 $oak_dir/$setting/BIAS/
     cp $output_dir/bias_model/interpret/$cell_line.profile_scores.h5 $oak_dir/$setting/BIAS/
 fi
 
-
 ### STEP 2 - TRAIN CHROMBPNET MODEL
+
 if [[ -d $output_dir/chrombpnet_model ]] ; then
     echo "skipping chrombpnet model training  - directory present "
 else
     mkdir $output_dir/chrombpnet_model
-    CUDA_VISIBLE_DEVICES=$gpu bash step6_train_chrombpnet_model.sh $ref_fasta $data_dir"/"$cell_line"_unstranded.bw" $overlap_peak $neg_dir/negatives_with_summit.bed $fold $output_dir/bias_model/bias.h5 $output_dir/chrombpnet_model $data_type 
+    CUDA_VISIBLE_DEVICES=$gpu bash step6_train_chrombpnet_model.sh $ref_fasta $data_dir"/"$cell_line"_unstranded.bw" $overlap_peak $neg_dir/negatives_with_summit.bed $fold $output_dir/bias_model/bias.h5 $output_dir/chrombpnet_model $data_type
 fi
 
 ### INTERPRET SEQUENCE MODEL
@@ -156,18 +163,8 @@ else
         --model_h5=$output_dir/chrombpnet_model/chrombpnet_wo_bias.h5  | tee -a $logfile
 fi
 
-if [[ -d $oak_dir/$setting/ ]]; then
-    echo "oak dir exists"
-else
-    mkdir $oak_dir/$setting/
-    mkdir $oak_dir/$setting/BIAS
-    mkdir $oak_dir/$setting/SIGNAL
-fi
-
-oak_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/$data_type/$cell_line/
-mkdir $oak_dir/$setting/SIGNAL
 if [[ -f $oak_dir/$setting/SIGNAL/$cell_line.counts_scores.h5  && -f $oak_dir/$setting/SIGNAL/$cell_line.profile_scores.h5 ]] ; then
-    echo "file already copied"
+    echo "chrombpnet model files already present on oak"
 else
     echo "copying counts and profile scores to oak"
     cp $output_dir/chrombpnet_model/interpret/$cell_line.counts_scores.h5 $oak_dir/$setting/SIGNAL/
