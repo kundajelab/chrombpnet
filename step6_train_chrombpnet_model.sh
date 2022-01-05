@@ -221,18 +221,18 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
         -chr "chr1" \\
-        -m $output_dir/chrombpnet.h5 \\
+        -m $output_dir/bias_model_scaled.h5 \\
         -bs 512 \\
-        -o $output_dir/footprints/uncorrected \\
+        -o $output_dir/footprints/bias \\
         -pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \\
         -mo dnase_1,dnase_2" | tee -a $logfile
         python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
         -g $reference_fasta \
         -r $output_dir/filtered.nonpeaks.bed \
         -chr "chr1" \
-        -m $output_dir/chrombpnet.h5 \
+        -m $output_dir/bias_model_scaled.h5 \
         -bs 512 \
-        -o $output_dir/footprints/uncorrected \
+        -o $output_dir/footprints/bias \
         -pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \
         -mo dnase_1,dnase_2 | tee -a $logfile
 elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
@@ -242,18 +242,18 @@ elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
         -chr "chr1" \\
-        -m $output_dir/chrombpnet.h5 \\
+        -m $output_dir/bias_model_scaled.h5 \\
         -bs 512 \\
-        -o $output_dir/footprints/uncorrected \\
+        -o $output_dir/footprints/bias \\
         -pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \\
         -mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5" | tee -a $logfile
         python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
         -g $reference_fasta \
         -r $output_dir/filtered.nonpeaks.bed \
         -chr "chr1" \
-        -m $output_dir/chrombpnet.h5 \
+        -m $output_dir/bias_model_scaled.h5 \
         -bs 512 \
-        -o $output_dir/footprints/uncorrected \
+        -o $output_dir/footprints/bias \
         -pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \
         -mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5 | tee -a $logfile
 else
