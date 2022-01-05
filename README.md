@@ -2,8 +2,7 @@
                 This repo is under construction. Incomplete documentation has been flagged as TODO section.
 
 - This repo contains code for the chrombpnet paper Anusri Pampari*, Anna Shcherbina*, Anshul Kundaje. (*authors contributed equally to the work)  
-- General queries/thoughts have been addressed in the discussion section below.
-- Please contact [Anusri Pampari] (\<first-name\>@stanford.edu)  for suggestions and comments. More instructions about reporting bugs detailed below.
+- Please contact [Anusri Pampari] (\<first-name\>@stanford.edu)  for suggestions and comments. 
 - Authors would like to thank Avanti Shrikumar and Surag Nair for their help with the project.
 
 ## Quick Links
