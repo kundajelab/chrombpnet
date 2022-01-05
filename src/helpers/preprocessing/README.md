@@ -9,7 +9,7 @@ To run these scripts you will need the `samtools` and `bedGraphToBigWig` (from u
 ## Bam to Bigwig (+4/-4 shift for ATAC and 0/+1 shift for DNASE)
 
 ```
-bash bam_to_bigwig.sh [input_bam] [output_dir] [data_type] [chrom_sizes]
+bash bam_to_bigwig.sh [input_bam] [output_prefix] [data_type] [chrom_sizes]
 ```
 
 The following assumptions are made with this script - make changes accordingly if the assumptions dont hold.
@@ -25,13 +25,14 @@ The following assumptions are made with this script - make changes accordingly i
 ## Example Usage
 
 ```
-bash bam_to_bigwig.sh input.bam /path/to/dir/ ATAC_PE hg38.chrom.sizes
+bash bam_to_bigwig.sh input.bam <output_name> ATAC_PE hg38.chrom.sizes
+<example output file> : <output_name>_unstranded.bw
 ```
 
 ## Input Format
 
 - input_bam: must be bam file.
-- output_dir: Directory to store the output. The directory must already exist.
+- output_prefix: prefix for output file. The directory in the prefix, if applicable, must already exist.
 - data_type: The `data_type` variable takes the following 4 values ATAC_PE, ATAC_SE, DNASE_PE, DNASE_SE.
 - chrom_sizes: Tab seperated file with two columns. First column is the chromosome and second column is the chromsome length. (Make sure the bam's use the same reference format as the `chrom_sizes`.)
 
