@@ -133,7 +133,7 @@ Secondly, we will filter the regions from the genome-wide buckets created from t
 
 ```
 mkdir data/negatives_data
-bash step3_get_background_regions.sh data/downloads/hg38.fa data/downloads/hg38.chrom.sizes data/downloads/blacklist.bed.gz data/downloads/overlap.bed.gz 2114 data/downloads/genomewide_gc_hg38_stride_50_inputlen_2114.bed data/negatives_data data/splits/fold_0.json
+bash step3_get_background_regions.sh data/downloads/hg38.fa data/downloads/hg38.chrom.sizes data/downloads/blacklist.bed.gz data/downloads/overlap.bed.gz 2114 data/downloads/genomewide_gc_hg38_stride_50_inputlen_2114.bed data/negatives_data data/splits/fold_0.json /users/kmualim/chrombpnet/
 ```
 
 Following are some things to keep in mind when using custom datasets 
@@ -153,7 +153,7 @@ We will train a bias model on the non-peak regions by running the `step4_train_b
 ```
 mkdir models
 mkdir models/bias_model
-bash step4_train_bias_model.sh data/hg38.fa data/downloads/K562_unstranded.bw data/downloads/overlap.bed.gz data/negatives_data/negatives_with_summit.bed data/splits/fold_0.json 0.5 models/bias_model
+bash step4_train_bias_model.sh data/hg38.fa data/downloads/K562_unstranded.bw data/downloads/overlap.bed.gz data/negatives_data/negatives_with_summit.bed data/splits/fold_0.json 0.5 models/bias_model /users/kmualim/chrombpnet/
 
 ```
 
