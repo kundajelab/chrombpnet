@@ -8,6 +8,7 @@ inputlen=$5
 genomewide_gc=$6
 output_dir=$7
 fold=$8
+codedir=$9
 
 function timestamp {
     # Function to get the current time with the new line character
@@ -41,7 +42,7 @@ exclude_bed=$output_dir/exclude.bed
 
 # create regions of size inputlen that do not fall in exclude bed and that gc-match with the given overlap peaks
 # create as many regions as there are in overlap peaks bed file
-bash $PWD/src/helpers/make_gc_matched_negatives/run.sh $overlap_peak $exclude_bed $inputlen $output_dir $reference_fasta $genomewide_gc $fold $chrom_sizes $logfile
+bash $codedir/src/helpers/make_gc_matched_negatives/run.sh $overlap_peak $exclude_bed $inputlen $output_dir $reference_fasta $genomewide_gc $fold $chrom_sizes $logfile
 # make a dummy summit file - rest of the pipeline uses this format
 echo $( timestamp ): "awk -v OFS=\"\t\" '{print \$1, \$2, \$3, \".\",  \".\", \".\", \".\", \".\", \".\", \"1057\"}\' $output_dir/negatives.bed > $output_dir/negatives_with_summit.bed" | tee -a $logfile
 awk -v OFS="\t" '{print $1, $2, $3, ".",  ".", ".", ".", ".", ".", "1057"}' $output_dir/negatives.bed > $output_dir/negatives_with_summit.bed
