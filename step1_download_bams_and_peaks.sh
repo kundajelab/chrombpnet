@@ -6,7 +6,7 @@ wget https://www.encodeproject.org/files/ENCFF128WZG/@@download/ENCFF128WZG.bam 
 wget https://www.encodeproject.org/files/ENCFF534DCE/@@download/ENCFF534DCE.bam -O $data_dir/rep3.bam
 
 samtools merge -f $data_dir/merged_unsorted.bam $data_dir/rep1.bam $data_dir/rep2.bam $data_dir/rep3.bam
-samtools sort -@4 merged_unsorted.bam -o merged.bam
+samtools sort -@4 $data_dir/merged_unsorted.bam -o $data_dir/merged.bam
 samtools index $data_dir/merged.bam
 
 # download overlap peaks (default peaks on ENCODE)
