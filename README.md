@@ -54,7 +54,9 @@ Now install the packages required by chrombpnet as follows.
 
 ```
 conda install -y -c bioconda samtools bedtools ucsc-bedgraphtobigwig 
-pip install git+https://github.com/kundajelab/chrombpnet.git
+git clone https://github.com/kundajelab/chrombpnet.git
+cd chrombpnet
+pip install -r requirements.txt
 ```
 	
 ##  Tutorial on how to train chrombpnet models
