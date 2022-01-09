@@ -82,12 +82,12 @@ def predict_on_batch_wrapper(model,test_generator):
         preds=model.predict_on_batch(X)
 
         # get counts predictions
-        true_counts.extend(np.squeeze(y[0]))
-        profile_probs_predictions.extend(softmax(np.squeeze(preds[0])))
+        true_counts.extend(y[0])
+        profile_probs_predictions.extend(softmax(preds[0]))
 
         # get profile predictions
-        true_counts_sum.extend(np.squeeze(y[1]))
-        counts_sum_predictions.extend(np.squeeze(preds[1]))
+        true_counts_sum.extend(y[1])
+        counts_sum_predictions.extend(preds[1])
         coordinates.extend(coords)
 
     return np.array(true_counts), np.array(profile_probs_predictions), np.array(true_counts_sum), np.array(counts_sum_predictions), np.array(coordinates)
