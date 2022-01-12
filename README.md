@@ -209,7 +209,7 @@ We will use the bias model trained in Step 4 to regress out the effect of the bi
 
 ```
 mkdir models/chrombpnet_model
-bash step6_train_chrombpnet_model.sh data/downloads/hg38.fa data/downloads/K data/downloads/overlap.bed.gz data/downloads/negatives_with_summit.bed data/splits/fold_0.json models/bias_model/bias.h5 models/chrombpnet_model ATAC_PE
+bash step6_train_chrombpnet_model.sh data/downloads/hg38.fa data/downloads/K562_unstranded.bw data/downloads/overlap.bed.gz data/negatives_data/negatives_with_summit.bed data/splits/fold_0.json models/bias_model/bias.h5 models/chrombpnet_model ATAC_PE
 
 ```
 
