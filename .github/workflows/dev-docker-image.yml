@@ -3,12 +3,13 @@ name: Docker Image CI
 on:
   push:
     branch:        
-      - main    
+      - master    
 jobs:
 
   build:
 
     runs-on: ubuntu-latest
+    if: GitHub.ref == 'refs/heads/master'
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
