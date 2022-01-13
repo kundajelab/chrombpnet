@@ -73,7 +73,7 @@ if __name__=="__main__":
         seqlet_path = os.path.join(args.output_dir,'seqlets_counts.txt')
 
     # create a directory for storing pngs later
-    outdirname = os.path.join(args.output_dir, "{}".format("untrimmed_logos"))
+    outdirname = os.path.join(args.output_dir, "{}".format("untrimmed_logos_"+scoring_type))
     if not os.path.exists(outdirname):
         os.mkdir(outdirname)
 
