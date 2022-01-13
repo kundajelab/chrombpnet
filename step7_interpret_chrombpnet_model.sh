@@ -13,5 +13,5 @@ python $PWD/src/evaluation/interpret/interpret.py \
 
 ## modisco run
 
-python src/evaluation/modisco/run_modisco.py -s $output_dir/corrected -p "profile" -o $output_dir -m 50000 -c 1000
-python src/evaluation/modisco/run_modisco.py -s $output_dir/corrected -p "counts" -o $output_dir -m 50000 -c 1000
+python src/evaluation/modisco/run_modisco.py -s $output_dir/corrected -p "profile" -o $output_dir -m 50000 -c 500
+python src/evaluation/modisco/run_modisco.py -s $output_dir/corrected -p "counts" -o $output_dir -m 50000 -c 500
