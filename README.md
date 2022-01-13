@@ -4,6 +4,7 @@
 - This repo contains code for the chrombpnet paper Anusri Pampari*, Anna Shcherbina*, Anshul Kundaje. (*authors contributed equally to the work)  
 - Please contact [Anusri Pampari] (\<first-name\>@stanford.edu)  for suggestions and comments. 
 - Authors would like to thank Avanti Shrikumar and Surag Nair for their help with the project.
+- Link to a pretrained bias model trained in K562 bulk ATAC-seq - http://mitra.stanford.edu/kundaje/anusri/chrombpnet_downloads/bias.h5
 
 ## Quick Links
 
