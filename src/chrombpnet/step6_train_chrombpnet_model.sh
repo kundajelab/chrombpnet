@@ -37,7 +37,7 @@ fi
 # (2) scales the given bias model on the non-peaks
 # (3) Calculates the counts loss weight 
 # (4) Creates a TSV file that can be loaded into the next step
-echo $( timestamp ): "python $PWD/src/helpers/hyperparameters/find_chrombpnet_hyperparams.py \\
+echo $( timestamp ): "python $PWD/helpers/hyperparameters/find_chrombpnet_hyperparams.py \\
        --genome=$reference_fasta \\
        --bigwig=$bigwig_path \\
        --peaks=$overlap_peak \\
@@ -52,7 +52,7 @@ echo $( timestamp ): "python $PWD/src/helpers/hyperparameters/find_chrombpnet_hy
        --n_dilation_layers=$n_dilation_layers \\
        --bias_model_path=$bias_model \\
        --output_dir=$output_dir " | tee -a $logfile
-python $PWD/src/helpers/hyperparameters/find_chrombpnet_hyperparams.py \
+python $PWD/helpers/hyperparameters/find_chrombpnet_hyperparams.py \
        --genome=$reference_fasta \
        --bigwig=$bigwig_path \
        --peaks=$overlap_peak \
@@ -71,7 +71,7 @@ python $PWD/src/helpers/hyperparameters/find_chrombpnet_hyperparams.py \
 # # this script does the following -  
 # # (1) trains a model on the given peaks/nonpeaks
 # # (2) The parameters file input to this script should be TSV seperatedp
-echo $( timestamp ): "python $PWD/src/training/train.py \\
+echo $( timestamp ): "python $PWD/training/train.py \\
        --genome=$reference_fasta \\
        --bigwig=$bigwig_path \\
        --peaks=$output_dir/filtered.peaks.bed \\
@@ -80,9 +80,9 @@ echo $( timestamp ): "python $PWD/src/training/train.py \\
        --output_prefix=$output_dir/chrombpnet \\
        --chr_fold_path=$fold \\
        --batch_size=64 \\
-       --architecture_from_file=$PWD/src/training/models/chrombpnet_with_bias_model.py \\
+       --architecture_from_file=$PWD/training/models/chrombpnet_with_bias_model.py \\
        --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss" | tee -a $logfile
-python $PWD/src/training/train.py \
+python $PWD/training/train.py \
        --genome=$reference_fasta \
        --bigwig=$bigwig_path \
        --peaks=$output_dir/filtered.peaks.bed \
@@ -91,11 +91,11 @@ python $PWD/src/training/train.py \
        --output_prefix=$output_dir/chrombpnet \
        --chr_fold_path=$fold \
        --batch_size=64 \
-       --architecture_from_file=$PWD/src/training/models/chrombpnet_with_bias_model.py \
+       --architecture_from_file=$PWD/training/models/chrombpnet_with_bias_model.py \
        --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss | tee -a $logfile
 
 # # # predictions and metrics on the chrombpnet model trained
-echo $( timestamp ): "python $PWD/src/training/predict.py \\
+echo $( timestamp ): "python $PWD/training/predict.py \\
         --genome=$reference_fasta \\
         --bigwig=$bigwig_path \\
         --peaks=$output_dir/filtered.peaks.bed \\
@@ -106,7 +106,7 @@ echo $( timestamp ): "python $PWD/src/training/predict.py \\
         --output_prefix=$output_dir/chrombpnet \\
         --batch_size=256 \\
         --model_h5=$output_dir/chrombpnet.h5" | tee -a $logfile
-python $PWD/src/training/predict.py \
+python $PWD/training/predict.py \
         --genome=$reference_fasta \
         --bigwig=$bigwig_path \
         --peaks=$output_dir/filtered.peaks.bed \
@@ -119,7 +119,7 @@ python $PWD/src/training/predict.py \
         --model_h5=$output_dir/chrombpnet.h5 | tee -a $logfile
 
 # # # predictions and metrics on the chrombpnet model without bias trained
-echo $( timestamp ): "python $PWD/src/training/predict.py \\
+echo $( timestamp ): "python $PWD/training/predict.py \\
         --genome=$reference_fasta \\
         --bigwig=$bigwig_path \\
         --peaks=$output_dir/filtered.peaks.bed \\
@@ -130,7 +130,7 @@ echo $( timestamp ): "python $PWD/src/training/predict.py \\
         --output_prefix=$output_dir/chrombpnet_wo_bias \\
         --batch_size=256 \\
         --model_h5=$output_dir/chrombpnet_wo_bias.h5 " | tee -a $logfile
-python $PWD/src/training/predict.py \
+python $PWD/training/predict.py \
         --genome=$reference_fasta \
         --bigwig=$bigwig_path \
         --peaks=$output_dir/filtered.peaks.bed \
@@ -143,7 +143,7 @@ python $PWD/src/training/predict.py \
         --model_h5=$output_dir/chrombpnet_wo_bias.h5 | tee -a $logfile
 
 # # # predictions and metrics on the bias model trained
-echo $( timestamp ): "python $PWD/src/training/predict.py \\
+echo $( timestamp ): "python $PWD/training/predict.py \\
         --genome=$reference_fasta \\
         --bigwig=$bigwig_path \\
         --peaks=$output_dir/filtered.peaks.bed \\
@@ -154,7 +154,7 @@ echo $( timestamp ): "python $PWD/src/training/predict.py \\
         --output_prefix=$output_dir/bias \\
         --batch_size=256 \\
         --model_h5=$output_dir/bias_model_scaled.h5" | tee -a $logfile
-python $PWD/src/training/predict.py \
+python $PWD/training/predict.py \
         --genome=$reference_fasta \
         --bigwig=$bigwig_path \
         --peaks=$output_dir/filtered.peaks.bed \
@@ -170,7 +170,7 @@ python $PWD/src/training/predict.py \
 if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
         echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
         mkdir $output_dir/footprints
-        echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \\
+        echo $( timestamp ): "python $PWD/evaluation/marginal_footprints/marginal_footprinting.py \\
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
         -chr "chr1" \\
@@ -179,7 +179,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
         -o $output_dir/footprints/ \\
         -pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \\
         -mo dnase_1,dnase_2" | tee -a $logfile
-        python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
+        python $PWD/evaluation/marginal_footprints/marginal_footprinting.py \
         -g $reference_fasta \
         -r $output_dir/filtered.nonpeaks.bed \
         -chr "chr1" \
@@ -191,7 +191,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
 elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
         echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
         mkdir $output_dir/footprints
-        echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \\
+        echo $( timestamp ): "python $PWD/evaluation/marginal_footprints/marginal_footprinting.py \\
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
         -chr "chr1" \\
@@ -200,7 +200,7 @@ elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
         -o $output_dir/footprints/ \\
         -pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \\
         -mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5" | tee -a $logfile
-        python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
+        python $PWD/evaluation/marginal_footprints/marginal_footprinting.py \
         -g $reference_fasta \
         -r $output_dir/filtered.nonpeaks.bed \
         -chr "chr1" \
@@ -217,7 +217,7 @@ fi
 if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
         echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
         mkdir $output_dir/footprints
-        echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \\
+        echo $( timestamp ): "python $PWD/evaluation/marginal_footprints/marginal_footprinting.py \\
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
         -chr "chr1" \\
@@ -226,7 +226,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
         -o $output_dir/footprints/bias \\
         -pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \\
         -mo dnase_1,dnase_2" | tee -a $logfile
-        python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
+        python $PWD/evaluation/marginal_footprints/marginal_footprinting.py \
         -g $reference_fasta \
         -r $output_dir/filtered.nonpeaks.bed \
         -chr "chr1" \
@@ -238,7 +238,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
 elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
         echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
         mkdir $output_dir/footprints
-        echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \\
+        echo $( timestamp ): "python $PWD/evaluation/marginal_footprints/marginal_footprinting.py \\
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
         -chr "chr1" \\
@@ -247,7 +247,7 @@ elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
         -o $output_dir/footprints/bias \\
         -pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \\
         -mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5" | tee -a $logfile
-        python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
+        python $PWD/evaluation/marginal_footprints/marginal_footprinting.py \
         -g $reference_fasta \
         -r $output_dir/filtered.nonpeaks.bed \
         -chr "chr1" \
