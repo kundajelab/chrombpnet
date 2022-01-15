@@ -7,7 +7,22 @@ wget http://mitra.stanford.edu/kundaje/projects/chrombpnet/microglia/inputs/Clus
 ```
 
 ## 2. Run the resulting shifted tagAlign file through caper pipeline to generate peak calls
+Using json with caper: 
 
+```
+{
+    "atac.pipeline_type": "atac",
+    "atac.title": "cluster24_shifted",
+    "atac.paired_end": true,
+    "atac.genome_tsv": "s3://caper-in/refs/hg38/hg38.tsv",
+    "atac.align_cpu": 10,
+    "atac.align_mem_factor":0.50,
+    "atac.align_disk_factor":20,
+    "atac.tas": [
+        "s3://caper-in/inbox/Cluster24.tagAlign.sorted.shifted.bed.gz"
+    ]
+}
+```
 Outputs are here:
 Using version 2.0.3 of pipeline 
 ```
