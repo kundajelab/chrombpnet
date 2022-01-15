@@ -22,9 +22,10 @@ tiledb/db_ingest_microglia.sh
 
 ## 4. Train bias model + sequence to counts model. 
 
+```
 microglia_atac_bias_filters_128.sh
 microglia_atac_bias_filters_500.sh
-
+```
 
 ## 5. Run modisco
 ```
