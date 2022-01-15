@@ -1,0 +1,2 @@
+kerasAC_bigwigs_from_deepshap --path_to_pickle /srv/scratch/annashch/chrombpnet/microglia/results/chrombpnet/ATAC/microglia/4_4_shifted_ATAC_10.11.2021_bias_filters_128/invivo_bias_model_step1/deepshap/scores.0.fold0.deepSHAP \
+			      --output_dir /srv/scratch/annashch/chrombpnet/microglia/results/chrombpnet/ATAC/microglia/4_4_shifted_ATAC_10.11.2021_bias_filters_128/invivo_bias_model_step1/deepshap

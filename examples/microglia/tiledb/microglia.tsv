@@ -1,0 +1,2 @@
+dataset	idr_peak	overlap_peak	ambig_peak	negatives_peak	count_bigwig_unstranded_5p
+microglia	../data/microglia.idr.optimal.narrowPeak	../data/microglia.overlap.optimal.narrowPeak	/mnt/data/annotations/blacklist/GRch38/GRch38_unified_blacklist.bed	../negatives/microglia.gc.matched.negatives.bed	../data/microglia.unstranded.bw
