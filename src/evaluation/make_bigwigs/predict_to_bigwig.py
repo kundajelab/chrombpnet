@@ -8,8 +8,10 @@ import bigwig_helper
 import keras
 import pyfaidx
 import sys
-from load_model import *
-import data_utils
+from context import data_utils as data_utils
+from context import load_model_wrapper as load_model_wrapper
+
+NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 
 
 # need full paths!
@@ -34,8 +36,8 @@ def softmax(x, temp=1):
 
 
 model_chrombpnet_nb = load_model_wrapper(model_hdf5=args.chrombpnet_model_nb)
-model_chrombpnet = load_model_wrapper(json_string=args.chrombpnet_model+".arch",weights=args.chrombpnet_model+".weights")
-model_bias = load_model_wrapper(json_string=args.bias_model+".arch",weights=args.bias_model+".weights")
+model_chrombpnet = load_model_wrapper(model_hdf5=args.chrombpnet_model)
+model_bias = load_model_wrapper(model_hdf5=args.bias_model)
 
 
 inputlen = int(model_bias.input_shape[1])
@@ -46,7 +48,8 @@ assert(model_chrombpnet.input_shape[1]==inputlen)
 assert(model_chrombpnet.output_shape[0][1]==outputlen)
 
 # load data
-regions_df = pd.read_csv(args.regions, sep='\t', names=data_utils.NARROWPEAK_SCHEMA)
+regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
+print(regions_df.head())
 gs = bigwig_helper.read_chrom_sizes(args.chrom_sizes)
 regions = bigwig_helper.get_regions(args.regions, outputlen) # output regions
 
