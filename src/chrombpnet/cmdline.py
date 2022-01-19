@@ -83,12 +83,12 @@ def main():
     subparser.set_defaults(func=bigwigs)
 
     subparser = subparsers.add_parser("plot_bias_pwm")
-    subparser.add_argument("-i", "--bigwig", required=True,  help="generated bigwig file")
-    subparser.add_argument("-g", "--genome", required=True, help="reference genome fasta")
-    subparser.add_argument("-o", "--output_prefix", required=True,  help="output dir for storing pwm")
-    subparser.add_argument("-c","--chr",type=str, required=True, help="chromosome to build pwm, the name should be present in the chrom sizes file and bigwig you will provide")
-    subparser.add_argument("-cz","--chrom_sizes",type=str, required=True, help="TSV file with chromosome name in first column and size in the second column")
-    subparser.add_argument("-pw","--pwm_width",type=int, default=24, required=False, help="width of pwm matrix")
+    subparser.add_argument("-i", "--bigwig", action=PathParse, help="generated bigwig file")
+    subparser.add_argument("-g", "--genome", action=PathParse, help="reference genome fasta")
+    subparser.add_argument("-o", "--output_prefix", action=PathParse, help="output dir for storing pwm")
+    subparser.add_argument("-c","--chr", type=str, help="chromosome to build pwm, the name should be present in the chrom sizes file and bigwig you will provide")
+    subparser.add_argument("-cz","--chrom_sizes",type=str, action=PathParse, help="TSV file with chromosome name in first column and size in the second column")
+    subparser.add_argument("-pw","--pwm_width",type=int, default=24, help="width of pwm matrix")
     subparser.set_defaults(func=bias_pwm)
 
     subparser = subparsers.add_parser("get_human_splits")
