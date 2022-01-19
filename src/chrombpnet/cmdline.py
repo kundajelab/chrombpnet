@@ -97,7 +97,6 @@ def main():
 
     subparser = subparsers.add_parser("bin_genome")
     subparser.add_argument("-g","--genome", action=PathParse, help="reference genome file")
-    subparser.add_argument("-c","--chrom_sizes", action=PathParse, help="chromosome sizes file for reference genome (contains chr and chrom size seperated by tab)")
     subparser.add_argument("-o","--output_bed", action=PathParse, help="output BED file to store the gc content of binned genome")
     subparser.add_argument("-f","--inputlen", type=int, default=2114, help="inputlen to use to find gc content")
     subparser.add_argument("-s","--stride", type=int, default=50, help="stride to use for shifting the bins")
