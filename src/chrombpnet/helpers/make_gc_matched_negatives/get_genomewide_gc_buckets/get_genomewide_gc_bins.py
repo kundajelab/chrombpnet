@@ -19,18 +19,18 @@ def main(genome_path, out_path, inputlen, stride):
         for entry in fh:
             chrom = entry.name
             seq = entry.sequence
-            buffer = [None for _ in range(inputlen)] # Keep track of last `inputlen` bases
+            buffer = [0 for _ in range(inputlen)] # Keep track of last `inputlen` bases
             ngc = 0
             for seqind, base in enumerate(seq):
                 # Maintain running count of G/C while iterating through chromosome
                 # `base` is the last nucleotide in bin
                 ind = seqind % inputlen
-                base_purge = buffer[ind] # Remove base falling out of range
-                if base_purge == "G" or base_purge == "C":
-                    ngc -= 1
+                ngc -= buffer[ind] # Remove base falling out of range
                 if base == "G" or base == "C": # Add new base in range
                     ngc += 1
-                buffer[ind] = base 
+                    buffer[ind] = 1 
+                else:
+                    buffer[ind] = 0
 
                 end = seqind + 1
                 start = end - inputlen
