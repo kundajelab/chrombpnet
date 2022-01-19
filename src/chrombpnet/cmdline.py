@@ -33,7 +33,7 @@ def splits(args):
 def bins(args):
     run(
         "python", "helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py", 
-        "-g", args.genome, "-c", args.chrom_sizes, "-o", args.output_prefix, "-f", args.inputlen, "-s", args.stride
+        "-g", args.genome, "-c", args.chrom_sizes, "-o", args.output_bed, "-f", args.inputlen, "-s", args.stride
     )
 
 def background(args):
@@ -85,7 +85,7 @@ def main():
     subparser = subparsers.add_parser("plot_bias_pwm")
     subparser.add_argument("-i", "--bigwig", action=PathParse, help="generated bigwig file")
     subparser.add_argument("-g", "--genome", action=PathParse, help="reference genome fasta")
-    subparser.add_argument("-o", "--output_prefix", action=PathParse, help="output dir for storing pwm")
+    subparser.add_argument("-o", "--output", action=PathParse, help="output image for storing pwm")
     subparser.add_argument("-c","--chr", type=str, help="chromosome to build pwm, the name should be present in the chrom sizes file and bigwig you will provide")
     subparser.add_argument("-cz","--chrom_sizes",type=str, action=PathParse, help="TSV file with chromosome name in first column and size in the second column")
     subparser.add_argument("-pw","--pwm_width",type=int, default=24, help="width of pwm matrix")
@@ -98,7 +98,7 @@ def main():
     subparser = subparsers.add_parser("bin_genome")
     subparser.add_argument("-g","--genome", action=PathParse, help="reference genome file")
     subparser.add_argument("-c","--chrom_sizes", action=PathParse, help="chromosome sizes file for reference genome (contains chr and chrom size seperated by tab)")
-    subparser.add_argument("-o","--output_prefix", action=PathParse, help="output prefix path to store the gc content of binned genome")
+    subparser.add_argument("-o","--output_bed", action=PathParse, help="output BED file to store the gc content of binned genome")
     subparser.add_argument("-f","--inputlen", type=int, default=2114, help="inputlen to use to find gc content")
     subparser.add_argument("-s","--stride", type=int, default=50, help="stride to use for shifting the bins")
     subparser.set_defaults(func=bins)
