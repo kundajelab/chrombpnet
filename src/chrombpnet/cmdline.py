@@ -33,7 +33,7 @@ def splits(args):
 def bins(args):
     run(
         "python", "helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py", 
-        "-g", args.genome, "-c", args.chrom_sizes, "-o", args.output_bed, "-f", args.inputlen, "-s", args.stride
+        "-g", args.genome, "-o", args.output_bed, "-f", args.inputlen, "-s", args.stride
     )
 
 def background(args):
