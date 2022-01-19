@@ -21,12 +21,18 @@ def bigwigs(args):
         args.in_bam, args.bigwig_prefix, args.data_type, args.reference_fasta, args.chrom_sizes
     )
 
+def bias_pwm(args):
+    run(
+        "python", "helpers/preprocessing/analysis/build_pwm_from_bigwig.py", 
+        "-i", args.bigwig, "-g", args.genome, "-o", args.output_prefix, "-c", args.chr, "-cz", args.chrom_sizes, "-pw", args.pwm_width
+    )
+
 def splits(args):
-    run("python", "src/helpers/make_chr_splits/splits.py", "-o", args.o)
+    run("python", "helpers/make_chr_splits/splits.py", "-o", args.o)
 
 def bins(args):
     run(
-        "python", "src/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py", 
+        "python", "helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py", 
         "-g", args.genome, "-c", args.chrom_sizes, "-o", args.output_prefix, "-f", args.inputlen, "-s", args.stride
     )
 
@@ -75,6 +81,15 @@ def main():
     subparser.add_argument("reference_fasta", action=PathParse)
     subparser.add_argument("chrom_sizes", action=PathParse)
     subparser.set_defaults(func=bigwigs)
+
+    subparser = subparsers.add_parser("plot_bias_pwm")
+    parser.add_argument("-i", "--bigwig", required=True,  help="generated bigwig file")
+    parser.add_argument("-g", "--genome", required=True, help="reference genome fasta")
+    parser.add_argument("-o", "--output_prefix", required=True,  help="output dir for storing pwm")
+    parser.add_argument("-c","--chr",type=str, required=True, help="chromosome to build pwm, the name should be present in the chrom sizes file and bigwig you will provide")
+    parser.add_argument("-cz","--chrom_sizes",type=str, required=True, help="TSV file with chromosome name in first column and size in the second column")
+    parser.add_argument("-pw","--pwm_width",type=int, default=24, required=False, help="width of pwm matrix")
+    subparser.set_defaults(func=bias_pwm)
 
     subparser = subparsers.add_parser("get_human_splits")
     subparser.add_argument("-o", action=PathParse)
