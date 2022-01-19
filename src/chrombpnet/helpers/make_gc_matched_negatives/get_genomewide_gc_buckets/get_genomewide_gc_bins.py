@@ -65,4 +65,5 @@ def main(genome_path, out_path, inputlen, stride):
 #     df.to_csv(args.output_prefix+".bed",sep='\t', header=False, index=False, index_label=['CHROM','START','END'])
   
 if __name__=="__main__":
-    main()
+    args = parse_args()
+    main(args.genome, args.output_bed, args.inputlen, args.stride)
