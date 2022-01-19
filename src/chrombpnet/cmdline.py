@@ -24,7 +24,7 @@ def bigwigs(args):
 def bias_pwm(args):
     run(
         "python", "helpers/preprocessing/analysis/build_pwm_from_bigwig.py", 
-        "-i", args.bigwig, "-g", args.genome, "-o", args.output_prefix, "-c", args.chr, "-cz", args.chrom_sizes, "-pw", args.pwm_width
+        "-i", args.bigwig, "-g", args.genome, "-o", args.output, "-c", args.chr, "-cz", args.chrom_sizes, "-pw", args.pwm_width
     )
 
 def splits(args):
