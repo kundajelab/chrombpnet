@@ -45,7 +45,7 @@ def make_logo(match, logo_dir_vier, meme_motif_db):
     if match + '.png' in os.listdir(logo_dir_vier):
         pass
     elif match + '.pfm' in os.listdir(meme_motif_db):
-        ppm = np.loadtxt(os.path,join(meme_motif_db, match + '.pfm'), delimiter='\t')
+        ppm = np.loadtxt(os.path.join(meme_motif_db, match + '.pfm'), delimiter='\t')
         ppm = np.transpose(ppm)
         _plot_weights(viz_sequence.ic_scale(ppm, background=background),
                         path=logo_dir_vier + '/' + match + '.png')
