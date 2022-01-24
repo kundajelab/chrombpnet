@@ -1,3 +1,11 @@
+# exit when any command fails
+set -e
+
+# keep track of the last executed command
+trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+# echo an error message before exiting
+trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
+
 python tf_modiscohits.py --outdir=count/k562_hits/ \
 	/srv/scratch/anusri/chrombpnet_paper/results/chrombpnet_nov_08/ATAC/K562/4_4_shifted_ATAC_09.29.2021_bias_filters_500/final_model_step3/unplug/deepshap/20K.fold0.deepSHAP \
 	/oak/stanford/groups/akundaje/projects/chrombpnet_paper/modisco/flank_len_500/SIGNAL/K562/4_4_shifted_ATAC_09.29.2021_bias_filters_500_new/20K.fold0.deepSHAP.count_shap.hdf5 \
