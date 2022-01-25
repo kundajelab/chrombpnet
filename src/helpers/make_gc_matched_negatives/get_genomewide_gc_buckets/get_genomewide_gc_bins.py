@@ -21,9 +21,10 @@ def main():
     region_dict=dict()
     for index,row in chrom_sizes.iterrows():
         chrom=row[0]
-        print(chrom) 
+        # print(chrom) 
         chrom_size=row[1]
-        for bin_start in tqdm(range(0,chrom_size,args.stride)):
+        # for bin_start in tqdm(range(0,chrom_size,args.stride)):
+        for bin_start in range(0,chrom_size,args.stride):
             bin_end=bin_start+args.inputlen
             seq=ref.fetch(chrom,bin_start,bin_end).upper()
             g=seq.count('G')
@@ -38,7 +39,7 @@ def main():
     print("made df")
     new_index=pd.MultiIndex.from_tuples(df.index, names=('CHR', 'START','END'))
     df = pd.DataFrame(df[0], new_index)
-    df.to_csv(args.output_prefix+".bed",sep='\t', header=False, index=False, index_label=['CHROM','START','END'])
+    df.to_csv(args.output_prefix+".bed",sep='\t', header=False, index=True, index_label=['CHROM','START','END'])
   
 if __name__=="__main__":
     main()
