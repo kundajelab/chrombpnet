@@ -5,7 +5,7 @@ import json
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 
-def fetch_data_and_model_params_based_on_mode(mode, args, parameters, nonpeak_regions):
+def fetch_data_and_model_params_based_on_mode(mode, args, parameters, nonpeak_regions, peak_regions):
 
     if mode=="train": 
         inputlen=int(parameters["inputlen"])
@@ -20,7 +20,8 @@ def fetch_data_and_model_params_based_on_mode(mode, args, parameters, nonpeak_re
         inputlen=int(parameters["inputlen"])
         outputlen=int(parameters["outputlen"])
         # fix negatives set for validation
-        nonpeak_regions=nonpeak_regions.sample(frac=float(parameters["negative_sampling_ratio"]), replace=False, random_state=args.seed)
+        if (nonpeak_regions is not None) and (peak_regions is not None):
+            nonpeak_regions=nonpeak_regions.sample(n=int(float(parameters["negative_sampling_ratio"])*peak_regions.shape[0]), replace=False, random_state=args.seed)
         negative_sampling_ratio=1.0 # already subsampled
         # do not jitter at valid time - we are testing only at summits
         max_jitter=0
@@ -75,8 +76,7 @@ def initialize_generators(args, mode, parameters, return_coords):
 
     inputlen, outputlen, \
     nonpeak_regions, negative_sampling_ratio, \
-    max_jitter, add_revcomp, shuffle_at_epoch_start  =  fetch_data_and_model_params_based_on_mode(mode, args, parameters, nonpeak_regions)
-
+    max_jitter, add_revcomp, shuffle_at_epoch_start  =  fetch_data_and_model_params_based_on_mode(mode, args, parameters, nonpeak_regions, peak_regions)
     generator=batchgen_generator.ChromBPNetBatchGenerator(
                                     peak_regions=peak_regions,
                                     nonpeak_regions=nonpeak_regions,
@@ -87,7 +87,6 @@ def initialize_generators(args, mode, parameters, return_coords):
                                     max_jitter=max_jitter,
                                     negative_sampling_ratio=negative_sampling_ratio,
                                     cts_bw_file=args.bigwig,
-                                    seed=args.seed,
                                     add_revcomp=add_revcomp,
                                     return_coords=return_coords,
                                     shuffle_at_epoch_start=shuffle_at_epoch_start

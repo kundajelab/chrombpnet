@@ -9,8 +9,6 @@ import math
 import os
 import json
 
-os.environ['PYTHONHASHSEED'] = '0'
-
 def subsample_nonpeak_data(nonpeak_seqs, nonpeak_cts, nonpeak_coords, peak_data_size, negative_sampling_ratio):
     #Randomly samples a portion of the non-peak data to use in training
     num_nonpeak_samples = int(negative_sampling_ratio * peak_data_size)
@@ -26,7 +24,7 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
     every epoch, and calls bias model on it, whose outputs (bias profile logits 
     and bias logcounts) are fed as input to the chrombpnet model.
     """
-    def __init__(self, peak_regions, nonpeak_regions, genome_fasta, batch_size, inputlen, outputlen, max_jitter, negative_sampling_ratio, cts_bw_file, seed, add_revcomp, return_coords, shuffle_at_epoch_start):
+    def __init__(self, peak_regions, nonpeak_regions, genome_fasta, batch_size, inputlen, outputlen, max_jitter, negative_sampling_ratio, cts_bw_file, add_revcomp, return_coords, shuffle_at_epoch_start):
         """
         seqs: B x L' x 4
         cts: B x M'
@@ -34,10 +32,6 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         outputlen: int (M <= M'), M' is greater to allow for cropping (= jittering)
         batch_size: int (B)
         """
-
-        np.random.seed(seed)
-        random.seed(seed)
-        tf.random.set_seed(seed)
 
         peak_seqs, peak_cts, peak_coords, nonpeak_seqs, nonpeak_cts, nonpeak_coords, = data_utils.load_data(peak_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen, outputlen, max_jitter)
         self.peak_seqs, self.nonpeak_seqs = peak_seqs, nonpeak_seqs
@@ -51,7 +45,6 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         self.add_revcomp = add_revcomp
         self.return_coords = return_coords
         self.shuffle_at_epoch_start = shuffle_at_epoch_start
-        self.seed=seed
 
 
         # random crop training data to the desired sizes, revcomp augmentation
@@ -66,7 +59,6 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         # random crop training data to inputlen and outputlen (with corresponding offsets), revcomp augmentation
         # shuffle required since otherwise peaks and nonpeaks will be together
         #Sample a fraction of the negative samples according to the specified ratio
-
         if (self.peak_seqs is not None) and (self.nonpeak_seqs is not None):
             if self.negative_sampling_ratio < 1.0:
                 self.sampled_nonpeak_seqs, self.sampled_nonpeak_cts, self.sampled_nonpeak_coords = subsample_nonpeak_data(self.nonpeak_seqs, self.nonpeak_cts, self.nonpeak_coords, len(self.peak_seqs), self.negative_sampling_ratio)
@@ -90,7 +82,7 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
 
         self.cur_seqs, self.cur_cts, self.cur_coords = augment.crop_revcomp_augment(
                                             self.seqs, self.cts, self.coords, self.inputlen, self.outputlen, 
-                                            self.add_revcomp, seed=self.seed, shuffle=self.shuffle_at_epoch_start
+                                            self.add_revcomp, shuffle=self.shuffle_at_epoch_start
                                           )
 
     def __getitem__(self, idx):
