@@ -173,7 +173,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
         echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \\
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
-        -chr "chr1" \\
+        --chr_fold_path=$fold \\
         -m $output_dir/chrombpnet_wo_bias.h5 \\
         -bs 512 \\
         -o $output_dir/footprints/corrected \\
@@ -182,7 +182,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
         python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
         -g $reference_fasta \
         -r $output_dir/filtered.nonpeaks.bed \
-        -chr "chr1" \
+        --chr_fold_path=$fold \
         -m $output_dir/chrombpnet_wo_bias.h5 \
         -bs 512 \
         -o $output_dir/footprints/corrected \
@@ -194,7 +194,7 @@ elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
         echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \\
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
-        -chr "chr1" \\
+        --chr_fold_path=$fold \\
         -m $output_dir/chrombpnet_wo_bias.h5 \\
         -bs 512 \\
         -o $output_dir/footprints/corrected \\
@@ -203,7 +203,7 @@ elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
         python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
         -g $reference_fasta \
         -r $output_dir/filtered.nonpeaks.bed \
-        -chr "chr1" \
+        --chr_fold_path=$fold \
         -m $output_dir/chrombpnet_wo_bias.h5 \
         -bs 512 \
         -o $output_dir/footprints/corrected \
@@ -220,7 +220,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
         echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \\
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
-        -chr "chr1" \\
+        --chr_fold_path=$fold \\
         -m $output_dir/bias_model_scaled.h5 \\
         -bs 512 \\
         -o $output_dir/footprints/bias \\
@@ -229,7 +229,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
         python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
         -g $reference_fasta \
         -r $output_dir/filtered.nonpeaks.bed \
-        -chr "chr1" \
+        --chr_fold_path=$fold \
         -m $output_dir/bias_model_scaled.h5 \
         -bs 512 \
         -o $output_dir/footprints/bias \
@@ -250,7 +250,7 @@ elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
         python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
         -g $reference_fasta \
         -r $output_dir/filtered.nonpeaks.bed \
-        -chr "chr1" \
+        --chr_fold_path=$fold \
         -m $output_dir/bias_model_scaled.h5 \
         -bs 512 \
         -o $output_dir/footprints/bias \
