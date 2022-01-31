@@ -67,16 +67,6 @@ def main(
 
     os.makedirs(outdir, exist_ok=True)
 
-    print("Importing DeepSHAP scores and TF-MoDISco results...")
-    hyp_scores, act_scores, one_hot_seqs, imp_coords = \
-        run_tfmodisco.import_shap_scores_part2(
-            shap_scores_path, center_cut_size=center_cut_size
-    )
-    tfm_results = run_tfmodisco.import_tfmodisco_results(
-        tfm_results_path, hyp_scores, one_hot_seqs, center_cut_size
-    )
-    assert np.all(imp_coords[:, 2] - imp_coords[:, 1] == input_length)
-
     # Import peaks
     peak_table = pd.read_csv(
         peak_bed_path, sep="\t", header=None, index_col=False,
@@ -90,6 +80,17 @@ def main(
         (input_length // 2)
     peak_table["peak_end"] = peak_table["peak_start"] + input_length
     
+    print("Importing DeepSHAP scores and TF-MoDISco results...")
+    hyp_scores, act_scores, one_hot_seqs, imp_coords = \
+        run_tfmodisco.import_shap_scores_part2(
+            shap_scores_path, peak_table, center_cut_size=center_cut_size
+    )
+    tfm_results = run_tfmodisco.import_tfmodisco_results(
+        tfm_results_path, hyp_scores, one_hot_seqs, center_cut_size
+    )
+
+    assert np.all(imp_coords[:, 2] - imp_coords[:, 1] == input_length)
+
     peak_table = peak_table.reset_index().drop_duplicates(
         ["peak_chrom", "peak_start", "peak_end"]
     )

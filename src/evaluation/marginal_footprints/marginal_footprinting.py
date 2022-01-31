@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import argparse
 import context
+import json
 
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
@@ -23,7 +24,7 @@ def fetch_footprinting_args():
     parser=argparse.ArgumentParser(description="get marginal footprinting for given model and given motifs")
     parser.add_argument("-g", "--genome", type=str, required=True, help="Genome fasta")
     parser.add_argument("-r", "--regions", type=str, required=True, help="10 column bed file of peaks. Sequences and labels will be extracted centered at start (2nd col) + summit (10th col).")
-    parser.add_argument("-chr", "--test_chr", type=str, required=True, help="Only use the following chromsomes from the regions argument")
+    parser.add_argument("-fl", "--chr_fold_path", type=str, required=True, help="Path to file containing chromosome splits; we will only use the test chromosomes")
     parser.add_argument("-m", "--model_h5", type=str, required=True, help="Path to trained model, can be both bias or chrombpnet model")
     parser.add_argument("-bs", "--batch_size", type=int, default="64", help="input batch size for the model")
     parser.add_argument("-o", "--output_prefix", type=str, required=True, help="Output prefix")
@@ -79,8 +80,11 @@ def main():
     print("inferred model inputlen: ", inputlen)
     print("inferred model outputlen: ", outputlen)
 
+    splits_dict = json.load(open(args.chr_fold_path))
+    chroms_to_keep = set(splits_dict["test"])
+
     regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
-    regions_subsample = regions_df[(regions_df["chr"]==args.test_chr)]
+    regions_subsample = regions_df[(regions_df["chr"].isin(chroms_to_keep))]
     regions_seqs = context.get_seq(regions_subsample, genome_fasta, inputlen)
 
     footprints_at_motifs = {}

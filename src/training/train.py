@@ -8,6 +8,7 @@ import data_generators.initializers as initializers
 import pandas as pd
 import os
 import json
+import numpy as np
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 os.environ['PYTHONHASHSEED'] = '0'
@@ -79,6 +80,7 @@ def main():
     # read tab-seperated parameters file
     parameters = get_model_param_dict(args)
     print(parameters)
+    np.random.seed(args.seed)
 
     # get model architecture to load
     model, architecture_module=get_model(args, parameters)

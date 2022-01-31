@@ -140,7 +140,7 @@ def main():
 
         metrics_dictionary["profile_metrics"]["nonpeaks"] = {}
         metrics_dictionary["profile_metrics"]["nonpeaks"]["median_jsd"] = np.nanmedian(jsd_pw[non_peaks_idx])        
-        metrics_dictionary["profile_metrics"]["nonpeaks"]["median_normj_sd"] = np.nanmedian(jsd_norm[non_peaks_idx])
+        metrics_dictionary["profile_metrics"]["nonpeaks"]["median_norm_jsd"] = np.nanmedian(jsd_norm[non_peaks_idx])
 
         metrics.plot_histogram(jsd_pw[non_peaks_idx], jsd_rnd[non_peaks_idx], args.output_prefix+"_only_nonpeaks", "Only non peaks")
 

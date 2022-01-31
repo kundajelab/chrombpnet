@@ -41,7 +41,7 @@ def counts_metrics(labels,preds,outf,title):
     
     return spearman_cor, pearson_cor, mse
 
-def profile_metrics(true_counts,pred_probs):
+def profile_metrics(true_counts,pred_probs,pseudocount=0.001):
     '''
     Get profile metrics
     '''
@@ -66,7 +66,7 @@ def profile_metrics(true_counts,pred_probs):
         #mnll_norm.append(curr_mnll_norm)
 
         # jsd
-        cur_jsd=jensenshannon(true_counts[idx,:]/np.nansum(true_counts[idx,:]),pred_probs[idx,:])
+        cur_jsd=jensenshannon(true_counts[idx,:]/(pseudocount+np.nansum(true_counts[idx,:])),pred_probs[idx,:])
         jsd_pw.append(cur_jsd)
         # normalized jsd
         min_jsd, max_jsd = jsd_min_max_bounds(true_counts[idx,:])
@@ -75,7 +75,7 @@ def profile_metrics(true_counts,pred_probs):
 
         # get random shuffling on labels for a worst case performance on metrics - labels versus shuffled labels
         shuffled_labels=np.random.permutation(true_counts[idx,:])
-        shuffled_labels_prob=shuffled_labels/np.nansum(shuffled_labels)
+        shuffled_labels_prob=shuffled_labels/(pseudocount+np.nansum(shuffled_labels))
 
         # mnll random
         #curr_rnd_mnll = mnll(true_counts[idx,:],  probs=shuffled_labels_prob)
@@ -85,7 +85,7 @@ def profile_metrics(true_counts,pred_probs):
         #mnll_rnd_norm.append(curr_rnd_mnll_norm)   
 
         # jsd random
-        curr_jsd_rnd=jensenshannon(true_counts[idx,:]/np.nansum(true_counts[idx,:]),shuffled_labels_prob)
+        curr_jsd_rnd=jensenshannon(true_counts[idx,:]/(pseudocount+np.nansum(true_counts[idx,:])),shuffled_labels_prob)
         jsd_rnd.append(curr_jsd_rnd)
         # normalized jsd random
         curr_rnd_jsd_norm = get_min_max_normalized_value(curr_jsd_rnd, min_jsd, max_jsd)

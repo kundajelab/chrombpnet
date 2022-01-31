@@ -6,14 +6,16 @@ from collections import OrderedDict
 import modisco
 import click
 import pickle as pkl
-
+import modisco.visualization
+import deepdish
 def import_shap_scores_part2(
-    shap_scores_hdf5, center_cut_size=None, chrom_set=None,
+    shap_scores_hdf5, peak_table, center_cut_size=None, chrom_set=None,
     remove_non_acgt=True
 ):
-    open_file = open(shap_scores_hdf5, 'rb')
-    score_dict = pkl.load(open_file)
-    flank=center_cut_size//2
+    scores = deepdish.io.load(shap_scores_hdf5)
+    #open_file = open(shap_scores_hdf5, 'rb')
+    #score_dict = pkl.load(open_file)
+    flank=center_cut_size
 
     hyp_impscores = []
     impscores = []
@@ -21,16 +23,28 @@ def import_shap_scores_part2(
     coords = []
     score_type="profile_shap"
 
-    for i in score_dict[score_type]:
-        midpoint=score_dict[score_type][i].shape[0] // 2
-        hyp_impscores.append(score_dict[score_type][i][midpoint-flank:midpoint+flank,:])
-        impscores.append(score_dict[score_type][i][midpoint-flank:midpoint+flank,:])
-        onehot_seqs.append(score_dict['seq'][i][midpoint-flank:midpoint+flank,:])
-        coords.append(np.array([i[0], int(i[1])-1057, int(i[1])+1057], dtype=object))
+    center = scores['shap']['seq'].shape[-1]//2
+    start = center - flank
+    end = center + flank
+
+    for i in scores['shap']['seq']:
+        hyp_impscores.append(i[:,start:end].transpose())
+
+    for i in scores['projected_shap']['seq']:
+        impscores.append(i[:,start:end].transpose())
+
+    for i in scores['raw']['seq']:
+        onehot_seqs.append(i[:,start:end].transpose())
+
+    assert(scores['shap']['seq'].shape[0]==peak_table.shape[0])
+
+    #print(peak_table.head())
+    for i in range(peak_table.shape[0]):
+        coords.append(np.array([peak_table.loc[i,"peak_chrom"], int(peak_table.loc[i,"peak_start"].item()), int(peak_table.loc[i,"peak_end"].item())], dtype=object))
         #print(coords[-1])
     hyp_impscores = np.array(hyp_impscores)
     onehot_seqs = np.array(onehot_seqs)
-    impscores = hyp_impscores * onehot_seqs
+    impscores = np.array(impscores)
     coords=np.array(coords)
     return hyp_impscores, impscores, onehot_seqs, coords
 
