@@ -117,7 +117,7 @@ If you want to mention custom splits please edit the `splits.py` file directly a
 
 Here we will generate non-peak background regions that GC-match with the peak regions. We will use the non-peaks regions to train and evaluate a bias model. We will also use these regions in chrombpnet model training and as background regions to get marginal footprints. There are two key steps to this process - 
 
-Firstly, we will start by dividing the entire genome into overlapping bins of `inputlen` regions. ChromBpnet models are trained on `inputlen` of 2114, so we will divide the entire genome into non-overlapping bins of length of 2114 input length and calculate their gc-fraction value. 
+Firstly, we will start by dividing the entire genome into overlapping bins of `inputlen` regions. ChromBpnet models are trained on `inputlen` of 2114, so we will divide the entire genome into overlapping bins of length of 2114 input length and calculate their gc-fraction value. 
 
 
 For convenience the genome wide buckets we created on human genome (hg38) reference can be downloaded as follows -  
@@ -128,7 +128,8 @@ wget http://mitra.stanford.edu/kundaje/anusri/chrombpnet_downloads/genomewide_gc
 To generate this file directly from the scripts run the command below - 
 
 ```
-python src/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py -g data/downloads/hg38.fa -o data/downloads/genomewide_gc_hg38_stride_1000_inputlen_2114.bed -f 2114 -s 1000```
+python src/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py -g data/downloads/hg38.fa -o data/downloads/genomewide_gc_hg38_stride_1000_inputlen_2114.bed -f 2114 -s 1000
+```
 
 
 Secondly, we will filter the regions from the genome-wide buckets created from the above step such that they do not fall in peak regions or blacklist regions but have similar GC-distribution as the peaks.
