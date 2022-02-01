@@ -3,7 +3,7 @@ Scripts to find the gc content of genome wide bins.
 ### Usage
 
 ```bash 
-python get_genomewide_gc_bins.py -g [genome]  -c [chromosome_sizes_for_reference] -o [output_path_prefix]  -il [inputlen] --s [stride]
+python get_genomewide_gc_bins.py -g [genome] -o [output_path]  -f [inputlen] -s [stride]
 ```
 
 The above scripts bins the genome into `inputlen` length regions. The bin intervals are spaced at `stride` length.
@@ -11,8 +11,7 @@ The above scripts bins the genome into `inputlen` length regions. The bin interv
 ### Input format:
 
 - genome: Reference geneome fasta.
-- chromosome_sizes_for_reference: Tab seperated file with two columns. First column is the chromosome and second column is the chromsome length.
-- output_path_prefix: Path and file name to store the output. See output fotmat section below.
+- output_path: Path and file name to store the output. See output format section below.
 - inputlen: An integer value for the length of a bin for gc-fraction calculation.
 - stride: An integer stride value to space the bins.
 
