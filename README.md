@@ -123,20 +123,19 @@ Firstly, we will start by dividing the entire genome into overlapping bins of `i
 For convenience the genome wide buckets we created on human genome (hg38) reference can be downloaded as follows -  
 
 ```
-wget http://mitra.stanford.edu/kundaje/anusri/chrombpnet_downloads/genomewide_gc_hg38_stride_50_inputlen_2114.bed -O data/downloads/genomewide_gc_hg38_stride_50_inputlen_2114.bed
+wget http://mitra.stanford.edu/kundaje/anusri/chrombpnet_downloads/genomewide_gc_hg38_stride_1000_inputlen_2114.bed -O data/downloads/genomewide_gc_hg38_stride_1000_inputlen_2114.bed
 ```
 To generate this file directly from the scripts run the command below - 
 
 ```
-python src/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py -g data/downloads/hg38.fa -c data/downloads/hg38.chrom.sizes -o data/downloads/genomewide_gc_hg38_stride_50_inputlen_2114.bed -f 2114 -s 50
-```
-NOTE: The script above can take several hours to complete, but it is a one-time run for every reference genome. Please contribute if you know of ways to speed this step.
+python src/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py -g data/downloads/hg38.fa -o data/downloads/genomewide_gc_hg38_stride_1000_inputlen_2114.bed -f 2114 -s 1000```
+
 
 Secondly, we will filter the regions from the genome-wide buckets created from the above step such that they do not fall in peak regions or blacklist regions but have similar GC-distribution as the peaks.
 
 ```
 mkdir data/negatives_data
-bash step3_get_background_regions.sh data/downloads/hg38.fa data/downloads/hg38.chrom.sizes data/downloads/blacklist.bed.gz data/downloads/overlap.bed.gz 2114 data/downloads/genomewide_gc_hg38_stride_50_inputlen_2114.bed data/negatives_data data/splits/fold_0.json
+bash step3_get_background_regions.sh data/downloads/hg38.fa data/downloads/hg38.chrom.sizes data/downloads/blacklist.bed.gz data/downloads/overlap.bed.gz 2114 data/downloads/genomewide_gc_hg38_stride_1000_inputlen_2114.bed data/negatives_data data/splits/fold_0.json
 ```
 
 Following are some things to keep in mind when using custom datasets 

@@ -18,4 +18,4 @@ The above scripts bins the genome into `inputlen` length regions. The bin interv
 ### Output format:
 
 The script outputs a tab-seperated file containing chr, start, end and gc_content. These are genome wide regions binned into `inputlen` regions and with a given `stride`. 
-For example look at the following pre-generated file at `/oak/stanford/groups/akundaje/anusri/refs/genomewide_gc_hg38_stride_50_inputlen_1057.bed` generated with `inputlen` 2114 and `stride` 50 using script `/oak/stanford/groups/akundaje/anusri/refs/get_genomewide_gc_bins.sh`.
+For example look at the following pre-generated file at http://mitra.stanford.edu/kundaje/anusri/chrombpnet_downloads/genomewide_gc_hg38_stride_1000_inputlen_2114.bed generated with `inputlen` 2114 and `stride` 1000 using this script.

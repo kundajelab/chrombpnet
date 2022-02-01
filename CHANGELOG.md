@@ -1,13 +1,15 @@
 # Changelog
 
 ## [Unreleased] - 2022-01-31
-- Marginal footprinting no longer hardcoded to take only chr1, it now inputs the fold json.
-- Invivo footprinting is made compatible with the new input repo changes.
-- Pandas read bugs fixed for gc-matching scripts.
-- Tutorial now exists when one part of the pipeline breaks instead of proceeding further.
+- Marginal footprinting no longer hardcoded to take only chr1, it now inputs the fold json. (PR#20)
+- Invivo footprinting is made compatible with the new input repo changes. (PR#22)
+- Pandas read bugs fixed for gc-matching scripts. (PR#15)
+- Tutorial now exists when one part of the pipeline breaks instead of proceeding further. (PR#18)
+- Added the fast binning scripts at src/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets (PR#11)
+- Added pseudocount in metrics.py (PR#13) - needs further review.
 
 ## [Unreleased] - 2022-01-24
-- Seed setting fixed for training. Seed was set improperly - preventing shuffling for every epoch.
+- Seed setting fixed for training. Seed was set improperly - preventing shuffling for every epoch. (PR#19)
 - return coordinates while training for debugging - returns status of the point such as revcomp,peak/nonpeak,coordinates etc
 
 ## [Unreleased] - 2022-01-15
