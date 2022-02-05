@@ -5,7 +5,6 @@ import pyBigWig
 import numpy as np
 import pandas as pd
 import bigwig_helper
-import keras
 import pyfaidx
 import sys
 from context import data_utils as data_utils
