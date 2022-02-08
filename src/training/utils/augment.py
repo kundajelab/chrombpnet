@@ -64,7 +64,8 @@ def crop_revcomp_augment(seqs, labels, coords, seq_crop_width, label_crop_width,
     assert(seqs.shape[0]==labels.shape[0])
 
     # this does not modify seqs and labels
-    mod_seqs, mod_labels, mod_coords = random_crop(seqs, labels, seq_crop_width, label_crop_width, coords)
+    #mod_seqs, mod_labels, mod_coords = random_crop(seqs, labels, seq_crop_width, label_crop_width, coords)
+    mod_seqs, mod_labels, mod_coords = seqs, labels, coords
 
     # this modifies mod_seqs, mod_labels in-place
     if add_revcomp:

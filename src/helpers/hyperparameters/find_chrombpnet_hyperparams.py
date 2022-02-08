@@ -100,7 +100,7 @@ if __name__=="__main__":
     peaks = param_utils.filter_edge_regions(peaks, bw, args.inputlen+2*args.max_jitter, peaks_bool=1)
     test_peaks = param_utils.filter_edge_regions(test_peaks, bw, args.inputlen, peaks_bool=1)
    
-    nonpeaks = param_utils.filter_edge_regions(nonpeaks, bw, args.inputlen+2*args.max_jitter, peaks_bool=0)
+    nonpeaks = param_utils.filter_edge_regions(nonpeaks, bw, args.inputlen, peaks_bool=0)
     test_nonpeaks = param_utils.filter_edge_regions(test_nonpeaks, bw, args.inputlen, peaks_bool=0)
 
     # step 2 filtering: filter peaks that are outliers in train and valid set - no filtering on test set
