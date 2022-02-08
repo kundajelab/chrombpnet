@@ -75,8 +75,8 @@ if __name__=="__main__":
     peaks = param_utils.filter_edge_regions(peaks, bw, args.inputlen, peaks_bool=1)
 
     # step 2 filtering: filter nonpeaks that have counts less than a threshold_factor (minimum of peak counts)
-    peak_cnts, peak_seqs = param_utils.get_seqs_cts(genome, bw, peaks, args.inputlen, args.outputlen)
-    nonpeak_cnts, nonpeak_seqs = param_utils.get_seqs_cts(genome, bw, nonpeaks, args.inputlen, args.outputlen)    
+    peak_cnts, _ = param_utils.get_seqs_cts(genome, bw, peaks, args.inputlen, args.outputlen)
+    nonpeak_cnts, _ = param_utils.get_seqs_cts(genome, bw, nonpeaks, args.inputlen, args.outputlen)    
     assert(len(peak_cnts) == peaks.shape[0])
     assert(len(nonpeak_cnts) == nonpeaks.shape[0])
 
