@@ -14,4 +14,4 @@ pyBigWig==0.3.18
 deepdish==0.3.7
 git+https://github.com/AvantiShri/shap.git
 deeplift==0.6.13.0
-modisco==0.5.15.0
+modisco==0.5.16.0
