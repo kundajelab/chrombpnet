@@ -23,6 +23,7 @@ config = {
     'download_url': 'https://github.com/kundajelab/chrombpnet',
     'version': '0.1',
     'packages': ['chrombpnet'],
+    'python_requires': '>=3.6',
     'install_requires': install_requires,
     'dependency_inks': dependency_links,
 'entry_points': {'console_scripts': [    'chrombpnet_get_params = chrombpnet.helpers.hyperparameters.find_chrombpnet_hyperparams:main',
