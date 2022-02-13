@@ -32,7 +32,8 @@ def fetch_footprinting_args():
                         help="Path to a TSV file containing motifs in first column and motif string to use for footprinting in second column")    
     parser.add_argument("-mo", "--motifs", nargs="+", type=lambda s: [str(item.strip()) for item in s.split(',')], default=["Tn5"],
                         help="Input motifs to do marginal footprinting, the motif names input here should be present in the collumn one in motifs_to_pwm file argument")
-    parser.add_argument("--ylim",default=(0,0.08),type=tuple, required=False,help="lower and upper y-limits for plotting the motif footprint")
+    parser.add_argument("--ylim",default=None,type=tuple, required=False,help="lower and upper y-limits for plotting the motif footprint, in the form of a tuple i.e. \
+    (0,0.8). If this is set to None, ylim will be autodetermined.")
     
     args = parser.parse_args()
     return args
@@ -103,7 +104,8 @@ def main():
                 avg_response_at_tn5.append(np.round(np.max(motif_footprint[outputlen//2-100:outputlen//2+100]),3))
         plt.figure()
         plt.plot(range(200),motif_footprint[outputlen//2-100:outputlen//2+100])
-        plt.ylim(args.ylim)
+        if args.ylim is not None: 
+            plt.ylim(args.ylim)
         plt.savefig(args.output_prefix+".{}.footprint.png".format(motif))
 
     if np.mean(avg_response_at_tn5) < 0.006:
