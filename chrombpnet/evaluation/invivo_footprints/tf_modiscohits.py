@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from modisco.hit_scoring import densityadapted_hitscoring
 from modisco.util import compute_per_position_ic
-import run_tfmodisco as run_tfmodisco
+import chrombpnet.evaluation.invivo_footprints.run_tfmodisco as run_tfmodisco
 import click
 
 def import_tfmodisco_hits(hits_bed):

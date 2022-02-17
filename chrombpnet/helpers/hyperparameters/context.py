@@ -1,8 +1,7 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../training/')))
-import utils.losses as losses
-import utils.one_hot as one_hot
+import chrombpnet.training.utils.losses as losses
+import chrombpnet.training.utils.one_hot as one_hot
 import tensorflow as tf
 import tensorflow_probability as tfp
 

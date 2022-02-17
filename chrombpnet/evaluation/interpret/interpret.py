@@ -14,8 +14,8 @@ import shutil
 import errno
 import os
 import argparse
-import shap_utils 
-import context
+import chrombpnet.evaluation.interpret.shap_utils as shap_utils
+import chrombpnet.evaluation.interpret.context as context
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 

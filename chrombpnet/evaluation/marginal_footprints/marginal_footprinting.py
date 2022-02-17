@@ -12,7 +12,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import argparse
-import context
+import chrombpnet.evaluation.marginal_footprints.context as context
 import json
 
 

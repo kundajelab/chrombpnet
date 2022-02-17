@@ -4,11 +4,11 @@ import argparse
 import pyBigWig
 import numpy as np
 import pandas as pd
-import bigwig_helper
 import pyfaidx
 import sys
-from context import data_utils as data_utils
-from context import load_model_wrapper as load_model_wrapper
+import chrombpnet.evaluation.make_bigwigs.bigwig_helper as bigwig_helper
+from chrombpnet.evaluation.make_bigwigs.context import data_utils as data_utils
+from chrombpnet.evaluation.make_bigwigs.context import load_model_wrapper as load_model_wrapper
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 

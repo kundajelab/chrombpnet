@@ -1,13 +1,13 @@
-import utils.argmanager as argmanager
-import utils.losses as losses
+import chrombpnet.training.utils.argmanager as argmanager
+import chrombpnet.training.utils.losses as losses
 from tensorflow.keras.utils import get_custom_objects
 from tensorflow.keras.models import load_model
 from scipy import nanmean, nanstd
 import pandas as pd
 import os
 import scipy.stats
-import metrics
-import data_generators.initializers as initializers
+import chrombpnet.training.metrics as metrics
+import chrombpnet.training.data_generators.initializers as initializers
 import numpy as np
 import json
 import h5py

@@ -1,10 +1,10 @@
 from __future__ import division, print_function, absolute_import
 import importlib.machinery
 import tensorflow.keras.callbacks as tfcallbacks 
-import utils.argmanager as argmanager
-import utils.losses as losses
-import utils.callbacks as callbacks
-import data_generators.initializers as initializers
+import chrombpnet.training.utils.argmanager as argmanager
+import chrombpnet.training.utils.losses as losses
+import chrombpnet.training.utils.callbacks as callbacks
+import chrombpnet.training.data_generators.initializers as initializers
 import pandas as pd
 import os
 import json

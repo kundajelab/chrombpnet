@@ -2,7 +2,7 @@ import argparse
 import pyBigWig
 import numpy as np
 import deepdish
-import bigwig_helper
+import chrombpnet.evaluation.make_bigwig.bigwig_helper as bigwig_helper
 
 # need full paths!
 parser = argparse.ArgumentParser(description="Convert importance scores in hdf5 format to bigwig. The output can be visualised using WashU Epigenome Browser as a dynseq track. Please read all parameter argument requirements. PROVIDE ABSOLUTE PATHS!")

@@ -1,5 +1,5 @@
 import numpy as np
-from context import one_hot
+from chrombpnet.helpers.hyperparameters.context import one_hot
 
 def filter_edge_regions(peaks_df, bw, width, peaks_bool):
     """

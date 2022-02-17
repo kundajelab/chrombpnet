@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import math
 import pyfaidx
-import one_hot
+import chrombpnet.evaluation.variant_effect_prediction.one_hot as one_hot
 
 class SNPGenerator(Sequence):
     def __init__(self,

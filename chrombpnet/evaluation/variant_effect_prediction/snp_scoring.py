@@ -1,11 +1,11 @@
-from snp_generator import SNPGenerator
+from chrombpnet.evaluation.variant_effect_prediction.snp_generator import SNPGenerator
 from scipy.spatial.distance import jensenshannon
 from tensorflow.keras.utils import get_custom_objects
 from tensorflow.keras.models import load_model
 import pandas as pd
 import os
 import argparse
-import losses
+import chrombpnet.evaluation.variant_effect_prediction.losses as losses
 import numpy as np
 import pickle as pkl
 

@@ -1,8 +1,7 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../training/')))
-import utils.losses as losses
-from utils.data_utils import get_seq
+import chrombpnet.training.utils.losses as losses
+from chrombpnet.training.utils.data_utils import get_seq
 import tensorflow as tf
 
 def load_model_wrapper(args):

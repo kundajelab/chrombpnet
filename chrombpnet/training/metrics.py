@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from matplotlib import cm
 from matplotlib.colors import Normalize 
 from scipy.interpolate import interpn
-from utils.metrics_utils import * 
+from chrombpnet.training.utils.metrics_utils import * 
 
 plt.rcParams["figure.figsize"]=10,5
 font = {'family' : 'normal',

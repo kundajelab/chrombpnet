@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import os
 import param_utils
-from context import load_model_wrapper
+from chrombpnet.helpers.hyperparameters.context import load_model_wrapper
 from tensorflow import keras
 import json
 

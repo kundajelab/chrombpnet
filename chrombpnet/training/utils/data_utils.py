@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pyBigWig
 import pyfaidx
-from utils import one_hot
+from chrombpnet.training.utils import one_hot
 
 
 def get_seq(peaks_df, genome, width):

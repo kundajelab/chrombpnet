@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import os
 import json
-import param_utils
+import chrombpnet.helpers.hyperparameters.param_utils
 
 def parse_data_args():
     parser=argparse.ArgumentParser(description="find hyper-parameters for chrombpnet defined in src/training/models/chrombpnet_with_bias_model.py")

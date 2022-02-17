@@ -4,7 +4,7 @@ import pyBigWig
 from modisco.visualization import viz_sequence
 import matplotlib.pyplot as plt
 import argparse
-import one_hot
+import chrombpnet.helpers.preprocessing.analysis.one_hot as one_hot
 
 def parse_args():
     parser=argparse.ArgumentParser(description="build pwm matrix from bigwig")

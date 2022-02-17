@@ -1,6 +1,6 @@
 from tensorflow import keras
-from utils import augment
-from utils import data_utils
+from chrombpnet.training.utils import augment
+from chrombpnet.training.utils import data_utils
 import tensorflow as tf
 import numpy as np
 import random
