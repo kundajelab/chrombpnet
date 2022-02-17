@@ -1,10 +1,11 @@
+#!/bin/bash
 # exit when any command fails
 set -e
 # keep track of the last executed command
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
-trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
-data_dir=$1
+trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
+data_dir=${1?param missing - data_dir}
 
 # download bam
 wget https://www.encodeproject.org/files/ENCFF077FBI/@@download/ENCFF077FBI.bam -O $data_dir/rep1.bam
