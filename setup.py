@@ -26,6 +26,7 @@ config = {
     'python_requires': '>=3.6',
     'install_requires': install_requires,
     'dependency_inks': dependency_links,
+    'zip_safe': False,
     'scripts':['chrombpnet/helpers/make_gc_matched_negatives/make_gc_matched_negatives.sh',
                'chrombpnet/helpers/preprocessing/bam_to_bigwig.sh',
                'step1_download_bams_and_peaks.sh',
