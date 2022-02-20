@@ -1,4 +1,4 @@
-import pysam
+import pyfaidx
 import argparse
 
 def parse_args():
@@ -9,30 +9,66 @@ def parse_args():
     parser.add_argument("-s","--stride", type=int,default=1000, help="stride to use for shifting the bins")
     return parser.parse_args()
 
-def main(genome_path, out_path, inputlen, stride):
-    with pysam.FastxFile(genome_path) as fh, open(out_path, "w") as fo:
-        for entry in fh:
-            chrom = entry.name
-            seq = entry.sequence
-            buffer = [0 for _ in range(inputlen)] # Sliding window of `inputlen` bases
-            ngc = 0
-            for seqind, base in enumerate(seq):
-                # Maintain running count of G/C while iterating through chromosome
-                # `base` is the final nucleotide in bin
-                ind = seqind % inputlen
-                ngc -= buffer[ind] # Remove base falling out of window
-                if base == "G" or base == "C": # Add new base in window
-                    ngc += 1
-                    buffer[ind] = 1 
-                else:
-                    buffer[ind] = 0
+def get_genomewide_gc(genome_fa, outf, width, stride):
+    """
+    Get GC fraction in bins of width "width" strided by "stride".
 
-                end = seqind + 1
-                start = end - inputlen
-                if (start % stride == 0) and (start >= 0):
-                    frac = round(ngc / inputlen, 2)
-                    fo.write(f"{chrom}\t{start}\t{end}\t{frac}\n")
-  
+    Main speedups come from:
+    - loading chromosome string using pyfaidx
+    - using the str.count function for substrings
+    - avoiding redundant counting
+
+    Redundant counting is avoided by counting in bins of size "stride"
+    at a time and caching the most recent values in cache. As an example:
+
+    For width 2114 and stride 1000, when considering the 3000-4000 bin, 
+    with already cached counts in 1000-2000 and 2000-3000, count in
+    3000-3114 and write 1000-3114. Then count in 3114-4000, now cache 
+    3000-4000 and delete 1000-2000. And repeat.
+    """
+
+    f = pyfaidx.Fasta(genome_fa, as_raw=True)
+    outf = open(outf, 'w')
+
+    div = width//stride
+    rem = width%stride
+    stride_x_div = div * stride
+
+    # cache will store the GC counts in the most recent
+    # div bins of length stride each
+    cache = [0]*div
+
+    for chrm in f.keys():
+        s = f[chrm][:].upper()
+
+        runsum = 0
+        # fill first div values
+        for i in range(0, stride_x_div, stride):
+            c = s.count("C", i, i+stride) + s.count("G", i, i+stride)
+            cache[i//stride % div] = c
+            runsum += c
+        
+        for i in range(div*stride, len(s)-rem, stride):
+            # invariant: runsum = sum(cache)
+            left_ct=0
+            if rem!=0:
+                left_ct = s.count("C", i, i+rem) + s.count("G", i, i+rem)
+                runsum += left_ct
+
+            outf.write("{}\t{}\t{}\t{:.2f}\n".format(chrm, i - stride_x_div, i - stride_x_div + width, runsum/width))
+
+            if div == 0: # stride > width, do no more
+                runsum = 0
+            else:
+                runsum -= cache[i//stride % div]
+
+                right_ct = s.count("C", i+rem, i+stride) + s.count("G", i+rem, i+stride)
+                runsum += right_ct
+                cache[i//stride % div] = left_ct+right_ct 
+
+    f.close()
+    outf.close()
+
 if __name__=="__main__":
     args = parse_args()
-    main(args.genome, args.output_bed, args.inputlen, args.stride)
+    get_genomewide_gc(args.genome, args.output_bed, args.inputlen, args.stride)
