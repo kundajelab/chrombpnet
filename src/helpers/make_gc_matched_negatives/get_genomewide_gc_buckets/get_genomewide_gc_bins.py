@@ -55,7 +55,7 @@ def get_genomewide_gc(genome_fa, outf, width, stride):
                 left_ct = s.count("C", i, i+rem) + s.count("G", i, i+rem)
                 runsum += left_ct
 
-            outf.write("{}\t{}\t{}\t{:.2f}\n".format(chrm, i - stride_x_div, i - stride_x_div + width, runsum/width))
+            outf.write("{}\t{}\t{}\t{}\n".format(chrm, i - stride_x_div, i - stride_x_div + width, round(runsum/width,2)))
 
             if div == 0: # stride > width, do no more
                 runsum = 0
