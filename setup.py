@@ -45,7 +45,8 @@ config = {
                                              'chrombpnet_deepshap = chrombpnet.evaluation.interpret.interpret:main',
                                              'chrombpnet_modisco = chrombpnet.evaluation.modisco.run_modisco:main',
                                              'chrombpnet_marginal_footprints = chrombpnet.evaluation.marginal_footprints.marginal_footprinting:main',
-                                             'chrombpnet_pwm_from_bigwig = chrombpnet.helpers.preprocessing.analysis.build_pwm_from_bigwig:main']}}
+                                             'chrombpnet_pwm_from_bigwig = chrombpnet.helpers.preprocessing.analysis.build_pwm_from_bigwig:main',
+                                             'chrombpnet_srcdir = chrombpnet.get_package_dir:main']}}
 
 if __name__== '__main__':
     setup(**config)
