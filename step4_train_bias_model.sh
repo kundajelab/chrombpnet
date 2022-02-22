@@ -14,7 +14,7 @@ nonpeaks=${4?param missing - nonpeaks}
 fold=${5?param missing - fold}
 bias_threshold_factor=${6?param missing - bias_threshold_factor}
 output_dir=${7?param missing - output_dir}
-logfile=${8?param missing - logfile}
+logfile=$8 #this is an optional argument 
 
 # defaults
 inputlen=2114

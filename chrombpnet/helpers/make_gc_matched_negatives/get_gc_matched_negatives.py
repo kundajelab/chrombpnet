@@ -105,8 +105,7 @@ def adjust_gc(chrom,cur_gc,negatives,used_negatives):
 
         
     
-if __name__=="__main__":
-
+def main(): 
     args=parse_args()
 
     splits_dict=json.load(open(args.chr_fold_path))
@@ -172,3 +171,5 @@ if __name__=="__main__":
     plt.savefig(args.output_prefix+"_compared_with_foreground.png")
 
     
+if __name__=="__main__":
+    main()

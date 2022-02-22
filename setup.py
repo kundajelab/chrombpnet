@@ -37,16 +37,19 @@ config = {
                'step6_train_chrombpnet_model.sh',
                'step7_interpret_chrombpnet_model.sh'
     ],
-    'entry_points': {'console_scripts': [    'chrombpnet_hyperparams = chrombpnet.helpers.hyperparameters.find_chrombpnet_hyperparams:main',
-                                             'chromobpnet_bias_hyperparams = chrombpnet.helpers.hyperparameters.find_bias_hyperparams:main',
-                                             'chrombpnet_train = chrombpnet.training.train:main',
-                                             'chrombpnet_predict = chrombpnet.training.predict:main',
-                                             'chrombpnet_metrics = chrombpnet.training.metrics:main',
-                                             'chrombpnet_deepshap = chrombpnet.evaluation.interpret.interpret:main',
-                                             'chrombpnet_modisco = chrombpnet.evaluation.modisco.run_modisco:main',
-                                             'chrombpnet_marginal_footprints = chrombpnet.evaluation.marginal_footprints.marginal_footprinting:main',
-                                             'chrombpnet_pwm_from_bigwig = chrombpnet.helpers.preprocessing.analysis.build_pwm_from_bigwig:main',
-                                             'chrombpnet_srcdir = chrombpnet.get_package_dir:main']}}
+    'entry_points': {'console_scripts': [
+        'chrombpnet_gc_content_foreground = chrombpnet.helpers.make_gc_matched_negatives.get_gc_content:main',
+        'chrombpnet_gc_matched_negatives = chrombpnet.helpers.make_gc_matched_negatives.get_gc_matched_negatives:main',
+        'chrombpnet_hyperparams = chrombpnet.helpers.hyperparameters.find_chrombpnet_hyperparams:main',
+        'chrombpnet_bias_hyperparams = chrombpnet.helpers.hyperparameters.find_bias_hyperparams:main',
+        'chrombpnet_train = chrombpnet.training.train:main',
+        'chrombpnet_predict = chrombpnet.training.predict:main',
+        'chrombpnet_metrics = chrombpnet.training.metrics:main',
+        'chrombpnet_deepshap = chrombpnet.evaluation.interpret.interpret:main',
+        'chrombpnet_modisco = chrombpnet.evaluation.modisco.run_modisco:main',
+        'chrombpnet_marginal_footprints = chrombpnet.evaluation.marginal_footprints.marginal_footprinting:main',
+        'chrombpnet_pwm_from_bigwig = chrombpnet.helpers.preprocessing.analysis.build_pwm_from_bigwig:main',
+        'chrombpnet_srcdir = chrombpnet.get_package_dir:main']}}
 
 if __name__== '__main__':
     setup(**config)
