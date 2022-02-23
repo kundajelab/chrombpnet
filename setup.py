@@ -13,6 +13,7 @@ for line in reqs:
 print(f"dependency_links:{dependency_links}")
 print(f"install_requires:{install_requires}")
 
+
 config = {
     'name': 'chrombpnet',
     'author': 'Kundaje lab',
@@ -29,6 +30,9 @@ config = {
     'zip_safe': False,
     'scripts':['chrombpnet/helpers/make_gc_matched_negatives/make_gc_matched_negatives.sh',
                'chrombpnet/helpers/preprocessing/bam_to_bigwig.sh',
+               'chrombpnet/training/models/bpnet_model.py',
+               'chrombpnet/training/models/chrombpnet_with_bias_bigwig.py',
+               'chrombpnet/training/models/chrombpnet_with_bias_model.py',
                'step1_download_bams_and_peaks.sh',
                'step2_make_bigwigs_from_bams.sh',
                'step3_get_background_regions.sh',
@@ -40,6 +44,7 @@ config = {
     'entry_points': {'console_scripts': [
         'chrombpnet_gc_content_foreground = chrombpnet.helpers.make_gc_matched_negatives.get_gc_content:main',
         'chrombpnet_gc_matched_negatives = chrombpnet.helpers.make_gc_matched_negatives.get_gc_matched_negatives:main',
+        'chrombpnet_make_splits = chrombpnet.helpers.make_chr_splits.splits:main',
         'chrombpnet_hyperparams = chrombpnet.helpers.hyperparameters.find_chrombpnet_hyperparams:main',
         'chrombpnet_bias_hyperparams = chrombpnet.helpers.hyperparameters.find_bias_hyperparams:main',
         'chrombpnet_train = chrombpnet.training.train:main',

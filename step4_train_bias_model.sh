@@ -43,7 +43,7 @@ fi
 # (2) filters non peaks based on the given bias threshold factor
 # (3) Calculates the counts loss weight 
 # (4) Creates a TSV file that can be loaded into the next step
-echo $( timestamp ): "chromobpnet_bias_hyperparams \\
+echo $( timestamp ): "chrombpnet_bias_hyperparams \\
        --genome=$reference_fasta \\
        --bigwig=$bigwig_path \\
        --peaks=$overlap_peak \\
@@ -58,7 +58,7 @@ echo $( timestamp ): "chromobpnet_bias_hyperparams \\
        --bias_threshold_factor=$bias_threshold_factor \\
        --output_dir $output_dir" | tee -a $logfile
 
-chromobpnet_bias_hyperparams \
+chrombpnet_bias_hyperparams \
     --genome=$reference_fasta \
     --bigwig=$bigwig_path \
     --peaks=$overlap_peak \
@@ -75,7 +75,8 @@ chromobpnet_bias_hyperparams \
 
 # this script does the following -  
 # (1) trains a model on the given peaks/nonpeaks
-# (2) The parameters file input to this script should be TSV seperated 
+# (2) The parameters file input to this script should be TSV seperated
+bpnet_model_path=`which bpnet_model.py`
 echo $( timestamp ): "chrombpnet_train \\
        --genome=$reference_fasta \\
        --bigwig=$bigwig_path \\
@@ -84,7 +85,7 @@ echo $( timestamp ): "chrombpnet_train \\
        --output_prefix=$output_dir/bias \\
        --chr_fold_path=$fold \\
        --batch_size=64 \\
-       --architecture_from_file=$PWD/chrombpnet/training/models/bpnet_model.py \\
+       --architecture_from_file=$bpnet_model_path \\
        --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss" | tee -a $logfile
 
 chrombpnet_train \
@@ -95,7 +96,7 @@ chrombpnet_train \
     --output_prefix=$output_dir/bias \
     --chr_fold_path=$fold \
     --batch_size=64 \
-    --architecture_from_file=$PWD/chrombpnet/training/models/bpnet_model.py \
+    --architecture_from_file=$bpnet_model_path \
     --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss  | tee -a $logfile
 
 # predictions and metrics on the bias model trained
