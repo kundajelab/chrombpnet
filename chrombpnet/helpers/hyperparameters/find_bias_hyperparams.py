@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import os
 import json
-import chrombpnet.helpers.hyperparameters.param_utils
+import chrombpnet.helpers.hyperparameters.param_utils as param_utils
 
 def parse_data_args():
     parser=argparse.ArgumentParser(description="find hyper-parameters for chrombpnet defined in src/training/models/chrombpnet_with_bias_model.py")
@@ -19,7 +19,7 @@ def parse_data_args():
     parser.add_argument("-fl", "--chr_fold_path", type=str, required=True, help="Fold information - dictionary with test,valid and train keys and values with corresponding chromosomes")
     return parser
 
-def parse_model_args(parse):
+def parse_model_args(parser):
     # arguments here defined the following model - src/training/models/chrombpnet_with_bias_model.py
     parser.add_argument("-il", "--inputlen", type=int, help="Sequence input length")
     parser.add_argument("-ol", "--outputlen", type=int, help="Prediction output length")
@@ -29,8 +29,7 @@ def parse_model_args(parse):
     args = parser.parse_args()
     return args
 
-if __name__=="__main__":
-
+def main():    
     # read the arguments
     parser = parse_data_args()
     args = parse_model_args(parser)
@@ -135,3 +134,7 @@ if __name__=="__main__":
     file.write("\n")
     file.write("\t".join(["negative_sampling_ratio", str(1.0)])) # this is just a dummy variable because the train.py pipeline needs it - all negatives will be used for bias model training
     file.close()
+
+
+if __name__=="__main__":
+    main()

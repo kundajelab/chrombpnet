@@ -4,7 +4,7 @@ import pyBigWig
 import pandas as pd
 import numpy as np
 import os
-import param_utils
+from chrombpnet.helpers.hyperparameters import param_utils as param_utils
 from chrombpnet.helpers.hyperparameters.context import load_model_wrapper
 from tensorflow import keras
 import json
@@ -21,7 +21,7 @@ def parse_data_args():
     parser.add_argument("-fl", "--chr_fold_path", type=str, required=True, help="Fold information - dictionary with test,valid and train keys and values with corresponding chromosomes")
     return parser
 
-def parse_model_args(parse):
+def parse_model_args(parser):
     # arguments here defined the following model - src/training/models/chrombpnet_with_bias_model.py
     parser.add_argument("-il", "--inputlen", type=int, required=True, help="Sequence input length")
     parser.add_argument("-ol", "--outputlen", type=int, required=True, help="Prediction output length")
@@ -58,8 +58,8 @@ def adjust_bias_model_logcounts(bias_model, seqs, cts):
     bias_model.layers[-1].set_weights([dw, db+delta])
     return bias_model
 
-if __name__=="__main__":
 
+def main(): 
     # read the arguments
     parser = parse_data_args()
     args = parse_model_args(parser)
@@ -179,3 +179,7 @@ if __name__=="__main__":
     file.write("\n")
     file.write("\t".join(["negative_sampling_ratio", str(args.negative_sampling_ratio)]))
     file.close()
+
+if __name__=="__main__":
+    main()
+    
