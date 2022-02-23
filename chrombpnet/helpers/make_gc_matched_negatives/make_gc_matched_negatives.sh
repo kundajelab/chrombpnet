@@ -41,7 +41,7 @@ echo $( timestamp ): "chrombpnet_gc_content_foreground \\
         --output_prefix $output_dir/foreground.gc \\
         --inputlen $inputlen" | tee -a $logfile
 
-python chrombpnet_gc_content_foreground \
+chrombpnet_gc_content_foreground \
        --input_bed $foreground_bed \
        --genome $genome \
        --chrom_sizes $chrom_sizes \
@@ -59,7 +59,7 @@ echo $( timestamp ): "chrombpnet_gc_matched_negatives \\
         --output_prefix $output_dir/negatives \\
         --chr_fold_path $fold \\
         --neg_to_pos_ratio_train 2" | tee -a $logfile
-python chrombpnet_gc_matched_negatives \
+chrombpnet_gc_matched_negatives \
     --candidate_negatives $output_dir/candidate.negatives.bed \
     --foreground_gc_bed $output_dir/foreground.gc.bed \
     --output_prefix $output_dir/negatives \
