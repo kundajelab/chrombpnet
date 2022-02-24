@@ -45,8 +45,8 @@ def save_plot(weights, dst_fname):
 
     plt.savefig(dst_fname)
 
-if __name__=="__main__":
 
+def main():
     args = fetch_modisco_args()    
 
     # check if the output directory exists
@@ -157,3 +157,5 @@ if __name__=="__main__":
         save_plot(pattern["sequence"].fwd,
                   os.path.join(args.output_dir, "untrimmed_logos_"+scoring_type, 'sequence_{}.png'.format(idx)))
 
+if __name__=="__main__":
+    main()
