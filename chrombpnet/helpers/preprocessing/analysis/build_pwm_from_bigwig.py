@@ -37,8 +37,7 @@ def get_pwm_bg(seqs, cnts, pwm_width=24):
     bg = bg/sum(bg)
     return motif, bg
 
-if __name__=="__main__":
-
+def main(): 
     args = parse_args()
 
     assert(args.pwm_width % 2 ==0)
@@ -67,3 +66,6 @@ if __name__=="__main__":
     ax = fig.add_subplot(111) 
     viz_sequence.plot_weights_given_ax(ax=ax, array=viz_sequence.ic_scale(motif, background=bg))
     plt.savefig(args.output_prefix)
+    
+if __name__=="__main__":
+    main()
