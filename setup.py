@@ -26,12 +26,11 @@ config = {
     'packages': ['chrombpnet'],
     'python_requires': '>=3.6',
     'install_requires': install_requires,
-    'dependency_inks': dependency_links,
+    'dependency_links': dependency_links,
     'zip_safe': False,
     'scripts':['chrombpnet/helpers/make_gc_matched_negatives/make_gc_matched_negatives.sh',
                'chrombpnet/helpers/preprocessing/bam_to_bigwig.sh',
                'chrombpnet/training/models/bpnet_model.py',
-               'chrombpnet/training/models/chrombpnet_with_bias_bigwig.py',
                'chrombpnet/training/models/chrombpnet_with_bias_model.py',
                'step1_download_bams_and_peaks.sh',
                'step2_make_bigwigs_from_bams.sh',
@@ -44,6 +43,7 @@ config = {
     'entry_points': {'console_scripts': [
         'chrombpnet_gc_content_foreground = chrombpnet.helpers.make_gc_matched_negatives.get_gc_content:main',
         'chrombpnet_gc_matched_negatives = chrombpnet.helpers.make_gc_matched_negatives.get_gc_matched_negatives:main',
+        'chrombpnet_pwm_from_bigwig = chrombpnet.helpers.preprocessing.analysis.build_pwm_from_bigwig:main',        
         'chrombpnet_make_splits = chrombpnet.helpers.make_chr_splits.splits:main',
         'chrombpnet_hyperparams = chrombpnet.helpers.hyperparameters.find_chrombpnet_hyperparams:main',
         'chrombpnet_bias_hyperparams = chrombpnet.helpers.hyperparameters.find_bias_hyperparams:main',
@@ -53,7 +53,7 @@ config = {
         'chrombpnet_deepshap = chrombpnet.evaluation.interpret.interpret:main',
         'chrombpnet_modisco = chrombpnet.evaluation.modisco.run_modisco:main',
         'chrombpnet_marginal_footprints = chrombpnet.evaluation.marginal_footprints.marginal_footprinting:main',
-        'chrombpnet_pwm_from_bigwig = chrombpnet.helpers.preprocessing.analysis.build_pwm_from_bigwig:main',
+        'chrombpnet_score_snps = chrombpnet.evaluation.variant_effect_prediction.snp_scoring:main',
         'chrombpnet_srcdir = chrombpnet.get_package_dir:main']}}
 
 if __name__== '__main__':

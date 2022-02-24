@@ -60,7 +60,7 @@ class SNPGenerator(Sequence):
            
             if len(cur_ref_seq) != self.inputlen or len(cur_alt_seq) != self.inputlen:
                 print("Exception input size is not 2114 - skipping snp")
-                print("rsid (chr_pos_ref_alt): ", entry["rsid"])
+                print("rsid (chr_pos_ref_alt): ", rsid)
                 continue
             
             ref_seqs.append(cur_ref_seq)

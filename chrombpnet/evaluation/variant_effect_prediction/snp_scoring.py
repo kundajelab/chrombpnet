@@ -1,4 +1,4 @@
-from chrombpnet.evaluation.variant_effect_prediction.snp_generator import SNPGenerator
+from chrompnet.evaluation.variant_effect_prediction.snp_generator import SNPGenerator
 from scipy.spatial.distance import jensenshannon
 from tensorflow.keras.utils import get_custom_objects
 from tensorflow.keras.models import load_model
@@ -35,7 +35,7 @@ def load_model_wrapper(args):
     print("model loaded succesfully")
     return model
 
-def fetch_snp_predictions(snp_regions, inputlen, genome_fasta, batch_size, debug_mode_on=False):
+def fetch_snp_predictions(model, snp_regions, inputlen, genome_fasta, batch_size, debug_mode_on=False):
     '''
     Returns model predictions (counts and profile probability predictions) at the given reference and alternate snp alleles.
     Please note that if the SNP location is at the edge - i.e we are unable to form a given inputlen of sequence - we skip predictions at this SNP
@@ -107,8 +107,7 @@ def predict_snp_effect_scores(rsids, ref_count_preds, alt_count_preds, ref_prob_
     return log_counts_diff, log_probs_diff_abs_sum, probs_jsd_diff
 
 
-if __name__=="__main__":
-
+def main():
     args = fetch_variant_args()
     debug_mode_on = args.debug_mode_on
 
@@ -130,7 +129,7 @@ if __name__=="__main__":
     print("input length inferred from the model: ", inputlen)
 
     # fetch model prediction on snps
-    rsids, ref_logcount_preds, alt_logcount_preds, ref_prob_preds, alt_prob_preds = fetch_snp_predictions(snp_regions, inputlen, args.genome, args.batch_size, debug_mode_on)
+    rsids, ref_logcount_preds, alt_logcount_preds, ref_prob_preds, alt_prob_preds = fetch_snp_predictions(model, snp_regions, inputlen, args.genome, args.batch_size, debug_mode_on)
 
     # find varaint effect scores at snps
     log_counts_diff, log_probs_diff_abs_sum, probs_jsd_diff = predict_snp_effect_scores(rsids, ref_logcount_preds, alt_logcount_preds, ref_prob_preds, alt_prob_preds)
@@ -157,3 +156,5 @@ if __name__=="__main__":
 
 
 
+if __name__=="__main__":
+    main()
