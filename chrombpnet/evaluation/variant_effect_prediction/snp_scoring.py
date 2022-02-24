@@ -1,4 +1,4 @@
-from chrompnet.evaluation.variant_effect_prediction.snp_generator import SNPGenerator
+from chrombpnet.evaluation.variant_effect_prediction.snp_generator import SNPGenerator
 from scipy.spatial.distance import jensenshannon
 from tensorflow.keras.utils import get_custom_objects
 from tensorflow.keras.models import load_model
