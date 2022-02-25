@@ -21,7 +21,7 @@ def parse_data_args():
     parser.add_argument("-fl", "--chr_fold_path", type=str, required=True, help="Fold information - dictionary with test,valid and train keys and values with corresponding chromosomes")
     return parser
 
-def parse_model_args(parse):
+def parse_model_args(parser):
     # arguments here defined the following model - src/training/models/chrombpnet_with_bias_model.py
     parser.add_argument("-il", "--inputlen", type=int, required=True, help="Sequence input length")
     parser.add_argument("-ol", "--outputlen", type=int, required=True, help="Prediction output length")
