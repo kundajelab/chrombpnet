@@ -3,8 +3,8 @@ import argparse
 
 def parse_args():
     parser=argparse.ArgumentParser(description="get gc content after binning the entire genome into bins")
-    parser.add_argument("-g","--genome", help="reference genome file")
-    parser.add_argument("-o","--output_bed", help="output BED file to store the gc content of binned genome")
+    parser.add_argument("-g","--genome", required=True, help="reference genome file")
+    parser.add_argument("-o","--output_bed", required=True, help="output BED file to store the gc content of binned genome")
     parser.add_argument("-f","--inputlen", type=int,default=2114, help="inputlen to use to find gc content")
     parser.add_argument("-s","--stride", type=int,default=1000, help="stride to use for shifting the bins")
     return parser.parse_args()
