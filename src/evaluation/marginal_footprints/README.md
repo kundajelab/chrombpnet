@@ -5,7 +5,7 @@ The scripts in this folder provide marginal footprints for a given motif and bac
 ## Usage
 
 ```
-python marginal_footprinting.py -g [genome_fasta] -r [regions] -chr [test_chr] -m [model_h5] -bs [batch_size] -o [output_prefix] -pwm_f [motifs_to_pwm_file] -mo [motifs]
+python marginal_footprinting.py -g [genome_fasta] -r [regions] -chr [test_chr] -m [model_h5] -bs [batch_size] -o [output_prefix] -pwm_f [motifs_to_pwm_file] -mo [motifs] --ylim (min-y, max-y)
 ```
 
 ## Example Usage
@@ -24,7 +24,7 @@ python marginal_footprinting.py -g /path/to/genome_fasta -r /path/to/bed_file -c
 - output_prefix: Output prefix path and name to use. See Output format section below to understand how this is used.
 - motifs_to_pwm_file: Path to a TSV file containing motifs in first column (e.g. `Tn5`) and motif string (e.g. `GCACAGTACAGAGCTG`) to use for footprinting in second column. 
 - motifs: The motifs to filter from `motifs_to_pwm_file` for footprinting. We will find footprints only for the motifs mentioned here. Make sure that the motif names mentioned here are present in the column 1 of `motifs_to_pwm_file`. Provide more than one motif - seperate them by comma.
-
+--ylim: optional argument to specify the lower and upper y-axis values for the generated plot. This is a tuple of float/int values (lower y-lim bound for plotting, upper-ylim bound for plotting). Default is to not use this argument and auto-calculate the y-axis range.
 
 ## Output Format
 
