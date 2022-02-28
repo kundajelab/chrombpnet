@@ -61,49 +61,49 @@ echo $( timestamp ): "chrombpnet_hyperparams \\
        --n_dilation_layers=$n_dilation_layers \\
        --bias_model_path=$bias_model \\
        --output_dir=$output_dir " | tee -a $logfile
-chrombpnet_hyperparams \
-    --genome=$reference_fasta \
-    --bigwig=$bigwig_path \
-    --peaks=$overlap_peak \
-    --nonpeaks=$nonpeaks \
-    --outlier_threshold=0.99 \
-    --chr_fold_path=$fold \
-    --negative_sampling_ratio=$negative_sampling_ratio \
-    --inputlen=$inputlen \
-    --outputlen=$outputlen \
-    --max_jitter=500 \
-    --filters=$filters \
-    --n_dilation_layers=$n_dilation_layers \
-    --bias_model_path=$bias_model \
-    --output_dir=$output_dir | tee -a $logfile
-
-# # this script does the following -  
+#chrombpnet_hyperparams \
+#    --genome=$reference_fasta \
+#    --bigwig=$bigwig_path \
+#    --peaks=$overlap_peak \
+#    --nonpeaks=$nonpeaks \
+#    --outlier_threshold=0.99 \
+#    --chr_fold_path=$fold \
+#    --negative_sampling_ratio=$negative_sampling_ratio \
+#    --inputlen=$inputlen \
+#    --outputlen=$outputlen \
+#    --max_jitter=500 \
+#    --filters=$filters \
+#    --n_dilation_layers=$n_dilation_layers \
+#    --bias_model_path=$bias_model \
+#    --output_dir=$output_dir | tee -a $logfile
+#
+## # this script does the following -  
 # # (1) trains a model on the given peaks/nonpeaks
 # # (2) The parameters file input to this script should be TSV seperatedp
 chrombpnet_with_bias_model_path=`which chrombpnet_with_bias_model.py`
 echo $( timestamp ): "chrombpnet_train \\
-       --genome=$reference_fasta \\
-       --bigwig=$bigwig_path \\
-       --peaks=$output_dir/filtered.peaks.bed \\
-       --nonpeaks=$output_dir/filtered.nonpeaks.bed \\
-       --params=$output_dir/chrombpnet_model_params.tsv \\
-       --output_prefix=$output_dir/chrombpnet \\
-       --chr_fold_path=$fold \\
-       --batch_size=64 \\
-       --architecture_from_file=$chrombpnet_with_bias_model_path \\
-       --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss" | tee -a $logfile
-chrombpnet_train \
-    --genome=$reference_fasta \
-    --bigwig=$bigwig_path \
-    --peaks=$output_dir/filtered.peaks.bed \
-    --nonpeaks=$output_dir/filtered.nonpeaks.bed \
-    --params=$output_dir/chrombpnet_model_params.tsv \
-    --output_prefix=$output_dir/chrombpnet \
-    --chr_fold_path=$fold \
-    --batch_size=64 \
-    --architecture_from_file=$chrombpnet_with_bias_model_path \
-    --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss | tee -a $logfile
-
+#       --genome=$reference_fasta \\
+#       --bigwig=$bigwig_path \\
+#       --peaks=$output_dir/filtered.peaks.bed \\
+#       --nonpeaks=$output_dir/filtered.nonpeaks.bed \\
+#       --params=$output_dir/chrombpnet_model_params.tsv \\
+#       --output_prefix=$output_dir/chrombpnet \\
+#       --chr_fold_path=$fold \\
+#       --batch_size=64 \\
+#       --architecture_from_file=$chrombpnet_with_bias_model_path \\
+#       --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss" | tee -a $logfile
+#chrombpnet_train \
+#    --genome=$reference_fasta \
+#    --bigwig=$bigwig_path \
+#    --peaks=$output_dir/filtered.peaks.bed \
+#    --nonpeaks=$output_dir/filtered.nonpeaks.bed \
+#    --params=$output_dir/chrombpnet_model_params.tsv \
+#    --output_prefix=$output_dir/chrombpnet \
+#    --chr_fold_path=$fold \
+#    --batch_size=64 \
+#    --architecture_from_file=$chrombpnet_with_bias_model_path \
+#    --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss | tee -a $logfile
+#
 # # # predictions and metrics on the chrombpnet model trained
 echo $( timestamp ): "chrombpnet_predict \\
         --genome=$reference_fasta \\
@@ -164,17 +164,17 @@ echo $( timestamp ): "chrombpnet_predict \\
         --output_prefix=$output_dir/bias \\
         --batch_size=256 \\
         --model_h5=$output_dir/bias_model_scaled.h5" | tee -a $logfile
-python chrombpnet_predict \
-       --genome=$reference_fasta \
-       --bigwig=$bigwig_path \
-       --peaks=$output_dir/filtered.peaks.bed \
-       --nonpeaks=$output_dir/filtered.nonpeaks.bed \
-       --chr_fold_path=$fold \
-       --inputlen=$inputlen \
-       --outputlen=$outputlen \
-       --output_prefix=$output_dir/bias \
-       --batch_size=256 \
-       --model_h5=$output_dir/bias_model_scaled.h5 | tee -a $logfile
+chrombpnet_predict \
+    --genome=$reference_fasta \
+    --bigwig=$bigwig_path \
+    --peaks=$output_dir/filtered.peaks.bed \
+    --nonpeaks=$output_dir/filtered.nonpeaks.bed \
+    --chr_fold_path=$fold \
+    --inputlen=$inputlen \
+    --outputlen=$outputlen \
+    --output_prefix=$output_dir/bias \
+    --batch_size=256 \
+    --model_h5=$output_dir/bias_model_scaled.h5 | tee -a $logfile
 
 # marginal footprinting
 
