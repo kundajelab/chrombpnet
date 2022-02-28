@@ -27,5 +27,5 @@ touch $logfile
 
 bash $PWD/src/helpers/preprocessing/bam_to_bigwig.sh $in_bam $bigwig_prefix $data_type $chrom_sizes $logfile
 
-echo $( timestamp ): "python $PWD/src/helpers/preprocessing/analysis/build_pwm_from_bigwig.py -i $bigwig_prefix_unstranded.bw -g $reference_fasta -o $bigwig_prefix_bias_pwm.png -c chr20 -cz $chrom_sizes" | tee -a $logfile
-python $PWD/src/helpers/preprocessing/analysis/build_pwm_from_bigwig.py -i $bigwig_prefix"_unstranded.bw" -g $reference_fasta -o $bigwig_prefix"_bias_pwm.png" -c "chr20" -cz $chrom_sizes 
+echo $( timestamp ): "python $PWD/src/helpers/preprocessing/analysis/build_pwm_from_bigwig.py -i $bigwig_prefix_unstranded.bw -g $reference_fasta -o $bigwig_prefix_bias_pwm -c chr20 -cz $chrom_sizes" | tee -a $logfile
+python $PWD/src/helpers/preprocessing/analysis/build_pwm_from_bigwig.py -i $bigwig_prefix"_unstranded.bw" -g $reference_fasta -o $bigwig_prefix"_bias_pwm" -c "chr20" -cz $chrom_sizes 
