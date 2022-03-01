@@ -9,7 +9,7 @@ echo "downloaded chr21 hg38 fasta file"
 for stride in 100 500 1000
 do
     echo $stride 
-    python ../src/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py -g chr21.fa -o $stride.chr21.gc.bed -f 2114 -s $stride 
+    python ../src/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py -g chr21.fa -o $stride.chr21.gc -f 2114 -s $stride 
 done
 
 #assert we get the expectd md5sum values
