@@ -17,6 +17,11 @@ data_type=$8
 seed=$9
 logfile=${10}
 
+if [ -z "$seed" ]
+  then
+    seed=1234
+fi
+
 # defaults
 inputlen=2114
 outputlen=1000
@@ -100,7 +105,6 @@ python $PWD/src/training/train.py \
        --params=$output_dir/chrombpnet_model_params.tsv \
        --output_prefix=$output_dir/chrombpnet \
        --chr_fold_path=$fold \
-       --epochs=1 \
        --seed=$seed \
        --batch_size=64 \
        --architecture_from_file=$PWD/src/training/models/chrombpnet_with_bias_model.py \

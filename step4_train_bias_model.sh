@@ -25,6 +25,21 @@ filters=$bias_filters
 n_dilation_layers=$bias_dil
 seed=$seed
 
+if [ -z "$bias_filters" ]
+  then
+    filters=128
+fi
+
+if [ -z "$bias_dil" ]
+  then
+    n_dilation_layers=4
+fi
+
+if [ -z "$seed" ]
+  then
+    seed=1234
+fi
+
 function timestamp {
     # Function to get the current time with the new line character
     # removed 
@@ -100,7 +115,6 @@ python $PWD/src/training/train.py \
        --chr_fold_path=$fold \
        --seed=$seed \
        --batch_size=64 \
-       --epochs=1 \
        --architecture_from_file=$PWD/src/training/models/bpnet_model.py \
        --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss  | tee -a $logfile
 
