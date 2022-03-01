@@ -83,7 +83,7 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
             self.coords = cropped_coords
 
         elif self.nonpeak_seqs is not None:
-            print(self.nonpeak_seqs.shape)
+            #print(self.nonpeak_seqs.shape)
 
             self.seqs = self.nonpeak_seqs
             self.cts = self.nonpeak_cts
