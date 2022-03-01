@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased] - 2022-02-28
+- Typo fix - (PR#31-36)
+- We can now specify ylimit in marginal footprinting plots (PR#27)
+
+## [Unreleased] - 2022-02-11
+- Updated modisco version - (PR#25)
+
+## [Unreleased] - 2022-02-07
+- Typo fix - (PR#23-24)
+
 ## [Unreleased] - 2022-01-31
 - Marginal footprinting no longer hardcoded to take only chr1, it now inputs the fold json. (PR#20)
 - Invivo footprinting is made compatible with the new input repo changes. (PR#22)
