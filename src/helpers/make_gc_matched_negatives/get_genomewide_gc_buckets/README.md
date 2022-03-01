@@ -3,7 +3,7 @@ Scripts to find the gc content of genome wide bins.
 ### Usage
 
 ```bash 
-python get_genomewide_gc_bins.py -g [genome] -o [output_path]  -f [inputlen] -s [stride]
+python get_genomewide_gc_bins.py -g [genome] -o [output_prefix]  -f [inputlen] -s [stride]
 ```
 
 The above scripts bins the genome into `inputlen` length regions. The bin intervals are spaced at `stride` length.
@@ -11,7 +11,7 @@ The above scripts bins the genome into `inputlen` length regions. The bin interv
 ### Input format:
 
 - genome: Reference geneome fasta.
-- output_path: Path and file name to store the output. See output format section below.
+- output_prefix: Output path prefix to store the output, ".bed" is appended as suffix by the code. If path conatins a directory make sure it already exists. See output format section below.
 - inputlen: An integer value for the length of a bin for gc-fraction calculation.
 - stride: An integer stride value to space the bins.
 
@@ -25,5 +25,5 @@ at  http://mitra.stanford.edu/kundaje/anusri/chrombpnet_downloads/genomewide_gc_
 ```
 wget https://www.encodeproject.org/files/GRCh38_no_alt_analysis_set_GCA_000001405.15/@@download/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta.gz
 gzip -d GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta.gz
-python get_genomewide_gc_bins.py -g GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta -o genomewide_gc_hg38_stride_1000_inputlen_2114.bed -f 2114 -s 1000
+python get_genomewide_gc_bins.py -g GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta -o genomewide_gc_hg38_stride_1000_inputlen_2114 -f 2114 -s 1000
 ```
