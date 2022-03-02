@@ -3,6 +3,7 @@
 ## [Unreleased] - 2022-02-28
 - Typo fix - (PR#31-36)
 - We can now specify ylimit in marginal footprinting plots (PR#27)
+- PR#30 merged  to do fast genome wide gc binning and bug fix to ensure case-sensitve GC calculation. Adds a unit test to make checks.
 
 ## [Unreleased] - 2022-02-11
 - Updated modisco version - (PR#25)
