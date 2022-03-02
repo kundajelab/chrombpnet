@@ -68,7 +68,11 @@ def get_genomewide_gc(genome_fa, outf, width, stride):
 
     f.close()
     outf.close()
-
-if __name__=="__main__":
+    
+def main():
     args = parse_args()
     get_genomewide_gc(args.genome, args.output_prefix+".bed", args.inputlen, args.stride)
+
+    
+if __name__=="__main__":
+    main()
