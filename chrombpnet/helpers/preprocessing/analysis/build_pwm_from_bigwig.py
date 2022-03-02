@@ -10,7 +10,7 @@ def parse_args():
     parser=argparse.ArgumentParser(description="build pwm matrix from bigwig")
     parser.add_argument("-i","--bigwig", required=True,  help="generated bigiwig file")
     parser.add_argument("-g", "--genome", required=True, help="reference genome fasta")
-    parser.add_argument("-o", "--output_prefix", required=True,  help="output dir for storing pwm")
+    parser.add_argument("-o", "--output_prefix", required=True,  help="output prefix for png file storing pwm (code will append .png suffix)")
     parser.add_argument("-c","--chr",type=str, required=True, help="chromosome to build pwm, the name should be present in the chrom sizes file and bigwig you will provide")
     parser.add_argument("-cz","--chrom_sizes",type=str, required=True, help="TSV file with chromosome name in first column and size in the second column")
     parser.add_argument("-pw","--pwm_width",type=int, default=24, required=False, help="width of pwm matrix")
@@ -65,7 +65,7 @@ def main():
     fig = plt.figure(figsize=figsize)
     ax = fig.add_subplot(111) 
     viz_sequence.plot_weights_given_ax(ax=ax, array=viz_sequence.ic_scale(motif, background=bg))
-    plt.savefig(args.output_prefix)
+    plt.savefig(args.output_prefix+'.png')
     
 if __name__=="__main__":
     main()

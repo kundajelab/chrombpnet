@@ -41,6 +41,7 @@ def fetch_snp_predictions(model, snp_regions, inputlen, genome_fasta, batch_size
     Please note that if the SNP location is at the edge - i.e we are unable to form a given inputlen of sequence - we skip predictions at this SNP
 
     Arguments::
+        model: chrombpnet model .h5 file to use for snp scoring. 
         snp_regions: pandas dataframe with the following columns "CHR", "POS0", "REF", "ALT"
         inputlen: integer representing the input length to use, snp is inserted in the middle
         genome_fasta: path to reference genome

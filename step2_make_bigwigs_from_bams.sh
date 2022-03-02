@@ -27,5 +27,5 @@ touch $logfile
 
 bam_to_bigwig.sh $in_bam $bigwig_prefix $data_type $chrom_sizes $logfile
 
-echo $( timestamp ): "build_pwm_from_bigwig -i $bigwig_prefix_unstranded.bw -g $reference_fasta -o $bigwig_prefix_bias_pwm.png -c chr20 -cz $chrom_sizes" | tee -a $logfile
-build_pwm_from_bigwig -i $bigwig_prefix"_unstranded.bw" -g $reference_fasta -o $bigwig_prefix"_bias_pwm.png" -c "chr20" -cz $chrom_sizes 
+echo $( timestamp ): "build_pwm_from_bigwig -i $bigwig_prefix_unstranded.bw -g $reference_fasta -o $bigwig_prefix_bias_pwm -c chr20 -cz $chrom_sizes" | tee -a $logfile
+build_pwm_from_bigwig -i $bigwig_prefix"_unstranded.bw" -g $reference_fasta -o $bigwig_prefix"_bias_pwm" -c "chr20" -cz $chrom_sizes 
