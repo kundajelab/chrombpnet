@@ -50,8 +50,7 @@ def combine_mult_and_diffref(mult, orig_inp, bg_data):
     return to_return
 
 
-def shuffle_several_times(s):
-    numshuffles=20
+def shuffle_several_times(s,numshuffles=20):
     if len(s)==2:
         return [np.array([dinuc_shuffle(s[0]) for i in range(numshuffles)]),
                 np.array([s[1] for i in range(numshuffles)])]
