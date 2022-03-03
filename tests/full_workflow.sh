@@ -6,7 +6,7 @@ set -e
 # keep track of the last executed command
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 
-GPU=0
+GPU=${$1-0}
 
 #create directory structure for workflow 
 data_dir=data
