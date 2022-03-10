@@ -96,8 +96,7 @@ def fetch_tomtom_matches(ppm, cwm, background=[0.25, 0.25, 0.25, 0.25], tomtom_e
     return r
 
 
-if __name__=="__main__":
-
+def main(): 
     args = fetch_tomtom_args()
 
     modisco_results = h5py.File(args.modisco_h5py, 'r')
@@ -153,3 +152,5 @@ if __name__=="__main__":
             if len(r) != args.top_n_matches:
                 f.write("\t\t"*(args.top_n_matches-len(r)))
             f.write("\n")
+if __name__=="__main__":
+    main()
