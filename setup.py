@@ -23,7 +23,7 @@ config = {
     'description': 'chrombpnet predicts chromatin accessibility from sequence',
     'download_url': 'https://github.com/kundajelab/chrombpnet',
     'version': '0.1',
-    'packages': ['chrombpnet'],
+    'packages': find_packages(),
     'python_requires': '>=3.6',
     'install_requires': install_requires,
     'dependency_links': dependency_links,
@@ -54,6 +54,7 @@ config = {
         'chrombpnet_deepshap = chrombpnet.evaluation.interpret.interpret:main',
         'chrombpnet_modisco = chrombpnet.evaluation.modisco.run_modisco:main',
         'chrombpnet_marginal_footprints = chrombpnet.evaluation.marginal_footprints.marginal_footprinting:main',
+        'chrombpnet_tomtom_hits = chrombpnet.evaluation.modisco.fetch_tomtom:main',
         'chrombpnet_score_snps = chrombpnet.evaluation.variant_effect_prediction.snp_scoring:main',
         'chrombpnet_srcdir = chrombpnet.get_package_dir:main']}}
 
