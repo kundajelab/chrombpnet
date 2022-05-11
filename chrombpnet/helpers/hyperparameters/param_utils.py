@@ -17,7 +17,7 @@ def filter_edge_regions(peaks_df, bw, width, peaks_bool):
     chrom_to_sizes = bw.chroms()
     filtered = []
     for i, r in peaks_df.iterrows():
-        if r['start'] + r['summit'] + width//2 > chrom_to_sizes[r['chr']] :
+        if r['start'] + r['summit'] + width//2 > chrom_to_sizes.get(r['chr'], 0) :
             filtered.append(True)
         else:
             filtered.append(False)
