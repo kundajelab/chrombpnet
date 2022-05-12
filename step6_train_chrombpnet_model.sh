@@ -179,7 +179,9 @@ chrombpnet_predict \
 # marginal footprinting
 
 #path to pwm file
-marginal_footprint_dir=`echo which chrombpnet_marginal_footprints`
+srcdir=`chrombpnet_srcdir`
+# marginal_footprint_dir=`echo which chrombpnet_marginal_footprints`
+marginal_footprint_dir="$srcdir/evaluation/marginal_footprints"
 echo $marginal_footprint_dir
 
 if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
