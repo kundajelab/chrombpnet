@@ -232,8 +232,8 @@ fi
 
 # marginal footprtining bias model
 if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
-        echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-        mkdir $output_dir/footprints
+        # echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
+        # mkdir $output_dir/footprints
         echo $( timestamp ): "chrombpnet_marginal_footprints \\
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
@@ -253,8 +253,8 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
             -pwm_f $marginal_footprint_dir/motif_to_pwm.tsv \
             -mo dnase_1,dnase_2 | tee -a $logfile
 elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
-        echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-        mkdir $output_dir/footprints
+        # echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
+        # mkdir $output_dir/footprints
         echo $( timestamp ): "chrombpnet_marginal_footprints \\
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
