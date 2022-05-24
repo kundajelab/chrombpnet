@@ -12,6 +12,6 @@ tensorflow-probability==0.15.0
 tqdm==4.48.2
 pyBigWig==0.3.18
 deepdish==0.3.7
-git+https://github.com/kundajelab/shap@master#egg=shap
+shap @ git+https://github.com/kundajelab/shap@master#egg=shap
 deeplift==0.6.13.0
 modisco==0.5.16.0
