@@ -1,11 +1,7 @@
 from setuptools import setup,find_packages
 
 #generate install_requires from requirements.txt file
-reqs=open('requirements.txt','r').read().strip().split('\n')
-install_requires=[]
-for line in reqs:
-    install_requires.append(line)
-
+install_requires=open('requirements.txt','r').read().strip().split('\n')
 print(f"install_requires:{install_requires}")
 
 
