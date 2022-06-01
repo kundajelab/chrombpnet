@@ -128,7 +128,7 @@ wget http://mitra.stanford.edu/kundaje/anusri/chrombpnet_downloads/genomewide_gc
 To generate this file directly from the scripts run the command below - 
 
 ```
-python src/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py -g data/downloads/hg38.fa -o data/downloads/genomewide_gc_hg38_stride_1000_inputlen_2114.bed -f 2114 -s 1000
+python src/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py -g data/downloads/hg38.fa -o data/downloads/genomewide_gc_hg38_stride_1000_inputlen_2114 -f 2114 -s 1000
 ```
 
 
