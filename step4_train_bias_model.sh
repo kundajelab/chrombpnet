@@ -15,30 +15,16 @@ nonpeaks=${4?param missing - nonpeaks}
 fold=${5?param missing - fold}
 bias_threshold_factor=${6?param missing - bias_threshold_factor}
 output_dir=${7?param missing - output_dir}
-logfile=$8 #this is an optional argument 
+filters=${8:-128}
+n_dilation_layers=${9:-4}
+seed=${10:-1234}
+logfile=$11 #this is an optional argument 
 
 
 # defaults
 inputlen=2114
 outputlen=1000
-filters=$bias_filters
-n_dilation_layers=$bias_dil
-seed=$seed
 
-if [ -z "$bias_filters" ]
-  then
-    filters=128
-fi
-
-if [ -z "$bias_dil" ]
-  then
-    n_dilation_layers=4
-fi
-
-if [ -z "$seed" ]
-  then
-    seed=1234
-fi
 
 function timestamp {
     # Function to get the current time with the new line character
@@ -114,6 +100,7 @@ chrombpnet_train \
     --params=$output_dir/bias_model_params.tsv \
     --output_prefix=$output_dir/bias \
     --chr_fold_path=$fold \
+    --seed=$seed \
     --batch_size=64 \
     --architecture_from_file=$bpnet_model_path \
     --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss  | tee -a $logfile
