@@ -71,7 +71,7 @@ chrombpnet_bias_hyperparams \
     --chr_fold_path=$fold \
     --inputlen=$inputlen \
     --outputlen=$outputlen \
-    --max_jitter=50 \
+    --max_jitter=0 \
     --filters=$filters \
     --n_dilation_layers=$n_dilation_layers \
     --bias_threshold_factor=$bias_threshold_factor \
