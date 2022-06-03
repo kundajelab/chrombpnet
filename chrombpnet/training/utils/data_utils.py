@@ -87,8 +87,8 @@ def load_data(bed_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen,
         train_nonpeaks_seqs, train_nonpeaks_cts, train_nonpeaks_coords = get_seq_cts_coords(nonpeak_regions,
                                               genome,
                                               cts_bw,
-                                              inputlen+2*max_jitter,
-                                              outputlen+2*max_jitter,
+                                              inputlen,
+                                              outputlen,
                                               peaks_bool=0)
 
 

@@ -33,8 +33,8 @@ def fit_and_evaluate(model,train_gen,valid_gen,args,architecture_module):
     earlystopper = tfcallbacks.EarlyStopping(monitor='val_loss', mode="min", patience=args.early_stop, verbose=1, restore_best_weights=True)
     history= callbacks.LossHistory(model_output_path_logs_name+".batch",args.trackables)
     csvlogger = tfcallbacks.CSVLogger(model_output_path_logs_name, append=False)
-    reduce_lr = tfcallbacks.ReduceLROnPlateau(monitor='val_loss',factor=0.4, patience=args.early_stop-2, min_lr=0.00000001)
-    cur_callbacks=[checkpointer,earlystopper,csvlogger,reduce_lr,history]
+    #reduce_lr = tfcallbacks.ReduceLROnPlateau(monitor='val_loss',factor=0.4, patience=args.early_stop-2, min_lr=0.00000001)
+    cur_callbacks=[checkpointer,earlystopper,csvlogger,history]
 
     model.fit(train_gen,
               validation_data=valid_gen,

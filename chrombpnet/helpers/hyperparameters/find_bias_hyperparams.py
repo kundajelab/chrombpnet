@@ -68,14 +68,14 @@ def main():
     test_nonpeaks = in_nonpeaks[(in_nonpeaks["chr"].isin(test_chroms_to_keep))]
 
     # step 1 filtering: filter nonpeaks that are in the edges - prevents us from making the inputlen regions - do this for all train/test/valid   
-    nonpeaks = param_utils.filter_edge_regions(nonpeaks, bw, args.inputlen+2*args.max_jitter, peaks_bool=0)
+    nonpeaks = param_utils.filter_edge_regions(nonpeaks, bw, args.inputlen, peaks_bool=0)
     test_nonpeaks = param_utils.filter_edge_regions(test_nonpeaks, bw, args.inputlen, peaks_bool=0)
 
     peaks = param_utils.filter_edge_regions(peaks, bw, args.inputlen, peaks_bool=1)
 
     # step 2 filtering: filter nonpeaks that have counts less than a threshold_factor (minimum of peak counts)
-    peak_cnts, peak_seqs = param_utils.get_seqs_cts(genome, bw, peaks, args.inputlen, args.outputlen)
-    nonpeak_cnts, nonpeak_seqs = param_utils.get_seqs_cts(genome, bw, nonpeaks, args.inputlen, args.outputlen)    
+    peak_cnts, _ = param_utils.get_seqs_cts(genome, bw, peaks, args.inputlen, args.outputlen)
+    nonpeak_cnts, _ = param_utils.get_seqs_cts(genome, bw, nonpeaks, args.inputlen, args.outputlen)    
     assert(len(peak_cnts) == peaks.shape[0])
     assert(len(nonpeak_cnts) == nonpeaks.shape[0])
 

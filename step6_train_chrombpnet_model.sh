@@ -16,7 +16,9 @@ fold=${5?param missing - fold}
 bias_model=${6?param missing - bias_model}
 output_dir=${7?param missing - output_dir}
 data_type=${8?param missing - data_type}
-logfile=$9 #optional
+seed=${9:-1234}
+logfile=$10 #optional
+       
 
 # defaults
 inputlen=2114
@@ -90,9 +92,11 @@ echo $( timestamp ): "chrombpnet_train \\
        --params=$output_dir/chrombpnet_model_params.tsv \\
        --output_prefix=$output_dir/chrombpnet \\
        --chr_fold_path=$fold \\
+       --seed=$seed \\
        --batch_size=64 \\
        --architecture_from_file=$chrombpnet_with_bias_model_path \\
        --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss" | tee -a $logfile
+
 chrombpnet_train \
     --genome=$reference_fasta \
     --bigwig=$bigwig_path \
@@ -101,6 +105,7 @@ chrombpnet_train \
     --params=$output_dir/chrombpnet_model_params.tsv \
     --output_prefix=$output_dir/chrombpnet \
     --chr_fold_path=$fold \
+    --seed=$seed \
     --batch_size=64 \
     --architecture_from_file=$chrombpnet_with_bias_model_path \
     --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss | tee -a $logfile
