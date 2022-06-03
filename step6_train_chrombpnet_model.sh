@@ -95,6 +95,7 @@ echo $( timestamp ): "chrombpnet_train \\
        --batch_size=64 \\
        --architecture_from_file=$chrombpnet_with_bias_model_path \\
        --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss" | tee -a $logfile
+
 chrombpnet_train \
     --genome=$reference_fasta \
     --bigwig=$bigwig_path \
@@ -103,6 +104,7 @@ chrombpnet_train \
     --params=$output_dir/chrombpnet_model_params.tsv \
     --output_prefix=$output_dir/chrombpnet \
     --chr_fold_path=$fold \
+    --seed=$seed \
     --batch_size=64 \
     --architecture_from_file=$chrombpnet_with_bias_model_path \
     --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss | tee -a $logfile
