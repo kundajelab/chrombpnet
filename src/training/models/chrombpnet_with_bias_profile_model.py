@@ -91,7 +91,7 @@ def bpnet_model(filters, n_dil_layers, sequence_len, out_pred_len):
 
 def getModelGivenModelOptionsAndWeightInits(args, model_params):   
     
-    #assert("bias_model_path" in model_params.keys()) # bias model path not specfied for model
+    assert("bias_model_path" in model_params.keys()) # bias model path not specfied for model
     filters=int(model_params['filters'])
     n_dil_layers=int(model_params['n_dil_layers'])
     counts_loss_weight=float(model_params['counts_loss_weight'])
@@ -110,29 +110,22 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
     rn.seed(seed)
     
     inp = Input(shape=(sequence_len, 4),name='sequence')    
-    inp_bias_logits = Input(shape=(out_pred_len+100,1), name="bias_logits")
-    inp_bias_logcounts = Input(shape=(1,), name="bias_logcounts")
 
     ## get bias output
-    print(bias_model.summary())
-    bias_output=bias_model([inp_bias_logits,inp_bias_logcounts])
-    output_wo_bias=bpnet_model_wo_bias(inp)
+    bias_output=bias_model(inp)
     ## get wo bias output
-    assert(len(bias_output[1].shape)==2) # bias model counts head is of incorrect shape (None,1) expected
-    assert(len(bias_output[0].shape)==2) # bias model profile head is of incorrect shape (None,out_pred_len) expected
+    output_wo_bias=bpnet_model_wo_bias(inp)
+    assert(len(bias_output.shape)==2) # bias model profile head is of incorrect shape (None,out_pred_len) expected
     assert(len(output_wo_bias[0].shape)==2)
     assert(len(output_wo_bias[1].shape)==2)
-    assert(bias_output[1].shape[1]==1) #  bias model counts head is of incorrect shape (None,1) expected
-    assert(bias_output[0].shape[1]==out_pred_len) # bias model profile head is of incorrect shape (None,out_pred_len) $
+    assert(bias_output.shape[1]==out_pred_len) # bias model profile head is of incorrect shape (None,out_pred_len) expected
 
 
-    profile_out = Add(name="logits_profile_predictions")([output_wo_bias[0], bias_output[0]])
-    concat_counts = Concatenate(axis=-1)([output_wo_bias[1], bias_output[1]])
-    count_out = Lambda(lambda x: tf.math.reduce_logsumexp(x, axis=-1, keepdims=True),
-                        name="logcount_predictions")(concat_counts)
+    profile_out = Add(name="logits_profile_predictions")([output_wo_bias[0],bias_output])
 
+    count_out = output_wo_bias[1]
     # instantiate keras Model with inputs and outputs
-    model=Model(inputs=[inp, inp_bias_logits, inp_bias_logcounts],outputs=[profile_out, count_out])
+    model=Model(inputs=[inp],outputs=[profile_out, count_out])
 
     model.compile(optimizer=Adam(learning_rate=args.learning_rate),
                     loss=[multinomial_nll,'mse'],

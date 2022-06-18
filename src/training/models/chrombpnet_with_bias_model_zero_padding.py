@@ -36,7 +36,7 @@ def bpnet_model(filters, n_dil_layers, sequence_len, out_pred_len):
     # first convolution without dilation
     x = Conv1D(filters,
                 kernel_size=conv1_kernel_size,
-                padding='valid', 
+                padding='same', 
                 activation='relu',
                 name='wo_bias_bpnet_1st_conv')(inp)
 
@@ -46,7 +46,7 @@ def bpnet_model(filters, n_dil_layers, sequence_len, out_pred_len):
         conv_layer_name = 'wo_bias_bpnet_{}conv'.format(layer_names[i-1])
         conv_x = Conv1D(filters, 
                         kernel_size=3, 
-                        padding='valid',
+                        padding='same',
                         activation='relu', 
                         dilation_rate=2**i,
                         name=conv_layer_name)(x)
@@ -62,13 +62,14 @@ def bpnet_model(filters, n_dil_layers, sequence_len, out_pred_len):
     # Step 1.1 - 1D convolution with a very large kernel
     prof_out_precrop = Conv1D(filters=num_tasks,
                         kernel_size=profile_kernel_size,
-                        padding='valid',
+                        padding='same',
                         name='wo_bias_bpnet_prof_out_precrop')(x)
 
     # Step 1.2 - Crop to match size of the required output size
     cropsize = int(int_shape(prof_out_precrop)[1]/2)-int(out_pred_len/2)
     assert cropsize>=0
-    assert (cropsize % 2 == 0) # Necessary for symmetric cropping
+
+    #assert (cropsize % 2 == 0) # Necessary for symmetric cropping
 
     prof = Cropping1D(cropsize,
                 name='wo_bias_bpnet_logitt_before_flatten')(prof_out_precrop)
@@ -91,7 +92,7 @@ def bpnet_model(filters, n_dil_layers, sequence_len, out_pred_len):
 
 def getModelGivenModelOptionsAndWeightInits(args, model_params):   
     
-    #assert("bias_model_path" in model_params.keys()) # bias model path not specfied for model
+    assert("bias_model_path" in model_params.keys()) # bias model path not specfied for model
     filters=int(model_params['filters'])
     n_dil_layers=int(model_params['n_dil_layers'])
     counts_loss_weight=float(model_params['counts_loss_weight'])
@@ -110,29 +111,26 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
     rn.seed(seed)
     
     inp = Input(shape=(sequence_len, 4),name='sequence')    
-    inp_bias_logits = Input(shape=(out_pred_len+100,1), name="bias_logits")
-    inp_bias_logcounts = Input(shape=(1,), name="bias_logcounts")
 
     ## get bias output
-    print(bias_model.summary())
-    bias_output=bias_model([inp_bias_logits,inp_bias_logcounts])
-    output_wo_bias=bpnet_model_wo_bias(inp)
+    bias_output=bias_model(inp)
     ## get wo bias output
+    output_wo_bias=bpnet_model_wo_bias(inp)
     assert(len(bias_output[1].shape)==2) # bias model counts head is of incorrect shape (None,1) expected
     assert(len(bias_output[0].shape)==2) # bias model profile head is of incorrect shape (None,out_pred_len) expected
     assert(len(output_wo_bias[0].shape)==2)
     assert(len(output_wo_bias[1].shape)==2)
     assert(bias_output[1].shape[1]==1) #  bias model counts head is of incorrect shape (None,1) expected
-    assert(bias_output[0].shape[1]==out_pred_len) # bias model profile head is of incorrect shape (None,out_pred_len) $
+    assert(bias_output[0].shape[1]==out_pred_len) # bias model profile head is of incorrect shape (None,out_pred_len) expected
 
 
-    profile_out = Add(name="logits_profile_predictions")([output_wo_bias[0], bias_output[0]])
+    profile_out = Add(name="logits_profile_predictions")([output_wo_bias[0],bias_output[0]])
     concat_counts = Concatenate(axis=-1)([output_wo_bias[1], bias_output[1]])
     count_out = Lambda(lambda x: tf.math.reduce_logsumexp(x, axis=-1, keepdims=True),
                         name="logcount_predictions")(concat_counts)
 
     # instantiate keras Model with inputs and outputs
-    model=Model(inputs=[inp, inp_bias_logits, inp_bias_logcounts],outputs=[profile_out, count_out])
+    model=Model(inputs=[inp],outputs=[profile_out, count_out])
 
     model.compile(optimizer=Adam(learning_rate=args.learning_rate),
                     loss=[multinomial_nll,'mse'],

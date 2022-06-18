@@ -1,10 +1,10 @@
 from __future__ import division, print_function, absolute_import
 import importlib.machinery
 import tensorflow.keras.callbacks as tfcallbacks 
-import utils.argmanager as argmanager
+import utils.bias_argmanager as argmanager
 import utils.losses as losses
 import utils.callbacks as callbacks
-import data_generators.initializers as initializers
+import data_generators.tobias_initializers as initializers
 import pandas as pd
 import os
 import json
@@ -23,7 +23,6 @@ def get_model(args, parameters):
     architecture_module=importlib.machinery.SourceFileLoader('',args.architecture_from_file).load_module()
     model=architecture_module.getModelGivenModelOptionsAndWeightInits(args, parameters)
     print("got the model")
-    print(model.summary())
     return model, architecture_module
 
 def fit_and_evaluate(model,train_gen,valid_gen,args,architecture_module):
