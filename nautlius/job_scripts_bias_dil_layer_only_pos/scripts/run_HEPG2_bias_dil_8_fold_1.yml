@@ -1,0 +1,70 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+   name: chrombpnet.hepg2.128.8.1234.0.8.fold.1
+   labels:
+     jobgroup: jobexample
+spec:
+   template:
+     metadata:
+       name: jobexample
+       labels:
+         jobgroup: jobexample
+     spec:
+       affinity:
+         nodeAffinity:
+           preferredDuringSchedulingIgnoredDuringExecution:
+           - weight: 1
+             preference:
+               matchExpressions:
+               - key: gpu-type
+                 operator: In
+                 values:
+                 - "titan-xp"
+                 - "TITANRTX"
+                 - "V100"
+               - key: gpu-type
+                 operator: NotIn
+                 values:
+                 - "K40"
+                 - "A100"
+                 - "A40"
+                 - "RTX6000"
+                 - "3090"
+       containers:
+       - name: jobexample
+         image: kundajelab/chrombpnet:dev 
+         imagePullPolicy: Always
+         resources:
+           requests:
+             cpu: 1
+             memory: 16Gi
+             nvidia.com/gpu: 1
+           limits:
+             cpu: 1
+             memory: 64Gi
+             nvidia.com/gpu: 1
+         command:
+         - /bin/bash
+         - -c
+         args:
+         - nvidia-smi;
+           mkdir /scratch/;
+           cp -r /chrombpnet/chrombpnet/ /scratch/;
+           cd /scratch/chrombpnet/;
+           mkdir /scratch/chrombpnet/HEPG2/;
+            cp -r /chrombpnet/ATAC_PE/HEPG2/data/ /scratch/chrombpnet/HEPG2/;
+           cp -r /chrombpnet/reference/ /scratch/chrombpnet/;
+           cp -r /chrombpnet/splits/ /scratch/chrombpnet/;
+           bash atac_run.sh 128 8 1234 0.8 HEPG2 1;
+           cp -r /scratch/chrombpnet/models/* /chrombpnet/ATAC_PE/HEPG2/; 
+         volumeMounts:
+         - mountPath: /chrombpnet
+           name: chrombpnet
+       restartPolicy: Never
+       volumes:
+         - name: chrombpnet
+           persistentVolumeClaim:
+             claimName: chrombpnet
+       imagePullSecrets:
+       - name: regcrew

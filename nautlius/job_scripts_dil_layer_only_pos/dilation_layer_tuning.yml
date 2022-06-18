@@ -1,0 +1,64 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+   name: chrombpnet.$clsmall.fold.$fold.dil.$dil.onlypos.try2
+   labels:
+     jobgroup: jobexample
+spec:
+   template:
+     metadata:
+       name: jobexample
+       labels:
+         jobgroup: jobexample
+     spec:
+       affinity:
+         nodeAffinity:
+           preferredDuringSchedulingIgnoredDuringExecution:
+           - weight: 1
+             preference:
+               matchExpressions:
+               - key: gpu-type
+                 operator: In
+                 values:
+                 - "titan-xp"
+                 - "TITANRTX"
+                 - "V100"
+       containers:
+       - name: jobexample
+         image: kundajelab/chrombpnet:dev 
+         imagePullPolicy: Always
+         resources:
+           requests:
+             cpu: 1
+             memory: 32Gi
+             nvidia.com/gpu: 1
+           limits:
+             cpu: 1
+             memory: 64Gi
+             nvidia.com/gpu: 1
+         command:
+         - /bin/bash
+         - -c
+         args:
+         - nvidia-smi;
+           mkdir /scratch/;
+           cp -r /chrombpnet/chrombpnet/ /scratch/;
+           cd /scratch/chrombpnet/;
+           mkdir /scratch/chrombpnet/$cellline/; 
+           mkdir /scratch/chrombpnet/$cellline/fold_$fold/; 
+           cp -r /chrombpnet/ATAC_PE/$cellline/data/ /scratch/chrombpnet/$cellline/;
+           cp  /chrombpnet/ATAC_PE/$cellline/$bias_setting/bias_model/$bias_name /scratch/chrombpnet/$cellline/fold_$fold/;
+           cp -r /chrombpnet/reference/ /scratch/chrombpnet/;
+           cp -r /chrombpnet/splits/ /scratch/chrombpnet/;
+           bash atac_run_withbias_only_pos.sh 1234 $cellline $fold $dil $inputlen fold_$fold/$bias_name;
+           cp -r /scratch/chrombpnet/models/* /chrombpnet/ATAC_PE/$cellline/; 
+         volumeMounts:
+         - mountPath: /chrombpnet
+           name: chrombpnet
+       restartPolicy: Never
+       volumes:
+         - name: chrombpnet
+           persistentVolumeClaim:
+             claimName: chrombpnet
+       imagePullSecrets:
+       - name: regcred

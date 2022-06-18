@@ -1,0 +1,64 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+   name: chrombpnet.hepg2.fold.0.dil.4.onlypos.try2
+   labels:
+     jobgroup: jobexample
+spec:
+   template:
+     metadata:
+       name: jobexample
+       labels:
+         jobgroup: jobexample
+     spec:
+       affinity:
+         nodeAffinity:
+           preferredDuringSchedulingIgnoredDuringExecution:
+           - weight: 1
+             preference:
+               matchExpressions:
+               - key: gpu-type
+                 operator: In
+                 values:
+                 - "titan-xp"
+                 - "TITANRTX"
+                 - "V100"
+       containers:
+       - name: jobexample
+         image: kundajelab/chrombpnet:dev 
+         imagePullPolicy: Always
+         resources:
+           requests:
+             cpu: 1
+             memory: 32Gi
+             nvidia.com/gpu: 1
+           limits:
+             cpu: 1
+             memory: 64Gi
+             nvidia.com/gpu: 1
+         command:
+         - /bin/bash
+         - -c
+         args:
+         - nvidia-smi;
+           mkdir /scratch/;
+           cp -r /chrombpnet/chrombpnet/ /scratch/;
+           cd /scratch/chrombpnet/;
+           mkdir /scratch/chrombpnet/HEPG2/; 
+           mkdir /scratch/chrombpnet/HEPG2/fold_0/; 
+           cp -r /chrombpnet/ATAC_PE/HEPG2/data/ /scratch/chrombpnet/HEPG2/;
+           cp  /chrombpnet/ATAC_PE/HEPG2/HEPG2_05.09.2022_bias_128_4_1234_0.8_fold_0/bias_model/bias.h5 /scratch/chrombpnet/HEPG2/fold_0/;
+           cp -r /chrombpnet/reference/ /scratch/chrombpnet/;
+           cp -r /chrombpnet/splits/ /scratch/chrombpnet/;
+           bash atac_run_withbias_only_pos.sh 1234 HEPG2 0 4 2114 fold_0/bias.h5;
+           cp -r /scratch/chrombpnet/models/* /chrombpnet/ATAC_PE/HEPG2/; 
+         volumeMounts:
+         - mountPath: /chrombpnet
+           name: chrombpnet
+       restartPolicy: Never
+       volumes:
+         - name: chrombpnet
+           persistentVolumeClaim:
+             claimName: chrombpnet
+       imagePullSecrets:
+       - name: regcred

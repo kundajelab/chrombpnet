@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: chrombpnet
+spec:
+  storageClassName: rook-cephfs
+  accessModes: 
+  - ReadWriteMany 
+  resources:
+    requests:
+      storage: 1000Gi

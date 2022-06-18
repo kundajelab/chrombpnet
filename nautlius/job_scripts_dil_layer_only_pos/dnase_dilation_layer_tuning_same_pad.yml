@@ -1,0 +1,67 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+   name: dnase.$clsmall.fold.$fold.dil.$dil.onlypos.samepad
+   labels:
+     jobgroup: jobexample
+spec:
+   template:
+     metadata:
+       name: jobexample
+       labels:
+         jobgroup: jobexample
+     spec:
+       affinity:
+         nodeAffinity:
+           preferredDuringSchedulingIgnoredDuringExecution:
+           - weight: 2
+             preference:
+               matchExpressions:
+               - key: nvidia.com/gpu.product
+                 operator: In
+                 values:
+                 - "titan-xp"
+                 - "TITANRTX"
+                 - "V100"
+                 operator: NotIn
+                 values:
+                 - "NVIDIA-A100-PCIE-40GB-MIG-2g.10gb"
+       containers:
+       - name: jobexample
+         image: kundajelab/chrombpnet:dev 
+         imagePullPolicy: Always
+         resources:
+           requests:
+             cpu: 1
+             memory: 32Gi
+             nvidia.com/gpu: 1
+           limits:
+             cpu: 1
+             memory: 128Gi
+             nvidia.com/gpu: 1
+         command:
+         - /bin/bash
+         - -c
+         args:
+         - nvidia-smi;
+           mkdir /scratch/;
+           cp -r /chrombpnet/chrombpnet/ /scratch/;
+           cd /scratch/chrombpnet/;
+           mkdir /scratch/chrombpnet/$cellline/; 
+           mkdir /scratch/chrombpnet/$cellline/fold_$fold/; 
+           cp -r /chrombpnet/$data_type/$cellline/data/ /scratch/chrombpnet/$cellline/;
+           cp  /chrombpnet/DNASE_PE/$bias_cl/$bias_setting/bias_model/$bias_name /scratch/chrombpnet/$cellline/fold_$fold/;
+           cp -r /chrombpnet/reference/ /scratch/chrombpnet/;
+           cp -r /chrombpnet/splits/ /scratch/chrombpnet/;
+           bash dnase_run_withbias_same_pad_only_pos.sh 1234 $cellline $fold $dil fold_$fold/$bias_name $data_type;
+           cp -r /scratch/chrombpnet/models/* /chrombpnet/$data_type/$cellline/; 
+         volumeMounts:
+         - mountPath: /chrombpnet
+           name: chrombpnet
+       restartPolicy: Never
+       volumes:
+         - name: chrombpnet
+           persistentVolumeClaim:
+             claimName: chrombpnet
+       imagePullSecrets:
+       - name: regcrew

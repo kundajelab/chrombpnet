@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: populate-chrombpnet-pod 
+spec:
+  containers:
+  - name: populate-pod-container
+    image: kundajelab/chrombpnet:dev
+    resources:
+      requests:
+        cpu: 1
+        memory: 10Gi
+      limits:
+        cpu: 1
+        memory: 10Gi
+    command:
+    - /bin/bash
+    - -c
+    args:
+    - sleep infinity;
+    volumeMounts:
+    - mountPath: /chrombpnet
+      name: chrombpnet
+  restartPolicy: Never
+  volumes:
+    - name: chrombpnet
+      persistentVolumeClaim:
+        claimName: chrombpnet
+  imagePullSecrets:
+  - name: regcrew
