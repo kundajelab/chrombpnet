@@ -15,8 +15,9 @@ bias_model=$6
 output_dir=$7
 data_type=$8
 seed=$9
-logfile=${10}
+logfile=${11}
 
+#64,256
 if [ -z "$seed" ]
   then
     seed=1234

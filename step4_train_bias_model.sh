@@ -53,6 +53,7 @@ if [ -z "$logfile" ]
   then
     echo "No logfile supplied - creating one"
     logfile=$output_dir"/train_bias_model.log"
+    echo $logfile
     touch $logfile
 fi
 
