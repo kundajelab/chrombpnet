@@ -6,16 +6,13 @@ import numpy as np
 import tensorflow as tf
 import pandas as pd
 import shap
-from tensorflow import keras
-from tensorflow.keras.utils import get_custom_objects
-from tensorflow.keras.models import load_model
 import pyfaidx
 import shutil
 import errno
 import os
 import argparse
 import chrombpnet.evaluation.interpret.shap_utils as shap_utils
-import chrombpnet.evaluation.interpret.context as context
+import chrombpnet.evaluation.interpret.input_utils as input_utils
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 
@@ -34,15 +31,6 @@ def fetch_interpret_args():
 
     args = parser.parse_args()
     return args
-
-def load_model_wrapper(args):
-    # read .h5 model
-    custom_objects={"multinomial_nll": context.losses.multinomial_nll, "tf": tf}    
-    get_custom_objects().update(custom_objects)    
-    model=load_model(args.model_h5)
-    print("got the model")
-    model.summary()
-    return model
 
 
 def generate_shap_dict(seqs, scores):
@@ -126,12 +114,8 @@ def main():
 
     if args.debug_chr:
         regions_df = regions_df[regions_df['chr'].isin(args.debug_chr)]
-        regions_df.to_csv("{}.interpreted_regions.bed".format(args.output_prefix), header=False, sep='\t')
-    else:
-        # copy regions bed to output directory
-        shutil.copy(args.regions, "{}.interpreted_regions.bed".format(args.output_prefix))
-
-    model = load_model_wrapper(args)
+    
+    model = input_utils.load_model_wrapper(args)
  
     # infer input length
     inputlen = model.input_shape[1] # if bias model (1 input only)
@@ -139,10 +123,13 @@ def main():
 
     # load sequences
     # NOTE: it will pull out sequences of length inputlen
-    #       centered at the summit (start + 10th column)
+    #       centered at the summit (start + 10th column) and peaks used after filtering
+
     genome = pyfaidx.Fasta(args.genome)
-    seqs = context.get_seq(regions_df, genome, inputlen)
+    seqs, peaks_used = input_utils.get_seq(regions_df, genome, inputlen)
     genome.close()
+
+    regions_df[peaks_used].to_csv("{}.interpreted_regions.bed".format(args.output_prefix), header=False, sep='\t')
 
     interpret(model, seqs, args.output_prefix, args.profile_or_counts)
 

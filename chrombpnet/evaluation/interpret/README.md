@@ -34,3 +34,7 @@ The following two files are created using the `output_prefix` as prefix for the 
     - `projected_shap` key consists of values obtained by multiplying `shap` values with `raw` values. These values will be used in building browser tracks.
 
 - `output_prefix`.count_scores.h5: A h5 file containing a dictionary with contribution scores for the count head of the chrombpnet model. Has similar structure as the `output_prefix`.profile_scores.h5.
+
+- `output_prefix`.interpreted_regions.bed: A bed file with regions used for interpretations. The script filters regions whose resulting sequences dont have the same length as `input_len` inferred from the model.  This bed file might have regions fewer than `regions` provided as input. 
+
+
