@@ -1,14 +1,15 @@
-import tensorflow as tf
-from tensorflow import keras
 import argparse
 import pyBigWig
 import numpy as np
 import pandas as pd
 import pyfaidx
-import sys
+from tensorflow.keras.utils import get_custom_objects
+from tensorflow.keras.models import load_model
+import tensorflow as tf
 import chrombpnet.evaluation.make_bigwigs.bigwig_helper as bigwig_helper
-from chrombpnet.evaluation.make_bigwigs.context import data_utils as data_utils
-from chrombpnet.evaluation.make_bigwigs.context import load_model_wrapper as load_model_wrapper
+import chrombpnet.training.utils.losses as losses
+import chrombpnet.training.utils.data_utils as data_utils 
+import chrombpnet.training.utils.one_hot as one_hot
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 
@@ -33,6 +34,14 @@ def softmax(x, temp=1):
     norm_x = x - np.mean(x,axis=1, keepdims=True)
     return np.exp(temp*norm_x)/np.sum(np.exp(temp*norm_x), axis=1, keepdims=True)
 
+def load_model_wrapper(model_hdf5):
+    # read .h5 model
+    custom_objects={"multinomial_nll":losses.multinomial_nll, "tf": tf}    
+    get_custom_objects().update(custom_objects)    
+    model=load_model(model_hdf5)
+    print("got the model")
+    model.summary()
+    return model
 
 model_chrombpnet_nb = load_model_wrapper(model_hdf5=args.chrombpnet_model_nb)
 model_chrombpnet = load_model_wrapper(model_hdf5=args.chrombpnet_model)
