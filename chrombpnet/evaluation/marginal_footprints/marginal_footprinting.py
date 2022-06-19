@@ -12,12 +12,26 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import argparse
-import chrombpnet.evaluation.marginal_footprints.context as context
 import json
+import chrombpnet.training.utils.losses as losses
+from chrombpnet.training.utils.data_utils import get_seq as get_seq
+import chrombpnet.training.utils.one_hot as one_hot
+from tensorflow.keras.utils import get_custom_objects
+from tensorflow.keras.models import load_model
 
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 PWM_SCHEMA = ["MOTIF_NAME", "MOTIF_PWM_FWD"]
+
+
+def load_model_wrapper(args):
+    # read .h5 model
+    custom_objects={"multinomial_nll":losses.multinomial_nll, "tf": tf}    
+    get_custom_objects().update(custom_objects)    
+    model=load_model(args.model_h5)
+    print("got the model")
+    model.summary()
+    return model
 
 
 def fetch_footprinting_args():
@@ -50,7 +64,7 @@ def get_footprint_for_motif(seqs, motif, model, inputlen, batch_size):
     midpoint=inputlen//2
 
     w_mot_seqs = seqs.copy()
-    w_mot_seqs[:, midpoint-len(motif)//2:midpoint-len(motif)//2+len(motif)] = context.one_hot.dna_to_one_hot([motif])
+    w_mot_seqs[:, midpoint-len(motif)//2:midpoint-len(motif)//2+len(motif)] = one_hot.dna_to_one_hot([motif])
 
     # midpoint of motif is the midpoint of sequence
     pred_output=model.predict(w_mot_seqs, batch_size=batch_size, verbose=True)
@@ -76,7 +90,7 @@ def main():
     print(pwm_df)
     genome_fasta = pyfaidx.Fasta(args.genome)
 
-    model=context.load_model_wrapper(args)
+    model=load_model_wrapper(args)
     inputlen = model.input_shape[1] 
     outputlen = model.output_shape[0][1] 
     print("inferred model inputlen: ", inputlen)
@@ -87,7 +101,7 @@ def main():
 
     regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
     regions_subsample = regions_df[(regions_df["chr"].isin(chroms_to_keep))]
-    regions_seqs = context.get_seq(regions_subsample, genome_fasta, inputlen)
+    regions_seqs = get_seq(regions_subsample, genome_fasta, inputlen)
 
     footprints_at_motifs = {}
 
