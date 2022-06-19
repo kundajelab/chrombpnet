@@ -22,7 +22,7 @@ wget https://www.encodeproject.org/files/ENCFF333TAT/@@download/ENCFF333TAT.bed.
 
 # download reference data
 wget https://www.encodeproject.org/files/GRCh38_no_alt_analysis_set_GCA_000001405.15/@@download/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta.gz -O $data_dir/hg38.fa.gz
-gunzip $data_dir/hg38.fa.gz
+yes n | gunzip $data_dir/hg38.fa.gz
 
 # download reference chromsome sizes
 wget https://www.encodeproject.org/files/GRCh38_EBV.chrom.sizes/@@download/GRCh38_EBV.chrom.sizes.tsv -O $data_dir/hg38.chrom.sizes
