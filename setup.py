@@ -15,7 +15,7 @@ config = {
     'download_url': 'https://github.com/kundajelab/chrombpnet',
     'version': '0.1',
     'packages': find_packages(),
-    'python_requires': '>=3.6',
+    'python_requires': '>=3.8',
     'install_requires': install_requires,
     'zip_safe': False,
     'scripts':['chrombpnet/helpers/make_gc_matched_negatives/make_gc_matched_negatives.sh',

@@ -40,24 +40,19 @@ Download and install the latest version of Docker for your platform. Here is the
 docker run -it --rm --memory=100g --gpus device=0  kundajelab/chrombpnet:dev
 ```
 
-### 2. Installation setup through Conda
+### 2. Installation setup throuh github within a conda environment 
 
-Download and install the latest version of Miniconda for your platform. Here is the link for the installers - <a href="https://docs.conda.io/en/latest/miniconda.html">Miniconda Installers</a>. Using Conda you can setup your own environment from scratch by following the commands in https://github.com/kundajelab/chrombpnet/blob/master/dockerfile.
-
-First create a new virtual environment and activate it as shown below
-
+Create a clean conda environment with python >=3.8 
 ```
-conda create --name chrombpnet python=3.7.9
+conda create -n chrombpnet python=3.8
 conda activate chrombpnet
 ```
 
-Now install the packages required by chrombpnet as follows.
+Git clone the staging branch of chrombpnet and install via pip
 
 ```
-conda install -y -c bioconda samtools bedtools ucsc-bedgraphtobigwig 
-git clone https://github.com/kundajelab/chrombpnet.git
-cd chrombpnet
-pip install -r requirements.txt
+git clone -b staging https://github.com/kundajelab/chrombpnet.git
+pip install -e chrombpnet
 ```
 	
 ##  Tutorial on how to train chrombpnet models
