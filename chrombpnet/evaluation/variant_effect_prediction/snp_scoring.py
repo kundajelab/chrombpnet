@@ -2,10 +2,10 @@ from chrombpnet.evaluation.variant_effect_prediction.snp_generator import SNPGen
 from scipy.spatial.distance import jensenshannon
 from tensorflow.keras.utils import get_custom_objects
 from tensorflow.keras.models import load_model
+import chrombpnet.training.utils.losses as losses
 import pandas as pd
 import os
 import argparse
-import chrombpnet.evaluation.variant_effect_prediction.losses as losses
 import numpy as np
 import pickle as pkl
 
@@ -29,7 +29,7 @@ def softmax(x, temp=1):
 
 def load_model_wrapper(args):
     # read .h5 model
-    custom_objects={"MultichannelMultinomialNLL": losses.MultichannelMultinomialNLL}    
+    custom_objects={"tf": tf, "multinomial_nll":losses.multinomial_nll}    
     get_custom_objects().update(custom_objects)    
     model=load_model(args.model_h5)
     print("model loaded succesfully")
