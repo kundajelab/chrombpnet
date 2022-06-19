@@ -48,6 +48,11 @@ conda create -n chrombpnet python=3.8
 conda activate chrombpnet
 ```
 
+Install non-Python  requirements via conda
+```
+conda install -y -c bioconda samtools bedtools ucsc-bedgraphtobigwig
+```
+
 Git clone the staging branch of chrombpnet and install via pip
 
 ```
