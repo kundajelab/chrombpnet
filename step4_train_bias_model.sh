@@ -18,7 +18,7 @@ output_dir=${7?param missing - output_dir}
 filters=${8:-128}
 n_dilation_layers=${9:-4}
 seed=${10:-1234}
-logfile=$11
+logfile=${11}
 
 # defaults
 inputlen=2114
