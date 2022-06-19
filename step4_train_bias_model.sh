@@ -16,7 +16,7 @@ fold=${5?param missing - fold}
 bias_threshold_factor=${6?param missing - bias_threshold_factor}
 output_dir=${7?param missing - output_dir}
 filters=${8:-128}
-n_dilation_layers=${9?:-4}
+n_dilation_layers=${9:-4}
 seed=${10:-1234}
 logfile=$11
 
