@@ -1,17 +1,17 @@
-import chrombpnet.training.utils.argmanager as argmanager
-import chrombpnet.training.utils.losses as losses
-from tensorflow.keras.utils import get_custom_objects
-from tensorflow.keras.models import load_model
-from scipy import nanmean, nanstd
 import pandas as pd
 import os
 import scipy.stats
-import chrombpnet.training.metrics as metrics
-import chrombpnet.training.data_generators.initializers as initializers
 import numpy as np
 import json
 import h5py
 import tensorflow as tf
+import chrombpnet.training.utils.argmanager as argmanager
+import chrombpnet.training.utils.losses as losses
+import chrombpnet.training.metrics as metrics
+import chrombpnet.training.data_generators.initializers as initializers
+from tensorflow.keras.utils import get_custom_objects
+from tensorflow.keras.models import load_model
+from scipy import nanmean, nanstd
 
 def write_predictions_h5py(output_prefix, profile, logcts, coords):
     # open h5 file for writing predictions
