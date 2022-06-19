@@ -1,6 +1,7 @@
 import json
 import argparse
 import os
+
 def main(): 
     parser = argparse.ArgumentParser()
     parser.add_argument("-o", "--output_dir", type=str, required=True, help="Path to store the fold information")
