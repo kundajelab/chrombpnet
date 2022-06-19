@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 import os
 from chrombpnet.helpers.hyperparameters import param_utils as param_utils
-from chrombpnet.helpers.hyperparameters.context import load_model_wrapper
 from tensorflow import keras
 import json
 
@@ -145,7 +144,7 @@ def main():
 
     # adjust bias model for training  - using train and validation set
     # the bias model might be trained on a difference read depth compared to the given data - so this step scales the bias model to account for that
-    bias_model = load_model_wrapper(args.bias_model_path)
+    bias_model = param_utils.load_model_wrapper(args.bias_model_path)
     bias_model_scaled = adjust_bias_model_logcounts(bias_model, nonpeak_seqs[(nonpeak_cnts< upper_thresh) & (nonpeak_cnts>lower_thresh)], nonpeak_cnts[(nonpeak_cnts< upper_thresh) & (nonpeak_cnts>lower_thresh)])
     # save the new bias model
     bias_model_scaled.save(os.path.join(args.output_dir, "bias_model_scaled.h5"))
