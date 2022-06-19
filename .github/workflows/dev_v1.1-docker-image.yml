@@ -9,7 +9,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    if: GitHub.ref == 'refs/heads/master'
+    if: GitHub.ref == 'refs/heads/staging'
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
