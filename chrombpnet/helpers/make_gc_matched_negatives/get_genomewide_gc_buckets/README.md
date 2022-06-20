@@ -2,8 +2,8 @@ Scripts to find the gc content of genome wide bins.
 
 ### Usage
 
-```bash 
-python get_genomewide_gc_bins.py -g [genome] -o [output_prefix]  -f [inputlen] -s [stride]
+```
+chrombpnet_genomewide_gc -g [genome] -o [output_prefix]  -f [inputlen] -s [stride]
 ```
 
 The above scripts bins the genome into `inputlen` length regions. The bin intervals are spaced at `stride` length.
@@ -25,5 +25,5 @@ at  http://mitra.stanford.edu/kundaje/anusri/chrombpnet_downloads/genomewide_gc_
 ```
 wget https://www.encodeproject.org/files/GRCh38_no_alt_analysis_set_GCA_000001405.15/@@download/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta.gz
 gzip -d GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta.gz
-python get_genomewide_gc_bins.py -g GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta -o genomewide_gc_hg38_stride_1000_inputlen_2114 -f 2114 -s 1000
+chrombpnet_genomewide_gc -g GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta -o genomewide_gc_hg38_stride_1000_inputlen_2114 -f 2114 -s 1000
 ```

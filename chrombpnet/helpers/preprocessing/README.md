@@ -9,7 +9,7 @@ To run these scripts you will need the `samtools` and `bedGraphToBigWig` (from u
 ## Bam to Bigwig (+4/-4 shift for ATAC and 0/+1 shift for DNASE)
 
 ```
-bash bam_to_bigwig.sh [input_bam] [output_prefix] [data_type] [chrom_sizes]
+bam_to_bigwig.sh [input_bam] [output_prefix] [data_type] [chrom_sizes]
 ```
 
 The following assumptions are made with this script - make changes accordingly if the assumptions dont hold.
@@ -25,7 +25,7 @@ The following assumptions are made with this script - make changes accordingly i
 ## Example Usage
 
 ```
-bash bam_to_bigwig.sh input.bam <output_name> ATAC_PE hg38.chrom.sizes
+bam_to_bigwig.sh input.bam <output_name> ATAC_PE hg38.chrom.sizes
 <example output file> : <output_name>_unstranded.bw
 ```
 
