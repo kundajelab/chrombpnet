@@ -36,6 +36,8 @@ This section will discuss the packages needed to train a chrombpnet model. First
 
 Download and install the latest version of Docker for your platform. Here is the link for the installers -<a href="https://docs.docker.com/get-docker/">Docker Installers</a>.  Run the docker run command below to open a environment with all the packages installed and do `cd chrombpnet` to start running the tutorial.
 
+**Note: To access your system GPU's from within the docker container, you must have [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) installed on your host machine. 
+**
 ```
 docker run -it --rm --memory=100g --gpus device=0  kundajelab/chrombpnet:dev
 ```
