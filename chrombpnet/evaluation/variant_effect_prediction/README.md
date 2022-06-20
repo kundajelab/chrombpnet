@@ -6,7 +6,7 @@ The scripts in this folder are used to do variant effect prediction using chromb
 ## Usage
 
 ```
-python snp_scoring.py -i [snp_data_tsv] -g [genome_fasta] -m [model_hdf5] -o [output_dir] -bs [batch_size] -dm [debug_mode_on]
+chrombpnet_score_snps -i [snp_data_tsv] -g [genome_fasta] -m [model_hdf5] -o [output_dir] -bs [batch_size] -dm [debug_mode_on]
 ```
 
 The following assumptions are made with this script - make changes accordingly if the assumptions dont hold.
@@ -23,7 +23,7 @@ The following assumptions are made with this script - make changes accordingly i
 ## Example Usage
 
 ```
-python snp_scoring.py -i /mnt/lab_data2/anusri/variant_effect_prediction_example/subsample_test.csv -g /mnt/data/male.hg19.fa -m /path/to/model.hdf5 -o /path/to/store/output -bs 64
+chrombpnet_score_snps -i /mnt/lab_data2/anusri/variant_effect_prediction_example/subsample_test.csv -g /mnt/data/male.hg19.fa -m /path/to/model.hdf5 -o /path/to/store/output -bs 64
 ```
 
 ## Input Format
