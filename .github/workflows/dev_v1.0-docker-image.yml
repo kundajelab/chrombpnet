@@ -3,13 +3,13 @@ name: Docker Image CI
 on:
   push:
     branch:        
-      - master    
+      - v1.0-branch    
 jobs:
 
   build:
 
     runs-on: ubuntu-latest
-    if: GitHub.ref == 'refs/heads/master'
+    if: GitHub.ref == 'refs/heads/v1.0-branch'
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
@@ -21,7 +21,7 @@ jobs:
               
     - name: Build the Docker image
 
-      run: docker build . --file dockerfile --tag kundajelab/chrombpnet:dev
+      run: docker build . --file dockerfile --tag kundajelab/chrombpnet:dev_v1.0
       
     - name: Docker Push
-      run: docker push kundajelab/chrombpnet:dev
+      run: docker push kundajelab/chrombpnet:dev_v1.0
