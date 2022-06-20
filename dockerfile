@@ -1,5 +1,5 @@
 # Use the official TensorFlow image as parent
-FROM tensorflow/tensorflow:2.8.0-gpu
+FROM tensorflow/tensorflow:2.8.2-gpu
 
 # Set the working directory
 WORKDIR /scratch
