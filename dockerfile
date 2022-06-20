@@ -4,6 +4,9 @@ FROM tensorflow/tensorflow:2.4.1-gpu
 # Set the working directory
 WORKDIR /scratch
 
+RUN rm /etc/apt/sources.list.d/cuda.list
+RUN rm /etc/apt/sources.list.d/nvidia-ml.list
+
 # Install some basic utilities
 RUN apt-get update --fix-missing && \
     apt-get install -y wget bzip2 ca-certificates curl git
@@ -37,7 +40,7 @@ RUN apt-get install -y jq
 
 # Clean up after apt and conda
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN conda clean -tipsy
+RUN conda clean -tipy
 
 # Set environment variables for Python
 ENV LC_ALL=C.UTF-8
