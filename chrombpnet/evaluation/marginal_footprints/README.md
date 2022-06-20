@@ -5,13 +5,13 @@ The scripts in this folder provide marginal footprints for a given motif and bac
 ## Usage
 
 ```
-python marginal_footprinting.py -g [genome_fasta] -r [regions] -chr [test_chr] -m [model_h5] -bs [batch_size] -o [output_prefix] -pwm_f [motifs_to_pwm_file] -mo [motifs] --ylim (min-y, max-y)
+chrombpnet_marginal_footprints -g [genome_fasta] -r [regions] -chr [test_chr] -m [model_h5] -bs [batch_size] -o [output_prefix] -pwm_f [motifs_to_pwm_file] -mo [motifs] --ylim (min-y, max-y)
 ```
 
 ## Example Usage
 
 ```
-python marginal_footprinting.py -g /path/to/genome_fasta -r /path/to/bed_file -chr chr1 -m /path/to/model.h5 -o /path/to/output_dir/outputprefix -pwm_f motif_to_pwm.tsv -mo CTCF,RUNX
+chrombpnet_marginal_footprints -g /path/to/genome_fasta -r /path/to/bed_file -chr chr1 -m /path/to/model.h5 -o /path/to/output_dir/outputprefix -pwm_f motif_to_pwm.tsv -mo CTCF,RUNX
 ```
 
 ## Input Format

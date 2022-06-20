@@ -6,13 +6,13 @@ The scripts in this folder are used to do get sequence contribution scores for t
 ## Usage
 
 ```
-python interpret.py -g [genome_fasta] -r [regions] -m [model_h5] -o [output_prefix] -d [debug_chr] -p [profile_or_counts]
+chrombpne_deepshap -g [genome_fasta] -r [regions] -m [model_h5] -o [output_prefix] -d [debug_chr] -p [profile_or_counts]
 ```
 
 ## Example Usage
 
 ```
-python interpret.py -g /path/to/genome.fasta -r /path/to/regions.bed -m /path/to/model.h5 -o /path/to/output_dir/output_prefix -p counts profiles
+chrombpnet_deepshap -g /path/to/genome.fasta -r /path/to/regions.bed -m /path/to/model.h5 -o /path/to/output_dir/output_prefix -p counts profiles
 ```
 
 ## Input Format
