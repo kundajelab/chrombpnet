@@ -22,6 +22,7 @@ config = {
                'chrombpnet/helpers/preprocessing/bam_to_bigwig.sh',
                'chrombpnet/training/models/bpnet_model.py',
                'chrombpnet/training/models/chrombpnet_with_bias_model.py',
+               'chrombpnet/evaluation/modisco/modisco.sh',
                'step1_download_bams_and_peaks.sh',
                'step2_make_bigwigs_from_bams.sh',
                'step3_get_background_regions.sh',
@@ -45,6 +46,7 @@ config = {
         'chrombpnet_modisco = chrombpnet.evaluation.modisco.run_modisco:main',
         'chrombpnet_marginal_footprints = chrombpnet.evaluation.marginal_footprints.marginal_footprinting:main',
         'chrombpnet_tomtom_hits = chrombpnet.evaluation.modisco.fetch_tomtom:main',
+        'chrompnet_visualize_motif_matches = chrombpnet.evaluation.modisco.visualize_motif_matches:main',
         'chrombpnet_score_snps = chrombpnet.evaluation.variant_effect_prediction.snp_scoring:main',
         'chrombpnet_srcdir = chrombpnet.get_package_dir:main']}}
 

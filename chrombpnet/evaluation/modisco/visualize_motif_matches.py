@@ -82,8 +82,7 @@ def create_modisco_logos(modisco_file,modisco_logo_dir, trim_threshold, score_ty
                         path=modisco_logo_dir + "/" + score_type + '.' + pattern_name + '.cwm.rev.png')
 
 
-if __name__=="__main__":
-
+def main():
     args = fetch_viz_args()
 
     score_type=args.score_type
@@ -148,7 +147,9 @@ if __name__=="__main__":
                                                  ), index=False)
 
 
-print(tomtom_df.head())
+    print(tomtom_df.head())
+if __name__=="__main__":
+    main()
 
 
 

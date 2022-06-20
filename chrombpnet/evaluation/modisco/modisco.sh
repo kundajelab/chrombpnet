@@ -20,9 +20,9 @@ vier_logos=${8?param_missing - vier_logos}
 vier_html=${9?param_missing - vier_html}
 html_link=${10?param_missing - html_link}
 
-python run_modisco.py -s $scores_prefix -p $score_type -o $output_dir -m $seqlets -c $crop
-python fetch_tomtom.py -m $output_dir/modisco_results_allChroms_counts.hdf5 -o $output_dir/$score_type.tomtom.tsv -d $meme_db -n 10 -th 0.3
-python visualize_motif_matches.py -m $output_dir/modisco_results_allChroms_counts.hdf5 -t $output_dir/$score_type.tomtom.tsv -o $output_dir \
-     -vd $vier_logos -th 0.3 -hl  $html_link -vhl $vier_html \
+chrombpnet_modisco -s $scores_prefix -p $score_type -o $output_dir -m $seqlets -c $crop
+chrombpnet_tomtom_hits -m $output_dir/modisco_results_allChroms_counts.hdf5 -o $output_dir/$score_type.tomtom.tsv -d $meme_db -n 10 -th 0.3
+chrombpnet_visualize_motif_matches -m $output_dir/modisco_results_allChroms_counts.hdf5 -t $output_dir/$score_type.tomtom.tsv -o $output_dir \
+     -vd $vier_logos -th 0.3 -hl $html_link -vhl $vier_html \
       -s $score_type -d $meme_logos
 

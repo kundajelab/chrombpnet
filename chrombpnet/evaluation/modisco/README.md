@@ -7,22 +7,22 @@ So a requirement for this script is that the outputs generated from step 2 are h
 ## Usage
 
 ```
-bash run.sh [scores_prefix] [output_dir] [score_type] [seqlets] [crop] [meme_db] [meme_logos] [vier_logos] [vier_html] [html_link]
+modisco.sh [scores_prefix] [output_dir] [score_type] [seqlets] [crop] [meme_db] [meme_logos] [vier_logos] [vier_html] [html_link]
 ```
 
 The following assumptions are made with this script - make changes accordingly if the assumptions dont hold.
 
-- The following scripts are used on the output of `/src/evaluation/interpret/interpret.py`. 
+- The following scripts are used on the output of `chrombpnet_deepshap`. 
 
 ## Example Usage
 
 ```
-bash run.sh /path/to/deepshap_scores/ /path/to/store/output/ counts_or_profiles 200000 1000 [meme_db] [meme_logos] [vier_logos] [vier_html] [html_link]
+modisco.sh /path/to/deepshap_scores/ /path/to/store/output/ counts_or_profiles 200000 1000 [meme_db] [meme_logos] [vier_logos] [vier_html] [html_link]
 ```
 
 ## Input Format
 
-- scores_prefix: This is the `output_prefix` used with `/src/evaluation/interpret/interpret.py`. 
+- scores_prefix: This is the `output_prefix` used with `chrombpnet_deepshap`. 
 - score_type: This is either set to `counts` or `profile`.
 - output_dir: Path to a directory to store the output files. The script assumes that the directory already exists. Look at the output format section below to understand the files generated.
 - seqlets: Number of seqlets to use for modisco run. If using the most recent dev version of MODISCO this can be set to 200K. If using older version set to 50K. You can test the working of the script with a much smaller value - as this decides the runtime of the script.
