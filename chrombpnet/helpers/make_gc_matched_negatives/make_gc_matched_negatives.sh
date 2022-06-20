@@ -7,15 +7,15 @@ trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
 trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
 
-foreground_bed=$1
-exclude_bed=$2
-inputlen=$3
-output_dir=$4
-genome=$5
-genomewide_gc=$6
-fold=$7
-chrom_sizes=$8
-logfile=$9
+foreground_bed=${1?param missing - foreground_bed}
+exclude_bed=${2?param missing - exclude_bed}
+inputlen=${3?param missing - inputlen}
+output_dir=${4?param missing - output_dir}
+genome=${5?param missing - genome}
+genomewide_gc=${6?param missing - genomewide_gc}
+fold=${7?param missing - fold}
+chrom_sizes=${8?param missing - chrom_sizes}
+logfile=${9}
 
 function timestamp {
     # Function to get the current time with the new line character
