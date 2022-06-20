@@ -28,6 +28,7 @@ If you are interested in learning more about the detailed architectures used, pl
 - bias model: https://github.com/kundajelab/chrombpnet/blob/master/chrombpnet/training/models/bpnet_model.py
 - chrombpnet model: https://github.com/kundajelab/chrombpnet/blob/master/chrombpnet/training/models/chrombpnet_with_bias_model.py.
 
+
 ## Installation
 
 This section will discuss the packages needed to train a chrombpnet model. Firstly, it is recommended that you use a GPU for model training and have the necessary NVIDIA drivers already installed. Secondly there are two ways to ensure you have the necessary packages to train chrombpnet models which we detail below,
@@ -79,14 +80,14 @@ step1_download_bams_and_peaks.sh data/downloads
 ```
 
 Following are some things to keep in mind when using custom datasets/downloads -
-- For bulk ATAC-seq/DNASE-seq datasets we use the latest <a href="https://github.com/ENCODE-DCC/atac-seq-pipeline ">ENCODE ATAC-seq protocol</a>  for peak-calling. 
+- For bulk ATAC-seq/DNASE-seq datasets we use the latest <a href="https://github.com/ENCODE-DCC/atac-seq-pipeline">ENCODE ATAC-seq protocol</a>  for peak-calling. 
 - If you are downloading the data from the ENCODE portal you can download the peaks flagged default for ATAC-seq datasets. For DNASE-seq datasets you might have to use MACS2 and follow the ENCODE ATAC-seq protocol for peak-calling.  (TODO - provide scripts to call peaks on filtered bams).
 - For paired end data we download the filtered bams and for single-end data we download the unfiltered bams from the pipeline/ENCODE portal. Please refer to the documentation below to understand the reason for this difference `chrombpnet/helpers/preprocessing/`
 - TODO - add notes on how this will be different for scATAC.
 
 #### Step 2: Make Bigwigs from Bam files (IMPORTANT STEP! PLEASE READ CAREFULLY)
 
-We will now create unstranded bigwigs (i.e. the + and - strand ends are combined into one stranded bigwig) from the bam files (downloaded in step1) using the command below. This workflow uses the following two commands (1) `chrombpnet/helpers/preprocessing/bam_to_bigwig.sh`: Considers that the given bam files are *unshifted* and does a shift of +4/-4 and (2) `chrombpnet/helpers/preprocessing/analysis/build_pwm_from_bigwig.py` generates an image of the bias motif obtained from the shifted bams. 
+We will now create unstranded bigwigs (i.e. the + and - strand ends are combined into one stranded bigwig) from the bam files (downloaded in step1) using the command below. This workflow uses the following two commands (1) `bam_to_bigwig.sh`: Considers that the given bam files are *unshifted* and does a shift of +4/-4 and (2) `chrombpnet_pwm_from_bigwig` generates an image of the bias motif obtained from the shifted bams. 
 
 ```
 step2_make_bigwigs_from_bams.sh data/downloads/merged.bam data/downloads/K562 ATAC_PE data/downloads/hg38.fa hg38.chrom.sizes
