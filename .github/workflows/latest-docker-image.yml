@@ -21,7 +21,8 @@ jobs:
               
     - name: Build the Docker image
 
-      run: docker build . --file dockerfile --tag kundajelab/chrombpnet:dev
+      run: docker build . --file dockerfile --tag kundajelab/chrombpnet:latest
       
     - name: Docker Push
-      run: docker push kundajelab/chrombpnet:dev
+      run: docker push kundajelab/chrombpnet:latest
+      

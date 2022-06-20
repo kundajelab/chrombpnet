@@ -1,6 +1,10 @@
 # Use the official TensorFlow image as parent
 FROM tensorflow/tensorflow:2.4.1-gpu
 
+#key signing issue with cuda repo can be fixed by removing from apt sources and re-adding in apt-get update 
+RUN rm /etc/apt/sources.list.d/cuda.list
+RUN rm /etc/apt/sources.list.d/nvidia-ml.list
+
 # Set the working directory
 WORKDIR /scratch
 
@@ -37,7 +41,7 @@ RUN apt-get install -y jq
 
 # Clean up after apt and conda
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN conda clean -tipsy
+RUN conda clean -tipy
 
 # Set environment variables for Python
 ENV LC_ALL=C.UTF-8
