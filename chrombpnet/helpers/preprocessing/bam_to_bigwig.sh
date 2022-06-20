@@ -7,11 +7,11 @@ trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
 trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
 
-input_bam=$1
-output_prefix=$2
-data_type=$3
-chrom_sizes=$4
-logfile=$5
+input_bam=${1?param missing - input_bam}
+output_prefix=${2?param missing - output_prefix}
+data_type=${3?param missing - data_type} 
+chrom_sizes=${4?param missing - chrom_sizes}
+logfile=${5}
 
 function timestamp {
     # Function to get the current time with the new line character
