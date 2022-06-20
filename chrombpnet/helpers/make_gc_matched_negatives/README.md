@@ -3,7 +3,8 @@ Scripts to get  non-peak regions gc-matched with a given foreground (or peak) se
 ### Usage
 
 ```bash 
-bash  make_gc_matched_negatives.sh [foreground_bed] [exclude_bed] [inputlen] [output_dir] [genome] [genomewide_gc] [fold] [chrom_sizes]
+chmod +x make_gc_matched_negatives.sh
+./make_gc_matched_negatives.sh [foreground_bed] [exclude_bed] [inputlen] [output_dir] [genome] [genomewide_gc] [fold] [chrom_sizes]
 ```
 
 The above script runs two python scripts `get_gc_content.py` (also called with the command `chrombpnet_gc_content_foreground`) and `get_gc_matched_negatives.py` (also called with the command `chrombpnet_gc_matched_negatives`) and a `bedtools` operation. Briefly `get_gc_content.py` finds the gc content distribution of the given foreground regions. This script filters the foreground regions if `inputlen` region cannot be formed (if the percentage of peaks filtered is high consider reducing the `inputlen` as your genome might be small). The bedtools operation keeps only those genomewide bins that do not fall in exclude bed as candidate negatives for gc-matching. `get_gc_matched_negatives.py`  filters the candidate negatives list to as many negative regions as foreround regions such that they are gc-mactched with foreground.
