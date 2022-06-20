@@ -29,7 +29,7 @@ def get_seq(peaks_df, genome, width):
 
 def load_model_wrapper(args):
     # read .h5 model
-    custom_objects={"multinomial_nll": losses.mutlinomial_nll, "tf": tf}    
+    custom_objects={"multinomial_nll": losses.multinomial_nll, "tf": tf}    
     get_custom_objects().update(custom_objects)    
     model=load_model(args.model_h5)
     print("got the model")
