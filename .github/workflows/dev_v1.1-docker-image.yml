@@ -24,4 +24,4 @@ jobs:
       run: docker build . --file dockerfile --tag kundajelab/chrombpnet:dev_v1.1
       
     - name: Docker Push
-      run: docker push kundajelab/chrombpnet:dev
+      run: docker push kundajelab/chrombpnet:dev_v1.1
