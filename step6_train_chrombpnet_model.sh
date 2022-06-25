@@ -14,7 +14,13 @@ fold=$5
 bias_model=$6
 output_dir=$7
 data_type=$8
-logfile=$9
+seed=$9
+logfile=${10}
+
+if [ -z "$seed" ]
+  then
+    seed=1234
+fi
 
 # defaults
 inputlen=2114
@@ -87,6 +93,7 @@ echo $( timestamp ): "python $PWD/src/training/train.py \\
        --params=$output_dir/chrombpnet_model_params.tsv \\
        --output_prefix=$output_dir/chrombpnet \\
        --chr_fold_path=$fold \\
+       --seed=$seed \\
        --batch_size=64 \\
        --architecture_from_file=$PWD/src/training/models/chrombpnet_with_bias_model.py \\
        --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss" | tee -a $logfile
@@ -98,6 +105,7 @@ python $PWD/src/training/train.py \
        --params=$output_dir/chrombpnet_model_params.tsv \
        --output_prefix=$output_dir/chrombpnet \
        --chr_fold_path=$fold \
+       --seed=$seed \
        --batch_size=64 \
        --architecture_from_file=$PWD/src/training/models/chrombpnet_with_bias_model.py \
        --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss | tee -a $logfile

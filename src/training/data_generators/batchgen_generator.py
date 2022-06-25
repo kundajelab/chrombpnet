@@ -60,20 +60,31 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         # shuffle required since otherwise peaks and nonpeaks will be together
         #Sample a fraction of the negative samples according to the specified ratio
         if (self.peak_seqs is not None) and (self.nonpeak_seqs is not None):
+            # crop peak data before stacking
+            cropped_peaks, cropped_cnts, cropped_coords = augment.random_crop(self.peak_seqs, self.peak_cts, self.inputlen, self.outputlen, self.peak_coords)
+            #print(cropped_peaks.shape)
+            #print(self.nonpeak_seqs.shape)
             if self.negative_sampling_ratio < 1.0:
                 self.sampled_nonpeak_seqs, self.sampled_nonpeak_cts, self.sampled_nonpeak_coords = subsample_nonpeak_data(self.nonpeak_seqs, self.nonpeak_cts, self.nonpeak_coords, len(self.peak_seqs), self.negative_sampling_ratio)
-                self.seqs = np.vstack([self.peak_seqs, self.sampled_nonpeak_seqs])
-                self.cts = np.vstack([self.peak_cts, self.sampled_nonpeak_cts])
-                self.coords = np.vstack([self.peak_coords, self.sampled_nonpeak_coords])
+                self.seqs = np.vstack([cropped_peaks, self.sampled_nonpeak_seqs])
+                self.cts = np.vstack([cropped_cnts, self.sampled_nonpeak_cts])
+                self.coords = np.vstack([cropped_coords, self.sampled_nonpeak_coords])
             else:
-                self.seqs = np.vstack([self.peak_seqs, self.nonpeak_seqs])
-                self.cts = np.vstack([self.peak_cts, self.nonpeak_cts])
-                self.coords = np.vstack([self.peak_coords, self.nonpeak_coords])
+                self.seqs = np.vstack([cropped_peaks, self.nonpeak_seqs])
+                self.cts = np.vstack([cropped_cnts, self.nonpeak_cts])
+                self.coords = np.vstack([cropped_coords, self.nonpeak_coords])
+
         elif self.peak_seqs is not None:
-            self.seqs = self.peak_seqs
-            self.cts = self.peak_cts
-            self.coords = self.peak_coords
+            # crop peak data before stacking
+            cropped_peaks, cropped_cnts, cropped_coords = augment.random_crop(self.peak_seqs, self.peak_cts, self.inputlen, self.outputlen, self.coords)
+
+            self.seqs = cropped_peaks
+            self.cts = cropped_cnts
+            self.coords = cropped_coords
+
         elif self.nonpeak_seqs is not None:
+            #print(self.nonpeak_seqs.shape)
+
             self.seqs = self.nonpeak_seqs
             self.cts = self.nonpeak_cts
             self.coords = self.nonpeak_coords

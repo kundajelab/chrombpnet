@@ -13,13 +13,32 @@ nonpeaks=$4
 fold=$5
 bias_threshold_factor=$6
 output_dir=$7
-logfile=$8
+bias_filters=$8
+bias_dil=$9
+seed=${10}
+logfile=${11}
 
 # defaults
 inputlen=2114
 outputlen=1000
-filters=128
-n_dilation_layers=4
+filters=$bias_filters
+n_dilation_layers=$bias_dil
+seed=$seed
+
+if [ -z "$bias_filters" ]
+  then
+    filters=128
+fi
+
+if [ -z "$bias_dil" ]
+  then
+    n_dilation_layers=4
+fi
+
+if [ -z "$seed" ]
+  then
+    seed=1234
+fi
 
 function timestamp {
     # Function to get the current time with the new line character
@@ -51,7 +70,7 @@ echo $( timestamp ): "python $PWD/src/helpers/hyperparameters/find_bias_hyperpar
        --chr_fold_path=$fold \\
        --inputlen=$inputlen \\
        --outputlen=$outputlen \\
-       --max_jitter=50 \\
+       --max_jitter=0 \\
        --filters=$filters \\
        --n_dilation_layers=$n_dilation_layers \\
        --bias_threshold_factor=$bias_threshold_factor \\
@@ -66,7 +85,7 @@ python $PWD/src/helpers/hyperparameters/find_bias_hyperparams.py \
        --chr_fold_path=$fold \
        --inputlen=$inputlen \
        --outputlen=$outputlen \
-       --max_jitter=50 \
+       --max_jitter=0 \
        --filters=$filters \
        --n_dilation_layers=$n_dilation_layers \
        --bias_threshold_factor=$bias_threshold_factor \
@@ -82,6 +101,7 @@ echo $( timestamp ): "python $PWD/src/training/train.py \\
        --params=$output_dir/bias_model_params.tsv \\
        --output_prefix=$output_dir/bias \\
        --chr_fold_path=$fold \\
+       --seed=$seed \\
        --batch_size=64 \\
        --architecture_from_file=$PWD/src/training/models/bpnet_model.py \\
        --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss" | tee -a $logfile
@@ -93,6 +113,7 @@ python $PWD/src/training/train.py \
        --params=$output_dir/bias_model_params.tsv \
        --output_prefix=$output_dir/bias \
        --chr_fold_path=$fold \
+       --seed=$seed \
        --batch_size=64 \
        --architecture_from_file=$PWD/src/training/models/bpnet_model.py \
        --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss  | tee -a $logfile

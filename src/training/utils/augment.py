@@ -29,9 +29,11 @@ def random_crop(seqs, labels, seq_crop_width, label_crop_width, coords):
     max_start = seqs.shape[1] - seq_crop_width # This should be the same for both input and output
 
     starts = np.random.choice(range(max_start+1), size=seqs.shape[0], replace=True)
-    coords[:,1] = coords[:,1].astype(int) + starts
 
-    return take_per_row(seqs, starts, seq_crop_width), take_per_row(labels, starts, label_crop_width), coords
+    new_coords = coords.copy()
+    new_coords[:,1] = new_coords[:,1].astype(int) - (seqs.shape[1]//2) + starts
+
+    return take_per_row(seqs, starts, seq_crop_width), take_per_row(labels, starts, label_crop_width), new_coords
 
 def random_rev_comp(seqs, labels, coords, frac=0.5):
     """
@@ -64,7 +66,8 @@ def crop_revcomp_augment(seqs, labels, coords, seq_crop_width, label_crop_width,
     assert(seqs.shape[0]==labels.shape[0])
 
     # this does not modify seqs and labels
-    mod_seqs, mod_labels, mod_coords = random_crop(seqs, labels, seq_crop_width, label_crop_width, coords)
+    #mod_seqs, mod_labels, mod_coords = random_crop(seqs, labels, seq_crop_width, label_crop_width, coords)
+    mod_seqs, mod_labels, mod_coords = seqs, labels, coords
 
     # this modifies mod_seqs, mod_labels in-place
     if add_revcomp:
