@@ -71,5 +71,5 @@ echo "completed step 5"
 CUDA_VISIBLE_DEVICES=$GPU step6_train_chrombpnet_model.sh $reference_fasta $bigwig_path $overlap_peak $nonpeaks $fold $output_models/bias_model/bias.h5 $output_models/chrombpnet_model $data_type
 echo "completed step 6" 
 
-CUDA_VISIBLE_DEVICES=$GPU step7_interpret_chrombpnet_model.sh $reference_fasta $overlap_peak $output_models/chrombpnet_model/chrombpnet_wo_bias.h5 $output_models/chrombpnet_model/interpret/
+CUDA_VISIBLE_DEVICES=$GPU step7_interpret_chrombpnet_model.sh $reference_fasta $output_data/subsample_peaks/30K.subsample.overlap.bed $output_models/chrombpnet_model/chrombpnet_wo_bias.h5 $output_models/chrombpnet_model/interpret/
 echo "completed step 7" 
