@@ -3,13 +3,13 @@ name: Docker Image CI
 on:
   push:
     branch:        
-      - staging    
+      - v1.2-branch    
 jobs:
 
   build:
 
     runs-on: ubuntu-latest
-    if: GitHub.ref == 'refs/heads/staging'
+    if: GitHub.ref == 'refs/heads/v1.2-branch'
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
@@ -21,7 +21,7 @@ jobs:
               
     - name: Build the Docker image
 
-      run: docker build . --file dockerfile --tag kundajelab/chrombpnet:dev_staging 
+      run: docker build . --file dockerfile --tag kundajelab/chrombpnet:dev_v1.2 
       
     - name: Docker Push
-      run: docker push kundajelab/chrombpnet:dev_staging 
+      run: docker push kundajelab/chrombpnet:dev_v1.2
