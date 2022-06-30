@@ -1,5 +1,5 @@
 # Use the official TensorFlow image as parent
-FROM tensorflow/tensorflow:2.4.1-gpu
+FROM tensorflow/tensorflow:2.8.2-gpu
 
 # Set the working directory
 WORKDIR /scratch
@@ -16,8 +16,8 @@ RUN cd /opt/ && \
     ./google-cloud-sdk/install.sh
 ENV PATH "$PATH:/opt/google-cloud-sdk/bin/"
 
-# Install Miniconda with Python 3.7 into /opt
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py37_4.9.2-Linux-x86_64.sh -O ~/miniconda.sh && \
+# Install Miniconda with Python 3.9 into /opt
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Linux-x86_64.sh -O ~/miniconda.sh && \
     /bin/bash ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh
 
@@ -37,7 +37,7 @@ RUN apt-get install -y jq
 
 # Clean up after apt and conda
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN conda clean -tipsy
+RUN conda clean -tipy
 
 # Set environment variables for Python
 ENV LC_ALL=C.UTF-8

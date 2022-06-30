@@ -6,6 +6,9 @@
 - Authors would like to thank Avanti Shrikumar and Surag Nair for their help with the project.
 - Link to a pretrained bias model trained in K562 bulk ATAC-seq - http://mitra.stanford.edu/kundaje/anusri/chrombpnet_downloads/bias.h5. You can also continue to use the bias model from chrombpnet-lite repo if that is what you have been using so far.
 
+## WARNING: If upgrading from v1.0 or v1.1 to v1.2
+Note that chrombpnet has undergone linting to generate a modular structure for release on pypi.Hard-coded script paths are no longer necessary. Please refer to the updated README (below) to ensure your script calls are compatible with v1.2
+
 ## Quick Links
 
 - [About](#chrombpnet)
@@ -25,12 +28,13 @@ ChromBPNet (shown in the image as `chrombpnet model`) is a fully convolutional n
 
 If you are interested in learning more about the detailed architectures used, please refer to the following architecture files - 
 
-- bias model: https://github.com/kundajelab/chrombpnet/blob/master/src/training/models/bpnet_model.py
-- chrombpnet model: https://github.com/kundajelab/chrombpnet/blob/master/src/training/models/chrombpnet_with_bias_model.py.
+- bias model: https://github.com/kundajelab/chrombpnet/blob/master/chrombpnet/training/models/bpnet_model.py
+- chrombpnet model: https://github.com/kundajelab/chrombpnet/blob/master/chrombpnet/training/models/chrombpnet_with_bias_model.py.
+
 
 ## Installation
 
-This section will discuss the packages needed to train a chrombpnet model. Firstly, it is recommended that you use a GPU for model training and have the necessary NVIDIA drivers already installed. Secondly there are two ways to ensure you have the necessary packages to train chrombpnet models which we detail below,
+This section will discuss the packages needed to train a chrombpnet model. Firstly, it is recommended that you use a GPU for model training and have the necessary NVIDIA drivers and CUDA already installed. You can verify that your machine is set up to use GPU's properly by executing the `nvidia-smi` command and ensuringn that the command returns information about your system GPU(s) (rather than an error). Secondly there are two ways to ensure you have the necessary packages to train chrombpnet models which we detail below,
 
 ### 1. Installation setup through Docker
 
@@ -42,24 +46,24 @@ Download and install the latest version of Docker for your platform. Here is the
 docker run -it --rm --memory=100g --gpus device=0  kundajelab/chrombpnet:dev
 ```
 
-### 2. Installation setup through Conda
+### 2. Installation setup throuh github within a conda environment 
 
-Download and install the latest version of Miniconda for your platform. Here is the link for the installers - <a href="https://docs.conda.io/en/latest/miniconda.html">Miniconda Installers</a>. Using Conda you can setup your own environment from scratch by following the commands in https://github.com/kundajelab/chrombpnet/blob/master/dockerfile.
-
-First create a new virtual environment and activate it as shown below
-
+Create a clean conda environment with python >=3.8 
 ```
-conda create --name chrombpnet python=3.7.9
+conda create -n chrombpnet python=3.8
 conda activate chrombpnet
 ```
 
-Now install the packages required by chrombpnet as follows.
+Install non-Python  requirements via conda
+```
+conda install -y -c bioconda samtools bedtools ucsc-bedgraphtobigwig
+```
+
+Git clone the staging branch of chrombpnet and install via pip
 
 ```
-conda install -y -c bioconda samtools bedtools ucsc-bedgraphtobigwig 
-git clone https://github.com/kundajelab/chrombpnet.git
-cd chrombpnet
-pip install -r requirements.txt
+git clone -b staging https://github.com/kundajelab/chrombpnet.git
+pip install -e chrombpnet
 ```
 	
 ##  Tutorial on how to train chrombpnet models
@@ -75,21 +79,21 @@ We will start by creating a directory (`data/downloads`) to download the bams an
 ```
 mkdir data
 mkdir data/downloads
-bash step1_download_bams_and_peaks.sh data/downloads
+step1_download_bams_and_peaks.sh data/downloads
 ```
 
 Following are some things to keep in mind when using custom datasets/downloads -
-- For bulk ATAC-seq/DNASE-seq datasets we use the latest <a href="https://github.com/ENCODE-DCC/atac-seq-pipeline ">ENCODE ATAC-seq protocol</a>  for peak-calling. 
+- For bulk ATAC-seq/DNASE-seq datasets we use the latest <a href="https://github.com/ENCODE-DCC/atac-seq-pipeline">ENCODE ATAC-seq protocol</a>  for peak-calling. 
 - If you are downloading the data from the ENCODE portal you can download the peaks flagged default for ATAC-seq datasets. For DNASE-seq datasets you might have to use MACS2 and follow the ENCODE ATAC-seq protocol for peak-calling.  (TODO - provide scripts to call peaks on filtered bams).
-- For paired end data we download the filtered bams and for single-end data we download the unfiltered bams from the pipeline/ENCODE portal. Please refer to the documentation below to understand the reason for this difference `src/helpers/preprocessing/`
+- For paired end data we download the filtered bams and for single-end data we download the unfiltered bams from the pipeline/ENCODE portal. Please refer to the documentation below to understand the reason for this difference `chrombpnet/helpers/preprocessing/`
 - TODO - add notes on how this will be different for scATAC.
 
 #### Step 2: Make Bigwigs from Bam files (IMPORTANT STEP! PLEASE READ CAREFULLY)
 
-We will now create unstranded bigwigs (i.e. the + and - strand ends are combined into one stranded bigwig) from the bam files (downloaded in step1) using the command below. This workflow uses the following two commands (1) `src/helpers/preprocessing/bam_to_bigwig.sh`: Considers that the given bam files are *unshifted* and does a shift of +4/-4 and (2) `src/helpers/preprocessing/analysis/build_pwm_from_bigwig.py` generates an image of the bias motif obtained from the shifted bams. 
+We will now create unstranded bigwigs (i.e. the + and - strand ends are combined into one stranded bigwig) from the bam files (downloaded in step1) using the command below. This workflow uses the following two commands (1) `bam_to_bigwig.sh`: Considers that the given bam files are *unshifted* and does a shift of +4/-4 and (2) `chrombpnet_pwm_from_bigwig` generates an image of the bias motif obtained from the shifted bams. 
 
 ```
-bash step2_make_bigwigs_from_bams.sh data/downloads/merged.bam data/downloads/K562 ATAC_PE data/downloads/hg38.fa hg38.chrom.sizes
+step2_make_bigwigs_from_bams.sh data/downloads/merged.bam data/downloads/K562 ATAC_PE data/downloads/hg38.fa hg38.chrom.sizes
 ```
 
 This command will generate two important output files - `data/downloads/K562_unstranded.bw`(unstranded bigwig file) and `data/downloads/K562_bias_pwm.png` (bias motif image). Open the `data/downloads/K562_bias_pwm.png` image generated by the script and you will see the following Tn5 motif PWM for this dataset.
@@ -98,9 +102,9 @@ This command will generate two important output files - `data/downloads/K562_uns
 
 Following are some things to keep in mind when using custom datasets/downloads -
 
-- **IMPORTANT NOTE 1:** If you are running these commands on custom experimental bam files - *read the documentation* in the directory `src/helpers/preprocessing/` and  `src/helpers/preprocessing/analysis/` to make sure you are using this worflow correctly. Always use the scripts in `src/helpers/preprocessing/analysis/` to make sure that you see Tn5 or DNASE-I bias PWM in the output image generated. If you do not see the bias motif it is likely that the bam's that you provided have a shift of some kind. Please provide only unshifted bams to the script. **Do not proceed further if you do not see a Tn5 or DNASE-I motif after this step.** 
+- **IMPORTANT NOTE 1:** If you are running these commands on custom experimental bam files - *read the documentation* in the directory `chrombpnet/helpers/preprocessing/` and  `chrombpnet/helpers/preprocessing/analysis/` to make sure you are using this worflow correctly. Always use the script in `chrombpnet_pwm_from_bigwig` to make sure that you see Tn5 or DNASE-I bias PWM in the output image generated. If you do not see the bias motif it is likely that the bam's that you provided have a shift of some kind. Please provide only unshifted bams to the script. **Do not proceed further if you do not see a Tn5 or DNASE-I motif after this step.** 
 
-- **IMPORTANT NOTE 2:** If you are running the pipeline on custom generated bigwigs (without using `src/helpers/preprocessing/`) make sure the bigwigs are unstranded and the shifts are done correctly. To check this run the scripts in `src/helpers/preprocessing/analysis/` and make sure that you see the Tn5 or DNASE-I bias PWM in the output image generated. **Do not proceed further if you do not see a Tn5 or DNASE-I motif after this step.** 
+- **IMPORTANT NOTE 2:** If you are running the pipeline on custom generated bigwigs (skipping `step2_make_bigwigs_from_bams.sh`) make sure the bigwigs are unstranded and the shifts are done correctly. To check this execute teh script `chrombpnet_pwm_from_bigwig` (you can see the arguments by running `chrombpnet_from_bigwig -h` and make sure that you see the Tn5 or DNASE-I bias PWM in the output image generated. **Do not proceed further if you do not see a Tn5 or DNASE-I motif after this step.** 
 
 - TODO - add preprocessing scripts for scATAC datasets.
 
@@ -110,9 +114,9 @@ For chrombpnet model training we split the dataset by chromosomes for training, 
 
 ```
 mkdir data/splits
-python src/helpers/make_chr_splits/splits.py -o data/splits/
+chrombpnet_make_splits -o data/splits/
 ```
-
+Note: this script is a wrapper for the python file: `chrombpnet/helpers/make_chr_splits/splits.py`
 If you want to mention custom splits please edit the `splits.py` file directly and make sure that the output json formatting is consistent with the current formatting in `splits.py` (the formatting is important for all the scripts being used in this tutorial).
 
 #### Step 3: Generate background regions (non-peaks) gc-matched with the peaks
@@ -120,7 +124,6 @@ If you want to mention custom splits please edit the `splits.py` file directly a
 Here we will generate non-peak background regions that GC-match with the peak regions. We will use the non-peaks regions to train and evaluate a bias model. We will also use these regions in chrombpnet model training and as background regions to get marginal footprints. There are two key steps to this process - 
 
 Firstly, we will start by dividing the entire genome into overlapping bins of `inputlen` regions. ChromBpnet models are trained on `inputlen` of 2114, so we will divide the entire genome into overlapping bins of length of 2114 input length and calculate their gc-fraction value. 
-
 
 For convenience the genome wide buckets we created on human genome (hg38) reference can be downloaded as follows -  
 
@@ -130,22 +133,23 @@ wget http://mitra.stanford.edu/kundaje/anusri/chrombpnet_downloads/genomewide_gc
 To generate this file directly from the scripts run the command below - 
 
 ```
-python src/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py -g data/downloads/hg38.fa -o data/downloads/genomewide_gc_hg38_stride_1000_inputlen_2114 -f 2114 -s 1000
+chrombpnet_genomewide_gc -g data/downloads/hg38.fa -o data/downloads/genomewide_gc_hg38_stride_1000_inputlen_2114 -f 2114 -s 1000
 ```
+This is a wrapper script that calls the python file `chrombpnet/helpers/make_gc_matched_negatives/get_genomewide_gc_buckets/get_genomewide_gc_bins.py`
 
 
 Secondly, we will filter the regions from the genome-wide buckets created from the above step such that they do not fall in peak regions or blacklist regions but have similar GC-distribution as the peaks.
 
 ```
 mkdir data/negatives_data
-bash step3_get_background_regions.sh data/downloads/hg38.fa data/downloads/hg38.chrom.sizes data/downloads/blacklist.bed.gz data/downloads/overlap.bed.gz 2114 data/downloads/genomewide_gc_hg38_stride_1000_inputlen_2114.bed data/negatives_data data/splits/fold_0.json
+step3_get_background_regions.sh data/downloads/hg38.fa data/downloads/hg38.chrom.sizes data/downloads/blacklist.bed.gz data/downloads/overlap.bed.gz 2114 data/downloads/genomewide_gc_hg38_stride_1000_inputlen_2114.bed data/negatives_data data/splits/fold_0.json
 ```
 
 Following are some things to keep in mind when using custom datasets 
 
 - `data/negatives_data/negatives_with_summit.bed` is the non-peaks file we will be using for further analysis below.
-- To understand all the outputs generated by these scripts refer to the documentation at `src/helpers/make_gc_matched_negatives`. 
-- The scripts  `src/helpers/make_gc_matched_negatives` filter out peaks for which  `inputlen` (here 2114) region cannot be constructed (this can happen if the summit/center of the peak is on the edge). For custom datasets if the reference genome is very small, than using `inputlen` of 2114 can filter out a lot of peaks - in which case users are encouraged to use smaller `inputlen`.
+- To understand all the outputs generated by these scripts refer to the documentation at `chrombpnet/helpers/make_gc_matched_negatives`. 
+- The scripts  `chrombpnet/helpers/make_gc_matched_negatives` filter out peaks for which  `inputlen` (here 2114) region cannot be constructed (this can happen if the summit/center of the peak is on the edge). For custom datasets if the reference genome is very small, than using `inputlen` of 2114 can filter out a lot of peaks - in which case users are encouraged to use smaller `inputlen`.
 
 ###  Train and Evaluate Bias Model
 
@@ -158,7 +162,7 @@ We will train a bias model on the non-peak regions by running the `step4_train_b
 ```
 mkdir models
 mkdir models/bias_model
-bash step4_train_bias_model.sh data/hg38.fa data/downloads/K562_unstranded.bw data/downloads/overlap.bed.gz data/negatives_data/negatives_with_summit.bed data/splits/fold_0.json 0.5 models/bias_model
+step4_train_bias_model.sh data/hg38.fa data/downloads/K562_unstranded.bw data/downloads/overlap.bed.gz data/negatives_data/negatives_with_summit.bed data/splits/fold_0.json 0.5 models/bias_model
 
 ```
 
@@ -199,7 +203,7 @@ Once we have the subsampled peak set we will run the script below to first get i
 
 ```
 mkdir models/bias_model/interpret
-bash step5_interpret_bias_model.sh data/downloads/hg38.fa data/subsample_peaks/30K.subsample.overlap.bed models/bias_model/bias.h5 models/bias_model/interpret/
+step5_interpret_bias_model.sh data/downloads/hg38.fa data/subsample_peaks/30K.subsample.overlap.bed models/bias_model/bias.h5 models/bias_model/interpret/
 ```
 
 ###  Train and Evaluate ChromBPNet Model
@@ -212,7 +216,7 @@ We will use the bias model trained in Step 4 to regress out the effect of the bi
 
 ```
 mkdir models/chrombpnet_model
-bash step6_train_chrombpnet_model.sh data/downloads/hg38.fa data/downloads/K562_unstranded.bw data/downloads/overlap.bed.gz data/negatives_data/negatives_with_summit.bed data/splits/fold_0.json models/bias_model/bias.h5 models/chrombpnet_model ATAC_PE
+step6_train_chrombpnet_model.sh data/downloads/hg38.fa data/downloads/K562_unstranded.bw data/downloads/overlap.bed.gz data/negatives_data/negatives_with_summit.bed data/splits/fold_0.json models/bias_model/bias.h5 models/chrombpnet_model ATAC_PE
 ```
 
 The script `step4_train_bias_model.sh` runs the following five steps -  
@@ -225,7 +229,7 @@ The script `step4_train_bias_model.sh` runs the following five steps -
 NOTE: The `models/chrombpnet_model/bias_model_scaled.h5` is the bias model  in use for bias correction - this is different from the input bias model by a scaling factor on the counts head. The user can choose to use a single bias model across different datasets (we empirically observed that bias models can be transferred across datasets) - in which case the script accounts for the difference in read-depths of the current dataset and the bias model training dataset by scaling the bias models counts head.
 
 Following are some things to keep in mind when using custom datasets:
-- Note that the script `step6_train_chrombpnet_model.sh` inputs an argument `data_type` (8th argument). The user can input the following four values for this argument - `ATAC_PE, DNASE_SE, DNASE_PE, ATAC_SE`. To understand the meaning of these arguments refer to `src/helpers/preprocessing/`.
+- Note that the script `step6_train_chrombpnet_model.sh` inputs an argument `data_type` (8th argument). The user can input the following four values for this argument - `ATAC_PE, DNASE_SE, DNASE_PE, ATAC_SE`. To understand the meaning of these arguments refer to `chrombpnet/helpers/preprocessing/`.
 - If `models/chrombpnet_model/footprints/corrected_footprints_score.txt` has values greater than 0.003, the chrombpnet models are not fully corrected for the bias. This is possible if the bias model is used incorrectly (if the bias model is transferred it is likely that the transfer has failed).
 
 
@@ -237,7 +241,7 @@ NOTE: It is computationally expensive to run this step on all the peaks -  since
 
 ```
 mkdir models/chrombpnet_model/interpret
-bash step7_interpret_chrombpnet_model.sh  data/downloads/hg38.fa data/subsample_peaks/30K.subsample.overlap.bed models/chrombpnet_model/chrombpnet_wo_bias.h5 models/chrombpnet_model/interpret/
+step7_interpret_chrombpnet_model.sh  data/downloads/hg38.fa data/subsample_peaks/30K.subsample.overlap.bed models/chrombpnet_model/chrombpnet_wo_bias.h5 models/chrombpnet_model/interpret/
 ```
 
 The script outputs interpretation scores (as h5 files `models/chrombpnet_model/interpret/corrected.profile_scores.h5` and `models/chrombpnet_model/interpret/corrected.counts_scores.h5`) and then summarizes the interpretation scores into PWMs (as png images in `models/chrombpnet_model/interpret/untrimmed_logos_counts` and `models/chrombpnet_model/interpret/untrimmed_logos_profile`). Browse through the images (with prefix name `contrib_`) in both the PWM folders and make sure you only see cell-type specific motifs (here GATA, SP1) and not bias motifs (Tn5/DNASE-I). 

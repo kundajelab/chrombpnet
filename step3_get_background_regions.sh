@@ -1,20 +1,24 @@
 #!/bin/bash
+
+echo "WARNING: If upgrading from v1.0 or v1.1 to v1.2. Note that chrombpnet has undergone linting to generate a modular structure for release on pypi.Hard-coded script paths are no longer necessary. Please refer to the updated README (below) to ensure your script calls are compatible with v1.2"
+
 # exit when any command fails
 set -e
+set -o pipefail
 
 # keep track of the last executed command
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
-trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
+trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
 
-reference_fasta=$1
-chrom_sizes=$2
-blacklist_region=$3
-overlap_peak=$4
-inputlen=$5
-genomewide_gc=$6
-output_dir=$7
-fold=$8
+reference_fasta=${1?param missing - reference_fasta}
+chrom_sizes=${2?param missing - chrom_sizes}
+blacklist_region=${3?param missing - blaklist_region}
+overlap_peak=${4?param missing - overlap_peak}
+inputlen=${5?param missing - inputlen}
+genomewide_gc=${6?param missing - genomewide_gc}
+output_dir=${7?param missing - output_dir} 
+fold=${8?param missing - fold}
 
 function timestamp {
     # Function to get the current time with the new line character
@@ -48,7 +52,7 @@ exclude_bed=$output_dir/exclude.bed
 
 # create regions of size inputlen that do not fall in exclude bed and that gc-match with the given overlap peaks
 # create as many regions as there are in overlap peaks bed file
-bash $PWD/src/helpers/make_gc_matched_negatives/run.sh $overlap_peak $exclude_bed $inputlen $output_dir $reference_fasta $genomewide_gc $fold $chrom_sizes $logfile
+make_gc_matched_negatives.sh  $overlap_peak $exclude_bed $inputlen $output_dir $reference_fasta $genomewide_gc $fold $chrom_sizes $logfile
 # make a dummy summit file - rest of the pipeline uses this format
 echo $( timestamp ): "awk -v OFS=\"\t\" '{print \$1, \$2, \$3, \".\",  \".\", \".\", \".\", \".\", \".\", \"1057\"}\' $output_dir/negatives.bed > $output_dir/negatives_with_summit.bed" | tee -a $logfile
 awk -v OFS="\t" '{print $1, $2, $3, ".",  ".", ".", ".", ".", ".", "1057"}' $output_dir/negatives.bed > $output_dir/negatives_with_summit.bed
