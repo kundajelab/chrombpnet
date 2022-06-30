@@ -62,7 +62,7 @@ conda install -y -c bioconda samtools bedtools ucsc-bedgraphtobigwig
 Git clone the staging branch of chrombpnet and install via pip
 
 ```
-git clone -b staging https://github.com/kundajelab/chrombpnet.git
+git clone https://github.com/kundajelab/chrombpnet.git
 pip install -e chrombpnet
 ```
 	
