@@ -1,6 +1,10 @@
 # Use the official TensorFlow image as parent
 FROM tensorflow/tensorflow:2.8.2-gpu
 
+#key signing issue with cuda repo can be fixed by removing from apt sources and re-adding in apt-get update 
+RUN rm /etc/apt/sources.list.d/cuda.list
+RUN rm /etc/apt/sources.list.d/nvidia-ml.list
+
 # Set the working directory
 WORKDIR /scratch
 
