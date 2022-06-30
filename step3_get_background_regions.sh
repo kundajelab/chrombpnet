@@ -1,4 +1,7 @@
 #!/bin/bash
+
+echo "WARNING: If upgrading from v1.0 or v1.1 to v1.2. Note that chrombpnet has undergone linting to generate a modular structure for release on pypi.Hard-coded script paths are no longer necessary. Please refer to the updated README (below) to ensure your script calls are compatible with v1.2"
+
 # exit when any command fails
 set -e
 set -o pipefail
