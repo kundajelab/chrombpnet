@@ -8,6 +8,7 @@ import os
 import argparse
 import numpy as np
 import pickle as pkl
+import tensorflow as tf
 
 
 SNP_SCHEMA = ["CHR", "POS0", "REF", "ALT", "META_DATA"]
