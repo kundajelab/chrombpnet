@@ -20,7 +20,7 @@ bias_model=${6?param missing - bias_model}
 output_dir=${7?param missing - output_dir}
 data_type=${8?param missing - data_type}
 seed=${9:-1234}
-logfile=$10 #optional
+logfile=${10} #optional
 
 # defaults
 inputlen=2114
