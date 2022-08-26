@@ -11,8 +11,11 @@ To run these scripts you will need the `samtools` and `bedGraphToBigWig` (from u
 We convert input BAMS to appropriately shifted (+4/-4 shift for ATAC and 0/+1 shift for DNASE) Bigwigs consistent with our training pipeline.
 
 ```
-usage: reads_to_bigwig.py [-h] -g GENOME (-ibam INPUT_BAM_FILE | -ifrag INPUT_FRAGMENT_FILE | -itag INPUT_TAGALIGN_FILE) -c CHROM_SIZES -o OUTPUT_PREFIX -d {ATAC,DNASE}
-                          [-p PLUS_SHIFT] [-m MINUS_SHIFT] [--ATAC-ref-path ATAC_REF_PATH] [--DNASE-ref-path DNASE_REF_PATH] [--num-samples NUM_SAMPLES]
+usage: reads_to_bigwig.py [-h] -g GENOME
+                          (-ibam INPUT_BAM_FILE | -ifrag INPUT_FRAGMENT_FILE | -itag INPUT_TAGALIGN_FILE)
+                          -c CHROM_SIZES -o OUTPUT_PREFIX -d {ATAC,DNASE} [-p PLUS_SHIFT]
+                          [-m MINUS_SHIFT] [--ATAC-ref-path ATAC_REF_PATH]
+                          [--DNASE-ref-path DNASE_REF_PATH] [--num-samples NUM_SAMPLES]
 
 Automatically detect enzyme shift of input BAM/fragment/tagAlign File
 
@@ -36,6 +39,14 @@ optional arguments:
                         Plus strand shift applied to reads. Estimated if not specified
   -m MINUS_SHIFT, --minus-shift MINUS_SHIFT
                         Minus strand shift applied to reads. Estimated if not specified
+  --ATAC-ref-path ATAC_REF_PATH
+                        Path to ATAC reference motifs (ATAC.ref.motifs.txt used by default)
+  --DNASE-ref-path DNASE_REF_PATH
+                        Path to DNASE reference motifs (DNASE.ref.motifs.txt used by
+                        default)
+  --num-samples NUM_SAMPLES
+                        Number of reads to sample from BAM/fragment/tagAlign file for shift
+                        estimation
 ```
 
 Please supply one of BAM(`-ibam`)/fragment file(`-ifrag`)/tagAlign file(`-itag`) as input. The script generates an unstranded bigwig- forward and reverse strands are combined with appropriate shifting (+4/-4 for ATAC and 0/+1 for DNase). Output is stored at `{OUTPUT_PREFIX}_unstranded.bw`. The directory in the prefix, if applicable, must already exist.
