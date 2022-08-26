@@ -4,6 +4,7 @@ import pyfaidx
 import subprocess
 import pandas as pd
 import numpy as np
+import itertools
 import os
 from modisco.visualization import viz_sequence
 import chrombpnet.training.utils.one_hot as one_hot
@@ -155,8 +156,14 @@ def compute_shift_ATAC(ref_plus_pwms, ref_minus_pwms, plus_pwm, minus_pwm):
 
     if len(plus_shifts) != 1 or len(minus_shifts) != 1:
         raise ValueError("Input file shifts inconsistent. Please post an issue")
-    # TODO: acceptable values
-    return list(plus_shifts)[0], list(minus_shifts)[0]
+    
+    plus_shift = list(plus_shifts)[0]
+    minus_shift = list(minus_shifts)[0]
+
+    if (plus_shift,minus_shift) not in [(0,0)]+ list(itertools.product([3,4,5],[-4,-5,-6])):
+        raise ValueError("Input shift is non-standard. Please post an Issue.")
+
+    return plus_shift, minus_shift
 
 def compute_shift_DNASE(ref_plus_pwms, ref_minus_pwms, plus_pwm, minus_pwm):
     plus_shifts = set()
@@ -171,9 +178,15 @@ def compute_shift_DNASE(ref_plus_pwms, ref_minus_pwms, plus_pwm, minus_pwm):
         minus_shifts.add(shift)
 
     if len(plus_shifts) != 1 or len(minus_shifts) != 1:
-        raise ValueError("Input file shifts inconsistent. Please post an issue")
-    # TODO: acceptable values
-    return list(plus_shifts)[0], list(minus_shifts)[0]
+        raise ValueError("Input file shifts inconsistent. Please post an Issue")
+
+    plus_shift = list(plus_shifts)[0]
+    minus_shift = list(minus_shifts)[0]
+
+    if (plus_shift,minus_shift) not in [(0,0), (0,1)]:
+        raise ValueError("Input shift is non-standard. Please post an Issue.")
+
+    return plus_shift, minus_shift 
 
 
 def compute_shift(input_bam_file, input_fragment_file, input_tagalign_file, num_samples, genome_fasta_path, data_type, ref_motifs_file):
