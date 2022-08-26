@@ -17,12 +17,12 @@ usage: reads_to_bigwig.py [-h] -g GENOME
                           [-m MINUS_SHIFT] [--ATAC-ref-path ATAC_REF_PATH]
                           [--DNASE-ref-path DNASE_REF_PATH] [--num-samples NUM_SAMPLES]
 
-Convert input BAM/fragment/tagAlign File to appropriately shifted unstranded Bigwig
+Convert input BAM/fragment/tagAlign file to appropriately shifted unstranded Bigwig
 
 optional arguments:
   -h, --help            show this help message and exit
   -g GENOME, --genome GENOME
-                        reference genome file
+                        reference genome fasta file
   -ibam INPUT_BAM_FILE, --input-bam-file INPUT_BAM_FILE
                         Input BAM file
   -ifrag INPUT_FRAGMENT_FILE, --input-fragment-file INPUT_FRAGMENT_FILE

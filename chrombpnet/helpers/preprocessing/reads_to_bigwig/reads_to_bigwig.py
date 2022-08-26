@@ -9,8 +9,8 @@ import auto_shift_detect
 
 
 def parse_args():
-    parser=argparse.ArgumentParser(description="Convert input BAM/fragment/tagAlign File to appropriately shifted unstranded Bigwig")
-    parser.add_argument('-g','--genome', required=True, type=str, help="reference genome file")
+    parser=argparse.ArgumentParser(description="Convert input BAM/fragment/tagAlign file to appropriately shifted unstranded Bigwig")
+    parser.add_argument('-g','--genome', required=True, type=str, help="reference genome fasta file")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-ibam', '--input-bam-file', type=str, help="Input BAM file")
     group.add_argument('-ifrag', '--input-fragment-file', type=str, help="Input fragment file")
