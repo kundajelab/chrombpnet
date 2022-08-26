@@ -10,7 +10,7 @@ import chrombpnet.training.utils.one_hot as one_hot
 
 
 def parse_args():
-    parser=argparse.ArgumentParser(description="Automatically detect enzyme shift of input BAM/Fragment File")
+    parser=argparse.ArgumentParser(description="Automatically detect enzyme shift of input BAM/fragment/tagAlign File")
     parser.add_argument('-g','--genome', required=True, type=str, help="reference genome file")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-ibam', '--input-bam-file', type=str, help="Input BAM file")
