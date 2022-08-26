@@ -1,6 +1,6 @@
-# Preprocessing scripts for chrombpnet
+# Preprocessing scripts for ChromBPNet
 
-The scripts in this folder are pre-processing steps to convert input reads to Bigwig format for trainining chrombpnet models.
+The scripts in this folder are pre-processing steps to convert input reads to Bigwig format for trainining ChromBPNet models.
 
 ## Requirements
 
@@ -77,7 +77,7 @@ Here we show you what a PWM built from unstranded Bigwigs look like when conside
 
 ### Suggestions for preparing input data
 
-Please ensure your input files are filtered for quality metrics and duplicates are removed appropriately. For single-end data, we recommend not removing duplicates. Fragment files obtained from Chromap, cellranger and similar tools can be supplied as is.
+Please ensure your input files are filtered for quality metrics and duplicates are removed appropriately. For single-end data, we recommend not removing duplicates. Fragment files obtained from Chromap, cellranger and similar tools are suitable with this pipeline. For single-cell analyses, you may wish to aggregate fragments by cluster instead of sample to train cluster-specific ChromBPNet models.
 
 [url1]: https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1642-2
 
