@@ -10,7 +10,7 @@ To run these scripts you will need the `samtools` and `bedGraphToBigWig` (from u
 
 We convert input BAMS to appropriately shifted (+4/-4 shift for ATAC and 0/+1 shift for DNASE) Bigwigs consistent with our training pipeline.
 
-```
+```bash
 usage: reads_to_bigwig.py [-h] -g GENOME
                           (-ibam INPUT_BAM_FILE | -ifrag INPUT_FRAGMENT_FILE | -itag INPUT_TAGALIGN_FILE)
                           -c CHROM_SIZES -o OUTPUT_PREFIX -d {ATAC,DNASE} [-p PLUS_SHIFT]
@@ -44,9 +44,21 @@ Please supply one of BAM(`-ibam`)/fragment file(`-ifrag`)/tagAlign file(`-itag`)
 
 If supplying a fragment file, it should minimally have 3 columns for chr, start and end. Each line must represent a fragment with Tn5 transposition events at both ends.
 
-If supplying a fragment file, it should minimally contain 3 columns for chr, start and end, and a 6th column with the strand.
+If supplying a fragment file, it should minimally contain 3 columns for chr, start and end, and a 6th column with the strand. 
+
+Both gzipped and plain text files are allowed. Sorting is not expected.
 
 The `CHROM_SIZES` file should be a tab-separated file with two columns. First column is the chromosome and second column is the chromsome length. Make sure the input BAM/fragment/tagAlign file are consistent with the chromosomes in `CHROM_SIZES`.
+
+### Example usage
+
+```bash
+python reads_to_bigwig.py -ifrag my_sample.frag.tsv.gz \
+                          -g hg38.fa \
+                          -c hg38.chrom.sizes \
+                          -o my_sample
+                          -d ATAC
+```
 
 ### Automatic shift detection
 
