@@ -60,6 +60,7 @@ def tagalign_stream(tagalign_file_path):
     """
     ta_is_gz = is_gz_file(tagalign_file_path)
     p = subprocess.Popen(["zcat" if ta_is_gz else "cat", tagalign_file_path], stdout=subprocess.PIPE)
+    return p
 
 def sample_reads(bam_path, fragment_file_path, tagalign_file_path, num_samples):
     # only one of bam, fragment, tagalign is not None
@@ -136,7 +137,8 @@ def get_ref_pwms(ref_motifs_path):
                 pwms[cur_orient][cur_motif] = []
             else:
                 pwms[cur_orient][cur_motif].append([float(y) for y in x.split('\t')])
-    
+    pwms[cur_orient][cur_motif] = np.array(pwms[cur_orient][cur_motif])
+
     return pwms['+'], pwms['-']
 
 def compute_shift_ATAC(ref_plus_pwms, ref_minus_pwms, plus_pwm, minus_pwm):
@@ -182,10 +184,6 @@ def compute_shift(input_bam_file, input_fragment_file, input_tagalign_file, num_
 
     plus_pwm, minus_pwm = get_pwms(sampled_plus_reads, sampled_minus_reads, genome_fasta_path)
     
-    #inp.savetxt("./plus.tsv", plus_pwm[10:30], fmt='%.4f', delimiter='\t')
-    #np.savetxt("./minus.tsv", minus_pwm[10:30], fmt='%.4f', delimiter='\t')
-    #import pdb;pdb.set_trace()
-
     ref_plus_pwms, ref_minus_pwms = get_ref_pwms(ref_motifs_file)
 
     if data_type=="ATAC":
