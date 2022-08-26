@@ -1,10 +1,10 @@
 # Preprocessing scripts for chrombpnet
 
-The scripts in this folder are pre-processing steps to convert input reads to bigwig format for trainining chrombpnet models.
+The scripts in this folder are pre-processing steps to convert input reads to Bigwig format for trainining chrombpnet models.
 
 ## Requirements
 
-To run these scripts you will need the `samtools` and `bedGraphToBigWig` (from ucsc) tools. These scripts are tested for bulk and single-cell ATAC-seq, and for bulk DNase-seq.
+To run these scripts you will need `bedtools`, `samtools` and `bedGraphToBigWig` (from ucsc) tools. These scripts are tested for bulk and single-cell ATAC-seq, and for bulk DNase-seq.
 
 ## BAM/fragment file/tagAlign file to Bigwig
 
@@ -40,7 +40,7 @@ optional arguments:
                         Minus strand shift applied to reads. Estimated if not specified
 ```
 
-Please supply one of BAM(`-ibam`)/fragment file(`-ifrag`)/tagAlign file(`-itag`) as input. The script generates an unstranded bigwig- forward and reverse strands are combined with appropriate shifting (+4/-4 for ATAC and 0/+1 for DNase). Output is stored at `{OUTPUT_PREFIX}_unstranded.bw`. The directory in the prefix, if applicable, must already exist.
+Please supply one of BAM(`-ibam`)/fragment file(`-ifrag`)/tagAlign file(`-itag`) as input. The script generates an unstranded Bigwig- forward and reverse strands are combined with appropriate shifting (+4/-4 for ATAC and 0/+1 for DNase). Output is stored at `{OUTPUT_PREFIX}_unstranded.bw`. The directory in the prefix, if applicable, must already exist.
 
 If supplying a fragment file, it should minimally have 3 columns for chr, start and end. Each line must represent a fragment with Tn5 transposition events at both ends.
 
@@ -73,7 +73,7 @@ In rare cases, you may see an error such as "Input file shifts inconsistent" or 
 ### Wondering why we are using the  +4/-4 ATAC shift (instead of the popular +4/-5 ATAC shift) and 0/+1 DNASE shift (instead of the popular no shift)? 
 
 **TODO**: Anusri now that we are not using PWMs, maybe provide a different argument?
-Here we show you what a PWM built from unstranded bigwigs look like when considering different shifts. To convert bigwigs to PWM use the scripts provided in the `analysis/` directory. From the below images we see that the signal on forward and revere strand reinforce themselves when we consider +4/-4 shift giving us the Tn5/DNASE-I bias motif PWM that we know of in literature ([Figure 1 in HINT-ATAC][url1] paper).
+Here we show you what a PWM built from unstranded Bigwigs look like when considering different shifts. To convert Bigwigs to PWM use the scripts provided in the `analysis/` directory. From the below images we see that the signal on forward and revere strand reinforce themselves when we consider +4/-4 shift giving us the Tn5/DNASE-I bias motif PWM that we know of in literature ([Figure 1 in HINT-ATAC][url1] paper).
 
 ### Suggestions for preparing input data
 
