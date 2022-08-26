@@ -10,7 +10,7 @@ To run these scripts you will need the `samtools` and `bedGraphToBigWig` (from u
 
 We convert input BAMS to appropriately shifted (+4/-4 shift for ATAC and 0/+1 shift for DNASE) Bigwigs consistent with our training pipeline.
 
-```bash
+```
 usage: reads_to_bigwig.py [-h] -g GENOME
                           (-ibam INPUT_BAM_FILE | -ifrag INPUT_FRAGMENT_FILE | -itag INPUT_TAGALIGN_FILE)
                           -c CHROM_SIZES -o OUTPUT_PREFIX -d {ATAC,DNASE} [-p PLUS_SHIFT]
