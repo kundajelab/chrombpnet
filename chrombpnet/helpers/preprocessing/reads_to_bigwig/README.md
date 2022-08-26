@@ -17,7 +17,7 @@ usage: reads_to_bigwig.py [-h] -g GENOME
                           [-m MINUS_SHIFT] [--ATAC-ref-path ATAC_REF_PATH]
                           [--DNASE-ref-path DNASE_REF_PATH] [--num-samples NUM_SAMPLES]
 
-Automatically detect enzyme shift of input BAM/fragment/tagAlign File
+Convert input BAM/fragment/tagAlign File to appropriately shifted unstranded Bigwig
 
 optional arguments:
   -h, --help            show this help message and exit
