@@ -56,9 +56,11 @@ The `CHROM_SIZES` file should be a tab-separated file with two columns. First co
 python reads_to_bigwig.py -ifrag my_sample.frag.tsv.gz \
                           -g hg38.fa \
                           -c hg38.chrom.sizes \
-                          -o my_sample
+                          -o /output/directory/my_sample
                           -d ATAC
 ```
+
+Example usage when we have an input ATAC-seq fragment file `my_sample.frag.tsv.gz`. Output is stored to `/output/directory/my_sample_unstranded.bw`, please ensure the directory `/output/directory/` exists.
 
 ### Automatic shift detection
 
