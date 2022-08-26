@@ -161,7 +161,7 @@ def compute_shift_ATAC(ref_plus_pwms, ref_minus_pwms, plus_pwm, minus_pwm):
     minus_shift = list(minus_shifts)[0]
 
     if (plus_shift,minus_shift) not in [(0,0)]+ list(itertools.product([3,4,5],[-4,-5,-6])):
-        raise ValueError("Input shift is non-standard. Please post an Issue.")
+        raise ValueError("Input shift is non-standard ({:+}/{:+}). Please post an Issue.".format(plus_shift, minus_shift))
 
     return plus_shift, minus_shift
 
@@ -184,7 +184,7 @@ def compute_shift_DNASE(ref_plus_pwms, ref_minus_pwms, plus_pwm, minus_pwm):
     minus_shift = list(minus_shifts)[0]
 
     if (plus_shift,minus_shift) not in [(0,0), (0,1)]:
-        raise ValueError("Input shift is non-standard. Please post an Issue.")
+        raise ValueError("Input shift is non-standard ({:+}/{:+}). Please post an Issue.".format(plus_shift, minus_shift))
 
     return plus_shift, minus_shift 
 
