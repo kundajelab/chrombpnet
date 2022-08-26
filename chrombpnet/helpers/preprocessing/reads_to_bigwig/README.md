@@ -46,7 +46,7 @@ If supplying a fragment file, it should minimally have 3 columns for chr, start 
 
 If supplying a fragment file, it should minimally contain 3 columns for chr, start and end, and a 6th column with the strand.
 
-The CHROM_SIZES file should be a tab-separated file with two columns. First column is the chromosome and second column is the chromsome length. Make sure the bam's use the same reference format as the `CHROM_SIZES`.
+The `CHROM_SIZES` file should be a tab-separated file with two columns. First column is the chromosome and second column is the chromsome length. Make sure the input BAM/fragment/tagAlign file are consistent with the chromosomes in `CHROM_SIZES`.
 
 ### Automatic shift detection
 
