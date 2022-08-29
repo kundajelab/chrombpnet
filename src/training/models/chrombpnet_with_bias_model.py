@@ -68,7 +68,7 @@ def bpnet_model(filters, n_dil_layers, sequence_len, out_pred_len):
     # Step 1.2 - Crop to match size of the required output size
     cropsize = int(int_shape(prof_out_precrop)[1]/2)-int(out_pred_len/2)
     assert cropsize>=0
-    assert (cropsize % 2 == 0) # Necessary for symmetric cropping
+    #assert (cropsize % 2 == 0) # Necessary for symmetric cropping
 
     prof = Cropping1D(cropsize,
                 name='wo_bias_bpnet_logitt_before_flatten')(prof_out_precrop)
