@@ -1,0 +1,82 @@
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/K562/K562_07.07.2022_bias_128_4_1234_0.5_fold_1_data_type_DNASE_PE/bias_model/interpret/K562.counts_scores.h5
+tar: Removing leading `/' from member names
+Dropping out copy after 0 retries
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/K562/K562_07.07.2022_bias_128_4_1234_0.5_fold_1_data_type_DNASE_PE/bias_model/interpret/K562.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/K562/K562_07.08.2022_bias_128_4_1234_0.5_fold_2_data_type_DNASE_PE/bias_model/interpret/K562.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/K562/K562_07.08.2022_bias_128_4_1234_0.5_fold_2_data_type_DNASE_PE/bias_model/interpret/K562.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/K562/K562_07.07.2022_bias_128_4_1234_0.5_fold_3_data_type_DNASE_PE/bias_model/interpret/K562.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/K562/K562_07.07.2022_bias_128_4_1234_0.5_fold_3_data_type_DNASE_PE/bias_model/interpret/K562.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/K562/K562_07.07.2022_bias_128_4_1234_0.5_fold_3_data_type_DNASE_PE/bias_model/interpret/K562.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/K562/K562_07.07.2022_bias_128_4_1234_0.5_fold_3_data_type_DNASE_PE/bias_model/interpret/K562.profile_scores.h5
+tar: Removing leading `/' from member names
+Dropping out copy after 0 retries
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/HEPG2/HEPG2_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_PE/bias_model/interpret/HEPG2.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/HEPG2/HEPG2_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_PE/bias_model/interpret/HEPG2.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/HEPG2/HEPG2_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_PE/bias_model/interpret/HEPG2.counts_scores.h5
+tar: Removing leading `/' from member names
+Dropping out copy after 0 retries
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/HEPG2/HEPG2_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_PE/bias_model/interpret/HEPG2.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/HEPG2/HEPG2_07.07.2022_bias_128_4_1234_0.8_fold_4_data_type_DNASE_PE/bias_model/interpret/HEPG2.counts_scores.h5
+tar: Removing leading `/' from member names
+Dropping out copy after 0 retries
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/HEPG2/HEPG2_07.07.2022_bias_128_4_1234_0.8_fold_4_data_type_DNASE_PE/bias_model/interpret/HEPG2.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/IMR90/IMR90_07.07.2022_bias_128_4_1234_0.8_fold_1_data_type_DNASE_SE/bias_model/interpret/IMR90.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/IMR90/IMR90_07.07.2022_bias_128_4_1234_0.8_fold_1_data_type_DNASE_SE/bias_model/interpret/IMR90.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/IMR90/IMR90_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_SE/bias_model/interpret/IMR90.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/IMR90/IMR90_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_SE/bias_model/interpret/IMR90.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/IMR90/IMR90_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_SE/bias_model/interpret/IMR90.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/IMR90/IMR90_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_SE/bias_model/interpret/IMR90.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/H1ESC/H1ESC_07.07.2022_bias_128_4_1234_0.8_fold_1_data_type_DNASE_SE/bias_model/interpret/H1ESC.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/H1ESC/H1ESC_07.07.2022_bias_128_4_1234_0.8_fold_1_data_type_DNASE_SE/bias_model/interpret/H1ESC.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/H1ESC/H1ESC_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_SE/bias_model/interpret/H1ESC.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/H1ESC/H1ESC_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_SE/bias_model/interpret/H1ESC.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/H1ESC/H1ESC_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_SE/bias_model/interpret/H1ESC.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/H1ESC/H1ESC_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_SE/bias_model/interpret/H1ESC.profile_scores.h5
+tar: Removing leading `/' from member names
+Dropping out copy after 0 retries
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/H1ESC/H1ESC_07.07.2022_bias_128_4_1234_0.8_fold_4_data_type_DNASE_SE/bias_model/interpret/H1ESC.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/H1ESC/H1ESC_07.07.2022_bias_128_4_1234_0.8_fold_4_data_type_DNASE_SE/bias_model/interpret/H1ESC.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.8_fold_1_data_type_DNASE_SE/bias_model/interpret/GM12878.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.8_fold_1_data_type_DNASE_SE/bias_model/interpret/GM12878.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_SE/bias_model/interpret/GM12878.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_SE/bias_model/interpret/GM12878.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_SE/bias_model/interpret/GM12878.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_SE/bias_model/interpret/GM12878.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.8_fold_4_data_type_DNASE_SE/bias_model/interpret/GM12878.counts_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_SE/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.8_fold_4_data_type_DNASE_SE/bias_model/interpret/GM12878.profile_scores.h5
+tar: Removing leading `/' from member names
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/K562/K562_07.07.2022_bias_128_4_1234_0.5_fold_4_data_type_DNASE_PE/bias_model/interpret/K562.counts_scores.h5
+tar: Removing leading `/' from member names
+Dropping out copy after 0 retries
+populate-chrombpnet-pod:/chrombpnet/DNASE_PE/K562/K562_07.07.2022_bias_128_4_1234_0.5_fold_4_data_type_DNASE_PE/bias_model/interpret/K562.profile_scores.h5
+tar: Removing leading `/' from member names

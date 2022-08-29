@@ -1,0 +1,71 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+   name: chrombpnet.gm12878.50m.fold.0.bias.transfer
+   labels:
+     jobgroup: jobexample
+spec:
+   template:
+     metadata:
+       name: jobexample
+       labels:
+         jobgroup: jobexample
+     spec:
+       affinity:
+         nodeAffinity:
+           preferredDuringSchedulingIgnoredDuringExecution:
+           - weight: 1
+             preference:
+               matchExpressions:
+               - key: gpu-type
+                 operator: In
+                 values:
+                 - "titan-xp"
+                 - "K40"
+                 - "TITANRTX"
+                 - "K40"
+                 - "V100"
+                 - "A100"
+                 - "A40"
+                 - "A40"
+                 - "RTX6000"
+                 - "3090"
+       containers:
+       - name: jobexample
+         image: kundajelab/chrombpnet:latest 
+         imagePullPolicy: Always
+         resources:
+           requests:
+             cpu: 1
+             memory: 32Gi
+             nvidia.com/gpu: 1
+           limits:
+             cpu: 1
+             memory: 128Gi
+             nvidia.com/gpu: 1
+         command:
+         - /bin/bash
+         - -c
+         args:
+         - nvidia-smi;
+           mkdir /scratch/;
+           cp -r /chrombpnet/chrombpnet/ /scratch/;
+           cd /scratch/chrombpnet/;
+           mkdir /scratch/chrombpnet/GM12878_50M_ATAC_PE/; 
+           mkdir /scratch/chrombpnet/GM12878_50M_ATAC_PE/fold_0/; 
+           cp -r /chrombpnet/ATAC_PE/GM12878_50M/data/ /scratch/chrombpnet/GM12878_50M_ATAC_PE/;
+           cp  /chrombpnet/ATAC_PE/HEPG2/HEPG2_05.09.2022_bias_128_4_1234_0.8_fold_0/bias_model/bias.h5 /scratch/chrombpnet/GM12878_50M_ATAC_PE/fold_0/;
+           cp -r /chrombpnet/reference/ /scratch/chrombpnet/;
+           cp -r /chrombpnet/splits/ /scratch/chrombpnet/;
+           bash all_run_with_bias_gm12878_cellline.sh GM12878_50M_ATAC_PE/fold_0/bias.h5 1234 GM12878_50M 0 ATAC_PE;
+           cp -r /scratch/chrombpnet/models/* /chrombpnet/ATAC_PE/GM12878_50M/; 
+         volumeMounts:
+         - mountPath: /chrombpnet
+           name: chrombpnet
+       restartPolicy: Never
+       volumes:
+         - name: chrombpnet
+           persistentVolumeClaim:
+             claimName: chrombpnet
+       imagePullSecrets:
+       - name: regcrew

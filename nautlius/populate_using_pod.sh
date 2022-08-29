@@ -1,7 +1,8 @@
 set -beEuo pipefail
 
 experiment=$1
-data_type=DNASE_SE
+data_type=$2
+#data_type=DNASE_SE
 #data_type=ATAC_PE
 
 #oak_dir=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet_feb_04/$data_type/

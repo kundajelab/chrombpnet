@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+   name: chrombpnet.imr90.1234.0.4.fold.4.atac
+   labels:
+     jobgroup: jobexample
+spec:
+   template:
+     metadata:
+       name: jobexample
+       labels:
+         jobgroup: jobexample
+     spec:
+       affinity:
+         nodeAffinity:
+           preferredDuringSchedulingIgnoredDuringExecution:
+           - weight: 1
+             preference:
+               matchExpressions:
+               - key: gpu-type
+                 operator: In
+                 values:
+                 - "titan-xp"
+                 - "TITANRTX"
+                 - "V100"
+       containers:
+       - name: jobexample
+         image: kundajelab/chrombpnet:dev 
+         imagePullPolicy: Always
+         resources:
+           requests:
+             cpu: 1
+             memory: 32Gi
+             nvidia.com/gpu: 1
+           limits:
+             cpu: 1
+             memory: 128Gi
+             nvidia.com/gpu: 1
+         command:
+         - /bin/bash
+         - -c
+         args:
+         - nvidia-smi;
+           mkdir /scratch/;
+           cp -r /chrombpnet/chrombpnet/ /scratch/;
+           cd /scratch/chrombpnet/;
+           mkdir /scratch/chrombpnet/IMR90_ATAC_PE/; 
+           cp -r /chrombpnet/ATAC_PE/IMR90/data/ /scratch/chrombpnet/IMR90_ATAC_PE/;
+           cp -r /chrombpnet/reference/ /scratch/chrombpnet/;
+           cp -r /chrombpnet/splits/ /scratch/chrombpnet/;
+           bash all_run.sh 128 4 1234 0.4 IMR90 4 ATAC_PE;
+           cp -r /scratch/chrombpnet/models/* /chrombpnet/ATAC_PE/IMR90/; 
+         volumeMounts:
+         - mountPath: /chrombpnet
+           name: chrombpnet
+       restartPolicy: Never
+       volumes:
+         - name: chrombpnet
+           persistentVolumeClaim:
+             claimName: chrombpnet
+       imagePullSecrets:
+       - name: regcrew
+

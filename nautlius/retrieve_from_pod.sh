@@ -9,11 +9,10 @@ podname=populate-chrombpnet-pod
 ceph=chrombpnet
 
 
-mkdir /mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/$data_type/$dataset/nautilus_runs_jun16/
-echo "kubectl cp $podname:/$ceph/$data_type/$dataset/$model  /mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/$data_type/$dataset/nautilus_runs_jun16/"
-kubectl cp $podname:/$ceph/$data_type/$dataset/$model  /mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/$data_type/$dataset/nautilus_runs_jun16/
 
-
+#mkdir /mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/$data_type/$dataset/nautilus_runs_jun16/
+#echo "kubectl cp $podname:/$ceph/$data_type/$dataset/$model  /mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/$data_type/$dataset/nautilus_runs_jun16/"
+#kubectl cp $podname:/$ceph/$data_type/$dataset/$model  /mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/$data_type/$dataset/nautilus_runs_jun16/
 
 
 #mkdir /mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_PE/$dataset/nautilus_runs_may18/
@@ -36,15 +35,21 @@ kubectl cp $podname:/$ceph/$data_type/$dataset/$model  /mnt/lab_data2/anusri/chr
 
 #mkdir /oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/DNASE_PE/$dataset/$model/
 #mkdir /oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/DNASE_PE/$dataset/$model/SIGNAL/
-#oak_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/DNASE_PE/$dataset/$model/SIGNAL
 
-#kubectl cp $podname:/$ceph/DNASE_PE/$dataset/$model/bias_model/interpret/$dataset.counts_scores.h5  $oak_dir/$dataset.counts_scores.h5
+mkdir /oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/$data_type/$dataset/$model/
+oak_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/$data_type/$dataset/$model/BIAS/
+mkdir $oak_dir
+
+echo "$podname:/$ceph/$data_type/$dataset/$model/bias_model/interpret/$dataset.counts_scores.h5"
+
+kubectl cp $podname:/$ceph/$data_type/$dataset/$model/bias_model/interpret/$dataset.counts_scores.h5  $oak_dir/$dataset.counts_scores.h5
+wait
+echo "$podname:/$ceph/$data_type/$dataset/$model/bias_model/interpret/$dataset.profile_scores.h5"
+
+kubectl cp $podname:/$ceph/$data_type/$dataset/$model/bias_model/interpret/$dataset.profile_scores.h5  $oak_dir/$dataset.profile_scores.h5
+
+#kubectl cp $podname:/$ceph/$data_type/$dataset/$model/chrombpnet_model/interpret/$dataset.counts_scores.h5  $oak_dir/$dataset.counts_scores.h5
 #wait
-#kubectl cp $podname:/$ceph/DNASE_PE/$dataset/$model/bias_model/interpret/$dataset.profile_scores.h5  $oak_dir/$dataset.profile_scores.h5
-
-#kubectl cp $podname:/$ceph/DNASE_PE/$dataset/$model/chrombpnet_model/interpret/$dataset.counts_scores.h5  $oak_dir/$dataset.counts_scores.h5
-#wait
-
-#kubectl cp $podname:/$ceph/DNASE_PE/$dataset/$model/chrombpnet_model/interpret/$dataset.profile_scores.h5  $oak_dir/$dataset.profile_scores.h5
+#kubectl cp $podname:/$ceph/$data_type/$dataset/$model/chrombpnet_model/interpret/$dataset.profile_scores.h5  $oak_dir/$dataset.profile_scores.h5
 
 
