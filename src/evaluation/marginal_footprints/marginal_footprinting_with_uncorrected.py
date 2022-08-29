@@ -1,4 +1,3 @@
-
 import pyBigWig
 import pandas as pd
 import numpy as np
@@ -14,10 +13,24 @@ import tensorflow as tf
 import argparse
 import context
 import json
-
+from tensorflow.keras.utils import get_custom_objects
+from tensorflow.keras.models import load_model
+import tensorflow as tf
+import deepdish
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
-PWM_SCHEMA = ["MOTIF_NAME", "MOTIF_PWM_FWD"]
+PWM_SCHEMA = ["MOTIF_NAME", "MOTIF_PWM_FWD", "1", "2", "3", "4", "5", "6", "7", "8"]
+
+
+def load_model_wrapper(args):
+    # read .h5 model
+    custom_objects={ "tf": tf}    
+    get_custom_objects().update(custom_objects)    
+    corrected_model=load_model(args.corrected_model_h5, compile=False)
+    uncorrected_model=load_model(args.uncorrected_model_h5, compile=False)
+    print("got the model")
+    corrected_model.summary()
+    return corrected_model,uncorrected_model
 
 
 def fetch_footprinting_args():
@@ -25,13 +38,13 @@ def fetch_footprinting_args():
     parser.add_argument("-g", "--genome", type=str, required=True, help="Genome fasta")
     parser.add_argument("-r", "--regions", type=str, required=True, help="10 column bed file of peaks. Sequences and labels will be extracted centered at start (2nd col) + summit (10th col).")
     parser.add_argument("-fl", "--chr_fold_path", type=str, required=True, help="Path to file containing chromosome splits; we will only use the test chromosomes")
-    parser.add_argument("-m", "--model_h5", type=str, required=True, help="Path to trained model, can be both bias or chrombpnet model")
+    parser.add_argument("-cm", "--corrected_model_h5", type=str, required=True, help="Path to trained model, can be both bias or chrombpnet model")
+    parser.add_argument("-um", "--uncorrected_model_h5", type=str, required=True, help="Path to trained model, can be both bias or chrombpnet model")
     parser.add_argument("-bs", "--batch_size", type=int, default="64", help="input batch size for the model")
     parser.add_argument("-o", "--output_prefix", type=str, required=True, help="Output prefix")
+    parser.add_argument("-tt", "--title", type=str, required=True, help="title for plot")
     parser.add_argument("-pwm_f", "--motifs_to_pwm", type=str, required=True, 
                         help="Path to a TSV file containing motifs in first column and motif string to use for footprinting in second column")    
-    parser.add_argument("-mo", "--motifs", nargs="+", type=lambda s: [str(item.strip()) for item in s.split(',')], default=["Tn5"],
-                        help="Input motifs to do marginal footprinting, the motif names input here should be present in the collumn one in motifs_to_pwm file argument")
     
     args = parser.parse_args()
     return args
@@ -60,14 +73,11 @@ def get_footprint_for_motif(seqs, motif, model, inputlen, batch_size):
     footprint_for_motif_rev = softmax(pred_output_rev[0])*(np.exp(pred_output_rev[1])-1)
 
     # add fwd sequence predictions and reverse sesquence predictions (not we flip the rev predictions)
-    #counts_for_motif = np.exp(pred_output_rev[1]) - 1 + np.exp(pred_output[1]) - 1
-    counts_for_motif = np.exp(pred_output_rev[1]) + np.exp(pred_output[1])
-    #counts_for_motif = pred_output_rev[1] + pred_output[1]
-
-    footprint_for_motif_tot = footprint_for_motif_fwd+footprint_for_motif_rev[:,::-1]
+    counts_for_motif = (np.exp(pred_output_rev[1]) - 1 + np.exp(pred_output[1]) - 1)/2
+    footprint_for_motif_tot = (footprint_for_motif_fwd+footprint_for_motif_rev[:,::-1])/2
     footprint_for_motif =  footprint_for_motif_tot / footprint_for_motif_tot.sum(axis=1)[:, np.newaxis]
 
-    return footprint_for_motif.mean(0), counts_for_motif.mean(0)
+    return footprint_for_motif_tot.mean(0), counts_for_motif.mean(0)
 
 def main():
 
@@ -77,7 +87,7 @@ def main():
     print(pwm_df)
     genome_fasta = pyfaidx.Fasta(args.genome)
 
-    model=context.load_model_wrapper(args)
+    model,uncorrected_model=load_model_wrapper(args)
     inputlen = model.input_shape[1] 
     outputlen = model.output_shape[0][1] 
     print("inferred model inputlen: ", inputlen)
@@ -87,43 +97,55 @@ def main():
     chroms_to_keep = set(splits_dict["test"])
 
     regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
-    regions_subsample = regions_df[(regions_df["chr"].isin(chroms_to_keep))]
+    chroms_to_keep = ["chr1"]
+    regions_subsample = regions_df[(regions_df["chr"].isin(chroms_to_keep))].sample(1000)
     regions_seqs = context.get_seq(regions_subsample, genome_fasta, inputlen)
 
     footprints_at_motifs = {}
-    motif_to_insert_fwd=""
+    footprints_at_motifs_uncorrected = {}
+
+    # get control sequence
     motif="control"
+    motif_to_insert_fwd = ""
+
     motif_footprint, motif_counts = get_footprint_for_motif(regions_seqs, motif_to_insert_fwd, model, inputlen, args.batch_size)
+    uncorrecetd_motif_footprint, uncorrected_motif_counts = get_footprint_for_motif(regions_seqs, motif_to_insert_fwd, uncorrected_model, inputlen, args.batch_size)
+
     footprints_at_motifs[motif]=[motif_footprint,motif_counts]
+    footprints_at_motifs_uncorrected[motif]=[uncorrecetd_motif_footprint,uncorrected_motif_counts]
 
 
     avg_response_at_tn5 = []
-    for motif in args.motifs[0]:
+    for i,r in pwm_df.iterrows():
+        motif=r["MOTIF_NAME"]
         print("inserting motif: ", motif)
-        motif_to_insert_fwd = pwm_df[pwm_df["MOTIF_NAME"]==motif]["MOTIF_PWM_FWD"].values[0]
+        motif_to_insert_fwd = r["MOTIF_PWM_FWD"]
         print(motif_to_insert_fwd)
         motif_footprint, motif_counts = get_footprint_for_motif(regions_seqs, motif_to_insert_fwd, model, inputlen, args.batch_size)
-        footprints_at_motifs[motif]=[motif_footprint,motif_counts]
+        uncorrecetd_motif_footprint, uncorrected_motif_counts = get_footprint_for_motif(regions_seqs, motif_to_insert_fwd, uncorrected_model, inputlen, args.batch_size)
 
-        # plot footprints of center 200bp
-        if ("tn5" in motif) or ("dnase" in motif):
-                avg_response_at_tn5.append(np.round(np.max(motif_footprint[outputlen//2-100:outputlen//2+100]),3))
+        footprints_at_motifs[motif]=[motif_footprint,motif_counts]
+        footprints_at_motifs_uncorrected[motif]=[uncorrecetd_motif_footprint,uncorrected_motif_counts]
+
         plt.figure()
-        plt.plot(range(200),motif_footprint[outputlen//2-100:outputlen//2+100])
+        plt.plot(range(200),uncorrecetd_motif_footprint[outputlen//2-100:outputlen//2+100], c="red", alpha=0.5)
+        plt.plot(range(200),motif_footprint[outputlen//2-100:outputlen//2+100], c="black")
+        plt.xticks(fontsize=18)
+        plt.yticks(fontsize=18)
+        plt.ylabel('Counts',fontsize=18)
+        plt.xlabel('200bp around motif',fontsize=18)
+        plt.title(args.title+"_"+motif, fontsize=18)
         plt.savefig(args.output_prefix+".{}.footprint.png".format(motif))
 
-    if np.mean(avg_response_at_tn5) < 0.006:
-        ofile = open("{}_footprints_score.txt".format(args.output_prefix), "w")
-        ofile.write("corrected_"+str(round(np.mean(avg_response_at_tn5),3))+"_"+"/".join(list(map(str,avg_response_at_tn5))))
-        ofile.close()
-    else:
-        ofile = open("{}_footprints_score.txt".format(args.output_prefix), "w")
-        ofile.write("uncorrected:"+str(round(np.mean(avg_response_at_tn5),3))+"/".join(list(map(str,avg_response_at_tn5))))
-        ofile.close()
 
     print("Saving marginal footprints")
     dd.io.save("{}_footprints.h5".format(args.output_prefix),
         footprints_at_motifs,
+        compression='blosc')
+
+    print("Saving marginal footprints")
+    dd.io.save("{}_uncorrected_footprints.h5".format(args.output_prefix),
+        footprints_at_motifs_uncorrected,
         compression='blosc')
 
 
