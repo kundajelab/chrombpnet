@@ -126,11 +126,7 @@ def main():
 
     if args.debug_chr:
         regions_df = regions_df[regions_df['chr'].isin(args.debug_chr)]
-        regions_df.to_csv("{}.interpreted_regions.bed".format(args.output_prefix), header=False, sep='\t')
-    else:
-        # copy regions bed to output directory
-        shutil.copy(args.regions, "{}.interpreted_regions.bed".format(args.output_prefix))
-
+    
     model = load_model_wrapper(args)
  
     # infer input length
@@ -139,10 +135,14 @@ def main():
 
     # load sequences
     # NOTE: it will pull out sequences of length inputlen
-    #       centered at the summit (start + 10th column)
+    #       centered at the summit (start + 10th column) and peaks used after filtering
+
     genome = pyfaidx.Fasta(args.genome)
-    seqs = context.get_seq(regions_df, genome, inputlen)
+    seqs, peaks_used = context.get_seq(regions_df, genome, inputlen)
     genome.close()
+
+    regions_df[peaks_used].to_csv("{}.interpreted_regions_v2.bed".format(args.output_prefix), header=False, index=False, sep='\t')
+
 
     interpret(model, seqs, args.output_prefix, args.profile_or_counts)
 
