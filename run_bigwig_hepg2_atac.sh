@@ -17,6 +17,6 @@ mkdir $output_dir
 
 
 regions=results/chrombpnet/hepg2.merged.atac.dnase.peaks.bed
-bash make_bigwig_new.sh $chrombpnet_nb $chrombpnet $bias $celline $gpu $regions $output_dir
+bash make_bigwig_new_temp.sh $chrombpnet_nb $chrombpnet $bias $celline $gpu $regions $output_dir
 
 

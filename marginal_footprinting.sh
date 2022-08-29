@@ -27,22 +27,22 @@ output_file=$output_dir/motif
 
 echo $( timestamp ): "mkdir $output_dir" | tee -a $logfile
         
-echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \\
+echo $( timestamp ): "python $PWD/src/evaluation/marginal_footprints/marginal_footprinting_all.py \\
 	-g $reference_fasta \\
 	-r $model_dir/filtered.nonpeaks.bed \\
 	--chr_fold_path=$fold \\
 	-m $model_dir/$model \\
 	-bs 256 \\
 	-o $output_file \\
-	-pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \\
+	-pwm_f src/evaluation/marginal_footprints/gm_benchmarking_motifs.tsv \\
 	-mo $motifs" | tee -a $logfile
 
-python $PWD/src/evaluation/marginal_footprints/marginal_footprinting.py \
+python $PWD/src/evaluation/marginal_footprints/marginal_footprinting_all.py \
 	-g $reference_fasta \
 	-r $model_dir/filtered.nonpeaks.bed \
 	--chr_fold_path=$fold \
 	-m $model_dir/$model \
 	-bs 256 \
 	-o $output_file \
-	-pwm_f src/evaluation/marginal_footprints/motif_to_pwm.tsv \
+	-pwm_f src/evaluation/marginal_footprints/gm_benchmarking_motifs.tsv \
 	-mo $motifs | tee -a $logfile
