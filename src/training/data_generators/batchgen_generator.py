@@ -76,7 +76,7 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
 
         elif self.peak_seqs is not None:
             # crop peak data before stacking
-            cropped_peaks, cropped_cnts, cropped_coords = augment.random_crop(self.peak_seqs, self.peak_cts, self.inputlen, self.outputlen, self.coords)
+            cropped_peaks, cropped_cnts, cropped_coords = augment.random_crop(self.peak_seqs, self.peak_cts, self.inputlen, self.outputlen, self.peak_coords)
 
             self.seqs = cropped_peaks
             self.cts = cropped_cnts
