@@ -44,8 +44,6 @@ def fetch_footprinting_args():
     parser.add_argument("-o", "--output_prefix", type=str, required=True, help="Output prefix")
     parser.add_argument("-pwm_f", "--motifs_to_pwm", type=str, required=True, 
                         help="Path to a TSV file containing motifs in first column and motif string to use for footprinting in second column")    
-    parser.add_argument("-mo", "--motifs", nargs="+", type=lambda s: [str(item.strip()) for item in s.split(',')], default=["Tn5"],
-                        help="Input motifs to do marginal footprinting, the motif names input here should be present in the collumn one in motifs_to_pwm file argument")
     parser.add_argument("--ylim",default=None,type=tuple, required=False,help="lower and upper y-limits for plotting the motif footprint, in the form of a tuple i.e. \
     (0,0.8). If this is set to None, ylim will be autodetermined.")
     
@@ -106,9 +104,11 @@ def main():
     footprints_at_motifs = {}
 
     avg_response_at_tn5 = []
-    for motif in args.motifs[0]:
+    #get motif names from column1 of the pwm_df
+    for index, row in pwm_df.iterrows():
+        motif=row["MOTIF_NAME"]
+        motif_to_insert_fwd=row["MOTIF_PWM_FWD"]        
         print("inserting motif: ", motif)
-        motif_to_insert_fwd = pwm_df[pwm_df["MOTIF_NAME"]==motif]["MOTIF_PWM_FWD"].values[0]
         print(motif_to_insert_fwd)
         motif_footprint, motif_counts = get_footprint_for_motif(regions_seqs, motif_to_insert_fwd, model, inputlen, args.batch_size)
         footprints_at_motifs[motif]=[motif_footprint,motif_counts]

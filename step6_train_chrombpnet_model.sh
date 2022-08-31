@@ -194,7 +194,7 @@ if [ -z "$pwm_f" ]
   then
       echo "No pwm file supplied, using default"
       tee -a motif_to_pwm.default.tsv <<EOF
-tn5_1	GCACAGTACAGAGCTG
+tn5_1	GCACAGTACAGAGCTG	      
 tn5_2	GTGCACAGTTCTAGAGTGTGCAG
 tn5_3	CCTCTACACTGTGCAGAA
 tn5_4	GCACAGTTCTAGACTGTGCAG
@@ -229,8 +229,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
         -m $output_dir/chrombpnet_wo_bias.h5 \\
         -bs 512 \\
         -o $output_dir/footprints/corrected \\
-        -pwm_f $pwm_f \\
-        -mo dnase_1,dnase_2" | tee -a $logfile
+        -pwm_f $pwm_f "| tee -a $logfile
 	    chrombpnet_marginal_footprints \
 		-g $reference_fasta \
 		-r $output_dir/filtered.nonpeaks.bed \
@@ -238,8 +237,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
 		-m $output_dir/chrombpnet_wo_bias.h5 \
 		-bs 512 \
 		-o $output_dir/footprints/corrected \
-		-pwm_f $pwm_f \
-		-mo dnase_1,dnase_2 | tee -a $logfile
+		-pwm_f $pwm_f | tee -a $logfile
 elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
     echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
     mkdir $output_dir/footprints
@@ -250,8 +248,7 @@ elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
         -m $output_dir/chrombpnet_wo_bias.h5 \\
         -bs 512 \\
         -o $output_dir/footprints/corrected \\
-        -pwm_f $pwm_f \\
-        -mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5" | tee -a $logfile
+        -pwm_f $pwm_f  | tee -a $logfile
 	    chrombpnet_marginal_footprints \
 		-g $reference_fasta \
 		-r $output_dir/filtered.nonpeaks.bed \
@@ -259,8 +256,7 @@ elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
 		-m $output_dir/chrombpnet_wo_bias.h5 \
 		-bs 512 \
 		-o $output_dir/footprints/corrected \
-		-pwm_f $pwm_f \
-		-mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5 | tee -a $logfile
+		-pwm_f $pwm_f | tee -a $logfile
 else
     echo "ERROR: unknown data type " $data_type | tee -a $logfile
 fi
@@ -276,8 +272,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
         -m $output_dir/bias_model_scaled.h5 \\
         -bs 512 \\
         -o $output_dir/footprints/bias \\
-        -pwm_f $pwm_f \\
-        -mo dnase_1,dnase_2" | tee -a $logfile
+        -pwm_f $pwm_f  | tee -a $logfile
 	    chrombpnet_marginal_footprints \
 		-g $reference_fasta \
 		-r $output_dir/filtered.nonpeaks.bed \
@@ -285,8 +280,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
 		-m $output_dir/bias_model_scaled.h5 \
 		-bs 512 \
 		-o $output_dir/footprints/bias \
-		-pwm_f $pwm_f \
-		-mo dnase_1,dnase_2 | tee -a $logfile
+		-pwm_f $pwm_f | tee -a $logfile
 elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
     echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
     mkdir $output_dir/footprints
@@ -297,8 +291,7 @@ elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
         -m $output_dir/bias_model_scaled.h5 \\
         -bs 512 \\
         -o $output_dir/footprints/bias \\
-        -pwm_f $pwm_f \\
-        -mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5" | tee -a $logfile
+        -pwm_f $pwm_f | tee -a $logfile
 	    chrombpnet_marginal_footprints \
 		-g $reference_fasta \
 		-r $output_dir/filtered.nonpeaks.bed \
@@ -306,8 +299,7 @@ elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
 		-m $output_dir/bias_model_scaled.h5 \
 		-bs 512 \
 		-o $output_dir/footprints/bias \
-		-pwm_f $pwm_f \
-		-mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5 | tee -a $logfile
+		-pwm_f $pwm_f  | tee -a $logfile
 else
     echo "ERROR: unknown data type " $data_type | tee -a $logfile
 fi
