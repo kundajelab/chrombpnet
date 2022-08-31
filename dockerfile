@@ -47,7 +47,14 @@ ENV LANG=C.UTF-8
 RUN mkdir /scratch/chrombpnet
 COPY . /scratch/chrombpnet
 
+# need to upgrade pip for faster dependency resolution
+RUN pip install --upgrade pip 
+
 # Install any needed packages specified in requirements.txt
 RUN pip install -r /scratch/chrombpnet/requirements.txt
+
+#Install chrombpnet itself
+WORKDIR /scratch
+RUN pip install -e chrombpnet
 
 
