@@ -129,10 +129,11 @@ def get_footprint_for_motif(seqs, motif, model, inputlen, batch_size):
 def main():
 
     args=fetch_footprinting_args()
-    if args.motif_to_pwm:
-        pwm_df = pd.read_csv(args.motifs_to_pwm, sep='\t',names=PWM_SCHEMA)
-    else:
+    #make sure motifs_to_pwm is not 'None'
+    if (args.motifs_to_pwm is None) or (args.motifs_to_pwm == "None"):
         pwm_df=get_default_motifs_to_pwm()
+    else:
+        pwm_df = pd.read_csv(args.motifs_to_pwm, sep='\t',names=PWM_SCHEMA)
     print(pwm_df)
     genome_fasta = pyfaidx.Fasta(args.genome)
 

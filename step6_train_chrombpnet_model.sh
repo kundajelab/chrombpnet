@@ -46,6 +46,10 @@ if [ -z "$logfile" ]
     touch $logfile
 fi
 
+if [ -z "$pwm_f" ]
+then
+    pwm_f="None"
+fi
 
 # this script does the following -  
 # (1) filters your peaks/nonpeaks (removes outliers and removes edge cases and creates a new filtered set)
