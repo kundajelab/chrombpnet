@@ -186,39 +186,6 @@ chrombpnet_predict \
     --model_h5=$output_dir/bias_model_scaled.h5 | tee -a $logfile
 
 # marginal footprinting
-
-
-
-#path to pwm file
-if [ -z "$pwm_f" ]
-  then
-      echo "No pwm file supplied, using default"
-      tee -a motif_to_pwm.default.tsv <<EOF
-tn5_1	GCACAGTACAGAGCTG	      
-tn5_2	GTGCACAGTTCTAGAGTGTGCAG
-tn5_3	CCTCTACACTGTGCAGAA
-tn5_4	GCACAGTTCTAGACTGTGCAG
-tn5_5	CTGCACAGTGTAGAGTTGTGC
-dnase_1	TTTACAAGTCCA
-dnase_2	TGTACTTACGAA
-NRF1	GCGCATGCGC
-AP1	CGATATGACTCATCCC
-CTCF	TTGGCCACTAGGGGGCGCTAT
-ETS	CCGAAAGCGGAAGTGAGAC	
-SP1	AAGGGGGCGGGGCCTAA
-RUNX	CCCTAACCACAGCCC
-NFKB	GCAAGGGAAATTCCCCAGG
-GATA+TAL	GGCTGGGGGGGGCAGATAAGGCC
-TAL	GGCTGGG
-NFYB	CCAGCCAATCAGAGC
-GABPA	GAAACCGGAAGTGGCC
-BACH1+MAFK	AACTGCTGAGTCATCCCG
-NRF1	CCCCGCGCATGCGCAGTGC
-HNF4G	CCGTTGGACTTTGGACCCTG
-EOF
-      pwm_f=motif_to_pwm.default.tsv
-fi
-
 if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
     echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
     mkdir $output_dir/footprints
