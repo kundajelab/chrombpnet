@@ -44,7 +44,7 @@ Please supply one of BAM(`-ibam`)/fragment file(`-ifrag`)/tagAlign file(`-itag`)
 
 If supplying a fragment file, it should minimally have 3 columns for chr, start and end. Each line must represent a fragment with Tn5 transposition events at both ends.
 
-If supplying a fragment file, it should minimally contain 3 columns for chr, start and end, and a 6th column with the strand. 
+If supplying a tagAlign file, it should minimally contain 3 columns for chr, start and end, and a 6th column with the strand. 
 
 Both gzipped and plain text files are allowed. Sorting is not expected.
 
