@@ -11,7 +11,7 @@ chrombpnet_marginal_footprints -g [genome_fasta] -r [regions] -chr [test_chr] -m
 ## Example Usage
 
 ```
-chrombpnet_marginal_footprints -g /path/to/genome_fasta -r /path/to/bed_file -chr chr1 -m /path/to/model.h5 -o /path/to/output_dir/outputprefix -pwm_f motif_to_pwm.tsv
+chrombpnet_marginal_footprints -g /path/to/genome_fasta -r /path/to/bed_file -chr chr1 -m /path/to/model.h5 -o /path/to/output_dir/outputprefix -pwm_f /path/to/motif_to_pwm.tsv
 ```
 
 ## Input Format
@@ -22,10 +22,10 @@ chrombpnet_marginal_footprints -g /path/to/genome_fasta -r /path/to/bed_file -ch
 - model_h5: Model in hdf5 format.
 - batch_size: Batch size to use for model predictions.
 - output_prefix: Output prefix path and name to use. See Output format section below to understand how this is used.
---motifs_to_pwm_file: optional argument specified a path to a TSV file containing motifs in first column (e.g. `Tn5`) and motif string (e.g. `GCACAGTACAGAGCTG`) to use for footprinting in second column. 
+--motifs_to_pwm_file:  Path to a TSV file containing motifs in first column (e.g. `Tn5`) and motif string (e.g. `GCACAGTACAGAGCTG`) to use for footprinting in second column. A default file is provided in the data folder (https://github.com/kundajelab/chrombpnet/tree/master/data/motif_to_pwm.tsv)
 --ylim: optional argument to specify the lower and upper y-axis values for the generated plot. This is a tuple of float/int values (lower y-lim bound for plotting, upper-ylim bound for plotting). Default is to not use this argument and auto-calculate the y-axis range.
 
-If the optional `motifs_to_pwm_file` argument is not provided, a default will be used containing the following:
+Example  https://github.com/kundajelab/chrombpnet/tree/master/data/motif_to_pwm.tsv can be used as a default and contains the following:
 ```
 tn5_1    GCACAGTACAGAGCTG
 tn5_2    GTGCACAGTTCTAGAGTGTGCAG

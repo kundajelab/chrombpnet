@@ -22,54 +22,6 @@ from tensorflow.keras.models import load_model
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 PWM_SCHEMA = ["MOTIF_NAME", "MOTIF_PWM_FWD"]
 
-def get_default_motifs_to_pwm():
-    motifs_to_pwm={'MOTIF_NAME':['tn5_1',
-                                 'tn5_2',
-                                 'tn5_3',
-                                 'tn5_4',
-                                 'tn5_5',
-                                 'dnase_1',
-                                 'dnase_2',
-                                 'NRF1',
-                                 'AP1',
-                                 'CTCF',
-                                 'ETS',
-                                 'SP1',
-                                 'RUNX',
-                                 'NFKB',
-                                 'GATA+TAL',
-                                 'TAL',
-                                 'NFYB',
-                                 'GABPA',
-                                 'BACH1+MAFK',
-                                 'NRF1',
-                                 'HNF4G'],
-                   'MOTIF_PWM_FWD':[
-                       'GCACAGTACAGAGCTG',
-                       'GTGCACAGTTCTAGAGTGTGCAG',
-                       'CCTCTACACTGTGCAGAA',
-                       'GCACAGTTCTAGACTGTGCAG',
-                       "CTGCACAGTGTAGAGTTGTGC",
-                       "TTTACAAGTCCA",
-                       "TGTACTTACGAA",
-                       "GCGCATGCGC",
-                       "CGATATGACTCATCCC",
-                       "TTGGCCACTAGGGGGCGCTAT",
-                       "CCGAAAGCGGAAGTGAGAC",
-                       "AAGGGGGCGGGGCCTAA",
-                       "CCCTAACCACAGCCC",
-                       "GCAAGGGAAATTCCCCAGG",
-                       "GGCTGGGGGGGGCAGATAAGGCC",
-                       "GGCTGGG",
-                       "CCAGCCAATCAGAGC",
-                       "GAAACCGGAAGTGGCC",
-                       "AACTGCTGAGTCATCCCG",
-                       "CCCCGCGCATGCGCAGTGC",
-                       "CCGTTGGACTTTGGACCCTG"]}
-    motifs_to_pwm_df=pd.DataFrame.from_dict(motifs_to_pwm)
-    return motifs_to_pwm_df
-
-
 def load_model_wrapper(args):
     # read .h5 model
     custom_objects={"multinomial_nll":losses.multinomial_nll, "tf": tf}    
@@ -88,8 +40,7 @@ def fetch_footprinting_args():
     parser.add_argument("-m", "--model_h5", type=str, required=True, help="Path to trained model, can be both bias or chrombpnet model")
     parser.add_argument("-bs", "--batch_size", type=int, default="64", help="input batch size for the model")
     parser.add_argument("-o", "--output_prefix", type=str, required=True, help="Output prefix")
-    parser.add_argument("-pwm_f", "--motifs_to_pwm", type=str, required=False, default=None, 
-                        help="Path to a TSV file containing motifs in first column and motif string to use for footprinting in second column")    
+    parser.add_argument("-pwm_f", "--motifs_to_pwm", type=str, required=True, help="Path to a TSV file containing motifs in first column and motif string to use for footprinting in second column")    
     parser.add_argument("--ylim",default=None,type=tuple, required=False,help="lower and upper y-limits for plotting the motif footprint, in the form of a tuple i.e. \
     (0,0.8). If this is set to None, ylim will be autodetermined.")
     
@@ -129,12 +80,8 @@ def get_footprint_for_motif(seqs, motif, model, inputlen, batch_size):
 def main():
 
     args=fetch_footprinting_args()
-    #make sure motifs_to_pwm is not 'None'
-    if (args.motifs_to_pwm is None) or (args.motifs_to_pwm == "None"):
-        pwm_df=get_default_motifs_to_pwm()
-    else:
-        pwm_df = pd.read_csv(args.motifs_to_pwm, sep='\t',names=PWM_SCHEMA)
-    print(pwm_df)
+    pwm_df = pd.read_csv(args.motifs_to_pwm, sep='\t',names=PWM_SCHEMA)
+    print(pwm_df.head())
     genome_fasta = pyfaidx.Fasta(args.genome)
 
     model=load_model_wrapper(args)

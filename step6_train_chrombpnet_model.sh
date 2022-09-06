@@ -21,7 +21,7 @@ output_dir=${7?param missing - output_dir}
 data_type=${8?param missing - data_type}
 seed=${9:-1234}
 logfile=${10} #optional
-pwm_f=${11}  #optional
+pwm_f=${11} 
 
 # defaults
 inputlen=2114
@@ -38,6 +38,13 @@ function timestamp {
     date +"%Y-%m-%d_%H-%M-%S" | tr -d '\n'
 }
 
+#verify that motif_to_pwm.tsv is provided 
+if [ -z "$pwm_f" ]
+then
+    echo "path to pwm file must be provided. You can use path to https://github.com/kundajelab/chrombpnet/tree/master/data/motif_to_pwm.tsv as a default"
+    exit
+fi
+
 # create the log file
 if [ -z "$logfile" ]
   then
@@ -46,10 +53,6 @@ if [ -z "$logfile" ]
     touch $logfile
 fi
 
-if [ -z "$pwm_f" ]
-then
-    pwm_f="None"
-fi
 
 # this script does the following -  
 # (1) filters your peaks/nonpeaks (removes outliers and removes edge cases and creates a new filtered set)
