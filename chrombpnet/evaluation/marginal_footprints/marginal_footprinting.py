@@ -1,4 +1,3 @@
-
 import pyBigWig
 import pandas as pd
 import numpy as np
@@ -23,7 +22,6 @@ from tensorflow.keras.models import load_model
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 PWM_SCHEMA = ["MOTIF_NAME", "MOTIF_PWM_FWD"]
 
-
 def load_model_wrapper(args):
     # read .h5 model
     custom_objects={"multinomial_nll":losses.multinomial_nll, "tf": tf}    
@@ -42,10 +40,7 @@ def fetch_footprinting_args():
     parser.add_argument("-m", "--model_h5", type=str, required=True, help="Path to trained model, can be both bias or chrombpnet model")
     parser.add_argument("-bs", "--batch_size", type=int, default="64", help="input batch size for the model")
     parser.add_argument("-o", "--output_prefix", type=str, required=True, help="Output prefix")
-    parser.add_argument("-pwm_f", "--motifs_to_pwm", type=str, required=True, 
-                        help="Path to a TSV file containing motifs in first column and motif string to use for footprinting in second column")    
-    parser.add_argument("-mo", "--motifs", nargs="+", type=lambda s: [str(item.strip()) for item in s.split(',')], default=["Tn5"],
-                        help="Input motifs to do marginal footprinting, the motif names input here should be present in the collumn one in motifs_to_pwm file argument")
+    parser.add_argument("-pwm_f", "--motifs_to_pwm", type=str, required=True, help="Path to a TSV file containing motifs in first column and motif string to use for footprinting in second column")    
     parser.add_argument("--ylim",default=None,type=tuple, required=False,help="lower and upper y-limits for plotting the motif footprint, in the form of a tuple i.e. \
     (0,0.8). If this is set to None, ylim will be autodetermined.")
     
@@ -85,9 +80,8 @@ def get_footprint_for_motif(seqs, motif, model, inputlen, batch_size):
 def main():
 
     args=fetch_footprinting_args()
-
     pwm_df = pd.read_csv(args.motifs_to_pwm, sep='\t',names=PWM_SCHEMA)
-    print(pwm_df)
+    print(pwm_df.head())
     genome_fasta = pyfaidx.Fasta(args.genome)
 
     model=load_model_wrapper(args)
@@ -106,9 +100,11 @@ def main():
     footprints_at_motifs = {}
 
     avg_response_at_tn5 = []
-    for motif in args.motifs[0]:
+    #get motif names from column1 of the pwm_df
+    for index, row in pwm_df.iterrows():
+        motif=row["MOTIF_NAME"]
+        motif_to_insert_fwd=row["MOTIF_PWM_FWD"]        
         print("inserting motif: ", motif)
-        motif_to_insert_fwd = pwm_df[pwm_df["MOTIF_NAME"]==motif]["MOTIF_PWM_FWD"].values[0]
         print(motif_to_insert_fwd)
         motif_footprint, motif_counts = get_footprint_for_motif(regions_seqs, motif_to_insert_fwd, model, inputlen, args.batch_size)
         footprints_at_motifs[motif]=[motif_footprint,motif_counts]

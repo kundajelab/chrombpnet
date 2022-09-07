@@ -20,7 +20,8 @@ bias_model=${6?param missing - bias_model}
 output_dir=${7?param missing - output_dir}
 data_type=${8?param missing - data_type}
 seed=${9:-1234}
-logfile=${10} #optional
+logfile=${11} #optional
+pwm_f=${10} #optional
 
 # defaults
 inputlen=2114
@@ -36,6 +37,36 @@ function timestamp {
     # current time
     date +"%Y-%m-%d_%H-%M-%S" | tr -d '\n'
 }
+
+#path to pwm file
+if [ -z "$pwm_f" ]
+then
+    echo "No pwm file supplied, using default"
+    tee -a motif_to_pwm.default.tsv <<EOF
+tn5_1    GCACAGTACAGAGCTG
+tn5_2    GTGCACAGTTCTAGAGTGTGCAG
+tn5_3    CCTCTACACTGTGCAGAA
+tn5_4    GCACAGTTCTAGACTGTGCAG
+tn5_5    CTGCACAGTGTAGAGTTGTGC
+dnase_1    TTTACAAGTCCA
+dnase_2    TGTACTTACGAA
+NRF1    GCGCATGCGC
+AP1    CGATATGACTCATCCC
+CTCF    TTGGCCACTAGGGGGCGCTAT
+ETS    CCGAAAGCGGAAGTGAGAC    
+SP1    AAGGGGGCGGGGCCTAA
+RUNX    CCCTAACCACAGCCC
+NFKB    GCAAGGGAAATTCCCCAGG
+GATA+TAL    GGCTGGGGGGGGCAGATAAGGCC
+TAL    GGCTGGG
+NFYB    CCAGCCAATCAGAGC
+GABPA    GAAACCGGAAGTGGCC
+BACH1+MAFK    AACTGCTGAGTCATCCCG
+NRF1    CCCCGCGCATGCGCAGTGC
+HNF4G    CCGTTGGACTTTGGACCCTG
+EOF
+      pwm_f=motif_to_pwm.default.tsv
+fi
 
 # create the log file
 if [ -z "$logfile" ]
@@ -185,107 +216,88 @@ chrombpnet_predict \
     --model_h5=$output_dir/bias_model_scaled.h5 | tee -a $logfile
 
 # marginal footprinting
-
-#path to pwm file
-srcdir=`chrombpnet_srcdir`
-# marginal_footprint_dir=`echo which chrombpnet_marginal_footprints`
-marginal_footprint_dir="$srcdir/evaluation/marginal_footprints"
-echo $marginal_footprint_dir
-
 if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
-        echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-        mkdir $output_dir/footprints
-        echo $( timestamp ): "chrombpnet_marginal_footprints \\
-        -g $reference_fasta \\
-        -r $output_dir/filtered.nonpeaks.bed \\
-        --chr_fold_path=$fold \\
-        -m $output_dir/chrombpnet_wo_bias.h5 \\
-        -bs 512 \\
-        -o $output_dir/footprints/corrected \\
-        -pwm_f $marginal_footprint_dir/motif_to_pwm.tsv \\
-        -mo dnase_1,dnase_2" | tee -a $logfile
-        chrombpnet_marginal_footprints \
-            -g $reference_fasta \
-            -r $output_dir/filtered.nonpeaks.bed \
-            --chr_fold_path=$fold \
-            -m $output_dir/chrombpnet_wo_bias.h5 \
-            -bs 512 \
-            -o $output_dir/footprints/corrected \
-            -pwm_f $marginal_footprint_dir/motif_to_pwm.tsv \
-            -mo dnase_1,dnase_2 | tee -a $logfile
+    echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
+    mkdir $output_dir/footprints
+    echo $( timestamp ): "chrombpnet_marginal_footprints \\
+    	     -g $reference_fasta \\
+             -r $output_dir/filtered.nonpeaks.bed \\
+             --chr_fold_path=$fold \\
+             -m $output_dir/chrombpnet_wo_bias.h5 \\
+             -bs 512 \\
+             -o $output_dir/footprints/corrected \\
+             -pwm_f $pwm_f "| tee -a $logfile
+    chrombpnet_marginal_footprints \
+	-g $reference_fasta \
+	-r $output_dir/filtered.nonpeaks.bed \
+	--chr_fold_path=$fold \
+	-m $output_dir/chrombpnet_wo_bias.h5 \
+	-bs 512 \
+	-o $output_dir/footprints/corrected \
+	-pwm_f $pwm_f | tee -a $logfile
 elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
-        echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-        mkdir $output_dir/footprints
-        echo $( timestamp ): "chrombpnet_marginal_footprints \\
-        -g $reference_fasta \\				     
+    echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
+    mkdir $output_dir/footprints
+    echo $( timestamp ): "chrombpnet_marginal_footprints \\
+    	-g $reference_fasta \\                     
         -r $output_dir/filtered.nonpeaks.bed \\
         --chr_fold_path=$fold \\
         -m $output_dir/chrombpnet_wo_bias.h5 \\
         -bs 512 \\
         -o $output_dir/footprints/corrected \\
-        -pwm_f $marginal_footprint_dir/motif_to_pwm.tsv \\
-        -mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5" | tee -a $logfile
-        chrombpnet_marginal_footprints \
-            -g $reference_fasta \
-            -r $output_dir/filtered.nonpeaks.bed \
-            --chr_fold_path=$fold \
-            -m $output_dir/chrombpnet_wo_bias.h5 \
-            -bs 512 \
-            -o $output_dir/footprints/corrected \
-            -pwm_f $marginal_footprint_dir/motif_to_pwm.tsv \
-            -mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5 | tee -a $logfile
+        -pwm_f $pwm_f"  | tee -a $logfile
+    chrombpnet_marginal_footprints \
+	-g $reference_fasta \
+	-r $output_dir/filtered.nonpeaks.bed \
+	--chr_fold_path=$fold \
+	-m $output_dir/chrombpnet_wo_bias.h5 \
+	-bs 512 \
+	-o $output_dir/footprints/corrected \
+	-pwm_f $pwm_f | tee -a $logfile
 else
     echo "ERROR: unknown data type " $data_type | tee -a $logfile
 fi
 
-# marginal footprtining bias model
+# marginal footprinting bias model
 if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
-        # echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-        # mkdir $output_dir/footprints
-        echo $( timestamp ): "chrombpnet_marginal_footprints \\
+    echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
+    mkdir $output_dir/footprints
+    echo $( timestamp ): "chrombpnet_marginal_footprints \\
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
         --chr_fold_path=$fold \\
         -m $output_dir/bias_model_scaled.h5 \\
         -bs 512 \\
         -o $output_dir/footprints/bias \\
-        -pwm_f $marginal_footprint_dir/motif_to_pwm.tsv \\
-        -mo dnase_1,dnase_2" | tee -a $logfile
-        chrombpnet_marginal_footprints \
-            -g $reference_fasta \
-            -r $output_dir/filtered.nonpeaks.bed \
-            --chr_fold_path=$fold \
-            -m $output_dir/bias_model_scaled.h5 \
-            -bs 512 \
-            -o $output_dir/footprints/bias \
-            -pwm_f $marginal_footprint_dir/motif_to_pwm.tsv \
-            -mo dnase_1,dnase_2 | tee -a $logfile
+        -pwm_f $pwm_f"  | tee -a $logfile
+    chrombpnet_marginal_footprints \
+	-g $reference_fasta \
+	-r $output_dir/filtered.nonpeaks.bed \
+	--chr_fold_path=$fold \
+	-m $output_dir/bias_model_scaled.h5 \
+	-bs 512 \
+	-o $output_dir/footprints/bias \
+	-pwm_f $pwm_f | tee -a $logfile
 elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
-        # echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-        # mkdir $output_dir/footprints
-        echo $( timestamp ): "chrombpnet_marginal_footprints \\
-        -g $reference_fasta \\
-        -r $output_dir/filtered.nonpeaks.bed \\
-        -chr "chr1" \\
-        -m $output_dir/bias_model_scaled.h5 \\
-        -bs 512 \\
-        -o $output_dir/footprints/bias \\
-        -pwm_f $marginal_footprint_dir/motif_to_pwm.tsv \\
-        -mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5" | tee -a $logfile
-        chrombpnet_marginal_footprints \
-            -g $reference_fasta \
-            -r $output_dir/filtered.nonpeaks.bed \
-            --chr_fold_path=$fold \
-            -m $output_dir/bias_model_scaled.h5 \
-            -bs 512 \
-            -o $output_dir/footprints/bias \
-            -pwm_f $marginal_footprint_dir/motif_to_pwm.tsv \
-            -mo tn5_1,tn5_2,tn5_3,tn5_4,tn5_5 | tee -a $logfile
+    echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
+    mkdir $output_dir/footprints
+    echo $( timestamp ): "chrombpnet_marginal_footprints \\
+    	     -g $reference_fasta \\
+             -r $output_dir/filtered.nonpeaks.bed \\
+             -chr "chr1" \\
+             -m $output_dir/bias_model_scaled.h5 \\
+             -bs 512 \\
+             -o $output_dir/footprints/bias \\
+             -pwm_f $pwm_f" | tee -a $logfile
+    chrombpnet_marginal_footprints \
+	-g $reference_fasta \
+	-r $output_dir/filtered.nonpeaks.bed \
+	--chr_fold_path=$fold \
+	-m $output_dir/bias_model_scaled.h5 \
+	-bs 512 \
+	-o $output_dir/footprints/bias \
+	-pwm_f $pwm_f  | tee -a $logfile
 else
     echo "ERROR: unknown data type " $data_type | tee -a $logfile
 fi
-
-
-
-
 

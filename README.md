@@ -218,6 +218,8 @@ We will use the bias model trained in Step 4 to regress out the effect of the bi
 mkdir models/chrombpnet_model
 step6_train_chrombpnet_model.sh data/downloads/hg38.fa data/downloads/K562_unstranded.bw data/downloads/overlap.bed.gz data/negatives_data/negatives_with_summit.bed data/splits/fold_0.json models/bias_model/bias.h5 models/chrombpnet_model ATAC_PE
 ```
+Note: Step6 will use the contents of data/motif_to_pwm.tsv if a motif-to-pwm input file is not provided
+
 
 The script `step4_train_bias_model.sh` runs the following five steps -  
  1. Generate hyperparmeters file for chrombpnet model: In this step we will filter peak and non-peaks regions for training and also find some important training hyperparameters. As a part of the filtration step we will filter out (a) peaks and non-peaks regions that are on the edges of the chromosome and (b) peaks and non-peaks which are outliers in total counts.
