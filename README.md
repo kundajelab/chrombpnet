@@ -216,7 +216,7 @@ We will use the bias model trained in Step 4 to regress out the effect of the bi
 
 ```
 mkdir models/chrombpnet_model
-step6_train_chrombpnet_model.sh data/downloads/hg38.fa data/downloads/K562_unstranded.bw data/downloads/overlap.bed.gz data/negatives_data/negatives_with_summit.bed data/splits/fold_0.json models/bias_model/bias.h5 models/chrombpnet_model ATAC_PE ""  "" data/motif_to_pwm.tsv
+step6_train_chrombpnet_model.sh data/downloads/hg38.fa data/downloads/K562_unstranded.bw data/downloads/overlap.bed.gz data/negatives_data/negatives_with_summit.bed data/splits/fold_0.json models/bias_model/bias.h5 models/chrombpnet_model ATAC_PE
 ```
 Note: Step6 will use the contents of data/motif_to_pwm.tsv if a motif-to-pwm input file is not provided
 
