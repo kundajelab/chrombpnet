@@ -21,7 +21,7 @@ output_dir=${7?param missing - output_dir}
 data_type=${8?param missing - data_type}
 seed=${9:-1234}
 logfile=${10} #optional
-pwm_f=${11?param missing - pwm_f} 
+pwm_f=${11} #optional
 
 # defaults
 inputlen=2114
@@ -38,12 +38,37 @@ function timestamp {
     date +"%Y-%m-%d_%H-%M-%S" | tr -d '\n'
 }
 
-#verify that motif_to_pwm.tsv is provided 
+#path to pwm file
 if [ -z "$pwm_f" ]
 then
-    echo "path to pwm file must be provided. You can use path to https://github.com/kundajelab/chrombpnet/tree/master/data/motif_to_pwm.tsv as a default"
-    exit
+    echo "No pwm file supplied, using default"
+    tee -a motif_to_pwm.default.tsv <<EOF
+EOF 	
+tn5_1    GCACAGTACAGAGCTG
+tn5_2    GTGCACAGTTCTAGAGTGTGCAG
+tn5_3    CCTCTACACTGTGCAGAA
+tn5_4    GCACAGTTCTAGACTGTGCAG
+tn5_5    CTGCACAGTGTAGAGTTGTGC
+dnase_1    TTTACAAGTCCA
+dnase_2    TGTACTTACGAA
+NRF1    GCGCATGCGC
+AP1    CGATATGACTCATCCC
+CTCF    TTGGCCACTAGGGGGCGCTAT
+ETS    CCGAAAGCGGAAGTGAGAC    
+SP1    AAGGGGGCGGGGCCTAA
+RUNX    CCCTAACCACAGCCC
+NFKB    GCAAGGGAAATTCCCCAGG
+GATA+TAL    GGCTGGGGGGGGCAGATAAGGCC
+TAL    GGCTGGG
+NFYB    CCAGCCAATCAGAGC
+GABPA    GAAACCGGAAGTGGCC
+BACH1+MAFK    AACTGCTGAGTCATCCCG
+NRF1    CCCCGCGCATGCGCAGTGC
+HNF4G    CCGTTGGACTTTGGACCCTG
+EOF
+      pwm_f=motif_to_pwm.default.tsv
 fi
+EOF
 
 # create the log file
 if [ -z "$logfile" ]
