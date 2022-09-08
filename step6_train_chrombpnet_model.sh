@@ -41,32 +41,26 @@ function timestamp {
 #path to pwm file
 if [ -z "$pwm_f" ]
 then
-    echo "No pwm file supplied, using default"
     TAB="$(printf '\t')"
-    tee  motif_to_pwm.default.tsv <<EOF
-tn5_1${TAB} GCACAGTACAGAGCTG
-tn5_2${TAB} GTGCACAGTTCTAGAGTGTGCAG
-tn5_3${TAB} CCTCTACACTGTGCAGAA
-tn5_4${TAB}GCACAGTTCTAGACTGTGCAG
-tn5_5${TAB}CTGCACAGTGTAGAGTTGTGC
+    if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
+	echo "No pwm file supplied, using default for DNASE"
+	tee  motif_to_pwm.default.tsv <<EOF
 dnase_1${TAB}TTTACAAGTCCA
 dnase_2${TAB}TGTACTTACGAA
-NRF1${TAB}GCGCATGCGC
-AP1${TAB}CGATATGACTCATCCC
-CTCF${TAB}TTGGCCACTAGGGGGCGCTAT
-ETS${TAB}CCGAAAGCGGAAGTGAGAC
-SP1${TAB}AAGGGGGCGGGGCCTAA
-RUNX${TAB}CCCTAACCACAGCCC
-NFKB${TAB}GCAAGGGAAATTCCCCAGG
-GATA+TAL${TAB}GGCTGGGGGGGGCAGATAAGGCC
-TAL${TAB}GGCTGGG
-NFYB${TAB}CCAGCCAATCAGAGC
-GABPA${TAB}GAAACCGGAAGTGGCC
-BACH1+MAFK${TAB}AACTGCTGAGTCATCCCG
-NRF1${TAB}CCCCGCGCATGCGCAGTGC
-HNF4G${TAB}CCGTTGGACTTTGGACCCTG
 EOF
-      pwm_f=motif_to_pwm.default.tsv
+    elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
+	echo "No pwm file supplied, using default for ATAC"
+	tee  motif_to_pwm.default.tsv <<EOF
+tn5_1${TAB}GCACAGTACAGAGCTG
+tn5_2${TAB}GTGCACAGTTCTAGAGTGTGCAG
+tn5_3${TAB}CCTCTACACTGTGCAGAA
+tn5_4${TAB}GCACAGTTCTAGACTGTGCAG
+tn5_5${TAB}CTGCACAGTGTAGAGTTGTGC
+EOF
+    else
+	echo "ERROR: unknown data type " $data_type | tee -a $logfile
+    fi    
+    pwm_f=motif_to_pwm.default.tsv
 fi
 
 # create the log file
@@ -217,9 +211,9 @@ chrombpnet_predict \
     --model_h5=$output_dir/bias_model_scaled.h5 | tee -a $logfile
 
 # marginal footprinting
+mkdir $output_dir/footprints
 if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
     echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-    mkdir $output_dir/footprints
     echo $( timestamp ): "chrombpnet_marginal_footprints \\
     	     -g $reference_fasta \\
              -r $output_dir/filtered.nonpeaks.bed \\
@@ -238,7 +232,6 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
 	-pwm_f $pwm_f | tee -a $logfile
 elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
     echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-    mkdir $output_dir/footprints
     echo $( timestamp ): "chrombpnet_marginal_footprints \\
     	-g $reference_fasta \\                     
         -r $output_dir/filtered.nonpeaks.bed \\
@@ -262,7 +255,6 @@ fi
 # marginal footprinting bias model
 if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
     echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-    mkdir $output_dir/footprints
     echo $( timestamp ): "chrombpnet_marginal_footprints \\
         -g $reference_fasta \\
         -r $output_dir/filtered.nonpeaks.bed \\
@@ -281,7 +273,6 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
 	-pwm_f $pwm_f | tee -a $logfile
 elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
     echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-    mkdir $output_dir/footprints
     echo $( timestamp ): "chrombpnet_marginal_footprints \\
     	     -g $reference_fasta \\
              -r $output_dir/filtered.nonpeaks.bed \\
