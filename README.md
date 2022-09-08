@@ -260,7 +260,7 @@ To run chrombpnet on sherlock:
  srun -p gpu -c 4 --gres gpu:1 --pty bash
 ```
 
-2) Use the `singularity exec` command, binding your data / output directory to a directory within the docker container. An example of executing step6_train_chrombpnet_model.sh with pre-generated argument paths is provided below: 
+2) Use the `singularity exec` command, binding your data / output directory to a directory within the singularity container. An example of executing step6_train_chrombpnet_model.sh with pre-generated argument paths is provided below: 
 
 
 ```
@@ -277,7 +277,7 @@ fold=$singularity_mountpoint/outputs/data/splits/fold_0.json
 output_models=$singularity_mountpoint/outputs/models
 data_type=ATAC_PE
 
-#run singularity exec.
+#run singularity exec
 singularity  exec --nv -e --no-mount hostfs --bind $prefix:$singularity_mountpoint docker://kundajelab/chrombpnet:latest step6_train_chrombpnet_model.sh $reference_fasta $bigwig_path $overlap_peak $nonpeak $fold $output_models/bias_model/bias.h5 $output_models/chrombpnet_model $data_type
 ```
 Note that the flags used with singularity exec are important. This is what each flag means: 
@@ -289,6 +289,6 @@ Note that the flags used with singularity exec are important. This is what each 
 
 * `--no-mount hostfs` --> do not mount the host filesystem in the singularity container. This avoids conflicting installations of python, and overwriting directories in the singularity image (i.e. avoids mounting `/scratch` on sherlock to `/scratch` in the singularity container, which we don't want as that is where the chrombpnet source files live in the container) 
 
-*`--bind` --> binds paths on the host machine to paths in the container. The syntax is path1_on_host:path1_on_container,path2_on_host:path2_on_container,pathN_on_host:pathN_on_container. 
+* `--bind` --> binds paths on the host machine to paths in the container. The syntax is path1_on_host:path1_on_container,path2_on_host:path2_on_container,pathN_on_host:pathN_on_container. 
 
 
