@@ -43,7 +43,7 @@ Download and install the latest version of Docker for your platform. Here is the
 **Note: To access your system GPU's from within the docker container, you must have [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) installed on your host machine. 
 **
 ```
-docker run -it --rm --memory=100g --gpus device=0  kundajelab/chrombpnet:dev
+docker run -it --rm --memory=100g --gpus device=0  kundajelab/chrombpnet:latest
 ```
 
 ### 2. Installation setup throuh github within a conda environment 
@@ -59,13 +59,13 @@ Install non-Python  requirements via conda
 conda install -y -c bioconda samtools bedtools ucsc-bedgraphtobigwig
 ```
 
-Git clone the staging branch of chrombpnet and install via pip
+Git clone the master branch of chrombpnet and install via pip
 
 ```
 git clone https://github.com/kundajelab/chrombpnet.git
 pip install -e chrombpnet
 ```
-	
+
 ##  Tutorial on how to train chrombpnet models
 
 Here we provide a step-by-step guide to training and evaluating chrombpnet models using the K562 bulk ATAC-seq data <a href="https://www.encodeproject.org/experiments/ENCSR868FGK">(ENCSR868FGK)</a>. Here we assume that all the scripts are being run from the main `chrombpnet` directory.
@@ -249,3 +249,46 @@ step7_interpret_chrombpnet_model.sh  data/downloads/hg38.fa data/subsample_peaks
 The script outputs interpretation scores (as h5 files `models/chrombpnet_model/interpret/corrected.profile_scores.h5` and `models/chrombpnet_model/interpret/corrected.counts_scores.h5`) and then summarizes the interpretation scores into PWMs (as png images in `models/chrombpnet_model/interpret/untrimmed_logos_counts` and `models/chrombpnet_model/interpret/untrimmed_logos_profile`). Browse through the images (with prefix name `contrib_`) in both the PWM folders and make sure you only see cell-type specific motifs (here GATA, SP1) and not bias motifs (Tn5/DNASE-I). 
 
 NOTE: The presence of bias motifs Tn5/DNase-I in the PWMs indicates that the chrombpnet models are not fully corrected for the bias.  This is possible if the bias model is used incorrectly (if the bias model is transferred it is likely that the transfer has failed).
+
+## Running on the Stanford sherlock cluster in singularity 
+
+Sherlock does not support docker, but it does support singularity. Singularity is installed by default on all sherlock nodes.
+To run chrombpnet on sherlock: 
+
+1) Make sure you are on a gpu node: 
+```
+ srun -p gpu -c 4 --gres gpu:1 --pty bash
+```
+
+2) Use the `singularity exec` command, binding your data / output directory to a directory within the docker container. An example of executing step6_train_chrombpnet_model.sh with pre-generated argument paths is provided below: 
+
+
+```
+# we will mount our current directory, which contains the data and output folders from step5, to the `/mnt` directory on the singularity container: 
+prefix=`pwd`
+singularity_mountpoint=/mnt
+
+#provide paths to the arguments for step6
+reference_fasta=$singularity_mountpoint/data/hg38.fa
+bigwig_path=$singularity_mountpoint/data/merged_unstranded.bw
+overlap_peak=$singularity_mountpoint/data/overlap.bed.gz
+nonpeak=$singularity_mountpoint/outputs/data/negatives_with_summit.bed
+fold=$singularity_mountpoint/outputs/data/splits/fold_0.json
+output_models=$singularity_mountpoint/outputs/models
+data_type=ATAC_PE
+
+#run singularity exec.
+singularity  exec --nv -e --no-mount hostfs --bind $prefix:$singularity_mountpoint docker://kundajelab/chrombpnet:latest step6_train_chrombpnet_model.sh $reference_fasta $bigwig_path $overlap_peak $nonpeak $fold $output_models/bias_model/bias.h5 $output_models/chrombpnet_model $data_type
+```
+Note that the flags used with singularity exec are important. This is what each flag means: 
+
+* `--nv` --> run on a GPU 
+
+
+* `-e` --> clean environment before running the container 
+
+* `--no-mount hostfs` --> do not mount the host filesystem in the singularity container. This avoids conflicting installations of python, and overwriting directories in the singularity image (i.e. avoids mounting `/scratch` on sherlock to `/scratch` in the singularity container, which we don't want as that is where the chrombpnet source files live in the container) 
+
+*`--bind` --> binds paths on the host machine to paths in the container. The syntax is path1_on_host:path1_on_container,path2_on_host:path2_on_container,pathN_on_host:pathN_on_container. 
+
+
