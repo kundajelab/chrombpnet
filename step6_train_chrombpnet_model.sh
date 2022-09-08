@@ -51,9 +51,9 @@ EOF
     elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
 	echo "No pwm file supplied, using default for ATAC"
 	tee  motif_to_pwm.default.tsv <<EOF
-tn5_1${TAB} GCACAGTACAGAGCTG
-tn5_2${TAB} GTGCACAGTTCTAGAGTGTGCAG
-tn5_3${TAB} CCTCTACACTGTGCAGAA
+tn5_1${TAB}GCACAGTACAGAGCTG
+tn5_2${TAB}GTGCACAGTTCTAGAGTGTGCAG
+tn5_3${TAB}CCTCTACACTGTGCAGAA
 tn5_4${TAB}GCACAGTTCTAGACTGTGCAG
 tn5_5${TAB}CTGCACAGTGTAGAGTTGTGC
 EOF
