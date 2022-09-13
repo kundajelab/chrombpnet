@@ -221,7 +221,7 @@ step6_train_chrombpnet_model.sh data/downloads/hg38.fa data/downloads/K562_unstr
 Note: Step6 will use the contents of data/motif_to_pwm.{ATAC,DNASE}.tsv if a motif-to-pwm input file is not provided, depending on whether data_type is set to ATAC_PE/ATAC_SE or DNASE_PE/DNASE_SE
 
 
-The script `step4_train_bias_model.sh` runs the following five steps -  
+The script `step6_train_chrombpnet_model` runs the following five steps -  
  1. Generate hyperparmeters file for chrombpnet model: In this step we will filter peak and non-peaks regions for training and also find some important training hyperparameters. As a part of the filtration step we will filter out (a) peaks and non-peaks regions that are on the edges of the chromosome and (b) peaks and non-peaks which are outliers in total counts.
  2. Train the chrombpnet model using the hyper-parameters and filtered regions in train/valid chromosomes mentioned in `data/splits/fold_0.json`. This step will output a scaled bias model `models/chrombpnet_model/bias_model_scaled.h5` , chrombpnet model  `models/chrombpnet_model/chrombpnet.h5` and sequence model `models/chrombpnet_model/chrombpnet_wo_bias.h5` in h5py format. 
  3. Get predictions on the peak and non-peak regions in test chromosomes in `data/splits/fold_0.json` and report the metrics in `models/chrombpnet_model/bias_metrics.json`, `models/chrombpnet_model/chrombpnet_metrics.json` and `models/chrombpnet_model/chrombpnet_wo_bias_metrics.json`. The script also stores the predictions in `.h5` format.
