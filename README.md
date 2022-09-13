@@ -162,7 +162,7 @@ We will train a bias model on the non-peak regions by running the `step4_train_b
 ```
 mkdir models
 mkdir models/bias_model
-step4_train_bias_model.sh data/hg38.fa data/downloads/K562_unstranded.bw data/downloads/overlap.bed.gz data/negatives_data/negatives_with_summit.bed data/splits/fold_0.json 0.5 models/bias_model
+step4_train_bias_model.sh data/downlaods/hg38.fa data/downloads/K562_unstranded.bw data/downloads/overlap.bed.gz data/negatives_data/negatives_with_summit.bed data/splits/fold_0.json 0.5 models/bias_model
 
 ```
 
