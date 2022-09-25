@@ -2,14 +2,26 @@
 
 echo "WARNING: If upgrading from v1.0 or v1.1 to v1.2. Note that chrombpnet has undergone linting to generate a modular structure for release on pypi.Hard-coded script paths are no longer necessary. Please refer to the updated README (below) to ensure your script calls are compatible with v1.2"
 
+
 # exit when any command fails
 set -e
-set -o pipefail
 
 # keep track of the last executed command
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+
+cleanup() {
+    exit_code=$?
+    if [ ${exit_code} == 0 ]
+    then
+	echo "Completed execution"
+    else
+	echo "\"${last_command}\" failed with exit code ${exit_code}."
+    fi
+}
+
 # echo an error message before exiting
-trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
+trap 'cleanup' EXIT INT TERM
+
 
 reference_fasta=${1?param missing - reference_fasta}
 chrom_sizes=${2?param missing - chrom_sizes}
@@ -19,6 +31,11 @@ inputlen=${5?param missing - inputlen}
 genomewide_gc=${6?param missing - genomewide_gc}
 output_dir=${7?param missing - output_dir} 
 fold=${8?param missing - fold}
+
+if [[ ! -e $output_dir ]]; then
+    mkdir $output_dir
+fi
+
 
 function timestamp {
     # Function to get the current time with the new line character
