@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import itertools
 import os
-from modisco.visualization import viz_sequence
+import viz_sequence
 import chrombpnet.training.utils.one_hot as one_hot
 
 
