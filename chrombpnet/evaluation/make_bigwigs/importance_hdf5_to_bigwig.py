@@ -8,6 +8,7 @@ import chrombpnet.evaluation.make_bigwigs.bigwig_helper as bigwig_helper
 parser = argparse.ArgumentParser(description="Convert importance scores in hdf5 format to bigwig. The output can be visualised using WashU Epigenome Browser as a dynseq track. Please read all parameter argument requirements. PROVIDE ABSOLUTE PATHS!")
 parser.add_argument("-h5", "--hdf5", type=str, help="HDF5 file f such that f['projected_shap']['seq'] has (N x 4 x seqlen) shape with importance score * sequence so that at each f['projected_shap']['seq'][i, :, j] has 3 zeros and 1 non-zero value")
 parser.add_argument("-n", "--npz", type=str, help="Numpy file with shap scores")
+parser.add_argument("-oh", "--onehot", type=str, help="Numpy file with onehot sequences")
 parser.add_argument("-r", "--regions", type=str, required=True, help="10 column BED file of length = N which matches f['projected_shap']['seq'].shape[0]. The ith region in the BED file corresponds to ith entry in importance matrix. If start=2nd col, summit=10th col, then the importance scores are assumed to be for [start+summit-(seqlen/2):start+summit+(seqlen/2)]")
 parser.add_argument("-c", "--chrom-sizes", type=str, required=True, help="Chromosome sizes 2 column tab-separated file")
 parser.add_argument("-o", "--outfile", type=str, required=True, help="Output bigwig file")
@@ -22,6 +23,8 @@ if args.hdf5:
     d = deepdish.io.load(args.hdf5, '/projected_shap/seq')
 elif args.npz:
     d = np.load(args.npz)['arr_0']
+    o = np.load(args.onehot)['arr_0']
+    d = d * o
 
 SEQLEN = d.shape[2]
 assert(SEQLEN%2==0)
@@ -29,11 +32,11 @@ assert(SEQLEN%2==0)
 gs = bigwig_helper.read_chrom_sizes(args.chrom_sizes)
 regions = bigwig_helper.get_regions(args.regions, SEQLEN)
 
-bigwig_helper.write_bigwig(d.sum(1), 
-                           regions, 
-                           gs, 
-                           args.outfile, 
-                           args.outstats, 
-                           debug_chr=args.debug_chr, 
+bigwig_helper.write_bigwig(d.sum(1),
+                           regions,
+                           gs,
+                           args.outfile,
+                           args.outstats,
+                           debug_chr=args.debug_chr,
                            use_tqdm=args.tqdm)
 
