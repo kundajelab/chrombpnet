@@ -124,7 +124,7 @@ def main():
         ofile.close()
     else:
         ofile = open("{}_footprints_score.txt".format(args.output_prefix), "w")
-        ofile.write("uncorrected:"+str(round(np.mean(avg_response_at_tn5),3))+"_"+"/".join(list(map(str,avg_response_at_tn5))))
+        ofile.write("uncorrected:"+str(round(np.mean(avg_response_at_tn5),3))+"/".join(list(map(str,avg_response_at_tn5))))
         ofile.close()
 
     print("Saving marginal footprints")
