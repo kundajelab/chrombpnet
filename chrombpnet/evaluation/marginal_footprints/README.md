@@ -5,13 +5,13 @@ The scripts in this folder provide marginal footprints for a given motif and bac
 ## Usage
 
 ```
-chrombpnet_marginal_footprints -g [genome_fasta] -r [regions] -chr [test_chr] -m [model_h5] -bs [batch_size] -o [output_prefix] -pwm_f [motifs_to_pwm_file] -mo [motifs] --ylim (min-y, max-y)
+chrombpnet_marginal_footprints -g [genome_fasta] -r [regions] -chr [test_chr] -m [model_h5] -bs [batch_size] -o [output_prefix] -pwm_f [motifs_to_pwm_file] --ylim (min-y, max-y)
 ```
 
 ## Example Usage
 
 ```
-chrombpnet_marginal_footprints -g /path/to/genome_fasta -r /path/to/bed_file -chr chr1 -m /path/to/model.h5 -o /path/to/output_dir/outputprefix -pwm_f motif_to_pwm.tsv -mo CTCF,RUNX
+chrombpnet_marginal_footprints -g /path/to/genome_fasta -r /path/to/bed_file -chr chr1 -m /path/to/model.h5 -o /path/to/output_dir/outputprefix -pwm_f /path/to/motif_to_pwm.tsv
 ```
 
 ## Input Format
@@ -22,9 +22,34 @@ chrombpnet_marginal_footprints -g /path/to/genome_fasta -r /path/to/bed_file -ch
 - model_h5: Model in hdf5 format.
 - batch_size: Batch size to use for model predictions.
 - output_prefix: Output prefix path and name to use. See Output format section below to understand how this is used.
-- motifs_to_pwm_file: Path to a TSV file containing motifs in first column (e.g. `Tn5`) and motif string (e.g. `GCACAGTACAGAGCTG`) to use for footprinting in second column. 
-- motifs: The motifs to filter from `motifs_to_pwm_file` for footprinting. We will find footprints only for the motifs mentioned here. Make sure that the motif names mentioned here are present in the column 1 of `motifs_to_pwm_file`. Provide more than one motif - seperate them by comma.
+--motifs_to_pwm_file:  Path to a TSV file containing motifs in first column (e.g. `Tn5`) and motif string (e.g. `GCACAGTACAGAGCTG`) to use for footprinting in second column. A default file is provided in the data folder (https://github.com/kundajelab/chrombpnet/tree/master/data/motif_to_pwm.tsv)
 --ylim: optional argument to specify the lower and upper y-axis values for the generated plot. This is a tuple of float/int values (lower y-lim bound for plotting, upper-ylim bound for plotting). Default is to not use this argument and auto-calculate the y-axis range.
+
+Example  https://github.com/kundajelab/chrombpnet/tree/master/data/motif_to_pwm.tsv can be used as a default and contains the following:
+```
+tn5_1    GCACAGTACAGAGCTG
+tn5_2    GTGCACAGTTCTAGAGTGTGCAG
+tn5_3    CCTCTACACTGTGCAGAA
+tn5_4    GCACAGTTCTAGACTGTGCAG
+tn5_5    CTGCACAGTGTAGAGTTGTGC
+dnase_1    TTTACAAGTCCA
+dnase_2    TGTACTTACGAA
+NRF1    GCGCATGCGC
+AP1    CGATATGACTCATCCC
+CTCF    TTGGCCACTAGGGGGCGCTAT
+ETS    CCGAAAGCGGAAGTGAGAC
+SP1    AAGGGGGCGGGGCCTAA
+RUNX    CCCTAACCACAGCCC
+NFKB    GCAAGGGAAATTCCCCAGG
+GATA+TAL    GGCTGGGGGGGGCAGATAAGGCC
+TAL    GGCTGGG
+NFYB    CCAGCCAATCAGAGC
+GABPA    GAAACCGGAAGTGGCC
+BACH1+MAFK    AACTGCTGAGTCATCCCG
+NRF1    CCCCGCGCATGCGCAGTGC
+HNF4G    CCGTTGGACTTTGGACCCTG
+```
+
 
 ## Output Format
 
@@ -32,3 +57,4 @@ The following two files are created using the `output_prefix` as prefix for the 
 
 - `output_prefix`.footprints.h5: A h5 formatted file containing a dictionary with `motifs` as key names and average `model_h5` predictions as values.
 - `output_prefix`.`motif_name`.footprints.png: A set of png images each with the naming convention as follows - `output_prefix`.`motif_name`.footprints.png. `motif_name` is a value from the list of `motifs` input. And the image carries the center 200bp marginal footprint for that motif.
+

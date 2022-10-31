@@ -57,6 +57,7 @@ config = {
         'chrombpnet_bias_hyperparams = chrombpnet.helpers.hyperparameters.find_bias_hyperparams:main',
         'chrombpnet_train = chrombpnet.training.train:main',
         'chrombpnet_predict = chrombpnet.training.predict:main',
+        'chrombpnet_predict_to_bigwig = chrombpnet.evaluation.make_bigwigs.predict_to_bigwig:main',
         'chrombpnet_metrics = chrombpnet.training.metrics:main',
         'chrombpnet_deepshap = chrombpnet.evaluation.interpret.interpret:main',
         'chrombpnet_modisco = chrombpnet.evaluation.modisco.run_modisco:main',
