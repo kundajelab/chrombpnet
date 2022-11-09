@@ -9,7 +9,7 @@ set -o pipefail
 # keep track of the last executed command
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
-trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
+trap 'ret=$?;cmd=$last_command;if [ $ret -ne 0 ]; then echo "$cmd failed with error code $ret"; fi' EXIT
 
 in_bam=${1?param missing - in_bam}
 bigwig_prefix=${2?param missing - bigwig_prefix}
@@ -27,6 +27,8 @@ function timestamp {
 
 logfile=$bigwig_prefix"_preprocessing.log"
 touch $logfile
+
+echo "finished"
 
 bam_to_bigwig.sh $in_bam $bigwig_prefix $data_type $chrom_sizes $logfile
 
