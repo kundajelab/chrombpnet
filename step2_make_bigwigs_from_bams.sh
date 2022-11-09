@@ -4,12 +4,22 @@ echo "WARNING: If upgrading from v1.0 or v1.1 to v1.2. Note that chrombpnet has 
 
 # exit when any command fails
 set -e
-set -o pipefail
 
 # keep track of the last executed command
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+
+cleanup() {
+    exit_code=$?
+    if [ ${exit_code} == 0 ]
+    then
+	echo "Completed execution"
+    else
+	echo "\"${last_command}\" failed with exit code ${exit_code}."
+    fi
+}
+
 # echo an error message before exiting
-trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
+trap 'cleanup' EXIT INT TERM
 
 in_bam=${1?param missing - in_bam}
 bigwig_prefix=${2?param missing - bigwig_prefix}
