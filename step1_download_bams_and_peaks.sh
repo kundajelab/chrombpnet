@@ -2,15 +2,29 @@
 
 echo "WARNING: If upgrading from v1.0 or v1.1 to v1.2. Note that chrombpnet has undergone linting to generate a modular structure for release on pypi.Hard-coded script paths are no longer necessary. Please refer to the updated README (below) to ensure your script calls are compatible with v1.2"
 
-
 # exit when any command fails
 set -e
-set -o pipefail
+
 # keep track of the last executed command
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+
+cleanup() {
+    exit_code=$?
+    if [ ${exit_code} == 0 ]
+    then
+	echo "Completed execution"
+    else
+	echo "\"${last_command}\" failed with exit code ${exit_code}."
+    fi
+}
+
 # echo an error message before exiting
-trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
+trap 'cleanup' EXIT INT TERM
+
 data_dir=${1?param missing - data_dir}
+if [[ ! -e $data_dir ]]; then
+    mkdir $data_dir
+fi
 
 # download bam
 wget https://www.encodeproject.org/files/ENCFF077FBI/@@download/ENCFF077FBI.bam -O $data_dir/rep1.bam

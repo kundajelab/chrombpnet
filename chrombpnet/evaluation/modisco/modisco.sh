@@ -5,9 +5,19 @@ set -e
 
 # keep track of the last executed command
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
-# echo an error message before exiting
-trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
 
+cleanup() {
+    exit_code=$?
+    if [ ${exit_code} == 0 ]
+    then
+	echo "Completed execution"
+    else
+	echo "\"${last_command}\" failed with exit code ${exit_code}."
+    fi
+}
+
+# echo an error message before exiting
+trap 'cleanup' EXIT INT TERM
 
 scores_prefix=${1?param missing - scores_prefix}
 output_dir=${2?param missing - output_dir}

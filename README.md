@@ -176,6 +176,8 @@ Following are some things to keep in mind when using custom datasets -
 - **IMPORTANT NOTE 1:** Notes on setting the value of `bias_threshold_factor` parameter -
     - If `bias_threshold_factor` is set to very low value you might filter out a lot of non-peak regions and the bias model might be sub-optimal (this will be reflected in the final performance metrics output by the model - poor jsd performance might imply a sub-optimal bias model). 
     - If `bias_threshold_factor` is set to very high you might include non-peak regions with high counts and this might lead to the bias model capturing cell-type specific motifs  (which is not ideal as we want to regress out only the bias motifs effect and not cell-type specific motifs effect). We will do Step 5 of the tutorial to make sure that the bias model captures only bias motifs. If the output in Step 5 shows cell-type specific motifs in addition to the bias motifs you have to repeat bias model training with a lower `bias_threshold_factor`.
+    
+- **IMPORTANT NOTE 2:** If you are training ChromBPNet models across multiple clusters on a single-cell dataset, we recommend training a bias model on the most abundant cluster and using that same bias model across all clusters. 
 
 #### Step 5: Interpret bias model
 
