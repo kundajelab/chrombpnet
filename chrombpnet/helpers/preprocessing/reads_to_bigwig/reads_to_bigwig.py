@@ -47,7 +47,7 @@ def generate_bigwig(input_bam_file, input_fragment_file, input_tagalign_file, ou
         p2.communicate()
 
     print("Making Bigwig")
-    subprocess.run(["bedGraphToBigWig", tmp_bedgraph.name, chrom_sizes_file, output_prefix + "_unstranded.bw"])
+    subprocess.run(["/home/users/soumyak/bedGraphToBigWig", tmp_bedgraph.name, chrom_sizes_file, output_prefix + "_unstranded.bw"])
 
     tmp_bedgraph.close()
 
