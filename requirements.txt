@@ -15,3 +15,4 @@ deepdish==0.3.7
 shap @ git+https://github.com/kundajelab/shap@master#egg=shap
 deeplift==0.6.13.0
 modisco==0.5.16.0
+modisco-lite==2.0.4
