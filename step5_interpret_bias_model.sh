@@ -38,5 +38,8 @@ chrombpnet_deepshap \
 
 ## modisco run
 
-chrombpnet_modisco -s $output_dir/bias -p "profile" -o $output_dir -m 50000 -c 500
-chrombpnet_modisco -s $output_dir/bias -p "counts" -o $output_dir -m 50000 -c 500
+modisco motifs -i $output_dir"/bias.profile_scores.h5" -n 50000 -o "modisco_results_allChroms_profile.hdf5" -w 500
+modisco motifs -i $output_dir"/bias.counts_scores.h5" -n 50000 -o "modisco_results_allChroms_counts.hdf5" -w 500
+
+modisco report -i "modisco_results_allChroms_profile.hdf5" -o  $output_dir/modisco_reports_profile/ -m /home/anusri/chrombpnet/data/motifs.meme.txt
+modisco report -i "modisco_results_allChroms_counts.hdf5" -o  $output_dir/modisco_reports_counts/ -m /home/anusri/chrombpnet/data/motifs.meme.txt
