@@ -56,7 +56,7 @@ conda activate chrombpnet
 
 Install non-Python  requirements via conda
 ```
-conda install -y -c bioconda samtools bedtools ucsc-bedgraphtobigwig
+conda install -y -c conda-forge -c bioconda samtools bedtools ucsc-bedgraphtobigwig pybigwig
 ```
 
 Git clone the staging branch of chrombpnet and install via pip
