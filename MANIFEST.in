@@ -6,3 +6,5 @@ include step4_train_bias_model.sh
 include step5_interpret_bias_model.sh
 include step6_train_chrombpnet_model.sh
 include step7_interpret_chrombpnet_model.sh
+include data/*.txt
+include data/*.tsv
