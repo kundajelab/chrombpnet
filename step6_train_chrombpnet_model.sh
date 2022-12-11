@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "WARNING: If upgrading from v1.0 or v1.1 to v1.2. Note that chrombpnet has undergone linting to generate a modular structure for release on pypi.Hard-coded script paths are no longer necessary. Please refer to the updated README (below) to ensure your script calls are compatible with v1.2"
-
 # exit when any command fails
 set -e
 
@@ -57,13 +55,13 @@ function timestamp {
 if [ -z "$pwm_f" ]
 then
     TAB="$(printf '\t')"
-    if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
+    if [["$data_type" = "DNASE" ]] ; then
 	echo "No pwm file supplied, using default for DNASE"
 	tee  motif_to_pwm.default.tsv <<EOF
 dnase_1${TAB}TTTACAAGTCCA
 dnase_2${TAB}TGTACTTACGAA
 EOF
-    elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
+    elif [[ "$data_type" = "ATAC"  ]] ; then
 	echo "No pwm file supplied, using default for ATAC"
 	tee  motif_to_pwm.default.tsv <<EOF
 tn5_1${TAB}GCACAGTACAGAGCTG
@@ -227,7 +225,7 @@ chrombpnet_predict \
 
 # marginal footprinting
 mkdir $output_dir/footprints
-if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
+if [[ "$data_type" = "DNASE" || ]] ; then
     echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
     echo $( timestamp ): "chrombpnet_marginal_footprints \\
     	     -g $reference_fasta \\
@@ -245,7 +243,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
 	-bs 512 \
 	-o $output_dir/footprints/corrected \
 	-pwm_f $pwm_f | tee -a $logfile
-elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
+elif [[ "$data_type" = "ATAC"  ]] ; then
     echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
     echo $( timestamp ): "chrombpnet_marginal_footprints \\
     	-g $reference_fasta \\                     
@@ -268,7 +266,7 @@ else
 fi
 
 # marginal footprinting bias model
-if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
+if [[ "$data_type" = "DNASE" ]] ; then
     echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
     echo $( timestamp ): "chrombpnet_marginal_footprints \\
         -g $reference_fasta \\
@@ -286,7 +284,7 @@ if [[ "$data_type" = "DNASE_SE" || "$data_type" = "DNASE_PE" ]] ; then
 	-bs 512 \
 	-o $output_dir/footprints/bias \
 	-pwm_f $pwm_f | tee -a $logfile
-elif [[ "$data_type" = "ATAC_SE" || "$data_type" = "ATAC_PE"  ]] ; then
+elif [[ "$data_type" = "ATAC" ]] ; then
     echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
     echo $( timestamp ): "chrombpnet_marginal_footprints \\
     	     -g $reference_fasta \\
