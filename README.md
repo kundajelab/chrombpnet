@@ -6,9 +6,6 @@
 - Authors would like to thank Avanti Shrikumar and Surag Nair for their help with the project.
 - Link to a pretrained bias model trained in K562 bulk ATAC-seq - http://mitra.stanford.edu/kundaje/anusri/chrombpnet_downloads/bias.h5. You can also continue to use the bias model from chrombpnet-lite repo if that is what you have been using so far.
 
-## WARNING: If upgrading from v1.0 or v1.1 to v1.2
-Note that chrombpnet has undergone linting to generate a modular structure for release on pypi.Hard-coded script paths are no longer necessary. Please refer to the updated README (below) to ensure your script calls are compatible with v1.2
-
 ## Quick Links
 
 - [About](#chrombpnet)
