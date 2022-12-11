@@ -1,6 +1,4 @@
 from setuptools import setup,find_packages
-from setuptools.command.develop import develop
-from setuptools.command.install import install
 
 
 #generate install_requires from requirements.txt file
@@ -50,6 +48,7 @@ config = {
         'chrombpnet_modisco = chrombpnet.evaluation.modisco.run_modisco:main',
         'chrombpnet_marginal_footprints = chrombpnet.evaluation.marginal_footprints.marginal_footprinting:main',
         'chrombpnet_tomtom_hits = chrombpnet.evaluation.modisco.fetch_tomtom:main',
+        'chrombpnet_convert_html_to_pdf = chrombpnet.evaluation.modisco.convert_html_to_pdf:main'
         'chrombpnet_visualize_motif_matches = chrombpnet.evaluation.modisco.visualize_motif_matches:main',
         'chrombpnet_score_snps = chrombpnet.evaluation.variant_effect_prediction.snp_scoring:main',
         'chrombpnet_srcdir = chrombpnet.get_package_dir:main']},

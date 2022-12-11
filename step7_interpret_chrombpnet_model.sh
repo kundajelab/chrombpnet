@@ -42,5 +42,8 @@ modisco motifs -i $output_dir"/corrected.counts_scores.h5" -n 50000 -o $output_d
 
 meme_dir=$(chrombpnet_srcdir)"/../data"
 
-modisco report -i $output_dir"/modisco_results_allChroms_profile.hdf5" -o  $output_dir/modisco_reports_profile/ -s $output_dir/modisco_reports_profile/ -m $meme_dir/motifs.meme.txt
-modisco report -i $output_dir"/modisco_results_allChroms_counts.hdf5" -o  $output_dir/modisco_reports_counts/ -s $output_dir/modisco_reports_counts/ -m $meme_dir/motifs.meme.txt
+modisco report -i $output_dir"/modisco_results_allChroms_profile.hdf5" -o  $output_dir/modisco_reports_profile/ -s "./" -m $meme_dir/motifs.meme.txt
+modisco report -i $output_dir"/modisco_results_allChroms_counts.hdf5" -o  $output_dir/modisco_reports_counts/ -s "./" -m $meme_dir/motifs.meme.txt
+
+chrombpnet_convert_html_to_pdf -i $output_dir/modisco_reports_profile/motifs.html -o $output_dir/modisco_reports_profile/motifs.pdf
+chrombpnet_convert_html_to_pdf -i $output_dir/modisco_reports_counts/motifs.html -o $output_dir/modisco_reports_counts/motifs.pdf
