@@ -157,8 +157,6 @@ def compute_shift_ATAC(ref_plus_pwms, ref_minus_pwms, plus_pwm, minus_pwm):
     if len(plus_shifts) != 1 or len(minus_shifts) != 1:
         raise ValueError("Input file shifts inconsistent. Please post an issue")
     
-    print(plus_shifts)
-    print(minus_shifts)
     plus_shift = list(plus_shifts)[0]
     minus_shift = list(minus_shifts)[0]
 
@@ -198,11 +196,7 @@ def compute_shift(input_bam_file, input_fragment_file, input_tagalign_file, num_
     sampled_plus_reads, sampled_minus_reads = sample_reads(input_bam_file, input_fragment_file, input_tagalign_file, num_samples)
 
     plus_pwm, minus_pwm = get_pwms(sampled_plus_reads, sampled_minus_reads, genome_fasta_path)
-    print(plus_pwm)
-    print(minus_pwm)  
     ref_plus_pwms, ref_minus_pwms = get_ref_pwms(ref_motifs_file)
-    print(ref_plus_pwms)
-    print(ref_minus_pwms)
 
     if data_type=="ATAC":
         plus_shift, minus_shift = compute_shift_ATAC(ref_plus_pwms, ref_minus_pwms, plus_pwm, minus_pwm)
@@ -221,7 +215,6 @@ def main():
             # https://stackoverflow.com/questions/4060221/how-to-reliably-open-a-file-in-the-same-directory-as-the-currently-running-scrip
             ref_motifs_file =  os.path.realpath(os.path.join(os.path.dirname(__file__), "ATAC.ref.motifs.txt"))
             import pdb;pdb.set_trace()
-            print(ref_motifs_file)
     elif args.data_type=="DNASE":
         ref_motifs_file = args.DNASE_ref_path
 
@@ -233,8 +226,6 @@ def main():
             args.data_type,
             ref_motifs_file)
     
-    print(plus_shift, minus_shift)
-
 
 if __name__=="__main__":
     main()
