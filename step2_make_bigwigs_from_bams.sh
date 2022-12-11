@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "WARNING: If upgrading from v1.0 or v1.1 to v1.2. Note that chrombpnet has undergone linting to generate a modular structure for release on pypi.Hard-coded script paths are no longer necessary. Please refer to the updated README (below) to ensure your script calls are compatible with v1.2"
-
 # exit when any command fails
 set -e
 
@@ -38,7 +36,6 @@ function timestamp {
 logfile=$bigwig_prefix"_preprocessing.log"
 touch $logfile
 
-bam_to_bigwig.sh $in_bam $bigwig_prefix $data_type $chrom_sizes $logfile
-
+chrombpnet_makebigwig -g $reference_fasta -ibam $in_bam -c $chrom_sizes -o $bigwig_prefix -d  $data_type
 echo $( timestamp ): "chrombpnet_pwm_from_bigwig -i $bigwig_prefix_unstranded.bw -g $reference_fasta -o $bigwig_prefix_bias_pwm -c chr20 -cz $chrom_sizes" | tee -a $logfile
 chrombpnet_pwm_from_bigwig -i $bigwig_prefix"_unstranded.bw" -g $reference_fasta -o $bigwig_prefix"_bias_pwm" -c "chr20" -cz $chrom_sizes 

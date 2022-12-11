@@ -157,6 +157,8 @@ def compute_shift_ATAC(ref_plus_pwms, ref_minus_pwms, plus_pwm, minus_pwm):
     if len(plus_shifts) != 1 or len(minus_shifts) != 1:
         raise ValueError("Input file shifts inconsistent. Please post an issue")
     
+    print(plus_shifts)
+    print(minus_shifts)
     plus_shift = list(plus_shifts)[0]
     minus_shift = list(minus_shifts)[0]
 
@@ -196,8 +198,11 @@ def compute_shift(input_bam_file, input_fragment_file, input_tagalign_file, num_
     sampled_plus_reads, sampled_minus_reads = sample_reads(input_bam_file, input_fragment_file, input_tagalign_file, num_samples)
 
     plus_pwm, minus_pwm = get_pwms(sampled_plus_reads, sampled_minus_reads, genome_fasta_path)
-    
+    print(plus_pwm)
+    print(minus_pwm)  
     ref_plus_pwms, ref_minus_pwms = get_ref_pwms(ref_motifs_file)
+    print(ref_plus_pwms)
+    print(ref_minus_pwms)
 
     if data_type=="ATAC":
         plus_shift, minus_shift = compute_shift_ATAC(ref_plus_pwms, ref_minus_pwms, plus_pwm, minus_pwm)

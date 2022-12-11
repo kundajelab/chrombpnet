@@ -1,46 +1,81 @@
-# Preprocessing scripts for chrombpnet
+# Preprocessing scripts for ChromBPNet
 
-The following scripts in this folder are some pre-processing steps to train chrombpnet models
+The scripts in this folder are pre-processing steps to convert input reads to Bigwig format for trainining ChromBPNet models.
 
 ## Requirements
 
-To run these scripts you will need the `samtools` and `bedGraphToBigWig` (from ucsc) tools. These scripts are currently tested **only for bulk ATAC-seq**. If you want to use these for sc-ATAC please make appropriate changes. I will try to add scripts that will work with sc-ATAC soon.
+To run these scripts you will need `bedtools`, `samtools` and `bedGraphToBigWig` (from ucsc) tools. These scripts are tested for bulk and single-cell ATAC-seq, and for bulk DNase-seq.
 
-## Bam to Bigwig (+4/-4 shift for ATAC and 0/+1 shift for DNASE)
+## BAM/fragment file/tagAlign file to Bigwig
 
-```
-bam_to_bigwig.sh [input_bam] [output_prefix] [data_type] [chrom_sizes]
-```
-
-The following assumptions are made with this script - make changes accordingly if the assumptions dont hold.
-
-- PE stands for paired-end and SE stands for single-end.
-- The DNASE input bams are +1 shifted on negative strand.
-- The ATAC input bams are +4 shifted on positive strand and -4 shifted on negative strand.
-- When PE is considered we used **filtered bams**. Filtered bams are obtained from the [ENCODE ATAC-seq pipeline][url1]. 
-- When SE is considered we start from **unfiltered bams**. We then use samtools flag `780` to do filtering. Refer to the following [link][url2] to understand what this flag means.
-- To understand the intuition behind performing this different filtering step on SE and PE please refer to the discussion section [below](#discussion). 
-- The script generates an unstranded bigwig - that is forward and reverse strand are not considered seperately but are combined into one.
-
-## Example Usage
+We convert input BAMS to appropriately shifted (+4/-4 shift for ATAC and 0/+1 shift for DNASE) Bigwigs consistent with our training pipeline.
 
 ```
-bam_to_bigwig.sh input.bam <output_name> ATAC_PE hg38.chrom.sizes
-<example output file> : <output_name>_unstranded.bw
+usage: reads_to_bigwig.py [-h] -g GENOME
+                          (-ibam INPUT_BAM_FILE | -ifrag INPUT_FRAGMENT_FILE | -itag INPUT_TAGALIGN_FILE)
+                          -c CHROM_SIZES -o OUTPUT_PREFIX -d {ATAC,DNASE} [-p PLUS_SHIFT]
+                          [-m MINUS_SHIFT] 
+
+Convert input BAM/fragment/tagAlign file to appropriately shifted unstranded Bigwig
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -g GENOME, --genome GENOME
+                        reference genome fasta file
+  -ibam INPUT_BAM_FILE, --input-bam-file INPUT_BAM_FILE
+                        Input BAM file
+  -ifrag INPUT_FRAGMENT_FILE, --input-fragment-file INPUT_FRAGMENT_FILE
+                        Input fragment file
+  -itag INPUT_TAGALIGN_FILE, --input-tagalign-file INPUT_TAGALIGN_FILE
+                        Input tagAlign file
+  -c CHROM_SIZES, --chrom-sizes CHROM_SIZES
+                        Chrom sizes file
+  -o OUTPUT_PREFIX, --output-prefix OUTPUT_PREFIX
+                        Output prefix (path/to/prefix)
+  -d {ATAC,DNASE}, --data-type {ATAC,DNASE}
+                        assay type
+  -p PLUS_SHIFT, --plus-shift PLUS_SHIFT
+                        Plus strand shift applied to reads. Estimated if not specified
+  -m MINUS_SHIFT, --minus-shift MINUS_SHIFT
+                        Minus strand shift applied to reads. Estimated if not specified
 ```
 
-## Input Format
+Please supply one of BAM(`-ibam`)/fragment file(`-ifrag`)/tagAlign file(`-itag`) as input. The script generates an unstranded Bigwig- forward and reverse strands are combined with appropriate shifting (+4/-4 for ATAC and 0/+1 for DNase). Output is stored at `{OUTPUT_PREFIX}_unstranded.bw`. The directory in the prefix, if applicable, must already exist.
 
-- input_bam: must be bam file.
-- output_prefix: prefix for output file. The directory in the prefix, if applicable, must already exist.
-- data_type: The `data_type` variable takes the following 4 values ATAC_PE, ATAC_SE, DNASE_PE, DNASE_SE.
-- chrom_sizes: Tab seperated file with two columns. First column is the chromosome and second column is the chromsome length. (Make sure the bam's use the same reference format as the `chrom_sizes`.)
+If supplying a fragment file, it should minimally have 3 columns for chr, start and end. Each line must represent a fragment with Tn5 transposition events at both ends.
 
-## Output Format
+If supplying a tagAlign file, it should minimally contain 3 columns for chr, start and end, and a 6th column with the strand. 
 
-- Generates a unstranded bigwig file with +4/-4 shift applied on ATAC datasets and 0/+1 shift applied on DNASE datasets.
+Both gzipped and plain text files are allowed. Sorting is not expected.
+
+The `CHROM_SIZES` file should be a tab-separated file with two columns. First column is the chromosome and second column is the chromsome length. Make sure the input BAM/fragment/tagAlign file are consistent with the chromosomes in `CHROM_SIZES`.
+
+### Example usage
+
+```bash
+python reads_to_bigwig.py -ifrag my_sample.frag.tsv.gz \
+                          -g hg38.fa \
+                          -c hg38.chrom.sizes \
+                          -o /output/directory/my_sample
+                          -d ATAC
+```
+
+Example usage when we have an input ATAC-seq fragment file `my_sample.frag.tsv.gz`. Output is stored to `/output/directory/my_sample_unstranded.bw`, please ensure the directory `/output/directory/` exists.
+
+### Automatic shift detection
+
+Most ATAC-seq (single-cell and bulk) pipelines shift Tn5 reads by +4/-5 by default. However when combining analyses with other tools, the effective shift can be different than +4/-5 due to off-by-one errors. Our script handles such cases by default by automatically detecting the enzyme shift (for ATAC and DNase) and correcting it appropriately (+4/-4 for ATAC and 0/+1 for DNase) for consistency with the training pipeline.
+
+In rare cases, you may see an error such as "Input file shifts inconsistent" or "Input shift is non-standard". In such cases, if you know the actual shift for your input file (typically +0/+0 for BAMs, and +4/-5 for ATAC fragment/tagAligns) you can supply them using the `--plus-shift` and `--minus-shift` flags. However, if you are uncertain, please reach out to us by submitting an [Issue](https://github.com/kundajelab/chrombpnet/issues).
+
 
 ## Discussion
+
+
+### Suggestions for preparing input data
+
+Please ensure your input files are filtered for quality metrics and duplicates are removed appropriately. For single-end data, we recommend not removing duplicates. Fragment files obtained from Chromap, cellranger and similar tools are suitable with this pipeline. For single-cell analyses, you may wish to aggregate fragments by cluster instead of sample to train cluster-specific ChromBPNet models.
+
 
 ### Wondering why we are using the  +4/-4 ATAC shift (instead of the popular +4/-5 ATAC shift) and 0/+1 DNASE shift (instead of the popular no shift)? 
 
@@ -78,7 +113,6 @@ When considering paired-end data, duplicates can be marked correctly because we 
 [url1]: https://github.com/ENCODE-DCC/atac-seq-pipeline
 [url2]: https://broadinstitute.github.io/picard/explain-flags.html
 [url3]: https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1642-2
-
 
 
 
