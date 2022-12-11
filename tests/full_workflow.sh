@@ -30,7 +30,7 @@ echo "completed step 1"
 
 in_bam=$data_dir/merged.bam
 bigwig_prefix=$data_dir/merged
-data_type=ATAC_PE
+data_type=ATAC
 reference_fasta=$data_dir/hg38.fa
 chrom_sizes=$data_dir/hg38.chrom.sizes
 step2_make_bigwigs_from_bams.sh $in_bam $bigwig_prefix $data_type $reference_fasta $chrom_sizes
