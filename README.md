@@ -75,7 +75,7 @@ train_chrombpnet_model.sh \
 
 #### Input Format
 
-- `-i`: input file path with filtered reads. Example files for supported types - [bam](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/ENCSR868FGK_merged.bam), fragment, tagalign 
+- `-i`: input file path with filtered reads. Example files for supported types - [bam](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/ENCSR868FGK_merged.bam), [fragment](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/example.fragments.tsv), [tagalign](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/example.tagAlign) 
 - `-t`: type of input file. Following string inputs are supported - "bam", "fragment", "tagalign". 
 - `-d`: assay type.  Following types are supported - "ATAC" or "DNASE"
 - `-g`: reference genome fasta file. Example file human reference - [hg38.fa](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/hg38.genome.fa)
@@ -122,13 +122,11 @@ To interpret the output files, please find documentation on expected output, the
 
 For more information, also see:
 
-- Full documentation list
+- [Full documentation list](https://github.com/kundajelab/chrombpnet/wiki)
 - Detailed usage guide with more information on the input and output file formats and how to work with them.
-- Best practices for preprocessing
-- Training tutorial
-- Frequently Asked Questions, FAQ
-- Singularity Setup
-
+- [Best practices for preprocessing](https://github.com/kundajelab/chrombpnet/wiki/Preprocessing)
+- [Training tutorial](https://github.com/kundajelab/chrombpnet/wiki/Tutorial)
+- [Frequently Asked Questions, FAQ](https://github.com/kundajelab/chrombpnet/wiki/FAQ)
  
 ## Bias Model training
 
