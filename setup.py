@@ -28,9 +28,9 @@ config = {
                'workflows/tutorial/step3_get_background_regions.sh',
                'workflows/tutorial/step4_train_bias_model.sh',
                'workflows/tutorial/step5_interpret_bias_model.sh',
-               'workflows/tutorial/step6_train_chrombpnet_modcel.sh',
+               'workflows/tutorial/step6_train_chrombpnet_model.sh',
                'workflows/tutorial/step7_interpret_chrombpnet_model.sh',
-               'workflows/train_bias_model.sh'
+               'workflows/train_bias_model.sh',
                'workflows/train_chrombpnet_model.sh'
     ],
     'entry_points': {'console_scripts': [
@@ -50,7 +50,7 @@ config = {
         'chrombpnet_modisco = chrombpnet.evaluation.modisco.run_modisco:main',
         'chrombpnet_marginal_footprints = chrombpnet.evaluation.marginal_footprints.marginal_footprinting:main',
         'chrombpnet_tomtom_hits = chrombpnet.evaluation.modisco.fetch_tomtom:main',
-        'chrombpnet_convert_html_to_pdf = chrombpnet.evaluation.modisco.convert_html_to_pdf:main'
+        'chrombpnet_convert_html_to_pdf = chrombpnet.evaluation.modisco.convert_html_to_pdf:main',
         'chrombpnet_visualize_motif_matches = chrombpnet.evaluation.modisco.visualize_motif_matches:main',
         'chrombpnet_score_snps = chrombpnet.evaluation.variant_effect_prediction.snp_scoring:main',
         'chrombpnet_srcdir = chrombpnet.get_package_dir:main']},
