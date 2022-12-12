@@ -86,7 +86,7 @@ train_chrombpnet_model.sh \
 - `-b`: Bias model in `.h5` format. Bias models are generally transferable across  assay types following similar protocol. Repository of pre-trained bias models for use [here](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/bias_models/). Instructions to train custom bias model below.
 - `-o`: Output directory path
 
-Please find helper scripts and instructions to filter input reads, generate peaks and non-peaks here. 
+Please find scripts and best practices for preprocssing [here](https://github.com/kundajelab/chrombpnet/wiki/Preprocessing).
 
 #### Output Format
 
@@ -109,29 +109,27 @@ evaluation\
 	pwm_from_input.png 
 	bias_metrics.json 
 	chrombpnet_metrics.json
-	chrombpnet_only_peaks.png
-	chrombpnet_only_peaks.jsd.png
+	chrombpnet_only_peaks.counts_pearsonr.png
+	chrombpnet_only_peaks.profile_jsd.png
 	profile_motifs.pdf
 	counts_motifs.pdf
 	footprints/bias_footprints_score.txt
 	footprints/corrected_footprints_score.txt
 	...
 ```
-
-To interpret the output files, please find documentation on expected output, their interpretation and instructions to improve bias correction here. 
+Detailed usage guide with more information on the output file formats and how to work with them are provided [here](https://github.com/kundajelab/chrombpnet/wiki/Output-format).
 
 For more information, also see:
 
 - [Full documentation list](https://github.com/kundajelab/chrombpnet/wiki)
-- Detailed usage guide with more information on the input and output file formats and how to work with them.
+- [Detailed usage guide with more information on the output file formats and how to work with them](https://github.com/kundajelab/chrombpnet/wiki/Output-format)
 - [Best practices for preprocessing](https://github.com/kundajelab/chrombpnet/wiki/Preprocessing)
 - [Training tutorial](https://github.com/kundajelab/chrombpnet/wiki/Tutorial)
 - [Frequently Asked Questions, FAQ](https://github.com/kundajelab/chrombpnet/wiki/FAQ)
  
 ## Bias Model training
 
-The command to train bias model will look like this:
-
+The command to train a custom bias bias model will look like this:
 
 ```
 train_bias_model.sh \
@@ -143,24 +141,22 @@ train_bias_model.sh \
   -p /path/to/peaks.bed \
   -n /path/to/nonpeaks.bed \
   -f /path/to/fold_0.json \
-  -b /path/to/bias.h5 \ 
   -o path/to/output/dir/ \
 ```
 
 #### Input Format
 
-- `-i`: input file path with filtered reads. Example files for supported types - bam, fragment, tagalign 
+- `-i`: input file path with filtered reads. Example files for supported types - [bam](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/ENCSR868FGK_merged.bam), [fragment](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/example.fragments.tsv), [tagalign](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/example.tagAlign) 
 - `-t`: type of input file. Following string inputs are supported - "bam", "fragment", "tagalign". 
 - `-d`: assay type.  Following types are supported - "ATAC" or "DNASE"
-- `-g`: reference genome fasta file. Example file in human - hg38.fa
-- `-c`: chromosome and size tab seperated file. Example file in human - hg38.chrom.sizes
-- `-p`: Input peaks in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit (10th column). Every region 	  is centered at start + summit internally, across all regions. Example file in  - peaks.bed.gz
-- `-n`: Input nonpeaks (background regions)in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit 	  	(10th column). Every region is centered at start + summit internally, across all regions. Example file in - nonpeaks.bed.gz
-- `-f`: json file showing split of chromosomes for train, test and valid. Example file - 
-- `-b`: Bias model in `.h5` format. Bias models are generally transferable across same assay types. Repository of pre-trained bias models for use - here. . Instructions to train custom bias model - here.
+- `-g`: reference genome fasta file. Example file human reference - [hg38.fa](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/hg38.genome.fa)
+- `-c`: chromosome and size tab seperated file. Example file in human reference - [hg38.chrom.sizes](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/hg38.chrom.sizes)
+- `-p`: Input peaks in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit (10th column). Every region 	  is centered at start + summit internally, across all regions. Example file with [ENCSR868FGK](https://www.encodeproject.org/experiments/ENCSR868FGK/) dataset - [peaks.bed](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/ENCSR868FGK_relaxed_peaks_no_blacklist.bed)
+- `-n`: Input nonpeaks (background regions)in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit 	  	(10th column). Every region is centered at start + summit internally, across all regions. Example file with [ENCSR868FGK](https://www.encodeproject.org/experiments/ENCSR868FGK/) dataset - [nonpeaks.bed](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/ENCSR868FGK_nonpeaks_no_blacklist.bed)
+- `-f`: json file showing split of chromosomes for train, test and valid. Example 5 fold jsons for human reference -  [folds](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/folds/) 
 - `-o`: Output directory path
 
-Please find helper scripts and instructions to filter input reads, generate peaks and non-peaks here. 
+Please find scripts and best practices for preprocssing [here](https://github.com/kundajelab/chrombpnet/wiki/Preprocessing).
 
 #### Output Format
 
@@ -169,8 +165,7 @@ The ouput directory will be populated as follows -
 ```
 models\
 	...
-	chrombpnet.h5
-	chrombpnet_nobias.h5 (TF-Model i.e model to predict bias corrected accessibility profile) 
+	bias.h5
 	...
 logs\
 	...
@@ -181,30 +176,23 @@ intermediates\
 evaluation\
 	...
 	pwm_from_input.png 
-	bias_metrics.json 
-	chrombpnet_metrics.json
-	chrombpnet_only_peaks.png
-	chrombpnet_only_peaks.jsd.png
+	bias_metrics.json
+	bias_only_peaks.counts_pearsonr.png
+	bias_only_peaks.profile_jsd.png
 	profile_motifs.pdf
 	counts_motifs.pdf
-	footprints/bias_footprints_score.txt
-	footprints/corrected_footprints_score.txt
 	...
 ```
-
-To interpret the output files, please find documentation on expected output, their interpretation and instructions to improve bias correction here. 
-
+Detailed usage guide with more information on the output file formats and how to work with them are provided [here](https://github.com/kundajelab/chrombpnet/wiki/Output-format).
 
 For more information, also see:
 
-- Full documentation list
-- Detailed usage guide with more information on the input and output file formats and how to work with them.
-- Best practices for preprocessing
-- Training tutorial
-- Frequently Asked Questions, FAQ
-- Singularity Setup
-
-
+- [Full documentation list](https://github.com/kundajelab/chrombpnet/wiki)
+- [Detailed usage guide with more information on the output file formats and how to work with them](https://github.com/kundajelab/chrombpnet/wiki/Output-format)
+- [Best practices for preprocessing](https://github.com/kundajelab/chrombpnet/wiki/Preprocessing)
+- [Training tutorial](https://github.com/kundajelab/chrombpnet/wiki/Tutorial)
+- [Frequently Asked Questions, FAQ](https://github.com/kundajelab/chrombpnet/wiki/FAQ)
+ 
 ## How to Cite
 
 If you're using ChromBPNet in your work, please cite:
