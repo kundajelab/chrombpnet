@@ -225,7 +225,7 @@ chrombpnet_predict \
 
 # marginal footprinting
 mkdir $output_dir/footprints
-if [[ "$data_type" = "DNASE" || ]] ; then
+if [[ "$data_type" = "DNASE" ]] ; then
     echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
     echo $( timestamp ): "chrombpnet_marginal_footprints \\
     	     -g $reference_fasta \\

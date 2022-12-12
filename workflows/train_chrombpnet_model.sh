@@ -22,18 +22,55 @@ trap 'cleanup' EXIT INT TERM
 
 # input files
 
-in_bam=${1?param missing - in_bam}
-data_type=${3?param missing - data_type}
-reference_fasta=${4?param missing - reference_fasta}
-chrom_sizes=${5?param missing - chrom_sizes}
-peaks=${3?param missing - peaks}
-nonpeaks=${4?param missing - nonpeaks}
-fold=${5?param missing - fold}
-bias_model=${6?param missing - bias_model}
-output_dir=${7?param missing - output_dir}
+while getopts i:d:g:c:p:n:f:b:o:h? flag
+
+do
+        case "${flag}" in
+                i) in_bam=${OPTARG}
+                        ;;
+                d) data_type=${OPTARG}
+                         ;;
+                g) reference_fasta=${OPTARG}
+                         ;;
+                c) chrom_sizes=${OPTARG}
+                         ;;
+                p) peaks=${OPTARG}
+                         ;;
+                n) nonpeaks=${OPTARG}
+                         ;;
+                f) fold=${OPTARG}
+                         ;;
+                b) bias_model=${OPTARG}
+                         ;;
+                o) output_dir=${OPTARG}
+                         ;;
+                h) echo "script usage: $0 [-i input_bam] [-d ATAC_or_DNASE] [-g genome_fasta] [-c chrom_sizes] [-p peaks_bed] [-n nonpeaks_bed] [-f folds_json] [-b bias_model_h5] [-o output_dir_path]"
+                         exit
+                         ;;
+                ?) echo "script usage: $0 [-i input_bam] [-d ATAC_or_DNASE] [-g genome_fasta] [-c chrom_sizes] [-p peaks_bed] [-n nonpeaks_bed] [-f folds_json] [-b bias_model_h5] [-o output_dir_path]" 
+                         exit
+                         ;;
+                *) echo "Invalid option: -$flag"
+                         exit 1 
+                         ;;
+
+        esac
+done
+
+in_bam=${in_bam?param missing -  bam file path missing}
+data_type=${3?param missing - data_type is ATAC or DNASE}
+reference_fasta=${4?param missing - reference genome file missing}
+chrom_sizes=${5?param missing - reference genome chrom sizes file missing}
+peaks=${3?param missing - peaks bed file missing}
+nonpeaks=${4?param missing - nonpeaks bed file missing}
+fold=${5?param missing - fold json missing}
+bias_model=${6?param missing - bias_model .h5 file missing}
+output_dir=${7?param missing - output_dir path missing}
 
 seed=${9:-1234} # optional
 pwm_f=${10} #optional
+
+echo $seed 
 
 ## output dirs
 
@@ -253,7 +290,7 @@ chrombpnet_predict \
 
 # marginal footprinting
 mkdir $output_dir/evaluation/footprints
-if [[ "$data_type" = "DNASE" || ]] ; then
+if [[ "$data_type" = "DNASE" ]] ; then
     echo $( timestamp ): "mkdir $output_dir/evaluation/footprints" | tee -a $logfile
     echo $( timestamp ): "chrombpnet_marginal_footprints \\
     	     -g $reference_fasta \\
