@@ -1,13 +1,16 @@
 # Bias factorized, base-resolution deep learning models of chromatin accessibility reveal cis-regulatory sequence syntax, transcription factor footprints and regulatory variants
 
-- This repo contains code for the `Bias factorized, base-resolution deep learning models of chromatin accessibility reveal cis-regulatory sequence syntax, transcription factor footprints and regulatory variants` paper Anusri Pampari*, Anna Shcherbina*, Anshul Kundaje. (*authors contributed equally to the work)  
+- This repo contains code for the paper `Bias factorized, base-resolution deep learning models of chromatin accessibility reveal cis-regulatory sequence syntax, transcription factor footprints and regulatory variants` (techincal report coming soon) by  Anusri Pampari*, Anna Shcherbina*, Anshul Kundaje. (*authors contributed equally)  
 - Please contact [Anusri Pampari] (\<first-name\>@stanford.edu) for suggestions and comments. 
+- Here is a link to the [slides](https://docs.google.com/presentation/d/1Ow6K8TYN40u7T3ODdo-JRCLuv5fUUacA/edit?usp=sharing&ouid=104820480456877027097&rtpof=true&sd=true) and a comprehensive [tutorial](https://github.com/kundajelab/chrombpnet/wiki). Please see the [FAQ](https://github.com/kundajelab/chrombpnet/wiki/FAQ) and file a github [issue](https://github.com/kundajelab/chrombpnet/issues) if you have questions.
 
 Chromatin profiles (DNASE-seq and ATAC-seq) exhibit multi-resolution shapes and spans regulated by co-operative binding of transcription factors (TFs). This complexity is further difficult to mine because of confounding bias from enzymes (DNASE-I/Tn5) used in these assays. Existing methods do not account for this complexity at base-resolution and do not account for enzyme bias correctly, thus missing the high-resolution architecture of these profile. Here we introduce ChromBPNet to address both these aspects.
 
-ChromBPNet (shown in the image as `chrombpnet model`) is a fully convolutional neural network that uses dilated convolutions with residual connections to enable large receptive fields with efficient parameterization. It also performs automatic assay bias correction in two steps, first by learning simple model on chromatin background that captures the enzyme effect (called `bias model` in the image). Then we use this model to regress out the effect of the enzyme from the ATAC-seq/DNASE-seq profiles. This two step process ensures that the sequence component of the ChromBPNet model (called `sequence model`) does not learn enzymatic bias. 
+ChromBPNet (shown in the image as `Bias-Factorized ChromBPNet`) is a fully convolutional neural network that uses dilated convolutions with residual connections to enable large receptive fields with efficient parameterization. It also performs automatic assay bias correction in two steps, first by learning simple model on chromatin background that captures the enzyme effect (called `Frozen Bias Model` in the image). Then we use this model to regress out the effect of the enzyme from the ATAC-seq/DNASE-seq profiles. This two step process ensures that the sequence component of the ChromBPNet model (called `TF Model`) does not learn enzymatic bias. 
 
-![Image](images/chrombpnet_arch.png)
+<p align="center">
+<img src="images/chrombpnet_arch.png" alt="ChromBPNet" align="center" style="width: 400px;"/>
+</p>
 
 ## Table of contents
 
@@ -52,29 +55,136 @@ pip install -e chrombpnet
 	
 ## QuickStart
 
+### Bias-factorized ChromBPNet training
 
-The command to train ChromBPNet will look like this:
+The command to train ChromBPNet with pre-trained bias model will look like this:
 
 ```
 train_chrombpnet_model.sh \
-  -i ../tests/data/merged_unsorted.bam \
-  -d ATAC \
-  -g ../tests/data/hg38.fa \
-  -p ../tests/data/overlap.bed.gz \
-  -c ../tests/data/hg38.chrom.sizes \ 
-  -n ../tests/outputs/data/negatives_with_summit.bed \
-  -f ../tests/outputs/data/splits/fold_0.json \
-  -b ../tests/outputs/models/bias_model/bias.h5 \ 
-  -o testing/ \
+  -i /path/to/input.bam \
+  -t "bam" \
+  -d "ATAC" \
+  -g /path/to/hg38.fa \
+  -c /path/to/hg38.chrom.sizes \ 
+  -p /path/to/peaks.bed \
+  -n /path/to/nonpeaks.bed \
+  -f /path/to/fold_0.json \
+  -b /path/to/bias.h5 \ 
+  -o path/to/output/dir/ \
 ```
 
-### Input Format
+#### Input Format
+
+- `-i`: input file path with filtered reads. Example files for supported types - bam, fragment, tagalign 
+- `-t`: type of input file. Following string inputs are supported - "bam", "fragment", "tagalign". 
+- `-d`: assay type.  Following types are supported - "ATAC" or "DNASE"
+- `-g`: reference genome fasta file. Example file in human - hg38.fa
+- `-c`: chromosome and size tab seperated file. Example file in human - hg38.chrom.sizes
+- `-p`: Input peaks in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit (10th column). Every region 	  is centered at start + summit internally, across all regions. Example file in  - peaks.bed.gz
+- `-n`: Input nonpeaks (background regions)in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit 	  	(10th column). Every region is centered at start + summit internally, across all regions. Example file in - nonpeaks.bed.gz
+- `-f`: json file showing split of chromosomes for train, test and valid. Example file - 
+- `-b`: Bias model in `.h5` format. Bias models are generally transferable across same assay types. Repository of pre-trained bias models for use - here. . Instructions to train custom bias model - here.
+- `-o`: Output directory path
+
+Please find helper scripts and instructions to filter input reads, generate peaks and non-peaks here. 
+
+#### Output Format
+
+The ouput directory will be populated as follows -
+
+```
+models\
+	...
+	chrombpnet.h5
+	chrombpnet_nobias.h5 (TF-Model i.e model to predict bias corrected accessibility profile) 
+	...
+logs\
+	...
+	
+intermediates\
+	...
+
+evaluation\
+	...
+	pwm_from_input.png 
+	bias_metrics.json 
+	chrombpnet_metrics.json
+	chrombpnet_only_peaks.png
+	chrombpnet_only_peaks.jsd.png
+	profile_motifs.pdf
+	counts_motifs.pdf
+	footprints/bias_footprints_score.txt
+	footprints/corrected_footprints_score.txt
+	...
+```
+
+To interpret the output files, please find documentation on expected output, their interpretation and instructions to improve bias correction here. 
+
+## Bias Model training
+
+The command to train bias model will look like this:
 
 
-### Output Format
+```
+train_bias_model.sh \
+  -i /path/to/input.bam \
+  -t "bam" \
+  -d "ATAC" \
+  -g /path/to/hg38.fa \
+  -c /path/to/hg38.chrom.sizes \ 
+  -p /path/to/peaks.bed \
+  -n /path/to/nonpeaks.bed \
+  -f /path/to/fold_0.json \
+  -b /path/to/bias.h5 \ 
+  -o path/to/output/dir/ \
+```
 
+#### Input Format
 
-For a optimal bias correction, please refer to our detailed tutorial and FAQs at our [wiki page](https://github.com/kundajelab/chrombpnet/wiki). 
-For other downstream tools refer to Wiki.
+- `-i`: input file path with filtered reads. Example files for supported types - bam, fragment, tagalign 
+- `-t`: type of input file. Following string inputs are supported - "bam", "fragment", "tagalign". 
+- `-d`: assay type.  Following types are supported - "ATAC" or "DNASE"
+- `-g`: reference genome fasta file. Example file in human - hg38.fa
+- `-c`: chromosome and size tab seperated file. Example file in human - hg38.chrom.sizes
+- `-p`: Input peaks in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit (10th column). Every region 	  is centered at start + summit internally, across all regions. Example file in  - peaks.bed.gz
+- `-n`: Input nonpeaks (background regions)in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit 	  	(10th column). Every region is centered at start + summit internally, across all regions. Example file in - nonpeaks.bed.gz
+- `-f`: json file showing split of chromosomes for train, test and valid. Example file - 
+- `-b`: Bias model in `.h5` format. Bias models are generally transferable across same assay types. Repository of pre-trained bias models for use - here. . Instructions to train custom bias model - here.
+- `-o`: Output directory path
+
+Please find helper scripts and instructions to filter input reads, generate peaks and non-peaks here. 
+
+#### Output Format
+
+The ouput directory will be populated as follows -
+
+```
+models\
+	...
+	chrombpnet.h5
+	chrombpnet_nobias.h5 (TF-Model i.e model to predict bias corrected accessibility profile) 
+	...
+logs\
+	...
+	
+intermediates\
+	...
+
+evaluation\
+	...
+	pwm_from_input.png 
+	bias_metrics.json 
+	chrombpnet_metrics.json
+	chrombpnet_only_peaks.png
+	chrombpnet_only_peaks.jsd.png
+	profile_motifs.pdf
+	counts_motifs.pdf
+	footprints/bias_footprints_score.txt
+	footprints/corrected_footprints_score.txt
+	...
+```
+
+To interpret the output files, please find documentation on expected output, their interpretation and instructions to improve bias correction here. 
+
 
 ## How to Cite
