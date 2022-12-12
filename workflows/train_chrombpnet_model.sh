@@ -22,11 +22,13 @@ trap 'cleanup' EXIT INT TERM
 
 # input files
 
-while getopts i:d:g:c:p:n:f:b:o:s:h? flag
+while getopts i:t:d:g:c:p:n:f:b:o:s:h? flag
 
 do
         case "${flag}" in
-                i) in_bam=${OPTARG}
+                i) input_file=${OPTARG}
+                        ;;
+                t) input_type=${OPTARG}
                         ;;
                 d) data_type=${OPTARG}
                          ;;
@@ -46,10 +48,10 @@ do
                          ;;
                 s) seed=${OPTARG}
                          ;;
-                h) echo "script usage: $0 [-i input_bam] [-d ATAC_or_DNASE] [-g genome_fasta] [-c chrom_sizes] [-p peaks_bed] [-n nonpeaks_bed] [-f folds_json] [-b bias_model_h5] [-o output_dir_path]"
+                h) echo "script usage: $0 [-i input_file] [-t bam_or_fragment_or_tagalign] [-d ATAC_or_DNASE] [-g genome_fasta] [-c chrom_sizes] [-p peaks_bed] [-n nonpeaks_bed] [-f folds_json] [-b bias_model_h5] [-o output_dir_path]"
                          exit
                          ;;
-                ?) echo "script usage: $0 [-i input_bam] [-d ATAC_or_DNASE] [-g genome_fasta] [-c chrom_sizes] [-p peaks_bed] [-n nonpeaks_bed] [-f folds_json] [-b bias_model_h5] [-o output_dir_path]" 
+                ?) echo "script usage: $0 [-i input_file] [-t bam_or_fragment_or_tagalign] [-d ATAC_or_DNASE] [-g genome_fasta] [-c chrom_sizes] [-p peaks_bed] [-n nonpeaks_bed] [-f folds_json] [-b bias_model_h5] [-o output_dir_path]" 
                          exit
                          ;;
                 *) echo "Invalid option: -$flag"
@@ -59,7 +61,8 @@ do
         esac
 done
 
-in_bam=${in_bam?param missing -  bam file path missing}
+input_file=${input_file?param missing -  input file path missing -  should be bam, fragment or tagalign file}
+input_type=${input_type?param missing -  input type missing - should be string with value bam, fragment or tagalign}
 data_type=${data_type?param missing - data_type is ATAC or DNASE}
 reference_fasta=${reference_fasta?param missing - reference genome file missing}
 chrom_sizes=${chrom_sizes?param missing - reference genome chrom sizes file missing}
@@ -124,8 +127,21 @@ function timestamp {
 logfile=$output_dir/logs/"preprocessing.log"
 touch $logfile
 
-echo $( timestamp ): "chrombpnet_makebigwig -g $reference_fasta -ibam $in_bam -c $chrom_sizes -o $bigwig_prefix -d  $data_type" | tee -a $logfile
-chrombpnet_makebigwig -g $reference_fasta -ibam $in_bam -c $chrom_sizes -o $bigwig_prefix -d  $data_type
+if [ $input_type == "bam" ]
+then
+    echo $( timestamp ): "chrombpnet_makebigwig -g $reference_fasta -ibam $input_file -c $chrom_sizes -o $bigwig_prefix -d  $data_type" | tee -a $logfile
+    chrombpnet_makebigwig -g $reference_fasta -ibam $input_file -c $chrom_sizes -o $bigwig_prefix -d  $data_type
+elif [ $input_type == "fragment" ] 
+then
+    echo $( timestamp ): "chrombpnet_makebigwig -g $reference_fasta -ifrag $input_file -c $chrom_sizes -o $bigwig_prefix -d  $data_type" | tee -a $logfile
+    chrombpnet_makebigwig -g $reference_fasta -ifrag $input_file -c $chrom_sizes -o $bigwig_prefix -d  $data_type
+elif [ $input_type == "tagalign" ] 
+then
+    echo $( timestamp ): "chrombpnet_makebigwig -g $reference_fasta -itag $input_file -c $chrom_sizes -o $bigwig_prefix -d  $data_type" | tee -a $logfile
+    chrombpnet_makebigwig -g $reference_fasta -itag $input_file -c $chrom_sizes -o $bigwig_prefix -d  $data_type
+else
+    echo "Unknown data type: "$input_type
+fi
 echo $( timestamp ): "chrombpnet_pwm_from_bigwig -i $bigwig_prefix_unstranded.bw -g $reference_fasta -o $bigwig_prefix_bias_pwm -c chr20 -cz $chrom_sizes" | tee -a $logfile
 chrombpnet_pwm_from_bigwig -i $bigwig_prefix"_unstranded.bw" -g $reference_fasta -o $output_dir/evaluation/"pwm_from_input" -c "chr20" -cz $chrom_sizes 
 
