@@ -7,19 +7,13 @@ Chromatin profiles (DNASE-seq and ATAC-seq) exhibit multi-resolution shapes and 
 
 ChromBPNet (shown in the image as `chrombpnet model`) is a fully convolutional neural network that uses dilated convolutions with residual connections to enable large receptive fields with efficient parameterization. It also performs automatic assay bias correction in two steps, first by learning simple model on chromatin background that captures the enzyme effect (called `bias model` in the image). Then we use this model to regress out the effect of the enzyme from the ATAC-seq/DNASE-seq profiles. This two step process ensures that the sequence component of the ChromBPNet model (called `sequence model`) does not learn enzymatic bias. 
 
-![Image](images/chrombpnet_arch.PNG)
-
-If you are interested in learning more about the detailed architectures used, please refer to the following architecture files - 
-
-- bias model: https://github.com/kundajelab/chrombpnet/blob/master/chrombpnet/training/models/bpnet_model.py
-- chrombpnet model: https://github.com/kundajelab/chrombpnet/blob/master/chrombpnet/training/models/chrombpnet_with_bias_model.py.
+![Image](images/chrombpnet_arch.pdf)
 
 ## Table of contents
 
-- [About](#chrombpnet)
 - [Installation](#installation)
 - [QuickStart](#quickstart)
-- [DeepDive](#deepdive)
+- [How-to-cite](#how-to-cite)
 
 ## Installation
 
@@ -58,6 +52,7 @@ pip install -e chrombpnet
 	
 ## QuickStart
 
+
 The command to train ChromBPNet will look like this:
 
 ```
@@ -81,3 +76,5 @@ train_chrombpnet_model.sh \
 
 For a optimal bias correction, please refer to our detailed tutorial and FAQs at our [wiki page](https://github.com/kundajelab/chrombpnet/wiki). 
 For other downstream tools refer to Wiki.
+
+## How to Cite
