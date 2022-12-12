@@ -22,7 +22,7 @@ trap 'cleanup' EXIT INT TERM
 
 # input files
 
-while getopts i:d:g:c:p:n:f:b:o:h? flag
+while getopts i:d:g:c:p:n:f:b:o:s:h? flag
 
 do
         case "${flag}" in
@@ -44,6 +44,8 @@ do
                          ;;
                 o) output_dir=${OPTARG}
                          ;;
+                s) seed=${OPTARG}
+                         ;;
                 h) echo "script usage: $0 [-i input_bam] [-d ATAC_or_DNASE] [-g genome_fasta] [-c chrom_sizes] [-p peaks_bed] [-n nonpeaks_bed] [-f folds_json] [-b bias_model_h5] [-o output_dir_path]"
                          exit
                          ;;
@@ -58,19 +60,17 @@ do
 done
 
 in_bam=${in_bam?param missing -  bam file path missing}
-data_type=${3?param missing - data_type is ATAC or DNASE}
-reference_fasta=${4?param missing - reference genome file missing}
-chrom_sizes=${5?param missing - reference genome chrom sizes file missing}
-peaks=${3?param missing - peaks bed file missing}
-nonpeaks=${4?param missing - nonpeaks bed file missing}
-fold=${5?param missing - fold json missing}
-bias_model=${6?param missing - bias_model .h5 file missing}
-output_dir=${7?param missing - output_dir path missing}
+data_type=${data_type?param missing - data_type is ATAC or DNASE}
+reference_fasta=${reference_fasta?param missing - reference genome file missing}
+chrom_sizes=${chrom_sizes?param missing - reference genome chrom sizes file missing}
+peaks=${peaks?param missing - peaks bed file missing}
+nonpeaks=${nonpeaks?param missing - nonpeaks bed file missing}
+fold=${fold?param missing - fold json missing}
+bias_model=${bias_model?param missing - bias_model .h5 file missing}
+output_dir=${output_dir?param missing - output_dir path missing}
 
-seed=${9:-1234} # optional
-pwm_f=${10} #optional
-
-echo $seed 
+seed=${seed:-1234} # optional
+pwm_f=${pwm_f} #optional
 
 ## output dirs
 
@@ -276,7 +276,7 @@ echo $( timestamp ): "chrombpnet_predict \\
         --outputlen=$outputlen \\
         --output_prefix=$output_dir/evaluation/bias \\
         --batch_size=256 \\
-        --model_h5=$output_dir/models/bias_model_scaled.h5" | tee -a $logfile
+        --model_h5=$output_dir/intermediates/bias_model_scaled.h5" | tee -a $logfile
 chrombpnet_predict \
     --genome=$reference_fasta \
     --bigwig=$bigwig_path \
@@ -286,7 +286,7 @@ chrombpnet_predict \
     --outputlen=$outputlen \
     --output_prefix=$output_dir/evaluation/bias \
     --batch_size=256 \
-    --model_h5=$output_dir/models/bias_model_scaled.h5 | tee -a $logfile
+    --model_h5=$output_dir/intermediates/bias_model_scaled.h5 | tee -a $logfile
 
 # marginal footprinting
 mkdir $output_dir/evaluation/footprints
@@ -337,7 +337,7 @@ if [[ "$data_type" = "DNASE" ]] ; then
         -g $reference_fasta \\
         -r $output_dir/intermediates/filtered.nonpeaks.bed \\
         --chr_fold_path=$fold \\
-        -m $output_dir/models/bias_model_scaled.h5 \\
+        -m $output_dir/intermediates/bias_model_scaled.h5 \\
         -bs 512 \\
         -o $output_dir/evaluation/footprints/bias \\
         -pwm_f $pwm_f"  | tee -a $logfile
@@ -345,7 +345,7 @@ if [[ "$data_type" = "DNASE" ]] ; then
 	-g $reference_fasta \
 	-r $output_dir/intermediates/filtered.nonpeaks.bed \
 	--chr_fold_path=$fold \
-	-m $output_dir/models/bias_model_scaled.h5 \
+	-m $output_dir/intermediates/bias_model_scaled.h5 \
 	-bs 512 \
 	-o $output_dir/evaluation/footprints/bias \
 	-pwm_f $pwm_f | tee -a $logfile
@@ -354,8 +354,8 @@ elif [[ "$data_type" = "ATAC" ]] ; then
     echo $( timestamp ): "chrombpnet_marginal_footprints \\
     	     -g $reference_fasta \\
              -r $output_dir/intermediates/filtered.nonpeaks.bed \\
-             -chr "chr1" \\
-             -m $output_dir/models/bias_model_scaled.h5 \\
+             --chr_fold_path=$fold \\
+             -m $output_dir/intermediates/bias_model_scaled.h5 \\
              -bs 512 \\
              -o $output_dir/evaluation/footprints/bias \\
              -pwm_f $pwm_f" | tee -a $logfile
@@ -363,7 +363,7 @@ elif [[ "$data_type" = "ATAC" ]] ; then
 	-g $reference_fasta \
 	-r $output_dir/intermediates/filtered.nonpeaks.bed \
 	--chr_fold_path=$fold \
-	-m $output_dir/models/bias_model_scaled.h5 \
+	-m $output_dir/intermediates/bias_model_scaled.h5 \
 	-bs 512 \
 	-o $output_dir/evaluation/footprints/bias \
 	-pwm_f $pwm_f  | tee -a $logfile

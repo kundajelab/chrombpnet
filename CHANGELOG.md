@@ -1,5 +1,13 @@
 # Changelog
 
+## Version - 1.3 - Inworks - 2022-12-11
+- Changed pipelines to use modisco-lite, old modisco will soon be removed
+- Added automatic shift scripts to repo and integrated with the pipeline
+- modisco now outputs both html and pdf. pdf can be shared with anyone.
+- Use ATAC, DNASE not ATAC_PE, DNASE_SE anymore
+- Simplyfing workflows to include only two main workflows, chrombpnet_train_tf_model, chrombpnet_train_bias_model
+- Restructuring README, moving tutorial to additional documentation and introducing FAQ, and only two pipelines (chrombpnet_train_tf_model, chrombpnet_train_bias_model)
+
 ## [Unreleased] - 2022-02-28
 - Typo fix - (PR#31-36)
 - We can now specify ylimit in marginal footprinting plots (PR#27)

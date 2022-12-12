@@ -7,7 +7,7 @@ Chromatin profiles (DNASE-seq and ATAC-seq) exhibit multi-resolution shapes and 
 
 ChromBPNet (shown in the image as `chrombpnet model`) is a fully convolutional neural network that uses dilated convolutions with residual connections to enable large receptive fields with efficient parameterization. It also performs automatic assay bias correction in two steps, first by learning simple model on chromatin background that captures the enzyme effect (called `bias model` in the image). Then we use this model to regress out the effect of the enzyme from the ATAC-seq/DNASE-seq profiles. This two step process ensures that the sequence component of the ChromBPNet model (called `sequence model`) does not learn enzymatic bias. 
 
-![Image](images/chrombpnet_arch.pdf)
+![Image](images/chrombpnet_arch.png)
 
 ## Table of contents
 

@@ -45,6 +45,7 @@ config = {
         'chrombpnet_predict = chrombpnet.training.predict:main',
         'chrombpnet_makebigwig = chrombpnet.helpers.preprocessing.reads_to_bigwig:main', 
         'chrombpnet_predict_to_bigwig = chrombpnet.evaluation.make_bigwigs.predict_to_bigwig:main',
+        'chrombpnet_importance_hdf5_to_bigwig = chrombpnet.evaluation.make_bigwigs.importance_hdf5_to_bigwig:main',   
         'chrombpnet_metrics = chrombpnet.training.metrics:main',
         'chrombpnet_deepshap = chrombpnet.evaluation.interpret.interpret:main',
         'chrombpnet_modisco = chrombpnet.evaluation.modisco.run_modisco:main',
