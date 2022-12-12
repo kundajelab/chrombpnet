@@ -36,6 +36,8 @@ function timestamp {
 logfile=$bigwig_prefix"_preprocessing.log"
 touch $logfile
 
+echo $( timestamp ): "chrombpnet_makebigwig -g $reference_fasta -ibam $in_bam -c $chrom_sizes -o $bigwig_prefix -d  $data_type" | tee -a $logfile
 chrombpnet_makebigwig -g $reference_fasta -ibam $in_bam -c $chrom_sizes -o $bigwig_prefix -d  $data_type
 echo $( timestamp ): "chrombpnet_pwm_from_bigwig -i $bigwig_prefix_unstranded.bw -g $reference_fasta -o $bigwig_prefix_bias_pwm -c chr20 -cz $chrom_sizes" | tee -a $logfile
 chrombpnet_pwm_from_bigwig -i $bigwig_prefix"_unstranded.bw" -g $reference_fasta -o $bigwig_prefix"_bias_pwm" -c "chr20" -cz $chrom_sizes 
+
