@@ -37,7 +37,7 @@ def counts_metrics(labels,preds,outf,title):
                     ylab='Log Count Predictions')
     plt.suptitle(title+" count: spearman R="+str(round(spearman_cor,3))+", Pearson R="+str(round(pearson_cor,3))+", mse="+str(round(mse,3)))
     plt.legend(loc='best')
-    plt.savefig(outf+'.png',format='png',dpi=300)
+    plt.savefig(outf+'.counts_pearsonr.png',format='png',dpi=300)
     
     return spearman_cor, pearson_cor, mse
 
@@ -115,6 +115,6 @@ def plot_histogram(region_jsd, shuffled_labels_jsd, output_prefix, title):
     plt.xlabel('Jensen Shannon Distance Profile Labels and Predictions in Probability Space')
     plt.title("JSD Dist: "+title)
     plt.legend(loc='best')
-    plt.savefig(output_prefix+".jsd.png",format='png',dpi=300)
+    plt.savefig(output_prefix+".profile_jsd.png",format='png',dpi=300)
 
 
