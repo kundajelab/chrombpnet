@@ -140,6 +140,7 @@ train_bias_model.sh \
   -c /path/to/hg38.chrom.sizes \ 
   -p /path/to/peaks.bed \
   -n /path/to/nonpeaks.bed \
+  -b 0.5
   -f /path/to/fold_0.json \
   -o path/to/output/dir/ \
 ```
@@ -153,6 +154,7 @@ train_bias_model.sh \
 - `-c`: chromosome and size tab seperated file. Example file in human reference - [hg38.chrom.sizes](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/hg38.chrom.sizes)
 - `-p`: Input peaks in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit (10th column). Every region 	  is centered at start + summit internally, across all regions. Example file with [ENCSR868FGK](https://www.encodeproject.org/experiments/ENCSR868FGK/) dataset - [peaks.bed](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/ENCSR868FGK_relaxed_peaks_no_blacklist.bed)
 - `-n`: Input nonpeaks (background regions)in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit 	  	(10th column). Every region is centered at start + summit internally, across all regions. Example file with [ENCSR868FGK](https://www.encodeproject.org/experiments/ENCSR868FGK/) dataset - [nonpeaks.bed](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/ENCSR868FGK_nonpeaks_no_blacklist.bed)
+- `-b`: Float value for bias threshold factor. Defaults to 0.5 for "ATAC" assay type and 0.8 for "DNASE" assay type.
 - `-f`: json file showing split of chromosomes for train, test and valid. Example 5 fold jsons for human reference -  [folds](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/folds/) 
 - `-o`: Output directory path
 
