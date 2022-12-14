@@ -1,10 +1,3 @@
 include requirements.txt
-include step1_download_bams_and_peaks.sh
-include step2_make_bigwigs_from_bams.sh
-include step3_get_background_regions.sh
-include step4_train_bias_model.sh
-include step5_interpret_bias_model.sh
-include step6_train_chrombpnet_model.sh
-include step7_interpret_chrombpnet_model.sh
-include data/*.txt
-include data/*.tsv
+include workflows/*
+include tests/*

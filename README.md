@@ -22,7 +22,7 @@ ChromBPNet (shown in the image as `Bias-Factorized ChromBPNet`) is a fully convo
 
 This section will discuss the packages needed to train a ChromBPNet model. Firstly, it is recommended that you use a GPU for model training and have the necessary NVIDIA drivers and CUDA already installed. You can verify that your machine is set up to use GPU's properly by executing the `nvidia-smi` command and ensuring that the command returns information about your system GPU(s) (rather than an error). Secondly there are two ways to ensure you have the necessary packages to train ChromBPNet  models which we detail below,
 
-### 1. Installation setup through Docker
+### 1. Running in docker 
 
 Download and install the latest version of Docker for your platform. Here is the link for the installers -<a href="https://docs.docker.com/get-docker/">Docker Installers</a>.  Run the docker run command below to open a environment with all the packages installed and do `cd chrombpnet` to start running the tutorial.
 
@@ -33,7 +33,7 @@ Download and install the latest version of Docker for your platform. Here is the
 docker run -it --rm --memory=100g --gpus device=0  kundajelab/chrombpnet:dev
 ```
 
-### 2. Installation setup throuh github within a conda environment 
+### 2. Local installation
 
 Create a clean conda environment with python >=3.8 
 ```
@@ -45,14 +45,17 @@ Install non-Python  requirements via conda
 ```
 conda install -y -c conda-forge -c bioconda samtools bedtools ucsc-bedgraphtobigwig pybigwig meme
 ```
+#### Install from pypi 
 
-Git clone the staging branch of chrombpnet and install via pip
-
+```
+pip install chrombpnet
+```
+#### Install from source
 ```
 git clone https://github.com/kundajelab/chrombpnet.git
 pip install -e chrombpnet
 ```
-	
+
 ## QuickStart
 
 ### Bias-factorized ChromBPNet training
