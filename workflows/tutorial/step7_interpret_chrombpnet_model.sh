@@ -40,7 +40,7 @@ chrombpnet_deepshap \
 modisco motifs -i $output_dir"/corrected.profile_scores.h5" -n 50000 -o $output_dir"/modisco_results_allChroms_profile.hdf5" -w 500
 modisco motifs -i $output_dir"/corrected.counts_scores.h5" -n 50000 -o $output_dir"/modisco_results_allChroms_counts.hdf5" -w 500
 
-meme_dir=$(chrombpnet_srcdir)"/../data"
+meme_dir=$(print_meme_motif_file)
 
 modisco report -i $output_dir"/modisco_results_allChroms_profile.hdf5" -o  $output_dir/modisco_reports_profile/ -s "./" -m $meme_dir/motifs.meme.txt
 modisco report -i $output_dir"/modisco_results_allChroms_counts.hdf5" -o  $output_dir/modisco_reports_counts/ -s "./" -m $meme_dir/motifs.meme.txt

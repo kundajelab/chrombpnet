@@ -6,7 +6,7 @@ import tempfile
 import os
 import numpy as np
 import chrombpnet.helpers.preprocessing.auto_shift_detect as auto_shift_detect
-
+from chrombpnet.data iimport DefaultDataFile, get_default_data_path
 
 def parse_args():
     parser=argparse.ArgumentParser(description="Convert input BAM/fragment/tagAlign file to appropriately shifted unstranded Bigwig")
@@ -20,8 +20,8 @@ def parse_args():
     parser.add_argument('-d', '--data-type', required=True, type=str, choices=['ATAC', 'DNASE'], help="assay type")
     parser.add_argument('-p', '--plus-shift', type=int, default=None, help="Plus strand shift applied to reads. Estimated if not specified")
     parser.add_argument('-m', '--minus-shift', type=int, default=None, help="Minus strand shift applied to reads. Estimated if not specified")
-    parser.add_argument('--ATAC-ref-path', type=str, default=None, help="Path to ATAC reference motifs (ATAC.ref.motifs.txt used by default)")
-    parser.add_argument('--DNASE-ref-path', type=str, default=None, help="Path to DNASE reference motifs (DNASE.ref.motifs.txt used by default)")
+    parser.add_argument('--ATAC-ref-path', type=str, default=None, help="Path to ATAC reference motifs (chrombpnet/data/ATAC.ref.motifs.txt used by default)")
+    parser.add_argument('--DNASE-ref-path', type=str, default=None, help="Path to DNASE reference motifs (chrombpnet/data/DNASE.ref.motifs.txt used by default)")
     parser.add_argument('--num-samples', type=int, default=10000, help="Number of reads to sample from BAM/fragment/tagAlign file for shift estimation")
     args = parser.parse_args()
     return args
@@ -61,12 +61,11 @@ def main():
         if args.data_type=="ATAC":
             ref_motifs_file = args.ATAC_ref_path
             if ref_motifs_file is None:
-                # https://stackoverflow.com/questions/4060221/how-to-reliably-open-a-file-in-the-same-directory-as-the-currently-running-scrip
-                ref_motifs_file =  os.path.realpath(os.path.join(os.path.dirname(__file__), "../../../data/ATAC.ref.motifs.txt"))
+                ref_motifs_file=get_default_data_path(DefaultDataFile.atac_ref_motifs)
         elif args.data_type=="DNASE":
             ref_motifs_file = args.DNASE_ref_path
             if ref_motifs_file is None:
-                ref_motifs_file =  os.path.realpath(os.path.join(os.path.dirname(__file__), "../../../data/DNASE.ref.motifs.txt"))
+                ref_motifs_file =  get_default_data_path(DefaultDataFile.dnase_ref_motifs)
     
         print("Estimating enzyme shift in input file")
         plus_shift, minus_shift = auto_shift_detect.compute_shift(args.input_bam_file,

@@ -51,30 +51,6 @@ function timestamp {
     date +"%Y-%m-%d_%H-%M-%S" | tr -d '\n'
 }
 
-#path to pwm file
-if [ -z "$pwm_f" ]
-then
-    TAB="$(printf '\t')"
-    if [["$data_type" = "DNASE" ]] ; then
-	echo "No pwm file supplied, using default for DNASE"
-	tee  motif_to_pwm.default.tsv <<EOF
-dnase_1${TAB}TTTACAAGTCCA
-dnase_2${TAB}TGTACTTACGAA
-EOF
-    elif [[ "$data_type" = "ATAC"  ]] ; then
-	echo "No pwm file supplied, using default for ATAC"
-	tee  motif_to_pwm.default.tsv <<EOF
-tn5_1${TAB}GCACAGTACAGAGCTG
-tn5_2${TAB}GTGCACAGTTCTAGAGTGTGCAG
-tn5_3${TAB}CCTCTACACTGTGCAGAA
-tn5_4${TAB}GCACAGTTCTAGACTGTGCAG
-tn5_5${TAB}CTGCACAGTGTAGAGTTGTGC
-EOF
-    else
-	echo "ERROR: unknown data type " $data_type | tee -a $logfile
-    fi    
-    pwm_f=motif_to_pwm.default.tsv
-fi
 
 # create the log file
 if [ -z "$logfile" ]
@@ -225,84 +201,42 @@ chrombpnet_predict \
 
 # marginal footprinting
 mkdir $output_dir/footprints
-if [[ "$data_type" = "DNASE" ]] ; then
-    echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-    echo $( timestamp ): "chrombpnet_marginal_footprints \\
-    	     -g $reference_fasta \\
-             -r $output_dir/filtered.nonpeaks.bed \\
-             --chr_fold_path=$fold \\
-             -m $output_dir/chrombpnet_nobias.h5 \\
-             -bs 512 \\
-             -o $output_dir/footprints/corrected \\
-             -pwm_f $pwm_f "| tee -a $logfile
-    chrombpnet_marginal_footprints \
-	-g $reference_fasta \
-	-r $output_dir/filtered.nonpeaks.bed \
-	--chr_fold_path=$fold \
-	-m $output_dir/chrombpnet_nobias.h5 \
-	-bs 512 \
-	-o $output_dir/footprints/corrected \
-	-pwm_f $pwm_f | tee -a $logfile
-elif [[ "$data_type" = "ATAC"  ]] ; then
-    echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-    echo $( timestamp ): "chrombpnet_marginal_footprints \\
-    	-g $reference_fasta \\                     
-        -r $output_dir/filtered.nonpeaks.bed \\
-        --chr_fold_path=$fold \\
-        -m $output_dir/chrombpnet_nobias.h5 \\
-        -bs 512 \\
-        -o $output_dir/footprints/corrected \\
-        -pwm_f $pwm_f"  | tee -a $logfile
-    chrombpnet_marginal_footprints \
-	-g $reference_fasta \
-	-r $output_dir/filtered.nonpeaks.bed \
-	--chr_fold_path=$fold \
-	-m $output_dir/chrombpnet_nobias.h5 \
-	-bs 512 \
-	-o $output_dir/footprints/corrected \
-	-pwm_f $pwm_f | tee -a $logfile
-else
-    echo "ERROR: unknown data type " $data_type | tee -a $logfile
-fi
+echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
+echo $( timestamp ): "chrombpnet_marginal_footprints \\
+         	     -g $reference_fasta \\
+		     -r $output_dir/filtered.nonpeaks.bed \\
+             	     --chr_fold_path=$fold \\
+             	     -m $output_dir/chrombpnet_nobias.h5 \\
+             	     -bs 512 \\
+             	     -o $output_dir/footprints/corrected \\
+	     	     -assay $data_type \\
+            	      -pwm_f $pwm_f "| tee -a $logfile
+chrombpnet_marginal_footprints \
+    -g $reference_fasta \
+    -r $output_dir/filtered.nonpeaks.bed \
+    --chr_fold_path=$fold \
+    -m $output_dir/chrombpnet_nobias.h5 \
+    -bs 512 \
+    -o $output_dir/footprints/corrected \
+    -assay $data_type \
+    -pwm_f $pwm_f | tee -a $logfile
 
-# marginal footprinting bias model
-if [[ "$data_type" = "DNASE" ]] ; then
-    echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-    echo $( timestamp ): "chrombpnet_marginal_footprints \\
-        -g $reference_fasta \\
-        -r $output_dir/filtered.nonpeaks.bed \\
-        --chr_fold_path=$fold \\
-        -m $output_dir/bias_model_scaled.h5 \\
-        -bs 512 \\
-        -o $output_dir/footprints/bias \\
-        -pwm_f $pwm_f"  | tee -a $logfile
-    chrombpnet_marginal_footprints \
-	-g $reference_fasta \
-	-r $output_dir/filtered.nonpeaks.bed \
-	--chr_fold_path=$fold \
-	-m $output_dir/bias_model_scaled.h5 \
-	-bs 512 \
-	-o $output_dir/footprints/bias \
-	-pwm_f $pwm_f | tee -a $logfile
-elif [[ "$data_type" = "ATAC" ]] ; then
-    echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
-    echo $( timestamp ): "chrombpnet_marginal_footprints \\
-    	     -g $reference_fasta \\
-             -r $output_dir/filtered.nonpeaks.bed \\
-             -chr "chr1" \\
-             -m $output_dir/bias_model_scaled.h5 \\
-             -bs 512 \\
-             -o $output_dir/footprints/bias \\
-             -pwm_f $pwm_f" | tee -a $logfile
-    chrombpnet_marginal_footprints \
-	-g $reference_fasta \
-	-r $output_dir/filtered.nonpeaks.bed \
-	--chr_fold_path=$fold \
-	-m $output_dir/bias_model_scaled.h5 \
-	-bs 512 \
-	-o $output_dir/footprints/bias \
-	-pwm_f $pwm_f  | tee -a $logfile
-else
-    echo "ERROR: unknown data type " $data_type | tee -a $logfile
-fi
-
+echo $( timestamp ): "mkdir $output_dir/footprints" | tee -a $logfile
+echo $( timestamp ): "chrombpnet_marginal_footprints \\
+     -g $reference_fasta \\
+     -r $output_dir/filtered.nonpeaks.bed \\
+     --chr_fold_path=$fold \\
+     -m $output_dir/bias_model_scaled.h5 \\
+     -bs 512 \\
+     -o $output_dir/footprints/bias \\
+     -assay $data_type \\
+     -pwm_f $pwm_f"  | tee -a $logfile
+chrombpnet_marginal_footprints \
+    -g $reference_fasta \
+    -r $output_dir/filtered.nonpeaks.bed \
+    --chr_fold_path=$fold \
+    -m $output_dir/bias_model_scaled.h5 \
+    -bs 512 \
+    -o $output_dir/footprints/bias \
+    -assay $data_type \
+    -pwm_f $pwm_f | tee -a $logfile

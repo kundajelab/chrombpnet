@@ -8,7 +8,7 @@ import itertools
 import os
 from modisco.visualization import viz_sequence
 import chrombpnet.training.utils.one_hot as one_hot
-
+from chrombpnet.data import DefaultDataFile, get_default_data_path
 
 def parse_args():
     parser=argparse.ArgumentParser(description="Automatically detect enzyme shift of input BAM/fragment/tagAlign File")
@@ -212,12 +212,11 @@ def main():
     if args.data_type=="ATAC":
         ref_motifs_file = args.ATAC_ref_path
         if ref_motifs_file is None:
-            # https://stackoverflow.com/questions/4060221/how-to-reliably-open-a-file-in-the-same-directory-as-the-currently-running-scrip
-            ref_motifs_file =  os.path.realpath(os.path.join(os.path.dirname(__file__), "ATAC.ref.motifs.txt"))
-            import pdb;pdb.set_trace()
+            ref_motifs_file = get_default_data_path(DefaultDataFile.atac_ref_motifs)
     elif args.data_type=="DNASE":
         ref_motifs_file = args.DNASE_ref_path
-
+        if ref_motifs_file is None:
+            ref_motifs_file = get_default_data_path(DefaultDataFile.dnase_ref_motifs) 
     plus_shift, minus_shift = compute_shift(args.input_bam_file, 
             args.input_fragment_file, 
             args.input_tagalign_file,

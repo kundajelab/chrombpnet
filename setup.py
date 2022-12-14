@@ -14,7 +14,7 @@ config = {
     'include_package_data': True,
     'description': 'chrombpnet predicts chromatin accessibility from sequence',
     'download_url': 'https://github.com/kundajelab/chrombpnet',
-    'version': '1.2',
+    'version': '1.3',
     'packages': find_packages(),
     'python_requires': '>=3.8',
     'install_requires': install_requires,
@@ -54,7 +54,7 @@ config = {
         'chrombpnet_convert_html_to_pdf = chrombpnet.evaluation.modisco.convert_html_to_pdf:main',
         'chrombpnet_visualize_motif_matches = chrombpnet.evaluation.modisco.visualize_motif_matches:main',
         'chrombpnet_score_snps = chrombpnet.evaluation.variant_effect_prediction.snp_scoring:main',
-        'chrombpnet_srcdir = chrombpnet.get_package_dir:main']},
+        'print_meme_motif_file = chrombpnet.data.__init__:print_meme_motif_file']}
 }
 
 if __name__== '__main__':
