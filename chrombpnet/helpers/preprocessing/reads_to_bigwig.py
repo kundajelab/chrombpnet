@@ -6,7 +6,7 @@ import tempfile
 import os
 import numpy as np
 import chrombpnet.helpers.preprocessing.auto_shift_detect as auto_shift_detect
-from chrombpnet.data iimport DefaultDataFile, get_default_data_path
+from chrombpnet.data import DefaultDataFile, get_default_data_path
 
 def parse_args():
     parser=argparse.ArgumentParser(description="Convert input BAM/fragment/tagAlign file to appropriately shifted unstranded Bigwig")
