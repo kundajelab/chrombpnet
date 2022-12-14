@@ -30,7 +30,7 @@ Download and install the latest version of Docker for your platform. Here is the
 > To access your system GPU's from within the docker container, you must have [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) installed on your host machine.
 
 ```
-docker run -it --rm --memory=100g --gpus device=0  kundajelab/chrombpnet:dev
+docker run -it --rm --memory=100g --gpus device=0  kundajelab/chrombpnet:latest
 ```
 
 ### 2. Local installation
