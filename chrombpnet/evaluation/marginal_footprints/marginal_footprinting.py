@@ -83,7 +83,7 @@ def main():
 
     args=fetch_footprinting_args()
     motifs_to_pwm=args.motifs_to_pwm
-    if motifs_to_pwm is None:
+    if (motifs_to_pwm is None) or (motifs_to_pwm=="None") :
         if args.assay == "ATAC":
             data_file=DefaultDataFile.motif_to_pwm_atac
         elif args.assay == "DNASE":

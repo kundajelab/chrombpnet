@@ -28,8 +28,8 @@ bias_model=${6?param missing - bias_model}
 output_dir=${7?param missing - output_dir}
 data_type=${8?param missing - data_type}
 seed=${9:-1234}
+pwm_f=${10:-None} #optional
 logfile=${11} #optional
-pwm_f=${10} #optional
 
 if [[ ! -e $output_dir ]]; then
     mkdir $output_dir
@@ -110,6 +110,7 @@ echo $( timestamp ): "chrombpnet_train \\
        --output_prefix=$output_dir/chrombpnet \\
        --chr_fold_path=$fold \\
        --seed=$seed \\
+       --epochs 1 \\
        --batch_size=64 \\
        --architecture_from_file=$chrombpnet_with_bias_model_path \\
        --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss" | tee -a $logfile
@@ -123,6 +124,7 @@ chrombpnet_train \
     --output_prefix=$output_dir/chrombpnet \
     --chr_fold_path=$fold \
     --seed=$seed \
+    --epochs 1 \
     --batch_size=64 \
     --architecture_from_file=$chrombpnet_with_bias_model_path \
     --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss | tee -a $logfile
@@ -210,7 +212,7 @@ echo $( timestamp ): "chrombpnet_marginal_footprints \\
              	     -bs 512 \\
              	     -o $output_dir/footprints/corrected \\
 	     	     -assay $data_type \\
-            	      -pwm_f $pwm_f "| tee -a $logfile
+            	     -pwm_f $pwm_f "| tee -a $logfile
 chrombpnet_marginal_footprints \
     -g $reference_fasta \
     -r $output_dir/filtered.nonpeaks.bed \
