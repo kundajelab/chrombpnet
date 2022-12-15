@@ -142,7 +142,7 @@ then
 else
     echo "Unknown data type: "$input_type
 fi
-echo $( timestamp ): "chrombpnet_pwm_from_bigwig -i $bigwig_prefix_unstranded.bw -g $reference_fasta -o $bigwig_prefix_bias_pwm -c chr20 -cz $chrom_sizes" | tee -a $logfile
+echo $( timestamp ): "chrombpnet_pwm_from_bigwig -i $bigwig_path -g $reference_fasta -o $bigwig_prefix_bias_pwm -c chr20 -cz $chrom_sizes" | tee -a $logfile
 chrombpnet_pwm_from_bigwig -i $bigwig_prefix"_unstranded.bw" -g $reference_fasta -o $output_dir/evaluation/"pwm_from_input" -c "chr20" -cz $chrom_sizes 
 
 

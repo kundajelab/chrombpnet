@@ -19,20 +19,62 @@ cleanup() {
 # echo an error message before exiting
 trap 'cleanup' EXIT INT TERM
 
+while getopts i:t:d:g:c:p:n:f:b:o:s:h? flag
+
+do
+        case "${flag}" in
+                i) input_file=${OPTARG}
+                        ;;
+                t) input_type=${OPTARG}
+                        ;;
+                d) data_type=${OPTARG}
+                         ;;
+                g) reference_fasta=${OPTARG}
+                         ;;
+                c) chrom_sizes=${OPTARG}
+                         ;;
+                p) peaks=${OPTARG}
+                         ;;
+                n) nonpeaks=${OPTARG}
+                         ;;
+                f) fold=${OPTARG}
+                         ;;
+                b) bias_threshol=${OPTARG}
+                         ;;
+                o) output_dir=${OPTARG}
+                         ;;
+                s) seed=${OPTARG}
+                         ;;
+                h) echo "script usage: $0 [-i input_file] [-t bam_or_fragment_or_tagalign] [-d ATAC_or_DNASE] [-g genome_fasta] [-c chrom_sizes] [-p peaks_bed] [-n nonpeaks_bed] [-f folds_json] [-b bias_model_h5] [-o output_dir_path]"
+                         exit
+                         ;;
+                ?) echo "script usage: $0 [-i input_file] [-t bam_or_fragment_or_tagalign] [-d ATAC_or_DNASE] [-g genome_fasta] [-c chrom_sizes] [-p peaks_bed] [-n nonpeaks_bed] [-f folds_json] [-b bias_model_h5] [-o output_dir_path]" 
+                         exit
+                         ;;
+                *) echo "Invalid option: -$flag"
+                         exit 1 
+                         ;;
+
+        esac
+done
+
+input_file=${input_file?param missing -  input file path missing -  should be bam, fragment or tagalign file}
+input_type=${input_type?param missing -  input type missing - should be string with value bam, fragment or tagalign}
+data_type=${data_type?param missing - data_type is ATAC or DNASE}
+reference_fasta=${reference_fasta?param missing - reference genome file missing}
+chrom_sizes=${chrom_sizes?param missing - reference genome chrom sizes file missing}
+peaks=${peaks?param missing - peaks bed file missing}
+nonpeaks=${nonpeaks?param missing - nonpeaks bed file missing}
+fold=${fold?param missing - fold json missing}
+output_dir=${output_dir?param missing - output_dir path missing}
+
+
 # input files
 
-in_bam=${1?param missing - in_bam}
-data_type=${3?param missing - data_type}
-reference_fasta=${4?param missing - reference_fasta}
-chrom_sizes=${5?param missing - chrom_sizes}
-peaks=${3?param missing - peaks}
-nonpeaks=${4?param missing - nonpeaks}
-fold=${5?param missing - fold}
-output_dir=${7?param missing - output_dir}
+seed=${seed:-1234} # optional
+bias_threshold_factor=${bias_threshol:-0.5} # optional
 
-filters=${8:-128} # optional
-n_dilation_layers=${9:-4} # optional
-seed=${10:-1234} # optional
+echo $bias_threshold_factor
 
 ## output dirs
 
@@ -84,15 +126,30 @@ function timestamp {
 logfile=$output_dir/logs/"preprocessing.log"
 touch $logfile
 
-echo $( timestamp ): "chrombpnet_makebigwig -g $reference_fasta -ibam $in_bam -c $chrom_sizes -o $bigwig_prefix -d  $data_type" | tee -a $logfile
-chrombpnet_makebigwig -g $reference_fasta -ibam $in_bam -c $chrom_sizes -o $bigwig_prefix -d  $data_type
-echo $( timestamp ): "chrombpnet_pwm_from_bigwig -i $bigwig_prefix_unstranded.bw -g $reference_fasta -o $bigwig_prefix_bias_pwm -c chr20 -cz $chrom_sizes" | tee -a $logfile
+if [ $input_type == "bam" ]
+then
+    echo $( timestamp ): "chrombpnet_makebigwig -g $reference_fasta -ibam $input_file -c $chrom_sizes -o $bigwig_prefix -d  $data_type" | tee -a $logfile
+    chrombpnet_makebigwig -g $reference_fasta -ibam $input_file -c $chrom_sizes -o $bigwig_prefix -d  $data_type
+elif [ $input_type == "fragment" ] 
+then
+    echo $( timestamp ): "chrombpnet_makebigwig -g $reference_fasta -ifrag $input_file -c $chrom_sizes -o $bigwig_prefix -d  $data_type" | tee -a $logfile
+    chrombpnet_makebigwig -g $reference_fasta -ifrag $input_file -c $chrom_sizes -o $bigwig_prefix -d  $data_type
+elif [ $input_type == "tagalign" ] 
+then
+    echo $( timestamp ): "chrombpnet_makebigwig -g $reference_fasta -itag $input_file -c $chrom_sizes -o $bigwig_prefix -d  $data_type" | tee -a $logfile
+    chrombpnet_makebigwig -g $reference_fasta -itag $input_file -c $chrom_sizes -o $bigwig_prefix -d  $data_type
+else
+    echo "Unknown data type: "$input_type
+fi
+echo $( timestamp ): "chrombpnet_pwm_from_bigwig -i $bigwig_path -g $reference_fasta -o $bigwig_prefix_bias_pwm -c chr20 -cz $chrom_sizes" | tee -a $logfile
 chrombpnet_pwm_from_bigwig -i $bigwig_prefix"_unstranded.bw" -g $reference_fasta -o $output_dir/evaluation/"pwm_from_input" -c "chr20" -cz $chrom_sizes 
 
 
 # defaults
 inputlen=2114
 outputlen=1000
+filters=128
+n_dilation_layers=4
 
 function timestamp {
     # Function to get the current time with the new line character
@@ -106,7 +163,6 @@ function timestamp {
 logfile=$output_dir"/logs/train_bias_model.log"
 touch $logfile
 
-fi
 
 # this script does the following -  
 # (1) filters your peaks/nonpeaks (removes outliers and removes edge cases and creates a new filtered set)
@@ -206,7 +262,7 @@ function timestamp {
 }
 
 
-shuf --random-source=<(yes 42) -n 30000 $peaks > $output_dir/intermediates/30K.subsample.peaks.bed
+shuf --random-source=<(yes 42) -n 300 $peaks > $output_dir/intermediates/30K.subsample.peaks.bed
 interpret_regions=$output_dir/intermediates/30K.subsample.peaks.bed
 
 
