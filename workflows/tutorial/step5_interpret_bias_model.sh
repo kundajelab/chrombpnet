@@ -38,10 +38,10 @@ chrombpnet_deepshap \
 modisco motifs -i $output_dir"/bias.profile_scores.h5" -n 50000 -o $output_dir/"modisco_results_allChroms_profile.hdf5" -w 500
 modisco motifs -i $output_dir"/bias.counts_scores.h5" -n 50000 -o $output_dir/"modisco_results_allChroms_counts.hdf5" -w 500
 
-meme_dir=$(chrombpnet_srcdir)"/../data"
+meme_file=$(print_meme_motif_file)
 
-modisco report -i $output_dir/"modisco_results_allChroms_profile.hdf5" -o  $output_dir/modisco_reports_profile/ -s "./" -m $meme_dir/motifs.meme.txt
-modisco report -i $output_dir/"modisco_results_allChroms_counts.hdf5" -o  $output_dir/modisco_reports_counts/ -s "./" -m $meme_dir/motifs.meme.txt
+modisco report -i $output_dir/"modisco_results_allChroms_profile.hdf5" -o  $output_dir/modisco_reports_profile/ -s "./" -m $meme_file
+modisco report -i $output_dir/"modisco_results_allChroms_counts.hdf5" -o  $output_dir/modisco_reports_counts/ -s "./" -m $meme_file
 
 chrombpnet_convert_html_to_pdf -i $output_dir/modisco_reports_profile/motifs.html -o $output_dir/modisco_reports_profile/motifs.pdf
 chrombpnet_convert_html_to_pdf -i $output_dir/modisco_reports_counts/motifs.html -o $output_dir/modisco_reports_counts/motifs.pdf
