@@ -15,7 +15,6 @@ import json
 import chrombpnet.training.utils.losses as losses
 from chrombpnet.training.utils.data_utils import get_seq as get_seq
 import chrombpnet.training.utils.one_hot as one_hot
-from chrombpnet.data import DefaultDataFile, get_default_data_path 
 from tensorflow.keras.utils import get_custom_objects
 from tensorflow.keras.models import load_model
 
@@ -41,8 +40,7 @@ def fetch_footprinting_args():
     parser.add_argument("-m", "--model_h5", type=str, required=True, help="Path to trained model, can be both bias or chrombpnet model")
     parser.add_argument("-bs", "--batch_size", type=int, default="64", help="input batch size for the model")
     parser.add_argument("-o", "--output_prefix", type=str, required=True, help="Output prefix")
-    parser.add_argument("-assay", type=str, choices=['ATAC', 'DNASE', 'TF'], required=True) 
-    parser.add_argument("-pwm_f", "--motifs_to_pwm", type=str, required=False, default=None, help="Path to a TSV file containing motifs in first column and motif string to use for footprinting in second column. If not provided, chrombpnet/data/motif_to_pwm.{ATAC,DNASE,TF}.tsv will be used, based on -assay specification")
+    parser.add_argument("-pwm_f", "--motifs_to_pwm", type=str, required=True, help="Path to a TSV file containing motifs in first column and motif string to use for footprinting in second column")    
     parser.add_argument("--ylim",default=None,type=tuple, required=False,help="lower and upper y-limits for plotting the motif footprint, in the form of a tuple i.e. \
     (0,0.8). If this is set to None, ylim will be autodetermined.")
     
@@ -79,23 +77,9 @@ def get_footprint_for_motif(seqs, motif, model, inputlen, batch_size):
 
     return footprint_for_motif.mean(0), counts_for_motif.mean(0)
 
-def main():
+def main(args):
 
-    args=fetch_footprinting_args()
-    motifs_to_pwm=args.motifs_to_pwm
-    if (motifs_to_pwm is None) or (motifs_to_pwm=="None") :
-        if args.assay == "ATAC":
-            data_file=DefaultDataFile.motif_to_pwm_atac
-        elif args.assay == "DNASE":
-            data_file=DefaultDataFile.motif_to_pwm_dnase
-        elif args.assay == "TF":
-            data_file=DefaultDataFile.motif_to_pwm_tf
-        else:
-            raise Exception(f"no default motif_to_pwm mapping exists for assay {args.assay}."
-                            "Please provide a file in -pwm_f argument")
-        motifs_to_pwm=get_default_data_path(data_file)
-        
-    pwm_df = pd.read_csv(motifs_to_pwm, sep='\t',names=PWM_SCHEMA)
+    pwm_df = pd.read_csv(args.motifs_to_pwm, sep='\t',names=PWM_SCHEMA)
     print(pwm_df.head())
     genome_fasta = pyfaidx.Fasta(args.genome)
 
@@ -125,20 +109,20 @@ def main():
         footprints_at_motifs[motif]=[motif_footprint,motif_counts]
 
         # plot footprints of center 200bp
-        if ("tn5" in motif) or ("dnase" in motif):
-                avg_response_at_tn5.append(np.round(np.max(motif_footprint[outputlen//2-100:outputlen//2+100]),3))
+        if ("tn5" in motif.lower()) or ("dnase" in motif.lower()):
+                avg_response_at_tn5.append(np.round(np.max(motif_footprint),3))
         plt.figure()
         plt.plot(range(200),motif_footprint[outputlen//2-100:outputlen//2+100])
         if args.ylim is not None: 
             plt.ylim(args.ylim)
         plt.savefig(args.output_prefix+".{}.footprint.png".format(motif))
 
-    if np.mean(avg_response_at_tn5) < 0.006:
-        ofile = open("{}_footprints_score.txt".format(args.output_prefix), "w")
+    if np.mean(avg_response_at_tn5) < 0.003:
+        ofile = open("{}_max_bias_resonse.txt".format(args.output_prefix), "w")
         ofile.write("corrected_"+str(round(np.mean(avg_response_at_tn5),3))+"_"+"/".join(list(map(str,avg_response_at_tn5))))
         ofile.close()
     else:
-        ofile = open("{}_footprints_score.txt".format(args.output_prefix), "w")
+        ofile = open("{}_max_bias_resonse.txt".format(args.output_prefix), "w")
         ofile.write("uncorrected:"+str(round(np.mean(avg_response_at_tn5),3))+"/".join(list(map(str,avg_response_at_tn5))))
         ofile.close()
 
@@ -149,5 +133,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
-
+    args=fetch_footprinting_args()
+    main(args)
