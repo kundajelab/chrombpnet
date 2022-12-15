@@ -21,7 +21,7 @@ def get_regions(regions_file, seqlen):
 
     return regions
 
-def write_bigwig(data, regions, gs, bw_out, outstats_file, debug_chr=None, use_tqdm=False):
+def write_bigwig(data, regions, gs, bw_out, debug_chr=None, use_tqdm=False, outstats_file=None):
     # regions may overlap but as we go in sorted order, at a given position,
     # we will pick the value from the interval whose summit is closest to 
     # current position
@@ -89,14 +89,14 @@ def write_bigwig(data, regions, gs, bw_out, outstats_file, debug_chr=None, use_t
     bw.close()
 
     all_entries = np.hstack(all_entries)
-
-    with open(outstats_file, 'w') as f:
-        f.write("Min\t{:.6f}\n".format(np.min(all_entries)))
-        f.write(".1%\t{:.6f}\n".format(np.quantile(all_entries, 0.001)))
-        f.write("1%\t{:.6f}\n".format(np.quantile(all_entries, 0.01)))
-        f.write("50%\t{:.6f}\n".format(np.quantile(all_entries, 0.5)))
-        f.write("99%\t{:.6f}\n".format(np.quantile(all_entries, 0.99)))
-        f.write("99.9%\t{:.6f}\n".format(np.quantile(all_entries, 0.999)))
-        f.write("99.95%\t{:.6f}\n".format(np.quantile(all_entries, 0.9995)))
-        f.write("99.99%\t{:.6f}\n".format(np.quantile(all_entries, 0.9999)))
-        f.write("Max\t{:.6f}\n".format(np.max(all_entries)))
+    if outstats_file != None:
+        with open(outstats_file, 'w') as f:
+            f.write("Min\t{:.6f}\n".format(np.min(all_entries)))
+            f.write(".1%\t{:.6f}\n".format(np.quantile(all_entries, 0.001)))
+            f.write("1%\t{:.6f}\n".format(np.quantile(all_entries, 0.01)))
+            f.write("50%\t{:.6f}\n".format(np.quantile(all_entries, 0.5)))
+            f.write("99%\t{:.6f}\n".format(np.quantile(all_entries, 0.99)))
+            f.write("99.9%\t{:.6f}\n".format(np.quantile(all_entries, 0.999)))
+            f.write("99.95%\t{:.6f}\n".format(np.quantile(all_entries, 0.9995)))
+            f.write("99.99%\t{:.6f}\n".format(np.quantile(all_entries, 0.9999)))
+            f.write("Max\t{:.6f}\n".format(np.max(all_entries)))

@@ -24,7 +24,7 @@ def fetch_interpret_args():
     parser.add_argument("-g", "--genome", type=str, required=True, help="Genome fasta")
     parser.add_argument("-r", "--regions", type=str, required=True, help="10 column bed file of peaks. Sequences and labels will be extracted centered at start (2nd col) + summit (10th col).")
     parser.add_argument("-m", "--model_h5", type=str, required=True, help="Path to trained model, can be both bias or chrombpnet model")
-    parser.add_argument("-o", "--output_prefix", type=str, required=True, help="Output prefix")
+    parser.add_argument("-o", "--output-prefix", type=str, required=True, help="Output prefix")
     parser.add_argument("-d", "--debug_chr", nargs="+", type=str, default=None, help="Run for specific chromosomes only (e.g. chr1 chr2) for debugging")
     parser.add_argument("-p", "--profile_or_counts", nargs="+", type=str, default=["counts", "profile"], choices=["counts", "profile"],
                         help="use either counts or profile or both for running shap")
@@ -98,13 +98,11 @@ def interpret(model, seqs, output_prefix, profile_or_counts):
                     compression='blosc')
 
 
-def main():
-    # parse the command line arguments
-    args = fetch_interpret_args()
+def main(args):
 
     # check if the output directory exists
-    if not os.path.exists(os.path.dirname(args.output_prefix)):
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), os.path.dirname(args.output_prefix))
+    #if not os.path.exists(os.path.dirname(args.output_prefix)):
+    #    raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), os.path.dirname(args.output_prefix))
 
     # write all the command line arguments to a json file
     with open("{}.interpret.args.json".format(args.output_prefix), "w") as fp:
@@ -134,4 +132,7 @@ def main():
     interpret(model, seqs, args.output_prefix, args.profile_or_counts)
 
 if __name__ == '__main__':
-    main()
+    # parse the command line arguments
+    args = fetch_interpret_args()
+    main(args)
+

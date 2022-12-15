@@ -11,7 +11,7 @@ import json
 def parse_data_args():
     parser=argparse.ArgumentParser(description="find hyper-parameters for chrombpnet defined in src/training/models/chrombpnet_with_bias_model.py")
     parser.add_argument("-g", "--genome", type=str, required=True, help="Genome fasta")
-    parser.add_argument("-b", "--bigwig", type=str, required=True, help="Bigwig of tn5 insertions. Ensure it is +4/-4 shifted")
+    parser.add_argument("-i", "--bigwig", type=str, required=True, help="Bigwig of tn5 insertions. Ensure it is +4/-4 shifted")
     parser.add_argument("-p", "--peaks", type=str, required=True, help="10 column bed file of peaks. Sequences and labels will be extracted centered at start (2nd col) + summit (10th col).")
     parser.add_argument("-n", "--nonpeaks", type=str, required=True, help="10 column bed file of non-peak regions, centered at summit (10th column)")
     parser.add_argument("-sr", "--negative_sampling_ratio", type=float, default=0.1, help="Ratio of negatives to positive samples per epoch")
@@ -24,9 +24,9 @@ def parse_model_args(parser):
     # arguments here defined the following model - src/training/models/chrombpnet_with_bias_model.py
     parser.add_argument("-il", "--inputlen", type=int, required=True, help="Sequence input length")
     parser.add_argument("-ol", "--outputlen", type=int, required=True, help="Prediction output length")
-    parser.add_argument("-fil", "--filters", type=int, default=128, help="Number of filters to use in chrombpnet mode")
-    parser.add_argument("-dil", "--n_dilation_layers", type=int, default=4, help="Number of dilation layers to use in chrombpnet model")
-    parser.add_argument("-bmp", "--bias_model_path", type=str, required=True, help="path of bias model")
+    parser.add_argument("-fil", "--filters", type=int, default=512, help="Number of filters to use in chrombpnet mode")
+    parser.add_argument("-dil", "--n_dilation_layers", type=int, default=8, help="Number of dilation layers to use in chrombpnet model")
+    parser.add_argument("-b", "--bias_model_path", type=str, required=True, help="path of bias model")
     parser.add_argument("-o", "--output_dir", help="output dir for storing hyper-param TSV for chrombpnet")
     args = parser.parse_args()
     return args
@@ -58,10 +58,7 @@ def adjust_bias_model_logcounts(bias_model, seqs, cts):
     return bias_model
 
 
-def main(): 
-    # read the arguments
-    parser = parse_data_args()
-    args = parse_model_args(parser)
+def main(args): 
 
     # read the fold information - we will evaluate hyperparams on the train+valid set and do nothing on the test set 
     splits_dict=json.load(open(args.chr_fold_path))
@@ -180,5 +177,10 @@ def main():
     file.close()
 
 if __name__=="__main__":
-    main()
+    # read the arguments
+    parser = parse_data_args()
+    args = parse_model_args(parser)
+
+    main(args)
+
     

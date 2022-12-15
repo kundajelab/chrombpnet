@@ -10,10 +10,10 @@ import chrombpnet.helpers.hyperparameters.param_utils as param_utils
 def parse_data_args():
     parser=argparse.ArgumentParser(description="find hyper-parameters for chrombpnet defined in src/training/models/chrombpnet_with_bias_model.py")
     parser.add_argument("-g", "--genome", type=str, required=True, help="Genome fasta")
-    parser.add_argument("-b", "--bigwig", type=str, required=True, help="Bigwig of tn5 insertions. Ensure it is +4/-4 shifted")
+    parser.add_argument("-i", "--bigwig", type=str, required=True, help="Bigwig of tn5 insertions. Ensure it is +4/-4 shifted")
     parser.add_argument("-p", "--peaks", type=str, required=True, help="10 column bed file of peaks. Sequences and labels will be extracted centered at start (2nd col) + summit (10th col).")
     parser.add_argument("-n", "--nonpeaks", type=str, required=True, help="10 column bed file of non-peak regions, centered at summit (10th column)")
-    parser.add_argument("-t", "--bias_threshold_factor", type=float, default=0.5, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions)")
+    parser.add_argument("-b", "--bias_threshold_factor", type=float, default=0.5, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions)")
     parser.add_argument("-oth", "--outlier_threshold", type=float, default=0.9999, help="threshold to use to filter outlies")
     parser.add_argument("-j", "--max_jitter", type=int, default=50, help="Maximum jitter applied on either side of region (default 500 for chrombpnet model)")
     parser.add_argument("-fl", "--chr_fold_path", type=str, required=True, help="Fold information - dictionary with test,valid and train keys and values with corresponding chromosomes")
@@ -29,10 +29,7 @@ def parse_model_args(parser):
     args = parser.parse_args()
     return args
 
-def main():    
-    # read the arguments
-    parser = parse_data_args()
-    args = parse_model_args(parser)
+def main(args):    
 
     # read the fold information - we will evaluate hyperparams and filter outliers on the train+valid set 
     # do nothing on the test set 
@@ -137,4 +134,8 @@ def main():
 
 
 if __name__=="__main__":
-    main()
+    # read the arguments
+    parser = parse_data_args()
+    args = parse_model_args(parser)
+
+    main(args)

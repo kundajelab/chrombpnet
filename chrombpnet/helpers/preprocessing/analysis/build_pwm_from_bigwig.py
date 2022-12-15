@@ -10,9 +10,9 @@ def parse_args():
     parser=argparse.ArgumentParser(description="build pwm matrix from bigwig")
     parser.add_argument("-i","--bigwig", required=True,  help="generated bigiwig file")
     parser.add_argument("-g", "--genome", required=True, help="reference genome fasta")
-    parser.add_argument("-o", "--output_prefix", required=True,  help="output prefix for png file storing pwm (code will append .png suffix)")
-    parser.add_argument("-c","--chr",type=str, required=True, help="chromosome to build pwm, the name should be present in the chrom sizes file and bigwig you will provide")
-    parser.add_argument("-cz","--chrom_sizes",type=str, required=True, help="TSV file with chromosome name in first column and size in the second column")
+    parser.add_argument("-op", "--output_prefix", required=True,  help="output prefix for png file storing pwm (code will append .png suffix)")
+    parser.add_argument("-cr","--chr",type=str, required=True, help="chromosome to build pwm, the name should be present in the chrom sizes file and bigwig you will provide")
+    parser.add_argument("-c","--chrom_sizes",type=str, required=True, help="TSV file with chromosome name in first column and size in the second column")
     parser.add_argument("-pw","--pwm_width",type=int, default=24, required=False, help="width of pwm matrix")
     return parser.parse_args()
 
@@ -37,8 +37,7 @@ def get_pwm_bg(seqs, cnts, pwm_width=24):
     bg = bg/sum(bg)
     return motif, bg
 
-def main(): 
-    args = parse_args()
+def main(args): 
 
     assert(args.pwm_width % 2 ==0)
 
@@ -68,4 +67,6 @@ def main():
     plt.savefig(args.output_prefix+'.png')
     
 if __name__=="__main__":
-    main()
+    args = parse_args()
+    main(args)
+

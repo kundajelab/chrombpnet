@@ -72,10 +72,8 @@ def get_model_param_dict(args):
 
     return params 
 
-def main():
+def main(args):
 
-    # read arguments
-    args=argmanager.fetch_train_args()
 
     # read tab-seperated parameters file
     parameters = get_model_param_dict(args)
@@ -100,4 +98,7 @@ def main():
 
 
 if __name__=="__main__":
-    main()
+    # read arguments
+    args=argmanager.fetch_train_args()
+    main(args)
+

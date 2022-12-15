@@ -16,10 +16,10 @@ def parse_args():
     group.add_argument('-ifrag', '--input-fragment-file', type=str, help="Input fragment file")
     group.add_argument('-itag', '--input-tagalign-file', type=str, help="Input tagAlign file")
     parser.add_argument('-c', '--chrom-sizes', type=str, required=True, help="Chrom sizes file")
-    parser.add_argument('-o', '--output-prefix', type=str, required=True, help="Output prefix (path/to/prefix)")
+    parser.add_argument('-op', '--output-prefix', type=str, required=True, help="Output prefix (path/to/prefix)")
     parser.add_argument('-d', '--data-type', required=True, type=str, choices=['ATAC', 'DNASE'], help="assay type")
-    parser.add_argument('-p', '--plus-shift', type=int, default=None, help="Plus strand shift applied to reads. Estimated if not specified")
-    parser.add_argument('-m', '--minus-shift', type=int, default=None, help="Minus strand shift applied to reads. Estimated if not specified")
+    parser.add_argument('-ps', '--plus-shift', type=int, default=None, help="Plus strand shift applied to reads. Estimated if not specified")
+    parser.add_argument('-ms', '--minus-shift', type=int, default=None, help="Minus strand shift applied to reads. Estimated if not specified")
     parser.add_argument('--ATAC-ref-path', type=str, default=None, help="Path to ATAC reference motifs (chrombpnet/data/ATAC.ref.motifs.txt used by default)")
     parser.add_argument('--DNASE-ref-path', type=str, default=None, help="Path to DNASE reference motifs (chrombpnet/data/DNASE.ref.motifs.txt used by default)")
     parser.add_argument('--num-samples', type=int, default=10000, help="Number of reads to sample from BAM/fragment/tagAlign file for shift estimation")
@@ -51,8 +51,7 @@ def generate_bigwig(input_bam_file, input_fragment_file, input_tagalign_file, ou
 
     tmp_bedgraph.close()
 
-def main():
-    args = parse_args()
+def main(args):
 
     plus_shift, minus_shift = args.plus_shift, args.minus_shift
 
@@ -97,4 +96,5 @@ def main():
             minus_shift_delta)
 
 if __name__=="__main__":
-    main()
+    args = parse_args()
+    main(args)

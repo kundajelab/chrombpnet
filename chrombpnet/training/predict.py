@@ -93,10 +93,8 @@ def predict_on_batch_wrapper(model,test_generator):
     return np.array(true_counts), np.array(profile_probs_predictions), np.array(true_counts_sum), np.array(counts_sum_predictions), np.array(coordinates)
 
 
-def main():
+def main(args):
 
-    # read arguments
-    args=argmanager.fetch_predict_args()
 
     metrics_dictionary = {"counts_metrics":{}, "profile_metrics":{}}
 
@@ -170,4 +168,7 @@ def main():
             json.dump(metrics_dictionary, fp,  indent=4)
 
 if __name__=="__main__":
-    main()
+    # read arguments
+    args=argmanager.fetch_predict_args()
+    main(args)
+
