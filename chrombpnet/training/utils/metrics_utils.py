@@ -124,7 +124,7 @@ def mnll(true_counts, logits=None, probs=None):
     
 #https://github.com/kundajelab/basepairmodels/blob/cf8e346e9df1bad9e55bd459041976b41207e6e5/basepairmodels/cli/metrics.py#L129
 def get_min_max_normalized_value(val, minimum, maximum):
-    ret_val = (val - minimum) / (maximum - minimum)
+    ret_val = (val - maximum) / (minimum - maximum)
 
     if ret_val < 0:
         return 0
