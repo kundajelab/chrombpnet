@@ -51,7 +51,7 @@ def read_parser():
         	optional_train.add_argument("-il", "--inputlen", type=int, default=2114, required=False, help="Sequence input length")
         	optional_train.add_argument("-ol", "--outputlen", type=int, default=1000, required=False, help="Prediction output length")
         	optional_train.add_argument("-s", "--seed", type=int, default=1234, help="seed to use for model training")
-      	 	optional_train.add_argument("-e", "--epochs", type=int, default=1, help="Maximum epochs to train")
+      	 	optional_train.add_argument("-e", "--epochs", type=int, default=50, help="Maximum epochs to train")
         	optional_train.add_argument("-es", "--early-stop", type=int, default=5, help="Early stop limit, corresponds to 'patience' in callback")
         	optional_train.add_argument("-l", "--learning-rate", type=float, default=0.001, help="Learning rate for model training")
         	optional_train.add_argument("--trackables",nargs="*",default=['logcount_predictions_loss', 'loss', 'logits_profile_predictions_loss', 'val_logcount_predictions_loss', 'val_loss', 'val_logits_profile_predictions_loss'], help="list of things to track per batch, such as logcount_predictions_loss,loss,profile_predictions_loss,val_logcount_predictions_loss,val_loss,val_profile_predictions_loss")
