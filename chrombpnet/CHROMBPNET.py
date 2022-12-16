@@ -194,8 +194,6 @@ def train_bias_pipeline(args):
 		print("Finished training! Exiting!")
 		return
 		
-	os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
-
 	# make predictions with trained bias model
 	import chrombpnet.training.predict as predict
 	args_copy = copy.deepcopy(args)
@@ -255,6 +253,7 @@ def main():
 			os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
 			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
 			os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
 
 			train_bias_pipeline(args)
 	
