@@ -64,9 +64,9 @@ The command to train ChromBPNet with pre-trained bias model will look like this:
 
 ```
 chrombpnet pipeline \
-  -ibam /path/to/input.bam \
-  -ifrag /path/to/input.bed \
-  -itag /path/to/input.tagAlign \
+  -ibam /path/to/input.bam \ # only one of ibam, ifrag or itag is accepted
+  -ifrag /path/to/input.tsv \ # only one of ibam, ifrag or itag is accepted
+  -itag /path/to/input.tagAlign \ # only one of ibam, ifrag or itag is accepted
   -d "ATAC" \
   -g /path/to/hg38.fa \
   -c /path/to/hg38.chrom.sizes \ 
@@ -140,9 +140,9 @@ The command to train a custom bias bias model will look like this:
 
 ```
 chrombpnet bias pipeline \
-  -ibam /path/to/input.bam \
-  -ifrag /path/to/input.bed \
-  -itag /path/to/input.tagAlign \
+  -ibam /path/to/input.bam \ # only one of ibam, ifrag or itag is accepted
+  -ifrag /path/to/input.tsv \ # only one of ibam, ifrag or itag is accepted
+  -itag /path/to/input.tagAlign \ # only one of ibam, ifrag or itag is accepted
   -d "ATAC" \
   -g /path/to/hg38.fa \
   -c /path/to/hg38.chrom.sizes \ 
