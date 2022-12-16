@@ -97,7 +97,7 @@ def read_parser():
         optional_bias_parser = bias_parser.add_argument_group('optional arguments')
         required_bias_parser,optional_bias_parser = general_training_args(required_bias_parser, optional_bias_parser)
         
-        required_bias_parser.add_argument("-b", "--bias_threshold_factor", type=float, required=True, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions)")
+        required_bias_parser.add_argument("-b", "--bias_threshold_factor", type=float, required=True, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions). Recommended start value 0.5 for ATAC and 0.8 for DNase.")
 
         optional_bias_parser.add_argument("-fil", "--filters", type=int, default=128, help="Number of filters to use in chrombpnet mode")
         optional_bias_parser.add_argument("-dil", "--n_dilation_layers", type=int, default=4, help="Number of dilation layers to use in chrombpnet model")
@@ -111,7 +111,7 @@ def read_parser():
         optional_biast_parser = bias_parser_train.add_argument_group('optional arguments')
         required_biast_parser,optional_bias_parser = general_training_args(required_biast_parser, optional_biast_parser)
         
-        required_biast_parser.add_argument("-b", "--bias_threshold_factor", type=float, required=True, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions)")
+        required_biast_parser.add_argument("-b", "--bias_threshold_factor", type=float, required=True, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions). Recommended start value 0.5 for ATAC and 0.8 for DNas")
 
         optional_bias_parser.add_argument("-fil", "--filters", type=int, default=128, help="Number of filters to use in chrombpnet mode")
         optional_bias_parser.add_argument("-dil", "--n_dilation_layers", type=int, default=4, help="Number of dilation layers to use in chrombpnet model")
