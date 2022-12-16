@@ -20,7 +20,7 @@ def chrombpnet_train_pipeline(args):
 	# QC bigwig
 	import chrombpnet.helpers.preprocessing.analysis.build_pwm_from_bigwig as build_pwm_from_bigwig	
 	args.bigwig = os.path.join(args.output_dir,"auxiliary/data_unstranded.bw")
-	args.output_prefix = os.path.join(args.output_dir,"evaluation/bw_shift_qc.png")
+	args.output_prefix = os.path.join(args.output_dir,"evaluation/bw_shift_qc")
 	folds = json.load(open(args.chr_fold_path))
 	assert(len(folds["valid"]) > 0) # validation list of chromosomes is empty
 	args.chr = folds["valid"][0]
@@ -71,6 +71,7 @@ def chrombpnet_train_pipeline(args):
 	os.rename(os.path.join(args.output_dir,"models/chrombpnet.log"),os.path.join(args.output_dir,"logs/chrombpnet.log"))
 	os.rename(os.path.join(args.output_dir,"models/chrombpnet.log.batch"),os.path.join(args.output_dir,"logs/chrombpnet.log.batch"))
 	os.rename(os.path.join(args.output_dir,"models/chrombpnet.params.json"),os.path.join(args.output_dir,"logs/chrombpnet.params.json"))
+	os.rename(os.path.join(args.output_dir,"models/chrombpnet.args.json"),os.path.join(args.output_dir,"logs/chrombpnet.args.json"))
 
 	if args.cmd == "train":
 		print("Finished training! Exiting!")
@@ -107,13 +108,16 @@ def chrombpnet_train_pipeline(args):
 	os.rename(os.path.join(args.output_dir,"evaluation/chrombpnet_nobias_footprints.h5"),os.path.join(args.output_dir,"auxiliary/chrombpnet_nobias_footprints.h5"))
 
 	# get contributions scores with model
+	args_copy = copy.deepcopy(args)
 	import chrombpnet.evaluation.interpret.interpret as interpret
 	peaks = pd.read_csv(os.path.join(args_copy.output_dir,"auxiliary/filtered.peaks.bed"),sep="\t",header=None)
-	sub_peaks = peaks.sample(30000, random_state=1234)
+	if peaks.shape[0] > 30000:
+		sub_peaks = peaks.sample(30000, random_state=1234)
+	else:
+		sub_peaks = peaks.sample(30000, random_state=1234)
 	sub_peaks.to_csv(os.path.join(args_copy.output_dir,"auxiliary/30K_subsample_peaks.bed"),sep="\t", header=False, index=False)
 	os.makedirs(os.path.join(args.output_dir,"auxiliary/interpret/"), exist_ok=False)
 
-	args_copy = copy.deepcopy(args)
 	args_copy.profile_or_counts = ["counts", "profile"]
 	args_copy.regions = os.path.join(args_copy.output_dir,"auxiliary/30K_subsample_peaks.bed")	
 	args_copy.model_h5 = os.path.join(args.output_dir,"models/chrombpnet_nobias.h5")
@@ -123,7 +127,7 @@ def chrombpnet_train_pipeline(args):
 	
 	import chrombpnet
 	chrombpnet_src_dir = os.path.dirname(chrombpnet.__file__)
-	meme_file=print_meme_motif_file()
+	meme_file=get_default_data_path(DefaultDataFile.motifs_meme)
 	
 	# modisco-lite pipeline
 	
@@ -150,7 +154,7 @@ def train_bias_pipeline(args):
 	# QC bigwig
 	import chrombpnet.helpers.preprocessing.analysis.build_pwm_from_bigwig as build_pwm_from_bigwig	
 	args.bigwig = os.path.join(args.output_dir,"auxiliary/data_unstranded.bw")
-	args.output_prefix = os.path.join(args.output_dir,"evaluation/bw_shift_qc.png")
+	args.output_prefix = os.path.join(args.output_dir,"evaluation/bw_shift_qc")
 	folds = json.load(open(args.chr_fold_path))
 	assert(len(folds["valid"]) > 0) # validation list of chromosomes is empty
 	args.chr = folds["valid"][0]
@@ -203,7 +207,10 @@ def train_bias_pipeline(args):
 	# get contributions scores with model
 	import chrombpnet.evaluation.interpret.interpret as interpret
 	peaks = pd.read_csv(os.path.join(args.peaks),sep="\t",header=None)
-	sub_peaks = peaks.sample(30000, random_state=1234)
+	if peaks.shape[0] > 30000:
+		sub_peaks = peaks.sample(30000, random_state=1234)
+	else:
+		sub_peaks = peaks.sample(30000, random_state=1234)
 	sub_peaks.to_csv(os.path.join(args_copy.output_dir,"auxiliary/30K_subsample_peaks.bed"),sep="\t", header=False, index=False)
 	os.makedirs(os.path.join(args.output_dir,"auxiliary/interpret/"), exist_ok=False)
 
@@ -217,7 +224,7 @@ def train_bias_pipeline(args):
 	
 	import chrombpnet
 	chrombpnet_src_dir = os.path.dirname(chrombpnet.__file__)
-	meme_file=print_meme_motif_file()
+	meme_file=get_default_data_path(DefaultDataFile.motifs_meme)
 	# modisco-lite pipeline
 	
 	modisco_command = "modisco motifs -i {} -n 50000 -o {} -w 500".format(os.path.join(args.output_dir,"auxiliary/interpret/bias.profile_scores.h5"),os.path.join(args.output_dir,"auxiliary/interpret/modisco_results_profile_scores.h5"))
@@ -289,7 +296,7 @@ def main():
 	elif args.cmd == "modisco_motifs":
 		import chrombpnet
 		chrombpnet_src_dir = os.path.dirname(chrombpnet.__file__)
-		meme_dir=chrombpnet_src_dir+"/../data/motifs.meme.txt"
+		meme_file=get_default_data_path(DefaultDataFile.motifs_meme)
 	
 		modisco_command = "modisco motifs -i {} -n 50000 -o {} -w 500".format(args.h5py,args.output_prefix+"_modisco.h5")
 		os.system(modisco_command)
