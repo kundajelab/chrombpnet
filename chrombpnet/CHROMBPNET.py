@@ -41,7 +41,7 @@ def chrombpnet_train_pipeline(args):
 	predict.main(args_copy)
 	
 	# QC bias model performance in peaks
-	bias_metrics = json.load(open(os.path.join(args_copy.output_dir,"evaluation/bias_metrics.json"))
+	bias_metrics = json.load(open(os.path.join(args_copy.output_dir,"evaluation/bias_metrics.json")))
 	assert(bias_metrics["counts_metrics"]["peaks"]["pearsonr"] > -0.3) # bias model has negative correlation in peaks - AT rich bias model. Increase bias threshold and retrain bias model. Or use a different bias model with higher bias threshold. 
 	
 	# fetch hyperparameters for training
@@ -156,6 +156,11 @@ def chrombpnet_train_pipeline(args):
 	
 def train_bias_pipeline(args):
 
+	if args.file_prefix:
+		fpx = args.file_prefix+"_"
+	else:
+		fpx = ""
+		
 	# Shift bam and convert to bigwig
 	import chrombpnet.helpers.preprocessing.reads_to_bigwig as reads_to_bigwig	
 	args.output_prefix = os.path.join(args.output_dir,"auxiliary/{}data".format(fpx))
@@ -215,6 +220,7 @@ def train_bias_pipeline(args):
 	# make predictions with trained bias model - peaks
 	
 	import chrombpnet.training.predict as predict
+	args_copy = copy.deepcopy(args)	
 	args_copy.output_prefix = os.path.join(args_copy.output_dir,"evaluation/{}bias".format(fpx))
 	args_copy.model_h5 = os.path.join(args.output_dir,"models/{}bias.h5".format(fpx))
 	args_copy.nonpeaks = "None"

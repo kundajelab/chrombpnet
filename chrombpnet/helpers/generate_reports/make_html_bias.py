@@ -60,7 +60,7 @@ def main(args):
 	bias_model_perf_hed = 'Bias model performance in non-peaks or background regions'
 	bias_model_perf_text = 'The pearsonr in should be greater than 0 (higher the better). Median JSD lower the better. Median Norm JSD higher the better. '
 
-	data = json.load(open(os.path.join(prefix,"evaluation/{}bias_metrics.json".format(fpx))))
+	data = json.load(open(os.path.join(prefix,"evaluation/{}bias_nonpeaks_metrics.json".format(fpx))))
 	df = pd.json_normalize(data['counts_metrics']).round(2)
 	df = pd.json_normalize(data['counts_metrics'])
 	df.index = ['counts_metrics']
@@ -69,7 +69,21 @@ def main(args):
 	df1 = pd.json_normalize(data['profile_metrics'])
 	df1.index = ['profile_metrics']
 	
-	
+	## bias model training performance
+
+	bias_model_perf_hed_peaks = 'Bias model performance in peaks'
+	bias_model_perf_text_peaks = 'The pearsonr in should be greater than -0.3 (otherwise the bias model has AT bias and bias correction might be incomplete). Median JSD lower the better. Median Norm JSD higher the better. '
+
+	data = json.load(open(os.path.join(prefix,"evaluation/{}bias_peaks_metrics.json".format(fpx))))
+	pdf = pd.json_normalize(data['counts_metrics']).round(2)
+	pdf = pd.json_normalize(data['counts_metrics'])
+	pdf.index = ['counts_metrics']
+
+	pdf1 = pd.json_normalize(data['profile_metrics']).round(2)
+	pdf1 = pd.json_normalize(data['profile_metrics'])
+	pdf1.index = ['profile_metrics']
+
+
 	## TFModisco motifs learnt by bias model (bias.h5) model 
 	
 	def remove_negs(tables):
@@ -132,6 +146,12 @@ def main(args):
 				<p>{bias_model_perf_text}</p>
 				{df.to_html(classes='mystyle')}
 				{df1.to_html(classes='mystyle')}
+			</body>
+			<body style="font-size:20px;">
+				<h3>{bias_model_perf_hed_peaks}</h3>
+				<p>{bias_model_perf_text_peaks}</p>
+				{pdf.to_html(classes='mystyle')}
+				{pdf1.to_html(classes='mystyle')}
 			</body>
 			<body style="font-size:20px;">
 				<h3>{tf_hed}</h3>
