@@ -9,11 +9,18 @@ def read_args():
 	parser = argparse.ArgumentParser(description="Make summary reports")
 	parser.add_argument('-id', '--input-dir', required=True, type=str, help="directory name output by command chrombpnet bias pipeline")
 	parser.add_argument('-d', '--data-type', required=True, type=str, help="assay data type - ATAC or DNASE")
+	parser.add_argument('-fp', '--file-prefix', required=False, default=None, type=str, help="File prefix for output to use. All the files will be prefixed with this string if provided.")
 	args = parser.parse_args()
 	return args
 	
 
 def main(args):
+
+	if args.file_prefix:
+		fpx = args.file_prefix+"_"
+	else:
+		fpx = ""
+		
 	prefix = args.input_dir
 	data_type = args.data_type
 	
@@ -41,13 +48,13 @@ def main(args):
 	df1 = pd.json_normalize(data['profile_metrics'])
 	df1.index = ['profile_metrics']
 
-	bias_image_loc=os.path.join("./","bw_shift_qc.png")
+	bias_image_loc=os.path.join("./","{}bw_shift_qc.png".format(fpx))
 	print(bias_image_loc)
 	## training images
 
 	train_hed = 'Training report'
 
-	loss = pd.read_csv(os.path.join(prefix,"logs/chrombpnet.log"), sep=",", header=0)
+	loss = pd.read_csv(os.path.join(prefix,"logs/{}chrombpnet.log".format(fpx)), sep=",", header=0)
 	
 	val_loss = loss["val_loss"]
 	train_loss = loss["loss"]
@@ -61,8 +68,8 @@ def main(args):
 	plt.xlabel('Epochs')
 	plt.ylabel('Total loss')
 	plt.tight_layout()
-	plt.savefig(os.path.join(prefix,"evaluation/epoch_loss.png"),format='png',dpi=300)
-	loss_image_loc=os.path.join("./",'epoch_loss.png')
+	plt.savefig(os.path.join(prefix,"evaluation/{}epoch_loss.png".format(fpx)),format='png',dpi=300)
+	loss_image_loc=os.path.join("./",'{}epoch_loss.png'.format(fpx))
 
 	
 	## Bias factorized ChromBPNet training performance
@@ -70,7 +77,7 @@ def main(args):
 	chrombpnet_model_perf_hed = 'ChromBPNet model performance in peaks'
 	chrombpnet_model_perf_text = 'The pearsonr in peaks should be greater than 0 (higher the better). Median JSD lower the better. Median Norm JSD higher the better. '
 
-	data = json.load(open(os.path.join(prefix,"evaluation/chrombpnet_metrics.json")))
+	data = json.load(open(os.path.join(prefix,"evaluation/{}chrombpnet_metrics.json".format(fpx))))
 	pdf = pd.json_normalize(data['counts_metrics']).round(2)
 	pdf = pd.json_normalize(data['counts_metrics'])
 	pdf.index = ['counts_metrics']
@@ -97,11 +104,11 @@ def main(args):
 	table_counts = open(os.path.join(prefix,"auxiliary/interpret/modisco_counts/motifs.html")).read().replace("./",os.path.join(prefix,"auxiliary/interpret/modisco_counts/")).replace("width=\"240\"","class=\"cover\"").replace("border=\"1\" class=\"dataframe\"","").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs")
 
 	if data_type == "ATAC":
-		tn5_1 = os.path.join("./","chrombpnet_nobias.tn5_1.footprint.png")
-		tn5_2 = os.path.join("./","chrombpnet_nobias.tn5_2.footprint.png")
-		tn5_3 = os.path.join("./","chrombpnet_nobias.tn5_3.footprint.png")
-		tn5_4 = os.path.join("./","chrombpnet_nobias.tn5_4.footprint.png")
-		tn5_5 = os.path.join("./","chrombpnet_nobias.tn5_5.footprint.png")
+		tn5_1 = os.path.join("./","{}chrombpnet_nobias.tn5_1.footprint.png".format(fpx))
+		tn5_2 = os.path.join("./","{}chrombpnet_nobias.tn5_2.footprint.png".format(fpx))
+		tn5_3 = os.path.join("./","{}chrombpnet_nobias.tn5_3.footprint.png".format(fpx))
+		tn5_4 = os.path.join("./","{}chrombpnet_nobias.tn5_4.footprint.png".format(fpx))
+		tn5_5 = os.path.join("./","{}chrombpnet_nobias.tn5_5.footprint.png".format(fpx))
 
 		html_table = f'''	
 					<table>
@@ -126,8 +133,8 @@ def main(args):
 				</table>
 		'''	
 	elif data_type == "DNASE":
-		dnase_1 = os.path.join("./","chrombpnet_nobias.dnase_1.footprint.png")
-		dnase_2 = os.path.join("./","chrombpnet_nobias.dnase_2.footprint.png")
+		dnase_1 = os.path.join("./","{}chrombpnet_nobias.dnase_1.footprint.png".format(fpx))
+		dnase_2 = os.path.join("./","{}chrombpnet_nobias.dnase_2.footprint.png".format(fpx))
 
 		html_table = f'''	
 					<table>
@@ -203,7 +210,7 @@ def main(args):
 
 	html = html_1+html_table+html_2
 	# 3. Write the html string as an HTML file
-	with open(os.path.join(prefix,"evaluation/overall_report.html"), 'w') as f:
+	with open(os.path.join(prefix,"evaluation/{}overall_report.html".format(fpx)), 'w') as f:
 		f.write(html.format(bias_image=bias_image_loc,loss_image_loc=loss_image_loc,
 					tn5_1=tn5_1,tn5_2=tn5_2,tn5_3=tn5_3,tn5_4=tn5_4,tn5_5=tn5_5))
 
@@ -235,7 +242,7 @@ def main(args):
 			}
 			
         ''')
-	HTML(os.path.join(prefix,"evaluation/overall_report.html")).write_pdf(os.path.join(prefix,"evaluation/overall_report.pdf"), stylesheets=[css])
+	HTML(os.path.join(prefix,"evaluation/{}overall_report.html".format(fpx))).write_pdf(os.path.join(prefix,"evaluation/{}overall_report.pdf".format(fpx)), stylesheets=[css])
 
 if __name__=="__main__":
 	args=read_args()

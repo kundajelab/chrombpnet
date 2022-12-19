@@ -7,11 +7,18 @@ import argparse
 def read_args():
 	parser = argparse.ArgumentParser(description="Make summary reports")
 	parser.add_argument('-id', '--input-dir', type=str, help="directory name output by command chrombpnet bias pipeline")
+	parser.add_argument('-fp', '--file-prefix', required=False, default=None, type=str, help="File prefix for output to use. All the files will be prefixed with this string if provided.")
 	args = parser.parse_args()
 	return args
 	
 
 def main(args):
+
+	if args.file_prefix:
+		fpx = args.file_prefix+"_"
+	else:
+		fpx = ""
+		
 	#prefix = "/home/anusri/full_run_tes/bias_model/"
 	prefix = args.input_dir
 	pd.set_option('colheader_justify', 'center')   # FOR TABLE <th>
@@ -25,13 +32,13 @@ def main(args):
 	pre_hed = 'Preprocessing report'
 	pre_text = 'The image should closely represent a Tn5 or DNase enzyme motif (indicates correct shift).'
 
-	bias_image_loc=os.path.join("./","bw_shift_qc.png")
+	bias_image_loc=os.path.join("./","{}bw_shift_qc.png".format(fpx))
 	
 	## training images
 
 	train_hed = 'Training report'
 
-	loss = pd.read_csv(os.path.join(prefix,"logs/bias.log"), sep=",", header=0)
+	loss = pd.read_csv(os.path.join(prefix,"logs/{}bias.log".format(fpx)), sep=",", header=0)
 	
 	val_loss = loss["val_loss"]
 	train_loss = loss["loss"]
@@ -45,15 +52,15 @@ def main(args):
 	plt.xlabel('Epochs')
 	plt.ylabel('Total loss')
 	plt.tight_layout()
-	plt.savefig(os.path.join(prefix,"evaluation/epoch_loss.png"),format='png',dpi=300)
-	loss_image_loc=os.path.join("./","epoch_loss.png")
+	plt.savefig(os.path.join(prefix,"evaluation/{}epoch_loss.png".format(fpx)),format='png',dpi=300)
+	loss_image_loc=os.path.join("./","{}epoch_loss.png".format(fpx))
 
 	## bias model training performance
 
 	bias_model_perf_hed = 'Bias model performance in non-peaks or background regions'
 	bias_model_perf_text = 'The pearsonr in should be greater than 0 (higher the better). Median JSD lower the better. Median Norm JSD higher the better. '
 
-	data = json.load(open(os.path.join(prefix,"evaluation/bias_metrics.json")))
+	data = json.load(open(os.path.join(prefix,"evaluation/{}bias_metrics.json".format(fpx))))
 	df = pd.json_normalize(data['counts_metrics']).round(2)
 	df = pd.json_normalize(data['counts_metrics'])
 	df.index = ['counts_metrics']
@@ -146,7 +153,7 @@ def main(args):
 	# 3. Write the html string as an HTML file
 	#with open('html_report.html', 'w') as f:
 	#	f.write(html.format(bias_image=bias_image_loc, loss_image_loc=loss_image_loc))
-	with open(os.path.join(prefix,"evaluation/overall_report.html"), 'w') as f:
+	with open(os.path.join(prefix,"evaluation/{}overall_report.html".format(fpx)), 'w') as f:
 		f.write(html.format(bias_image=bias_image_loc,loss_image_loc=loss_image_loc))
 
 	from weasyprint import HTML, CSS
@@ -177,7 +184,7 @@ def main(args):
 			}
         ''')
 	#HTML('html_report.html').write_pdf('html_report.pdf', stylesheets=[css])
-	HTML(os.path.join(prefix,"evaluation/overall_report.html")).write_pdf(os.path.join(prefix,"evaluation/overall_report.pdf"), stylesheets=[css])
+	HTML(os.path.join(prefix,"evaluation/{}overall_report.html".format(fpx))).write_pdf(os.path.join(prefix,"evaluation/{}overall_report.pdf".format(fpx)), stylesheets=[css])
 	
 if __name__=="__main__":
 	args=read_args()
