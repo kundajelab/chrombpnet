@@ -144,6 +144,11 @@ def chrombpnet_train_pipeline(args):
 	convert_html_to_pdf.main(os.path.join(args.output_dir,"auxiliary/interpret/modisco_counts/motifs.html"),os.path.join(args.output_dir,"evaluation/chrombpnet_nobias_counts.pdf"))
 	convert_html_to_pdf.main(os.path.join(args.output_dir,"auxiliary/interpret/modisco_profile/motifs.html"),os.path.join(args.output_dir,"evaluation/chrombpnet_nobias_profile.pdf"))
 	
+	import chrombpnet.helpers.generate_reports.make_html as make_html
+	args_copy = copy.deepcopy(args)
+	args_copy.input_dir = args_copy.output_dir
+	make_html(args_copy)
+
 def train_bias_pipeline(args):
 
 	# Shift bam and convert to bigwig
@@ -237,6 +242,11 @@ def train_bias_pipeline(args):
 	import chrombpnet.evaluation.modisco.convert_html_to_pdf as convert_html_to_pdf
 	convert_html_to_pdf.main(os.path.join(args.output_dir,"auxiliary/interpret/modisco_counts/motifs.html"),os.path.join(args.output_dir,"evaluation/bias_counts.pdf"))
 	convert_html_to_pdf.main(os.path.join(args.output_dir,"auxiliary/interpret/modisco_profile/motifs.html"),os.path.join(args.output_dir,"evaluation/bias_profile.pdf"))
+
+	import chrombpnet.helpers.generate_reports.make_html_bias as make_html_bias
+	args_copy = copy.deepcopy(args)
+	args_copy.input_dir = args_copy.output_dir
+	make_html(args_copy_bias)	
 		
 def main():
 	args = parsers.read_parser()
