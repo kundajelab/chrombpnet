@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     if: GitHub.ref == 'refs/heads/v1.3-branch'
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Build the Docker image
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
