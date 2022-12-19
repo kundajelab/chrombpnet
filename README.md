@@ -63,15 +63,16 @@ pip install -e chrombpnet
 The command to train ChromBPNet with pre-trained bias model will look like this:
 
 ```
-train_chrombpnet_model.sh \
-  -i /path/to/input.bam \
-  -t "bam" \
+chrombpnet pipeline \
+  -ibam /path/to/input.bam \ # only one of ibam, ifrag or itag is accepted
+  -ifrag /path/to/input.tsv \ # only one of ibam, ifrag or itag is accepted
+  -itag /path/to/input.tagAlign \ # only one of ibam, ifrag or itag is accepted
   -d "ATAC" \
   -g /path/to/hg38.fa \
   -c /path/to/hg38.chrom.sizes \ 
   -p /path/to/peaks.bed \
   -n /path/to/nonpeaks.bed \
-  -f /path/to/fold_0.json \
+  -fl /path/to/fold_0.json \
   -b /path/to/bias.h5 \ 
   -o path/to/output/dir/ \
 ```
@@ -97,27 +98,30 @@ The ouput directory will be populated as follows -
 
 ```
 models\
-	...
+	bias_model_scaled.h5
 	chrombpnet.h5
 	chrombpnet_nobias.h5 (TF-Model i.e model to predict bias corrected accessibility profile) 
-	...
 logs\
-	...
+	chrombpnet.log (loss per epoch)
+	chrombpnet.log.batch (loss per batch per epoch)
+	(..other hyperparameters used in training)
 	
-intermediates\
+auxilary\
+	filtered.peaks
+	filtered.nonpeaks
 	...
 
 evaluation\
-	...
-	pwm_from_input.png 
+	overall_report.pdf
+	bw_shift_qc.png 
 	bias_metrics.json 
 	chrombpnet_metrics.json
 	chrombpnet_only_peaks.counts_pearsonr.png
 	chrombpnet_only_peaks.profile_jsd.png
-	profile_motifs.pdf
-	counts_motifs.pdf
-	footprints/bias_footprints_score.txt
-	footprints/corrected_footprints_score.txt
+	chrombpnet_nobias_profile_motifs.pdf
+	chrombpnet_nobias_counts_motifs.pdf
+	chrombpnet_nobias_max_bias_response.txt
+	footprints/chrombpnet_nobias.tn5_1.footprint.png
 	...
 ```
 Detailed usage guide with more information on the output file formats and how to work with them are provided [here](https://github.com/kundajelab/chrombpnet/wiki/Output-format).
@@ -135,15 +139,17 @@ For more information, also see:
 The command to train a custom bias bias model will look like this:
 
 ```
-train_bias_model.sh \
-  -i /path/to/input.bam \
-  -t "bam" \
+chrombpnet bias pipeline \
+  -ibam /path/to/input.bam \ # only one of ibam, ifrag or itag is accepted
+  -ifrag /path/to/input.tsv \ # only one of ibam, ifrag or itag is accepted
+  -itag /path/to/input.tagAlign \ # only one of ibam, ifrag or itag is accepted
   -d "ATAC" \
   -g /path/to/hg38.fa \
   -c /path/to/hg38.chrom.sizes \ 
   -p /path/to/peaks.bed \
   -n /path/to/nonpeaks.bed \
-  -f /path/to/fold_0.json \
+  -fl /path/to/fold_0.json \
+  -b 0.5 \ 
   -o path/to/output/dir/ \
 ```
 
@@ -165,25 +171,28 @@ Please find scripts and best practices for preprocssing [here](https://github.co
 
 The ouput directory will be populated as follows -
 
+
 ```
 models\
-	...
 	bias.h5
-	...
 logs\
-	...
+	bias.log (loss per epoch)
+	bias.log.batch (loss per batch per epoch)
+	(..other hyperparameters used in training)
 	
-intermediates\
+auxilary\
+	filtered.peaks
+	filtered.nonpeaks
 	...
 
 evaluation\
-	...
-	pwm_from_input.png 
-	bias_metrics.json
+	overall_report.pdf
+	bw_shift_qc.png 
+	bias_metrics.json 
 	bias_only_peaks.counts_pearsonr.png
 	bias_only_peaks.profile_jsd.png
-	profile_motifs.pdf
-	counts_motifs.pdf
+	bias_profile_motifs.pdf
+	bias_counts_motifs.pdf
 	...
 ```
 Detailed usage guide with more information on the output file formats and how to work with them are provided [here](https://github.com/kundajelab/chrombpnet/wiki/Output-format).

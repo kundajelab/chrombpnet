@@ -11,12 +11,12 @@ def read_parser():
 
         parser = argparse.ArgumentParser(description=desc,formatter_class=RawTextHelpFormatter)
         subparsers = parser.add_subparsers(help="Must be eithier 'pipeline', 'train', 'bias', 'pred_bw', 'contribs_bw', 'motif_discovery' ,'footprints', or 'snp_score'.", required=True, dest='cmd')
-        pipeline_parser = subparsers.add_parser("pipeline", help="End-to-end pipline with qc and evaluation with bias factorized ChromBPNet model")
+        pipeline_parser = subparsers.add_parser("pipeline", help="End-to-end pipline with qc and evaluation for bias factorized ChromBPNet model")
         train_parser = subparsers.add_parser("train", help="Train bias factorized ChromBPNet model")
         
         bias_parser_full = subparsers.add_parser("bias", help="Tools to train and qc bias model")
         bias_parser_sub = bias_parser_full.add_subparsers(help="Must be eithier 'pipeline'  'train', 'qc'.", required=True, dest='cmd_bias')
-        bias_parser = bias_parser_sub.add_parser("pipeline", help="End-to-end pipline with qc and evaluation with bias model")
+        bias_parser = bias_parser_sub.add_parser("pipeline", help="End-to-end pipline with qc and evaluation for bias model")
         bias_parser_train = bias_parser_sub.add_parser("train", help="Train bias model")
         bias_parser_qc = bias_parser_sub.add_parser("qc", help="Do quality checks on the bias model")
         
@@ -51,11 +51,13 @@ def read_parser():
         	optional_train.add_argument("-il", "--inputlen", type=int, default=2114, required=False, help="Sequence input length")
         	optional_train.add_argument("-ol", "--outputlen", type=int, default=1000, required=False, help="Prediction output length")
         	optional_train.add_argument("-s", "--seed", type=int, default=1234, help="seed to use for model training")
-      	 	optional_train.add_argument("-e", "--epochs", type=int, default=1, help="Maximum epochs to train")
+      	 	optional_train.add_argument("-e", "--epochs", type=int, default=50, help="Maximum epochs to train")
         	optional_train.add_argument("-es", "--early-stop", type=int, default=5, help="Early stop limit, corresponds to 'patience' in callback")
         	optional_train.add_argument("-l", "--learning-rate", type=float, default=0.001, help="Learning rate for model training")
         	optional_train.add_argument("--trackables",nargs="*",default=['logcount_predictions_loss', 'loss', 'logits_profile_predictions_loss', 'val_logcount_predictions_loss', 'val_loss', 'val_logits_profile_predictions_loss'], help="list of things to track per batch, such as logcount_predictions_loss,loss,profile_predictions_loss,val_logcount_predictions_loss,val_loss,val_profile_predictions_loss")
         	optional_train.add_argument("-a","--architecture_from_file",type=str,required=False, default=None, help="Model to use for training")
+        	optional_train.add_argument("-fp","--file-prefix",type=str,required=False, default=None, help="File prefix for output to use. All the files will be prefixed with this string if provided.")
+
         	return required_train, optional_train
 		
         # train chrombpnet arguments
@@ -97,7 +99,7 @@ def read_parser():
         optional_bias_parser = bias_parser.add_argument_group('optional arguments')
         required_bias_parser,optional_bias_parser = general_training_args(required_bias_parser, optional_bias_parser)
         
-        required_bias_parser.add_argument("-b", "--bias_threshold_factor", type=float, required=True, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions)")
+        required_bias_parser.add_argument("-b", "--bias_threshold_factor", type=float, required=True, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions). Recommended start value 0.5 for ATAC and 0.8 for DNase.")
 
         optional_bias_parser.add_argument("-fil", "--filters", type=int, default=128, help="Number of filters to use in chrombpnet mode")
         optional_bias_parser.add_argument("-dil", "--n_dilation_layers", type=int, default=4, help="Number of dilation layers to use in chrombpnet model")
@@ -111,7 +113,7 @@ def read_parser():
         optional_biast_parser = bias_parser_train.add_argument_group('optional arguments')
         required_biast_parser,optional_bias_parser = general_training_args(required_biast_parser, optional_biast_parser)
         
-        required_biast_parser.add_argument("-b", "--bias_threshold_factor", type=float, required=True, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions)")
+        required_biast_parser.add_argument("-b", "--bias_threshold_factor", type=float, required=True, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions). Recommended start value 0.5 for ATAC and 0.8 for DNas")
 
         optional_bias_parser.add_argument("-fil", "--filters", type=int, default=128, help="Number of filters to use in chrombpnet mode")
         optional_bias_parser.add_argument("-dil", "--n_dilation_layers", type=int, default=4, help="Number of dilation layers to use in chrombpnet model")
