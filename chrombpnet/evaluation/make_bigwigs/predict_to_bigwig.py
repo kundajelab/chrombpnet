@@ -10,9 +10,81 @@ import chrombpnet.evaluation.make_bigwigs.bigwig_helper as bigwig_helper
 import chrombpnet.training.utils.losses as losses
 import chrombpnet.training.utils.data_utils as data_utils 
 import chrombpnet.training.utils.one_hot as one_hot
+import h5py
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 
+def write_predictions_h5py(output_prefix, profile, logcts, coords):
+    # open h5 file for writing predictions
+    output_h5_fname = "{}_predictions.h5".format(output_prefix)
+    h5_file = h5py.File(output_h5_fname, "w")
+    # create groups
+    coord_group = h5_file.create_group("coords")
+    pred_group = h5_file.create_group("predictions")
+
+    num_examples=len(coords)
+
+    coords_chrom_dset =  [str(coords[i][0]) for i in range(num_examples)]
+    coords_center_dset =  [int(coords[i][1]) for i in range(num_examples)]
+
+    dt = h5py.special_dtype(vlen=str)
+
+    # create the "coords" group datasets
+    coords_chrom_dset = coord_group.create_dataset(
+        "coords_chrom", data=np.array(coords_chrom_dset, dtype=dt),
+        dtype=dt, compression="gzip")
+    coords_start_dset = coord_group.create_dataset(
+        "coords_center", data=coords_center_dset, dtype=int, compression="gzip")
+
+    # create the "predictions" group datasets
+    profs_dset = pred_group.create_dataset(
+        "profs",
+        data=profile,
+        dtype=float, compression="gzip")
+    logcounts_dset = pred_group.create_dataset(
+        "logcounts", data=logcts,
+        dtype=float, compression="gzip")
+
+    # close hdf5 file
+    h5_file.close()
+
+def compare_with_observed(bigwig, regions_df, regions, outputlen, pred_logits, pred_logcts, output_prefix):
+
+	import chrombpnet.training.metrics as metrics 
+	
+	obs_bw = pyBigWig.open(bigwig)
+	obs_data = data_utils.get_cts(regions_df,obs_bw,outputlen)
+	
+	true_counts = obs_data
+	true_counts_sum = np.log(np.sum(true_counts, axis=-1)+1)
+	profile_probs_predictions = softmax(pred_logits) ##
+	counts_sum_predictions = np.squeeze(pred_logcts) ##
+	coordinates =  [[r[0], r[-1]] for r in regions]
+	print(true_counts.shape)
+	print(true_counts_sum.shape)
+	print(profile_probs_predictions.shape)
+	print(counts_sum_predictions.shape)
+	
+	write_predictions_h5py(output_prefix, profile_probs_predictions, counts_sum_predictions, coordinates)
+	
+	# store regions, their predictions and corresponding pointwise metrics
+	mnll_pw, mnll_norm, jsd_pw, jsd_norm, jsd_rnd, jsd_rnd_norm, mnll_rnd, mnll_rnd_norm =  metrics.profile_metrics(true_counts,profile_probs_predictions)
+
+	spearman_cor, pearson_cor, mse = metrics.counts_metrics(true_counts_sum, counts_sum_predictions, output_prefix, "All regions provided")
+	
+	metrics_dictionary={}
+	metrics_dictionary["counts_metrics"] = {}
+	metrics_dictionary["profile_metrics"] = {}
+	metrics_dictionary["counts_metrics"]["regions"] = {}
+	metrics_dictionary["counts_metrics"]["regions"]["spearmanr"] = spearman_cor
+	metrics_dictionary["counts_metrics"]["regions"]["pearsonr"] = pearson_cor
+	metrics_dictionary["counts_metrics"]["regions"]["mse"] = mse
+	
+	metrics_dictionary["profile_metrics"]["regions"] = {}
+	metrics_dictionary["profile_metrics"]["regions"]["median_jsd"] = np.nanmedian(jsd_pw)
+	metrics_dictionary["profile_metrics"]["regions"]["median_norm_jsd"] = np.nanmedian(jsd_norm)
+	
+	metrics.plot_histogram(jsd_pw, jsd_rnd, output_prefix, "All regions provided")
 
 # need full paths!
 def parse_args():
@@ -28,6 +100,7 @@ def parse_args():
     parser.add_argument("-b", "--batch-size", type=int, default=64)
     parser.add_argument("-t", "--tqdm", type=int,default=0, help="Use tqdm. If yes then you need to have it installed.")
     parser.add_argument("-d", "--debug-chr", nargs="+", type=str, default=None, help="Run for specific chromosomes only (e.g. chr1 chr2) for debugging")
+    parser.add_argument("-bw", "--bigwig", type=str, default=None, help="If provided .h5 with predictions are output along with calculated metrics considering bigwig as groundtruth.")
     args = parser.parse_args()
     assert (args.bias_model is None) + (args.chrombpnet_model is None) + (args.chrombpnet_model_nb is None) < 3, "No input model provided!"
     print(args)
@@ -78,11 +151,15 @@ def main(args):
         bigwig_helper.write_bigwig(softmax(pred_logits_wo_bias) * (np.expand_dims(np.exp(pred_logcts_wo_bias)[:,0],axis=1)), 
                                regions, 
                                gs, 
-                               args.output_prefix + "_no_bias.bw", 
+                               args.output_prefix + "_chrombpnet_nobias.bw", 
                                outstats_file=args.output_prefix_stats, 
                                debug_chr=args.debug_chr, 
                                use_tqdm=args.tqdm)
 
+        if args.bigwig:
+        	compare_with_observed(args.bigwig, regions_df, regions, outputlen, 
+        				pred_logits_wo_bias, pred_logcts_wo_bias, args.output_prefix+"_chrombpnet_nobias")
+        	
 
     if args.chrombpnet_model:
         model_chrombpnet = load_model_wrapper(model_hdf5=args.chrombpnet_model)
@@ -114,10 +191,15 @@ def main(args):
         bigwig_helper.write_bigwig(softmax(pred_logits) * (np.expand_dims(np.exp(pred_logcts)[:,0],axis=1)),
                                regions,
                                gs,
-                               args.output_prefix + "_w_bias.bw",
+                               args.output_prefix + "_chrombpnet.bw",
                                outstats_file=args.output_prefix_stats, 
                                debug_chr=args.debug_chr,
                                use_tqdm=args.tqdm)
+
+        if args.bigwig:
+        	compare_with_observed(args.bigwig, regions_df, regions, outputlen, 
+        				pred_logits, pred_logcts, args.output_prefix+"_chrombpnet")
+        	
 
     if args.bias_model:
         model_bias = load_model_wrapper(model_hdf5=args.bias_model)
@@ -152,7 +234,10 @@ def main(args):
                                debug_chr=args.debug_chr, 
                                use_tqdm=args.tqdm)
 
-
+        if args.bigwig:
+        	compare_with_observed(args.bigwig, regions_df, regions, outputlen, 
+        				pred_bias_logits, pred_bias_logcts, args.output_prefix+"_bias")
+        
     
 
 if __name__=="__main__":
