@@ -13,10 +13,10 @@ def parse_data_args():
     parser.add_argument("-i", "--bigwig", type=str, required=True, help="Bigwig of tn5 insertions. Ensure it is +4/-4 shifted")
     parser.add_argument("-p", "--peaks", type=str, required=True, help="10 column bed file of peaks. Sequences and labels will be extracted centered at start (2nd col) + summit (10th col).")
     parser.add_argument("-n", "--nonpeaks", type=str, required=True, help="10 column bed file of non-peak regions, centered at summit (10th column)")
-    parser.add_argument("-b", "--bias_threshold_factor", type=float, default=0.5, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions)")
-    parser.add_argument("-oth", "--outlier_threshold", type=float, default=0.9999, help="threshold to use to filter outlies")
-    parser.add_argument("-j", "--max_jitter", type=int, default=50, help="Maximum jitter applied on either side of region (default 500 for chrombpnet model)")
-    parser.add_argument("-fl", "--chr_fold_path", type=str, required=True, help="Fold information - dictionary with test,valid and train keys and values with corresponding chromosomes")
+    parser.add_argument("-b", "--bias-threshold-factor", type=float, default=0.5, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions)")
+    parser.add_argument("-oth", "--outlier-threshold", type=float, default=0.9999, help="threshold to use to filter outlies")
+    parser.add_argument("-j", "--max-jitter", type=int, default=50, help="Maximum jitter applied on either side of region (default 500 for chrombpnet model)")
+    parser.add_argument("-fl", "--chr-fold-path", type=str, required=True, help="Fold information - dictionary with test,valid and train keys and values with corresponding chromosomes")
     return parser
 
 def parse_model_args(parser):
@@ -24,8 +24,8 @@ def parse_model_args(parser):
     parser.add_argument("-il", "--inputlen", type=int, help="Sequence input length")
     parser.add_argument("-ol", "--outputlen", type=int, help="Prediction output length")
     parser.add_argument("-fil", "--filters", type=int, default=128, help="Number of filters to use in chrombpnet mode")
-    parser.add_argument("-dil", "--n_dilation_layers", type=int, default=4, help="Number of dilation layers to use in chrombpnet model")
-    parser.add_argument("-o", "--output_dir", required=True, help="output dir for storing hyper-param TSV for chrombpnet")
+    parser.add_argument("-dil", "--n-dilation-layers", type=int, default=4, help="Number of dilation layers to use in chrombpnet model")
+    parser.add_argument("-op", "--output-prefix", required=True, help="output prefix for storing hyper-param TSV for chrombpnet")
     args = parser.parse_args()
     return args
 
@@ -97,7 +97,7 @@ def main(args):
     # combine train valid and test peak set and store them in a new file
     frames = [nonpeaks, test_nonpeaks]
     all_nonpeaks = pd.concat(frames)
-    all_nonpeaks.to_csv(os.path.join(args.output_dir, "filtered.bias_nonpeaks.bed"), sep="\t", header=False, index=False)
+    all_nonpeaks.to_csv("{}filtered.bias_nonpeaks.bed".format(args.output_prefix), sep="\t", header=False, index=False)
 
     # find counts loss weight for model training - using train and validation set
     counts_loss_weight = np.median(final_cnts[(final_cnts < upper_thresh) & (final_cnts>lower_thresh)])/10
@@ -105,7 +105,7 @@ def main(args):
     assert(counts_loss_weight != 0)
 
     # store the parameters being used  - in a TSV file
-    file = open(os.path.join(args.output_dir, "bias_data_params.tsv"),"w")
+    file = open("{}bias_data_params.tsv".format(args.output_prefix),"w")
     file.write("\t".join(["counts_sum_min_thresh", str(round(lower_thresh,2))]))
     file.write("\n")
     file.write("\t".join(["counts_sum_max_thresh", str(round(upper_thresh,2))]))
@@ -114,7 +114,7 @@ def main(args):
     file.write("\n")
     file.close()
 
-    file = open(os.path.join(args.output_dir, "bias_model_params.tsv"),"w")
+    file = open("{}bias_model_params.tsv".format(args.output_prefix),"w")
     file.write("\t".join(["counts_loss_weight", str(round(counts_loss_weight,2))]))
     file.write("\n")
     file.write("\t".join(["filters", str(args.filters)]))
