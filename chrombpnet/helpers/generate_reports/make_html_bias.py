@@ -8,42 +8,28 @@ def read_args():
 	parser = argparse.ArgumentParser(description="Make summary reports")
 	parser.add_argument('-id', '--input-dir', type=str, help="directory name output by command chrombpnet bias pipeline")
 	parser.add_argument('-fp', '--file-prefix', required=False, default=None, type=str, help="File prefix for output to use. All the files will be prefixed with this string if provided.")
+	parser.add_argument('-icmd', '--command', required=False, default="pipeline", type=str, choices=['pipeline', 'train', "qc"], help="Choices on what to include in the report - entire pipleline, only train, only qc")
+
 	args = parser.parse_args()
 	return args
-	
 
-def main(args):
-
-	if args.file_prefix:
-		fpx = args.file_prefix+"_"
-	else:
-		fpx = ""
-		
-	#prefix = "/home/anusri/full_run_tes/bias_model/"
-	prefix = args.input_dir
-	pd.set_option('colheader_justify', 'center')   # FOR TABLE <th>
-
-
-	# 1. Set up multiple variables to store the titles, text within the report
-	page_title_text='Bias model quality check report'
-
-
+def train_report(fpx,prefix):
 	# preprocessing defaults
 	pre_hed = 'Preprocessing report'
 	pre_text = 'The image should closely represent a Tn5 or DNase enzyme motif (indicates correct shift).'
 
 	bias_image_loc=os.path.join("./","{}bw_shift_qc.png".format(fpx))
-	
+
 	## training images
 
 	train_hed = 'Training report'
-
+	
 	loss = pd.read_csv(os.path.join(prefix,"logs/{}bias.log".format(fpx)), sep=",", header=0)
 	
 	val_loss = loss["val_loss"]
 	train_loss = loss["loss"]
 	epochs = loss["epoch"]
-	
+
 	plt.rcParams["figure.figsize"]=4,4
 	plt.figure()
 	plt.plot(epochs, val_loss, label="val loss")
@@ -55,34 +41,36 @@ def main(args):
 	plt.savefig(os.path.join(prefix,"evaluation/{}epoch_loss.png".format(fpx)),format='png',dpi=300)
 	loss_image_loc=os.path.join("./","{}epoch_loss.png".format(fpx))
 
+	html = f'''
+			<body style="font-size:20px;">
+				<h3>{pre_hed}</h3>
+				<p>{pre_text}</p>
+				<img src={{bias_image}} style="max-width: 80%;">
+			</body>
+			<body style="font-size:20px;">
+				<h3>{train_hed}</h3>
+				<img src={{loss_image_loc}} class="center">
+			</body>
+			'''
+			
+	return html.format(bias_image=bias_image_loc,loss_image_loc=loss_image_loc)
+	
+def qc_report(fpx,prefix):
 	## bias model training performance
 
-	bias_model_perf_hed = 'Bias model performance in non-peaks or background regions'
-	bias_model_perf_text = 'The pearsonr in should be greater than 0 (higher the better). Median JSD lower the better. Median Norm JSD higher the better. '
+	bias_model_perf_hed = 'Bias model performance in peaks and non-peaks'
+	bias_model_perf_text = 'The pearsonr in non-peaks should be greater than 0 (higher the better). The pearsonr in peaks should be greater than -0.3 (otherwise bias model has AT rich bias). Median JSD lower the better. Median Norm JSD higher the better. '
 
-	data = json.load(open(os.path.join(prefix,"evaluation/{}bias_nonpeaks_metrics.json".format(fpx))))
+	data = json.load(open(os.path.join(prefix,"evaluation/{}bias_metrics.json".format(fpx))))
 	df = pd.json_normalize(data['counts_metrics']).round(2)
 	df = pd.json_normalize(data['counts_metrics'])
 	df.index = ['counts_metrics']
+	df = df[df.columns.drop(list(df.filter(regex='peaks_and_nonpeaks')))]
 
 	df1 = pd.json_normalize(data['profile_metrics']).round(2)
 	df1 = pd.json_normalize(data['profile_metrics'])
 	df1.index = ['profile_metrics']
-	
-	## bias model training performance
-
-	bias_model_perf_hed_peaks = 'Bias model performance in peaks'
-	bias_model_perf_text_peaks = 'The pearsonr in should be greater than -0.3 (otherwise the bias model has AT bias and bias correction might be incomplete). Median JSD lower the better. Median Norm JSD higher the better. '
-
-	data = json.load(open(os.path.join(prefix,"evaluation/{}bias_peaks_metrics.json".format(fpx))))
-	pdf = pd.json_normalize(data['counts_metrics']).round(2)
-	pdf = pd.json_normalize(data['counts_metrics'])
-	pdf.index = ['counts_metrics']
-
-	pdf1 = pd.json_normalize(data['profile_metrics']).round(2)
-	pdf1 = pd.json_normalize(data['profile_metrics'])
-	pdf1.index = ['profile_metrics']
-
+	df1 = df1[df1.columns.drop(list(df1.filter(regex='peaks_and_nonpeaks')))]
 
 	## TFModisco motifs learnt by bias model (bias.h5) model 
 	
@@ -113,8 +101,8 @@ def main(args):
 	tf_text_profile = "TFModisco on Profile head - Only enzyme motifs should be present. cwm_fwd, cwm_rev should be free from any TF motifs. The motifs top matches in TOMTOM are shown (match_0, match_1, match_2). The qvals should be high."
 	tf_text_counts = "TFModisco on Counts head. cwm_fwd, cwm_rev should be free from any TF motifs. These results should not be all AT rich sequences. The motifs top matches in TOMTOM are shown (match_0, match_1, match_2). The qvals should be high."
 
-	table_profile = open(os.path.join(prefix,"auxiliary/interpret/modisco_profile/motifs.html")).read().replace("./",os.path.join(prefix,"auxiliary/interpret/modisco_profile/")).replace("width=\"240\"","class=\"cover\"").replace("border=\"1\" class=\"dataframe\"","").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs")
-	table_counts = open(os.path.join(prefix,"auxiliary/interpret/modisco_counts/motifs.html")).read().replace("./",os.path.join(prefix,"auxiliary/interpret/modisco_counts/")).replace("width=\"240\"","class=\"cover\"").replace("border=\"1\" class=\"dataframe\"","").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs")
+	table_profile = open(os.path.join(prefix,"auxiliary/interpret_subsample/modisco_profile/motifs.html")).read().replace("./",os.path.join(prefix,"auxiliary/interpret_subsample/modisco_profile/")).replace("width=\"240\"","class=\"cover\"").replace("border=\"1\" class=\"dataframe\"","").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs")
+	table_counts = open(os.path.join(prefix,"auxiliary/interpret_subsample/modisco_counts/motifs.html")).read().replace("./",os.path.join(prefix,"auxiliary/interpret_subsample/modisco_counts/")).replace("width=\"240\"","class=\"cover\"").replace("border=\"1\" class=\"dataframe\"","").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs")
 
 	table_profile = remove_negs(table_profile)
 	table_counts = remove_negs(table_counts)
@@ -125,33 +113,11 @@ def main(args):
 
 	# 2. Combine them together using a long f-string
 	html = f'''
-		<html>
-			<head>
-				<title>{page_title_text}</title>
-			</head>
-			<body>
-				<h3>{page_title_text}</h3>
-            </body>
-			<body style="font-size:20px;">
-				<h3>{pre_hed}</h3>
-				<p>{pre_text}</p>
-				<img src={{bias_image}} style="max-width: 80%;">
-			</body>
-			<body style="font-size:20px;">
-				<h3>{train_hed}</h3>
-				<img src={{loss_image_loc}} class="center">
-			</body>
 			<body style="font-size:20px;">
 				<h3>{bias_model_perf_hed}</h3>
 				<p>{bias_model_perf_text}</p>
 				{df.to_html(classes='mystyle')}
 				{df1.to_html(classes='mystyle')}
-			</body>
-			<body style="font-size:20px;">
-				<h3>{bias_model_perf_hed_peaks}</h3>
-				<p>{bias_model_perf_text_peaks}</p>
-				{pdf.to_html(classes='mystyle')}
-				{pdf1.to_html(classes='mystyle')}
 			</body>
 			<body style="font-size:20px;">
 				<h3>{tf_hed}</h3>
@@ -166,15 +132,73 @@ def main(args):
 			<body>
 				 {table_counts}
 			</body>
-					
-		</html>
 		'''
+			
+	return html
+	
+def main(args):
 
+	if args.file_prefix:
+		fpx = args.file_prefix+"_"
+	else:
+		fpx = ""
+		
+	#prefix = "/home/anusri/full_run_tes/bias_model/"
+	prefix = args.input_dir
+	pd.set_option('colheader_justify', 'center')   # FOR TABLE <th>
+
+
+	if (args.command=="pipeline"):
+		page_title_text='Bias model training and quality check report'
+		main_html = f'''
+		<html>
+			<head>
+				<title>{page_title_text}</title>
+			</head>	
+			<body>
+				<h3>{page_title_text}</h3>
+			</body>
+			'''
+		main_html += train_report(fpx,prefix)
+		main_html += qc_report(fpx,prefix)
+
+	if (args.command=="train"):
+		page_title_text='Bias model training report'
+		main_html = f'''
+		<html>
+			<head>
+				<title>{page_title_text}</title>
+			</head>	
+			<body>
+				<h3>{page_title_text}</h3>
+			</body>
+			'''
+		main_html += train_report(fpx,prefix)
+
+	if (args.command=="qc"):
+		page_title_text='Bias model quality check report'
+		main_html = f'''
+		<html>
+			<head>
+				<title>{page_title_text}</title>
+			</head>	
+			<body>
+				<h3>{page_title_text}</h3>
+			</body>
+			'''
+		main_html += qc_report(fpx,prefix)
+	
+	
+	end_html = f'''
+	</html>
+		'''	
+		
+	main_html+=end_html
 	# 3. Write the html string as an HTML file
 	#with open('html_report.html', 'w') as f:
 	#	f.write(html.format(bias_image=bias_image_loc, loss_image_loc=loss_image_loc))
 	with open(os.path.join(prefix,"evaluation/{}overall_report.html".format(fpx)), 'w') as f:
-		f.write(html.format(bias_image=bias_image_loc,loss_image_loc=loss_image_loc))
+		f.write(main_html)
 
 	from weasyprint import HTML, CSS
 	css = CSS(string='''
