@@ -105,8 +105,7 @@ def adjust_gc(chrom,cur_gc,negatives,used_negatives):
 
         
     
-def main(): 
-    args=parse_args()
+def main(args): 
 
     splits_dict=json.load(open(args.chr_fold_path))
 
@@ -172,4 +171,5 @@ def main():
 
     
 if __name__=="__main__":
-    main()
+    args=parse_args()
+    main(args)
