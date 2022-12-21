@@ -15,6 +15,8 @@ def parse_args():
     parser.add_argument("-o","--output_prefix", help="gc-matched non-peaks output file name")
     parser.add_argument("-fl", "--chr_fold_path", type=str, required=True, help="Fold information - dictionary with test,valid and train keys and values with corresponding chromosomes")
     parser.add_argument("-npr", "--neg_to_pos_ratio_train", type=int, default=1, help="Ratio of negatives to positives to sample for training")
+    parser.add_argument("-s", "--seed", type=int, default=1234, help="seed to use for generating nonpeaks")
+
     return parser.parse_args()
 
 def remap_chrom(chrom, splits_dict):
@@ -107,7 +109,10 @@ def adjust_gc(chrom,cur_gc,negatives,used_negatives):
     
 def main(args): 
 
+
     splits_dict=json.load(open(args.chr_fold_path))
+    
+    random.seed(args.seed)
 
     negatives=make_gc_dict(args.candidate_negatives, splits_dict)
     used_negatives=dict()

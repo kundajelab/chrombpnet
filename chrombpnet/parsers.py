@@ -90,6 +90,7 @@ def read_parser():
         optional_nonpeaks_parser.add_argument("-s","--stride", type=int,default=1000, help="stride to use for shifting the bins")
         optional_nonpeaks_parser.add_argument("-npr", "--neg-to-pos-ratio-train", type=int, default=2, help="Ratio of negatives to positives to sample in training set (test set always has 1:1 positive to negatives ratio")
         optional_nonpeaks_parser.add_argument("-br", "--blacklist-regions", type=str, required=False, default=None, help="TSV file with 3 columns - chr, start, end")
+        optional_nonpeaks_parser.add_argument("-s", "--seed", type=int, default=1234, help="seed to use for generating nonpeaks")
 
         # Generate splits
         splits_parser._action_groups.pop()
