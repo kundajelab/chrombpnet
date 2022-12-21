@@ -10,19 +10,19 @@ desc = """======================================================================
 def read_parser():
 
         parser = argparse.ArgumentParser(description=desc,formatter_class=RawTextHelpFormatter)
-        subparsers = parser.add_subparsers(help="Must be eithier 'pipeline', 'train', 'qc', 'bias', 'nonpeaks', 'pred_bw', 'contribs_bw', 'modisco_motifs' ,'footprints', or 'snp_score'.", required=True, dest='cmd')
+        subparsers = parser.add_subparsers(help="Must be eithier 'pipeline', 'train', 'qc', 'bias', 'prep', 'pred_bw', 'contribs_bw', 'modisco_motifs' ,'footprints', or 'snp_score'.", required=True, dest='cmd')
         
         # main parsers
         
-        pipeline_parser = subparsers.add_parser("pipeline", help="End-to-end pipline with train, qc and test for bias factorized ChromBPNet model")
+        pipeline_parser = subparsers.add_parser("pipeline", help="End-to-end pipline with train, quality check and test for bias factorized ChromBPNet model")
         train_parser = subparsers.add_parser("train", help="Train bias factorized ChromBPNet model")
         qc_parser = subparsers.add_parser("qc", help="Do quality checks and test for bias factorized ChromBPNet model")
 
         # bias parsers
         
-        bias_parser_full = subparsers.add_parser("bias", help="Tools to train, qc  and test bias model")
+        bias_parser_full = subparsers.add_parser("bias", help="Tools to train, quality check and test bias model")
         bias_parser_sub = bias_parser_full.add_subparsers(help="Must be eithier 'pipeline'  'train', 'qc'.", required=True, dest='cmd_bias')
-        bias_parser = bias_parser_sub.add_parser("pipeline", help="End-to-end pipline with train, qc and test for bias model")
+        bias_parser = bias_parser_sub.add_parser("pipeline", help="End-to-end pipline with train, quality check and test for bias model")
         bias_parser_train = bias_parser_sub.add_parser("train", help="Train bias model")
         bias_parser_qc = bias_parser_sub.add_parser("qc", help="Do quality checks and test for the bias model")
         
@@ -34,8 +34,8 @@ def read_parser():
         splits_parser = prep_parser_sub.add_parser("splits", help="Generate chromosome splits")   
         
         # downstream tool parsers
-        preds_parser = subparsers.add_parser("pred_bw", help="Get model predictions on given regions and output to bigwig file (Metrics calculated if observed bigwig provided)")
-        contribs_parser = subparsers.add_parser("contribs_bw", help="Get contribution score on given regions and output to bigwig file")
+        preds_parser = subparsers.add_parser("pred_bw", help="Get model prediction bigwigs (Metrics calculated if observed bigwig provided)")
+        contribs_parser = subparsers.add_parser("contribs_bw", help="Get contribution score bigwigs")
         motifs_parser = subparsers.add_parser("modisco_motifs", help="Summarize motifs from contribution scores with TFModisco")
         #custom_preds_parser = subparsers.add_parser("pred_custom", help="Make model predictions on custom sequences and output to .h5 file")
         #custom_contribs_parser = subparsers.add_parser("contribs_custom", help="Get contribution on custom sequences and output to .h5 file")

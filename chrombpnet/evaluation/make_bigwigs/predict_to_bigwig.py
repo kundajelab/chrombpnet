@@ -11,6 +11,7 @@ import chrombpnet.training.utils.losses as losses
 import chrombpnet.training.utils.data_utils as data_utils 
 import chrombpnet.training.utils.one_hot as one_hot
 import h5py
+import json
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 
@@ -60,10 +61,6 @@ def compare_with_observed(bigwig, regions_df, regions, outputlen, pred_logits, p
 	profile_probs_predictions = softmax(pred_logits) ##
 	counts_sum_predictions = np.squeeze(pred_logcts) ##
 	coordinates =  [[r[0], r[-1]] for r in regions]
-	print(true_counts.shape)
-	print(true_counts_sum.shape)
-	print(profile_probs_predictions.shape)
-	print(counts_sum_predictions.shape)
 	
 	write_predictions_h5py(output_prefix, profile_probs_predictions, counts_sum_predictions, coordinates)
 	
@@ -85,6 +82,10 @@ def compare_with_observed(bigwig, regions_df, regions, outputlen, pred_logits, p
 	metrics_dictionary["profile_metrics"]["regions"]["median_norm_jsd"] = np.nanmedian(jsd_norm)
 	
 	metrics.plot_histogram(jsd_pw, jsd_rnd, output_prefix, "All regions provided")
+	
+	with open(output_prefix+'_metrics.json', 'w') as fp:
+		json.dump(metrics_dictionary, fp,  indent=4)
+
 
 # need full paths!
 def parse_args():

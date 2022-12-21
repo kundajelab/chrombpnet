@@ -18,7 +18,7 @@ def main():
 
 		pipelines.chrombpnet_train_pipeline(args)
 	
-	if args.cmd == "qc":
+	elif args.cmd == "qc":
 		os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
 		os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
 		

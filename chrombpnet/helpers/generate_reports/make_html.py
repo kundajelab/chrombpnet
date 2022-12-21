@@ -104,10 +104,10 @@ def qc_report(fpx,prefix,data_type):
 	tf_hed = "TFModisco motifs learnt from ChromBPNet after bias correction (chrombpnet_nobias.h5) model"
 
 	tf_text_profile = "TFModisco on Profile head - Only TF motifs should be present and no bias motifs. cwm_fwd, cwm_rev should be free from any bias motifs. The motifs top matches in TOMTOM are shown (match_0, match_1, match_2)"
-	tf_text_counts = "TFModisco on Counts head. cwm_fwd, cwm_rev should have only TF motifs.  The motifs top matches in TOMTOM are shown (match_0, match_1, match_2)"
+	#tf_text_counts = "TFModisco on Counts head. cwm_fwd, cwm_rev should have only TF motifs.  The motifs top matches in TOMTOM are shown (match_0, match_1, match_2)"
 
 	table_profile = open(os.path.join(prefix,"auxiliary/interpret_subsample/modisco_profile/motifs.html")).read().replace("./",os.path.join(prefix,"auxiliary/interpret_subsample/modisco_profile/")).replace("width=\"240\"","class=\"cover\"").replace("border=\"1\" class=\"dataframe\"","").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs")
-	table_counts = open(os.path.join(prefix,"auxiliary/interpret_subsample/modisco_counts/motifs.html")).read().replace("./",os.path.join(prefix,"auxiliary/interpret_subsample/modisco_counts/")).replace("width=\"240\"","class=\"cover\"").replace("border=\"1\" class=\"dataframe\"","").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs")
+	#table_counts = open(os.path.join(prefix,"auxiliary/interpret_subsample/modisco_counts/motifs.html")).read().replace("./",os.path.join(prefix,"auxiliary/interpret_subsample/modisco_counts/")).replace("width=\"240\"","class=\"cover\"").replace("border=\"1\" class=\"dataframe\"","").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs")
 
 	if data_type == "ATAC":
 		tn5_1 = os.path.join("./","{}chrombpnet_nobias.tn5_1.footprint.png".format(fpx))
@@ -181,6 +181,21 @@ def qc_report(fpx,prefix,data_type):
 			</body>	
 		'''
 		
+# 	html_motifs = f'''			
+# 			<body style="font-size:20px;">
+# 				<h3>{tf_hed}</h3>
+# 				<p>{tf_text_profile}</p>
+# 			</body>
+# 			<body>
+# 				 {table_profile}
+# 			</body>
+# 			<body style="font-size:20px;">
+# 				<p>{tf_text_counts}</p>
+# 			</body>
+# 			<body>
+# 				 {table_counts}
+# 			</body>
+# 		'''					
 	html_motifs = f'''			
 			<body style="font-size:20px;">
 				<h3>{tf_hed}</h3>
@@ -189,13 +204,7 @@ def qc_report(fpx,prefix,data_type):
 			<body>
 				 {table_profile}
 			</body>
-			<body style="font-size:20px;">
-				<p>{tf_text_counts}</p>
-			</body>
-			<body>
-				 {table_counts}
-			</body>
-		'''					
+		'''
 	html = html_perf+html_table+html_motifs
 	return html.format(tn5_1=tn5_1,tn5_2=tn5_2,tn5_3=tn5_3,tn5_4=tn5_4,tn5_5=tn5_5)
 
