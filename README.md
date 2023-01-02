@@ -79,14 +79,13 @@ chrombpnet pipeline \
 
 #### Input Format
 
-- `-i`: input file path with filtered reads. Example files for supported types - [bam](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/ENCSR868FGK_merged.bam), [fragment](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/example.fragments.tsv), [tagalign](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/example.tagAlign) 
-- `-t`: type of input file. Following string inputs are supported - "bam", "fragment", "tagalign". 
+- `-ibam` or `-ifrag` or `-itag`: input file path with filtered reads in one of bam, fragment or tagalign formats. Example files for supported types - [bam](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/ENCSR868FGK_merged.bam), [fragment](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/example.fragments.tsv), [tagalign](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/example.tagAlign) 
 - `-d`: assay type.  Following types are supported - "ATAC" or "DNASE"
 - `-g`: reference genome fasta file. Example file human reference - [hg38.fa](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/hg38.genome.fa)
 - `-c`: chromosome and size tab seperated file. Example file in human reference - [hg38.chrom.sizes](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/hg38.chrom.sizes)
 - `-p`: Input peaks in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit (10th column). Every region 	  is centered at start + summit internally, across all regions. Example file with [ENCSR868FGK](https://www.encodeproject.org/experiments/ENCSR868FGK/) dataset - [peaks.bed](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/ENCSR868FGK_relaxed_peaks_no_blacklist.bed)
 - `-n`: Input nonpeaks (background regions)in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit 	  	(10th column). Every region is centered at start + summit internally, across all regions. Example file with [ENCSR868FGK](https://www.encodeproject.org/experiments/ENCSR868FGK/) dataset - [nonpeaks.bed](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/ENCSR868FGK_nonpeaks_no_blacklist.bed)
-- `-f`: json file showing split of chromosomes for train, test and valid. Example 5 fold jsons for human reference -  [folds](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/folds/) 
+- `-fl`: json file showing split of chromosomes for train, test and valid. Example 5 fold jsons for human reference -  [folds](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/folds/) 
 - `-b`: Bias model in `.h5` format. Bias models are generally transferable across  assay types following similar protocol. Repository of pre-trained bias models for use [here](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/bias_models/). Instructions to train custom bias model below.
 - `-o`: Output directory path
 
@@ -113,6 +112,7 @@ auxilary\
 
 evaluation\
 	overall_report.pdf
+	overall_report.html
 	bw_shift_qc.png 
 	bias_metrics.json 
 	chrombpnet_metrics.json
@@ -121,7 +121,7 @@ evaluation\
 	chrombpnet_nobias_profile_motifs.pdf
 	chrombpnet_nobias_counts_motifs.pdf
 	chrombpnet_nobias_max_bias_response.txt
-	footprints/chrombpnet_nobias.tn5_1.footprint.png
+	chrombpnet_nobias.....footprint.png
 	...
 ```
 Detailed usage guide with more information on the output file formats and how to work with them are provided [here](https://github.com/kundajelab/chrombpnet/wiki/Output-format).
@@ -155,8 +155,7 @@ chrombpnet bias pipeline \
 
 #### Input Format
 
-- `-i`: input file path with filtered reads. Example files for supported types - [bam](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/ENCSR868FGK_merged.bam), [fragment](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/example.fragments.tsv), [tagalign](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/example.tagAlign) 
-- `-t`: type of input file. Following string inputs are supported - "bam", "fragment", "tagalign". 
+- `-ibam` or `-ifrag` or `-itag`: input file path with filtered reads in one of bam, fragment or tagalign formats. Example files for supported types - [bam](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/ENCSR868FGK_merged.bam), [fragment](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/example.fragments.tsv), [tagalign](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/example.tagAlign) 
 - `-d`: assay type.  Following types are supported - "ATAC" or "DNASE"
 - `-g`: reference genome fasta file. Example file human reference - [hg38.fa](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/hg38.genome.fa)
 - `-c`: chromosome and size tab seperated file. Example file in human reference - [hg38.chrom.sizes](https://mitra.stanford.edu/kundaje/oak/akundaje/anusri/chrombpnet_data/input_files/hg38.chrom.sizes)
@@ -180,19 +179,22 @@ logs\
 	bias.log.batch (loss per batch per epoch)
 	(..other hyperparameters used in training)
 	
-auxilary\
-	filtered.peaks
-	filtered.nonpeaks
+intermediates\
 	...
 
 evaluation\
-	overall_report.pdf
-	bw_shift_qc.png 
-	bias_metrics.json 
+        overall_report.html
+        overall_report.pdf
+	pwm_from_input.png
+        k562_epoch_loss.png 
+	bias_metrics.json
 	bias_only_peaks.counts_pearsonr.png
 	bias_only_peaks.profile_jsd.png
-	bias_profile_motifs.pdf
-	bias_counts_motifs.pdf
+	bias_only_nonpeaks.counts_pearsonr.png
+	bias_only_nonpeaks.profile_jsd.png
+        bias_predictions.h5
+	bias_profile.pdf
+	bias_counts.pdf
 	...
 ```
 Detailed usage guide with more information on the output file formats and how to work with them are provided [here](https://github.com/kundajelab/chrombpnet/wiki/Output-format).
