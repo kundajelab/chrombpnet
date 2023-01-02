@@ -124,7 +124,7 @@ evaluation\
 	chrombpnet_nobias.....footprint.png
 	...
 ```
-Detailed usage guide with more information on the output file formats and how to work with them are provided [here](https://github.com/kundajelab/chrombpnet/wiki/Output-format).
+Detailed usage guide with more information on input arguments and the output file formats and how to work with them are provided [here](https://github.com/kundajelab/chrombpnet/wiki/ChromBPNet-training) and [here](https://github.com/kundajelab/chrombpnet/wiki/Output-format).
 
 For more information, also see:
 
@@ -197,7 +197,7 @@ evaluation\
 	bias_counts.pdf
 	...
 ```
-Detailed usage guide with more information on the output file formats and how to work with them are provided [here](https://github.com/kundajelab/chrombpnet/wiki/Output-format).
+Detailed usage guide with more information on the input arguments and output file formats and how to work with them are provided [here](https://github.com/kundajelab/chrombpnet/wiki/Bias-model-training) and [here](https://github.com/kundajelab/chrombpnet/wiki/Output-format).
 
 For more information, also see:
 
