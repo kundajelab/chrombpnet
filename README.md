@@ -129,6 +129,7 @@ Detailed usage guide with more information on input arguments and the output fil
 For more information, also see:
 
 - [Full documentation list](https://github.com/kundajelab/chrombpnet/wiki)
+- [Detailed list of input arguments](https://github.com/kundajelab/chrombpnet/wiki/ChromBPNet-training)
 - [Detailed usage guide with more information on the output file formats and how to work with them](https://github.com/kundajelab/chrombpnet/wiki/Output-format)
 - [Best practices for preprocessing](https://github.com/kundajelab/chrombpnet/wiki/Preprocessing)
 - [Training tutorial](https://github.com/kundajelab/chrombpnet/wiki/Tutorial)
@@ -202,6 +203,7 @@ Detailed usage guide with more information on the input arguments and output fil
 For more information, also see:
 
 - [Full documentation list](https://github.com/kundajelab/chrombpnet/wiki)
+- [Detailed list of input arguments](https://github.com/kundajelab/chrombpnet/wiki/Bias-model-training)
 - [Detailed usage guide with more information on the output file formats and how to work with them](https://github.com/kundajelab/chrombpnet/wiki/Output-format)
 - [Best practices for preprocessing](https://github.com/kundajelab/chrombpnet/wiki/Preprocessing)
 - [Training tutorial](https://github.com/kundajelab/chrombpnet/wiki/Tutorial)
