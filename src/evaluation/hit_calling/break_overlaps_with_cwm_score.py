@@ -21,16 +21,17 @@ args = parser.parse_args()
 
 
 
-#inpath = os.path.join(args.output_prefix,"moods_filtered_scored_thresholded_normed.bed")
+inpath = os.path.join(args.output_prefix,"moods_filtered_scored_thresholded.bed")
 
-#comm = ["bedtools", "sort", "-i"]
-#comm += [inpath]
-#comm += ["|"]
-#comm += ["bedtools", "cluster", "-i", "stdin"]
-#f = open(os.path.join(args.output_prefix,"moods_filtered_scored_thresholded_clustered_normed.bed"), "w")
-#proc = subprocess.Popen(" ".join(comm), shell=True, stdout=f)
-#proc.wait()
-#f.close()
+comm = ["bedtools", "sort", "-i"]
+comm += [inpath]
+comm += ["|"]
+comm += ["bedtools", "cluster", "-i", "stdin"]
+f = open(os.path.join(args.output_prefix,"moods_filtered_scored_thresholded_clustered.bed"), "w")
+proc = subprocess.Popen(" ".join(comm), shell=True, stdout=f)
+proc.wait()
+f.close()
+
 
 def trim_motif_new(cwm, motif, trim_threshold=0.3):
     """
@@ -74,7 +75,10 @@ def import_tfmodisco_motifs(tfm_results_path, trim=True, only_pos=True):
             patterns = metacluster["seqlets_to_patterns_result"]["patterns"]
             num_patterns = len(patterns["all_pattern_names"][:])
             for pattern_i, pattern_name in enumerate(patterns["all_pattern_names"][:]):
-                pattern_name = pattern_name.decode()
+                try:
+                    pattern_name = pattern_name.decode()
+                except:
+                    pattern_name = pattern_name
                 pattern = patterns[pattern_name]
                 pfm = pattern["sequence"]["fwd"][:]
                 cwm = pattern["task0_contrib_scores"]["fwd"][:]
@@ -91,8 +95,6 @@ def import_tfmodisco_motifs(tfm_results_path, trim=True, only_pos=True):
 
 pfms = import_tfmodisco_motifs(args.tfm_path)
 
-
-#data = pd.read_csv(os.path.join(args.output_prefix,"moods_filtered_scored_thresholded_clustered_subset.bed"), sep="\t", header=None)
 data = pd.read_csv(os.path.join(args.output_prefix,"moods_filtered_scored_thresholded_clustered.bed"), sep="\t", header=None)
 bw = pyBigWig.open(args.bigwig)
 genome = pyfaidx.Fasta(args.genome)
@@ -108,31 +110,18 @@ for i,r in tqdm(data.iterrows()):
 
 	val = np.nan_to_num(bw.values(chr,start,end)).reshape((-1,1))
 	seq = one_hot.dna_to_one_hot([str(genome[chr][start:end])])[0]
-
-	#score = np.abs(val)
-	#trim_thresh = np.max(score) * 0.3
-	#val[val<trim_thresh] = 0.0
-
 	output = val*seq
 
+	# check correlation with both orginal pfm motif and is reverse complement
 	corr1 = np.max(signal.correlate2d(pfms[key][::-1, ::-1],output, mode="valid"))
 	corr2 = np.max(signal.correlate2d(pfms[key],output, mode="valid"))
 
 	corr = np.max([corr1, corr2])
-	corrs.append(corr/(end-start))
-	#corrs.append(corr)
-	#print(corrs[-1])
-
-#print(data.head())
-#print(len(corrs))
+	corrs.append(corr/(end-start)) # dividing it by length - this prefers shorter motifs while resolving clashes - so if you have 2 CTCF variants in your list and one is shorter that will get most of the hits
 
 data[9] = corrs
-#print(data.shape)
 
-#data.to_csv(os.path.join(args.output_prefix,"moods_filtered_scored_thresholded_clustered_cwm_actvations_normed_length.bed"),sep="\t", header=False, index=False)
-#data.to_csv(os.path.join(args.output_prefix,"moods_filtered_scored_thresholded_clustered_cwm_actvations_subset_normed.bed"),sep="\t", header=False, index=False)
 data.to_csv(os.path.join(args.output_prefix,"moods_filtered_scored_thresholded_clustered_cwm_actvations_normed.bed"),sep="\t", header=False, index=False)
-
 
 new_data = []
 
@@ -155,8 +144,6 @@ for idx in tqdm(clusters):
 
 new_data = pd.DataFrame(new_data)
 
-#new_data.to_csv(os.path.join(args.output_prefix,"overlaps_resolved_based_on_cwm_activations_normed_length_normed.bed"),sep="\t", header=False, index=False)
-#new_data.to_csv(os.path.join(args.output_prefix,"overlaps_resolved_based_on_cwm_activations_subset_normed.bed"),sep="\t", header=False, index=False)
 new_data.to_csv(os.path.join(args.output_prefix,"overlaps_resolved_based_on_cwm_activations_normed.bed"),sep="\t", header=False, index=False)
 
 

@@ -60,7 +60,7 @@ if [[ -d $output_dir/tobias_model ]] ; then
 else
     mkdir $output_dir/tobias_model
 
-    CUDA_VISIBLE_DEVICES=$gpu bash tobias_corrected_model_no_pos.sh $ref_fasta $in_bigwig $overlap_peak $nonpeaks $fold $output_dir/tobias_model $data_type $bias_bigwig $output_dir/tobias_bias_model/tobias_bias.h5
+    CUDA_VISIBLE_DEVICES=$gpu bash tobias_corrected_model_no_pos.sh $ref_fasta $in_bigwig $overlap_peak $nonpeaks $fold $output_dir/tobias_model $data_type $bias_bigwig
 fi
 
 

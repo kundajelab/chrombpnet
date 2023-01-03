@@ -1,65 +1,37 @@
-bed_dir=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/nautilus_runs_may18/K562_05.13.2022_bias_128_4_1234_0.5_fold_0/interpret/merged.K562.interpreted_regions.bed
-
-#bedtools slop -i /mnt/data/annotations/blacklist/GRch38/GRch38_unified_blacklist.bed.gz -g /mnt/data/annotations/by_release/hg38/hg38.chrom.sizes -b 1057 > temp.bed
-#bedtools intersect -v -a $bed_dir -b temp.bed | awk ' {print $1 "\t" $2 + $10 - 500 "\t" $2 + $10 + 500}' > merged_peaks_no_lacklist.w1000.bed
-genom=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa 
- 
-#bedtools sort -i merged_peaks_no_lacklist.w1000.bed | bedtools merge -i stdin > merged.k562.dnase.bed
-
-#python create_equal_width_peaks.py --bed merged.k562.dnase.bed --outf equal.spaced.merged.k562.new.bed
-
-peaks_bed=equal.spaced.merged.k562.new.bed
-
-wc -l equal.spaced.merged.k562.new.bed
-
-peak_bed=equal.spaced.merged.k562.new.bed
-
-modisco_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/modisco_jun_30/modisco/DNASE/K562/modisco_crop_500_100K_seqs_1
+output_dir=/mnt/lab_data3/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/K562_05.13.2022_bias_128_4_1234_0.5_fold_0/09_06_2022_motif_scanning/mooods_dir_eith_atac_profile_new/
+peak_bed=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/nautilus_runs_may18/K562_05.13.2022_bias_128_4_1234_0.5_fold_0/interpret/merged.K562.interpreted_regions.bed
+#modisco_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/modisco_jun_30/modisco/DNASE/K562/modisco_crop_500_100K_seqs_1
+modisco_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/modisco_jun_30/modisco/ATAC/K562/modisco_crop_500_100K_seqs_1
 shap_dir=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/nautilus_runs_may18/K562_05.13.2022_bias_128_4_1234_0.5_fold_0/interpret/merged.K562
-#output_dir=/mnt/lab_data3/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/K562_02.08.2022_bias_128_4_2356/06_22_2022_motif_scanning/mean_moods_baseairmodels_counts_new_divide_by_total_score_pval_0.01_moods/
-output_dir=/mnt/lab_data3/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/K562_02.08.2022_bias_128_4_2356/06_22_2022_motif_scanning/mean_moods_baseairmodels_counts_new_divide_by_total_score/
+genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa 
+
 mkdir  $output_dir
 echo $output_dir
 
-#bash run_moods_hits.sh $modisco_dir $shap_dir $output_dir $peak_bed "mean_norm"
-#python break_overlaps.py -o $output_dir
-python break_overlaps_with_cwm_score_2.py -o $output_dir -tfm $modisco_dir//modisco_results_allChroms_counts.hdf5 -bw $shap_dir.counts.bw -g $genom
+
+if [-f $output_dir/equal.spaced.merged.k562.bed];then
+	echo "peaks file exists"
+	wc -l $output_dir/equal.spaced.merged.k562.bed
+else
+	# remove blacklist regions from peaks and take 1000bp around the summit
+	bedtools slop -i /mnt/data/annotations/blacklist/GRch38/GRch38_unified_blacklist.bed.gz -g /mnt/data/annotations/by_release/hg38/hg38.chrom.sizes -b 1057 > $output_dir/temp.bed
+	bedtools intersect -v -a $peak_bed -b $output_dir/temp.bed | awk ' {print $1 "\t" $2 + $10 - 500 "\t" $2 + $10 + 500}' > $output_dir/merged_peaks_no_blacklist.w1000.bed
+
+	# merge your peak set
+	bedtools sort -i $output_dir/merged_peaks_no_blacklist.w1000.bed | bedtools merge -i stdin   > $output_dir/merged.k562.bed
+
+	# create equal intervals from your merged peaks - this is optional - this will affect how you consider co-occurence of hits not the annotation or the output hit bed file itself.
+	python create_equal_width_peaks.py --bed $output_dir/merged.k562.bed --outf $output_dir/equal.spaced.merged.k562.bed --input_len 1000
+
+	peaks_bed=$output_dir/equal.spaced.merged.k562.bed
+	wc -l $output_dir/equal.spaced.merged.k562.bed
+fi
+
+# update to the new peak file
+#peak_bed=/mnt/lab_data3/anusri/chrombpnet/results/chrombpnet/ATAC_PE/K562/K562_02.17.2022_bias_128_4_1234_0.5_fold_0/09_06_2022_motif_scanning//equal.spaced.merged.k562.bed
+peak_bed=/mnt/lab_data3/anusri/chrombpnet/results/chrombpnet/ATAC_PE/K562/K562_02.17.2022_bias_128_4_1234_0.5_fold_0/09_06_2022_motif_scanning_profile_new/merged.k562.bed
 
 
 
-
-modisco_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/modisco_jun_30/modisco/DNASE/K562/modisco_crop_500_100K_seqs_1
-shap_dir=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/nautilus_runs_may18/K562_05.13.2022_bias_128_4_1234_0.5_fold_0/interpret/merged.K562
-output_dir=/mnt/lab_data3/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/K562_02.08.2022_bias_128_4_2356/06_22_2022_motif_scanning/mean_moods_baseairmodels_counts_new/
-mkdir  $output_dir
-echo $output_dir
-
-#bash run_moods_hits.sh $modisco_dir $shap_dir $output_dir $peak_bed "mean_sum"
-#python break_overlaps.py -o $output_dir
-#python break_overlaps_with_cwm_score_2.py -o $output_dir -tfm $modisco_dir//modisco_results_allChroms_counts.hdf5 -bw $shap_dir.counts.bw -g $genom
-
-
-
-
-modisco_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/modisco_jun_30/modisco/DNASE/K562/modisco_crop_500_100K_seqs_1
-shap_dir=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/nautilus_runs_may18/K562_05.13.2022_bias_128_4_1234_0.5_fold_0/interpret/merged.K562
-output_dir=/mnt/lab_data3/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/K562_02.08.2022_bias_128_4_2356/06_22_2022_motif_scanning/moods_baseairmodels_counts_new_divide_by_total_score/
-mkdir  $output_dir
-echo $output_dir
-
-#bash run_moods_hits.sh $modisco_dir $shap_dir $output_dir $peak_bed "norm"
-#python break_overlaps.py -o $output_dir
-#python break_overlaps_with_cwm_score_2.py -o $output_dir -tfm $modisco_dir//modisco_results_allChroms_counts.hdf5 -bw $shap_dir.counts.bw -g $genom
-
-
-modisco_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/modisco_jun_30/modisco/DNASE/K562/modisco_crop_500_100K_seqs_1
-shap_dir=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/nautilus_runs_may18/K562_05.13.2022_bias_128_4_1234_0.5_fold_0/interpret/merged.K562
-output_dir=/mnt/lab_data3/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/K562_02.08.2022_bias_128_4_2356/06_22_2022_motif_scanning/moods_baseairmodels_counts_new/
-mkdir  $output_dir
-echo $output_dir
-
-#bash run_moods_hits.sh $modisco_dir $shap_dir $output_dir $peak_bed "sum"
-#python break_overlaps.py -o $output_dir
-#python break_overlaps_with_cwm_score_2.py -o $output_dir -tfm $modisco_dir//modisco_results_allChroms_counts.hdf5 -bw $shap_dir.counts.bw -g $genom
-
+bash run_moods_hits_test_profile.sh $modisco_dir $shap_dir $output_dir $peak_bed "mean_norm"
 

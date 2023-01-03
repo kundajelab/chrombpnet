@@ -198,7 +198,7 @@ def compute_hits_importance_scores(
         score_track = np.abs(imp_scores[peak_index])
         total_score = np.mean(score_track)
         for i, row in group.iterrows():
-            if method=="norm":
+            if method=="sum_norm":
                 scores[i] = np.sum(
                         score_track[row["motif_rel_start"]:row["motif_rel_end"]]
                 )/total_score
@@ -210,7 +210,7 @@ def compute_hits_importance_scores(
                 scores[i] = np.mean(
                         score_track[row["motif_rel_start"]:row["motif_rel_end"]]
                 )/total_score
-            if method=="mean_sum":
+            if method=="mean":
                 scores[i] = np.mean(
                         score_track[row["motif_rel_start"]:row["motif_rel_end"]]
                 )

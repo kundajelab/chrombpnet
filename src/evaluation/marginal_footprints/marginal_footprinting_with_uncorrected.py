@@ -98,7 +98,7 @@ def main():
 
     regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
     chroms_to_keep = ["chr1"]
-    regions_subsample = regions_df[(regions_df["chr"].isin(chroms_to_keep))].sample(1000)
+    regions_subsample = regions_df[(regions_df["chr"].isin(chroms_to_keep))]
     regions_seqs = context.get_seq(regions_subsample, genome_fasta, inputlen)
 
     footprints_at_motifs = {}

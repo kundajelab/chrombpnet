@@ -15,8 +15,8 @@ def get_regions(regions_file, seqlen):
     assert(seqlen%2==0)
 
     with open(regions_file) as r:
-        regions = [x.strip().split('\t') for x in r]
-
+        regions = [x.strip().split('\t')[0:] for x in r]
+    #print(regions) 
     regions = [[x[0], int(x[1])+int(x[9])-seqlen//2, int(x[1])+int(x[9])+seqlen//2, int(x[1])+int(x[9])] for x in regions]
 
     return regions

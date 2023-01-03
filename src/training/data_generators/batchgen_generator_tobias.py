@@ -44,9 +44,12 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         assert(bias_peak_coords.shape==peak_coords.shape)
         assert(bias_peak_coords[:,1].astype(float).all()==peak_coords[:,1].astype(float).all())
 
-        #print(bias_peak_cts.shape)
+        old = bias_peak_cts.shape
         #print(np.min(bias_peak_cts, axis=-1, keepdims=True))
         bias_peak_cts = bias_peak_cts - np.min(bias_peak_cts, axis=-1, keepdims=True)
+        #bias_peak_cts = softmax(bias_peak_cts)
+
+        assert(bias_peak_cts.shape==old)
         assert(np.all(bias_peak_cts>=0))
         self.peak_seqs, self.nonpeak_seqs = peak_seqs, nonpeak_seqs
         self.peak_cts, self.nonpeak_cts = peak_cts, nonpeak_cts
