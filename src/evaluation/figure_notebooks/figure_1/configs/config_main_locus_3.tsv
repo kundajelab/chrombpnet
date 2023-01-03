@@ -1,0 +1,2 @@
+sample	path	normalize	normalization_region	normalization_file	type	Min	Max	Scale	Color
+ATAC observed	/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/merged/K562/ATAC_temp/K562_unstranded_scaled.bw	FALSE	None	None	single	None	None	None	800000
