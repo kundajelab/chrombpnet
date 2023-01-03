@@ -7,6 +7,15 @@
 *.ipynb_checkpoints
 *.pkl
 *.npy
+*.pdf
+*.png
+*.bed
+*.pfm
+*.bam
+*.gz
+*.bai
+*.bw
+*.fai
 # Directories #
 # logs
 results

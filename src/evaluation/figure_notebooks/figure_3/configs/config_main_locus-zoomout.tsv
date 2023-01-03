@@ -1,0 +1,11 @@
+sample	path	normalize	normalization_region	normalization_file	type	Min	Max	Scale	Color
+ATAC observed	/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/merged/K562/ATAC_temp/K562_unstranded_scaled.bw	FALSE	None	None	single	None	None	None	E00FEE
+Uncorrected Predictions	/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/merged/K562/ATAC_temp/K562_w_bias_scaled.bw	FALSE	None	None	single	None	None	None	E00FEE
+Corrected Predictions	/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/merged/K562/ATAC_temp/K562_wo_bias_scaled.bw	FALSE	None	None	single	None	None	None	E00FEE
+Counts importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/K562/nautilus_runs/K562_02.17.2022_bias_128_4_1234_0.5_fold_0/interpret/merged.K562.counts.bw	TRUE	None	None	dsingle	-0.015176	0.106112	1	E00FEE
+Profile importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/K562/nautilus_runs/K562_02.17.2022_bias_128_4_1234_0.5_fold_0/interpret/merged.K562.profile.bw	TRUE	None	None	dsingle	-0.002358	0.057126	1	E00FEE
+DNase observed	/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/merged/K562/DNASE/K562_unstranded.bw	TRUE	None	None	single	None	None	1.95517273663274	458B00
+Uncorrected Predictions	/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/merged/K562/DNASE/K562_w_bias.bw	TRUE	None	None	single	None	None	1.1196196414988	458B00
+Corrected Predictions	/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/merged/K562/DNASE/K562_wo_bias.bw	TRUE	None	None	single	None	None	1.01343871950807	458B00
+Counts importance	/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/merged/K562/DNASE/merged.K562.counts.bw	TRUE	None	None	dsingle	-0.013217	0.141897	1	458B00
+Profile importance	/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/merged/K562/DNASE/merged.K562.profile.bw	TRUE	None	None	dsingle	-0.005945	0.101721	1	458B00

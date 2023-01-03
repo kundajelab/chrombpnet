@@ -1,0 +1,14 @@
+sample	path	normalize	normalization_region	normalization_file	type	Min	Max	Scale	Color
+observed	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/data/GM12878_unstranded.bw	TRUE	None	None	single	None	None	3.26367792781148	E00FEE
+uncorrected \n prediction	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/uncorrected_model_05.10.2022/interpret/GM12878_w_bias.bw	TRUE	None	None	single	None	None	1.72823216384425	E00FEE
+importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/uncorrected_model_05.10.2022/interpret/merged.GM12878.profile.bw	TRUE	None	None	dynseq	-0.007873	0.034607	None	None
+BPNet bias \n prediction	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/interpret/GM12878bias.bw	TRUE	None	None	single	None	None	0.038199847447443744	458B00
+importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/bias/betaglobin_w_bias.GM12878.profile.bw	TRUE	None	None	dynseq	-0.005014	0.012453	None	None
+ChromBPNet with  \n BPNet bias  \n prediction	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/interpret/GM12878_wo_bias.bw	TRUE	None	None	single	None	None	1.4925469442936647	0000FF
+ importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/interpret/merged.GM12878.profile.bw	TRUE	None	None	dynseq	-0.003204	0.023025	None	None
+ChromBPNet with  \n hint-atac   \n  prediction	/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/benchmarking/hint_2_loci/hint_wo_bias.bw	TRUE	None	None	single	None	None	1.9645445048797403	A52A2A
+importance	/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/benchmarking/hint_2_loci/hint.profile.bw	TRUE	None	None	dynseq	-0.004823	0.024229	None	None
+ChromBPNet with  \n tobias \n  prediction	/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/benchmarking/tobias_2_with_bias_loci/tobias_wo_bias.bw	TRUE	None	None	single	None	None	9.77493015951012e-14	A52A2A
+importance	/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/benchmarking/tobias_2_with_bias_loci/tobias.profile.bw	TRUE	None	None	dynseq	-0.006006	0.028426	None	None
+ChromBPNet with  \n 1-layer cnn bias \n  prediction	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/ATAC_PE_03.06.2022_simplebias/interpret/GM12878_wo_bias.bw	TRUE	None	None	single	None	None	1.86795364110082	A52A2A
+importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/ATAC_PE_03.06.2022_simplebias/interpret/merged.GM12878.profile.bw	TRUE	None	None	dynseq	-0.005101	0.025624	None	None

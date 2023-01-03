@@ -1,0 +1,5 @@
+sample	path	normalize	normalization_region	normalization_file	type	Min	Max	Scale	Color
+REF prediction	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/GM12878_03.06.2022_bias_128_4_1234_0.8_fold_0/bqtls_pu1_interpret//bigwigs/profile_ref.bw	FALSE	None	None	single	0	0.6	None	E00FEE
+ALT prediction	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/GM12878_03.06.2022_bias_128_4_1234_0.8_fold_0/bqtls_pu1_interpret//bigwigs//profile_alt.bw	FALSE	None	None	single	None	None	None	458B00
+REF importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/GM12878_03.06.2022_bias_128_4_1234_0.8_fold_0/bqtls_pu1_interpret//bigwigs/profile_shap_ref.bw	FALSE	None	None	single	0	0.03	None	E00FEE
+ALT importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/GM12878_03.06.2022_bias_128_4_1234_0.8_fold_0/bqtls_pu1_interpret//bigwigs/profile_shap_alt.bw	FALSE	None	None	single	None	None	None	458B00

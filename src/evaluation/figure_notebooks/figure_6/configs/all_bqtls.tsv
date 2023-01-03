@@ -1,0 +1,13 @@
+sample	path	normalize	normalization_region	normalization_file	type	Min	Max	Scale	Color	genome
+Chip REF prediction	/oak/stanford/groups/akundaje/anusri/dynseq-paper/SPI1_bQTL/bigwigs/chip_pred_ref	FALSE	None	None	stranded	0	0.1	None	E00FEE	hg38
+Chip ALT prediction	/oak/stanford/groups/akundaje/anusri/dynseq-paper/SPI1_bQTL/bigwigs/chip_pred_alt	FALSE	None	None	stranded	0	0.1	None	458B00	hg38
+Chip REF importance	/oak/stanford/groups/akundaje/anusri/dynseq-paper/SPI1_bQTL/bigwigs/chip_imp_ref.bw	FALSE	None	None	single	0	0.3	None	E00FEE	hg38
+Chip ALT importance	/oak/stanford/groups/akundaje/anusri/dynseq-paper/SPI1_bQTL/bigwigs/chip_imp_alt.bw	FALSE	None	None	single	0	0.3	None	458B00	hg38
+ATAC REF prediction	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/bqtls_pu1_interpret//bigwigs/profile_ref.bw	FALSE	None	None	single	0	6	None	E00FEE	hg19
+ATAC ALT prediction	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/bqtls_pu1_interpret//bigwigs/profile_alt.bw	FALSE	None	None	single	None	None	None	458B00	hg19
+ATAC REF importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/bqtls_pu1_interpret//bigwigs/profile_shap_ref.bw	FALSE	None	None	single	0	0.03	None	E00FEE	hg19
+ATAC ALT importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/bqtls_pu1_interpret//bigwigs/profile_shap_alt.bw	FALSE	None	None	single	None	None	None	458B00	hg19
+DNase REF prediction	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/GM12878_03.06.2022_bias_128_4_1234_0.8_fold_0/bqtls_pu1_interpret//bigwigs/profile_ref.bw	FALSE	None	None	single	0	0.6	None	E00FEE	hg19
+DNase ALT prediction	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/GM12878_03.06.2022_bias_128_4_1234_0.8_fold_0/bqtls_pu1_interpret//bigwigs//profile_alt.bw	FALSE	None	None	single	None	None	None	458B00	hg19
+DNase REF importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/GM12878_03.06.2022_bias_128_4_1234_0.8_fold_0/bqtls_pu1_interpret//bigwigs/profile_shap_ref.bw	FALSE	None	None	single	0	0.03	None	E00FEE	hg19
+DNase ALT importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/GM12878_03.06.2022_bias_128_4_1234_0.8_fold_0/bqtls_pu1_interpret//bigwigs/profile_shap_alt.bw	FALSE	None	None	single	None	None	None	458B00	hg19

@@ -1,0 +1,5 @@
+sample	path	normalize	normalization_region	normalization_file	type	Min	Max	Scale	Color
+observed	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_SE/GM12878/data/GM12878_unstranded.bw	FALSE	None	None	single	None	None	None	E00FEE
+prediction	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/GM12878_03.06.2022_bias_128_4_1234_0.8_fold_0/bias_non_peak_interpret/GM12878bias.bw	FALSE	None	None	single	None	None	None	E00FEE
+counts importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/GM12878_03.06.2022_bias_128_4_1234_0.8_fold_0/bias_non_peak_interpret/GM12878.counts.bw	FALSE	None	None	dynseq	None	None	None	None
+profile importance	/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/GM12878_03.06.2022_bias_128_4_1234_0.8_fold_0/bias_non_peak_interpret/GM12878.profile.bw	FALSE	None	None	dynseq	None	None	None	None

@@ -1,0 +1,5 @@
+sample	path	normalize	normalization_region	normalization_file	type	Min	Max	Scale	Color
+REF prediction	/oak/stanford/groups/akundaje/anusri/dynseq-paper/SPI1_bQTL/bigwigs/chip_pred_ref	FALSE	None	None	stranded	0	0.1	None	E00FEE
+ALT prediction	/oak/stanford/groups/akundaje/anusri/dynseq-paper/SPI1_bQTL/bigwigs/chip_pred_alt	FALSE	None	None	stranded	0	0.1	None	458B00
+REF importance	/oak/stanford/groups/akundaje/anusri/dynseq-paper/SPI1_bQTL/bigwigs/chip_imp_ref.bw	FALSE	None	None	single	None	None	None	E00FEE
+ALT importance	/oak/stanford/groups/akundaje/anusri/dynseq-paper/SPI1_bQTL/bigwigs/chip_imp_alt.bw	FALSE	None	None	single	None	None	None	458B00
