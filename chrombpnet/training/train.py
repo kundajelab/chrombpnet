@@ -93,8 +93,8 @@ def main(args):
     # store arguments and and parameters to checkpoint
     with open(args.output_prefix+'.args.json', 'w') as fp:
         json.dump(args.__dict__, fp,  indent=4)
-    with open(args.output_prefix+'.params.json', 'w') as fp:
-        json.dump(parameters, fp,  indent=4)
+    #with open(args.output_prefix+'.params.json', 'w') as fp:
+    #    json.dump(parameters, fp,  indent=4)
 
 
 if __name__=="__main__":
