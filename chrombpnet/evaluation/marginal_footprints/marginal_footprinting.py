@@ -79,57 +79,81 @@ def get_footprint_for_motif(seqs, motif, model, inputlen, batch_size):
 
 def main(args):
 
-    pwm_df = pd.read_csv(args.motifs_to_pwm, sep='\t',names=PWM_SCHEMA)
-    print(pwm_df.head())
-    genome_fasta = pyfaidx.Fasta(args.genome)
+	pwm_df = pd.read_csv(args.motifs_to_pwm, sep='\t',names=PWM_SCHEMA)
+	print(pwm_df.head())
+	genome_fasta = pyfaidx.Fasta(args.genome)
 
-    model=load_model_wrapper(args)
-    inputlen = model.input_shape[1] 
-    outputlen = model.output_shape[0][1] 
-    print("inferred model inputlen: ", inputlen)
-    print("inferred model outputlen: ", outputlen)
+	model=load_model_wrapper(args)
+	inputlen = model.input_shape[1] 
+	outputlen = model.output_shape[0][1] 
+	print("inferred model inputlen: ", inputlen)
+	print("inferred model outputlen: ", outputlen)
 
-    splits_dict = json.load(open(args.chr_fold_path))
-    chroms_to_keep = set(splits_dict["test"])
+	splits_dict = json.load(open(args.chr_fold_path))
+	chroms_to_keep = set(splits_dict["test"])
 
-    regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
-    regions_subsample = regions_df[(regions_df["chr"].isin(chroms_to_keep))]
-    regions_seqs = get_seq(regions_subsample, genome_fasta, inputlen)
+	regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
+	regions_subsample = regions_df[(regions_df["chr"].isin(chroms_to_keep))]
+	regions_seqs = get_seq(regions_subsample, genome_fasta, inputlen)
 
-    footprints_at_motifs = {}
+	footprints_at_motifs = {}
 
-    avg_response_at_tn5 = []
-    #get motif names from column1 of the pwm_df
-    for index, row in pwm_df.iterrows():
-        motif=row["MOTIF_NAME"]
-        motif_to_insert_fwd=row["MOTIF_PWM_FWD"]        
-        print("inserting motif: ", motif)
-        print(motif_to_insert_fwd)
-        motif_footprint, motif_counts = get_footprint_for_motif(regions_seqs, motif_to_insert_fwd, model, inputlen, args.batch_size)
-        footprints_at_motifs[motif]=[motif_footprint,motif_counts]
+	avg_response_at_tn5 = []
 
-        # plot footprints of center 200bp
-        if ("tn5" in motif.lower()) or ("dnase" in motif.lower()):
-                avg_response_at_tn5.append(np.round(np.max(motif_footprint),3))
-        plt.figure()
-        plt.plot(range(200),motif_footprint[outputlen//2-100:outputlen//2+100])
-        if args.ylim is not None: 
-            plt.ylim(args.ylim)
-        plt.savefig(args.output_prefix+".{}.footprint.png".format(motif))
+	motif = "control"
+	motif_to_insert_fwd = ""
+	print("inserting motif: ", motif)
+	print(motif_to_insert_fwd)
+	motif_footprint, motif_counts = get_footprint_for_motif(regions_seqs, motif_to_insert_fwd, model, inputlen, args.batch_size)
+	footprints_at_motifs[motif]=[motif_footprint,motif_counts]
 
-    if np.mean(avg_response_at_tn5) < 0.003:
-        ofile = open("{}_max_bias_resonse.txt".format(args.output_prefix), "w")
-        ofile.write("corrected_"+str(round(np.mean(avg_response_at_tn5),3))+"_"+"/".join(list(map(str,avg_response_at_tn5))))
-        ofile.close()
-    else:
-        ofile = open("{}_max_bias_resonse.txt".format(args.output_prefix), "w")
-        ofile.write("uncorrected:"+str(round(np.mean(avg_response_at_tn5),3))+"/".join(list(map(str,avg_response_at_tn5))))
-        ofile.close()
+	plt.figure()
+	plt.plot(range(200),motif_footprint[outputlen//2-100:outputlen//2+100])
+	if args.ylim is not None: 
+		plt.ylim(args.ylim)
+	plt.xlabel("200bp arount motif insertion", fontsize=11)
+	plt.ylabel("Probability", fontsize=11)
+	plt.xticks(ticks=[0,100,200], labels=[-100,0,100])
+	plt.tight_layout()
+	plt.savefig(args.output_prefix+".{}.footprint.png".format(motif))
 
-    print("Saving marginal footprints")
-    dd.io.save("{}_footprints.h5".format(args.output_prefix),
-        footprints_at_motifs,
-        compression='blosc')
+
+	#get motif names from column1 of the pwm_df
+	for index, row in pwm_df.iterrows():
+		motif=row["MOTIF_NAME"]
+		motif_to_insert_fwd=row["MOTIF_PWM_FWD"]        
+		print("inserting motif: ", motif)
+		print(motif_to_insert_fwd)
+		motif_footprint, motif_counts = get_footprint_for_motif(regions_seqs, motif_to_insert_fwd, model, inputlen, args.batch_size)
+		footprints_at_motifs[motif]=[motif_footprint,motif_counts]
+
+		# plot footprints of center 200bp
+		if ("tn5" in motif.lower()) or ("dnase" in motif.lower()):
+				avg_response_at_tn5.append(np.round(np.max(motif_footprint),3))
+		plt.figure()
+		plt.plot(range(200),motif_footprint[outputlen//2-100:outputlen//2+100])
+		if args.ylim is not None: 
+			plt.ylim(args.ylim)
+		plt.xlabel("200bp arount motif insertion", fontsize=11)
+		plt.ylabel("Probability", fontsize=11)
+		plt.xticks(ticks=[0,100,200], labels=[-100,0,100])
+		plt.tight_layout()
+		plt.savefig(args.output_prefix+".{}.footprint.png".format(motif))
+
+	if len(avg_response_at_tn5) > 0:
+		if np.mean(avg_response_at_tn5) < 0.003:
+			ofile = open("{}_max_bias_resonse.txt".format(args.output_prefix), "w")
+			ofile.write("corrected_"+str(round(np.mean(avg_response_at_tn5),3))+"_"+"/".join(list(map(str,avg_response_at_tn5))))
+			ofile.close()
+		else:
+			ofile = open("{}_max_bias_resonse.txt".format(args.output_prefix), "w")
+			ofile.write("uncorrected:"+str(round(np.mean(avg_response_at_tn5),3))+"/".join(list(map(str,avg_response_at_tn5))))
+			ofile.close()
+
+	print("Saving marginal footprints")
+	dd.io.save("{}_footprints.h5".format(args.output_prefix),
+		footprints_at_motifs,
+		compression='blosc')
 
 
 if __name__ == '__main__':
