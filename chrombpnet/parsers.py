@@ -16,7 +16,7 @@ def read_parser():
         
         pipeline_parser = subparsers.add_parser("pipeline", help="End-to-end pipline with train, quality check and test for bias factorized ChromBPNet model")
         train_parser = subparsers.add_parser("train", help="Train bias factorized ChromBPNet model")
-        qc_parser = subparsers.add_parser("qc", help="Do quality checks and test for bias factorized ChromBPNet model")
+        qc_parser = subparsers.add_parser("qc", help="Do quality checks and get test metrics for bias factorized ChromBPNet model")
 
         # bias parsers
         
@@ -24,7 +24,7 @@ def read_parser():
         bias_parser_sub = bias_parser_full.add_subparsers(help="Must be eithier 'pipeline'  'train', 'qc'.", required=True, dest='cmd_bias')
         bias_parser = bias_parser_sub.add_parser("pipeline", help="End-to-end pipline with train, quality check and test for bias model")
         bias_parser_train = bias_parser_sub.add_parser("train", help="Train bias model")
-        bias_parser_qc = bias_parser_sub.add_parser("qc", help="Do quality checks and test for the bias model")
+        bias_parser_qc = bias_parser_sub.add_parser("qc", help="Do quality checks and get test metrics for the bias model")
         
         # helper parsers
 
@@ -71,6 +71,7 @@ def read_parser():
         	optional_train.add_argument("-track","--trackables",nargs="*",default=['logcount_predictions_loss', 'loss', 'logits_profile_predictions_loss', 'val_logcount_predictions_loss', 'val_loss', 'val_logits_profile_predictions_loss'], help="list of things to track per batch, such as logcount_predictions_loss,loss,profile_predictions_loss,val_logcount_predictions_loss,val_loss,val_profile_predictions_loss")
         	optional_train.add_argument("-a","--architecture-from-file",type=str,required=False, default=None, help="Model to use for training")
         	optional_train.add_argument("-fp","--file-prefix",type=str,required=False, default=None, help="File prefix for output to use. All the files will be prefixed with this string if provided.")
+        	optional_train.add_argument('-hp', '--html-prefix', required=False, default="./", help="The html prefix to use for the html file output.")
 
         	return required_train, optional_train
 
