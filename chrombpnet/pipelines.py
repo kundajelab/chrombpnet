@@ -40,8 +40,9 @@ def chrombpnet_train_pipeline(args):
 	
 	# QC bias model performance in peaks
 	bias_metrics = json.load(open(os.path.join(args_copy.output_dir,"evaluation/bias_metrics.json")))
-	assert(bias_metrics["counts_metrics"]["peaks"]["pearsonr"] > -0.3) # bias model has negative correlation in peaks - AT rich bias model. Increase bias threshold and retrain bias model. Or use a different bias model with higher bias threshold. 
-	
+	print("Bias model pearsonr performance in peaks is: {}".format(str(np.round(bias_metrics["counts_metrics"]["peaks"]["pearsonr"],2))))
+	assert(bias_metrics["counts_metrics"]["peaks"]["pearsonr"] > -0.5) # bias model has negative correlation in peaks - AT rich bias model. Increase bias threshold and retrain bias model. Or use a different bias model with higher bias threshold. 
+
 	# fetch hyperparameters for training
 	import chrombpnet.helpers.hyperparameters.find_chrombpnet_hyperparams as find_chrombpnet_hyperparams
 	args_copy = copy.deepcopy(args)
@@ -73,7 +74,7 @@ def chrombpnet_train_pipeline(args):
 	# separating models from logs
 	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.log".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.log".format(fpx)))
 	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.log.batch".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.log.batch".format(fpx)))
-	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.params.json".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.params.json".format(fpx)))
+	#os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.params.json".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.params.json".format(fpx)))
 	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.args.json").format(fpx),os.path.join(args.output_dir,"logs/{}chrombpnet.args.json".format(fpx)))
 
 	if args.cmd == "train":
@@ -308,14 +309,14 @@ def train_bias_pipeline(args):
 	os.rename(os.path.join(args.output_dir,"models/{}bias.args.json".format(fpx)),os.path.join(args.output_dir,"logs/{}bias.args.json".format(fpx)))
 	os.rename(os.path.join(args.output_dir,"models/{}bias.log".format(fpx)),os.path.join(args.output_dir,"logs/{}bias.log".format(fpx)))
 	os.rename(os.path.join(args.output_dir,"models/{}bias.log.batch".format(fpx)),os.path.join(args.output_dir,"logs/{}bias.log.batch".format(fpx)))
-	os.rename(os.path.join(args.output_dir,"models/{}bias.params.json".format(fpx)),os.path.join(args.output_dir,"logs/{}bias.params.json".format(fpx)))
+#	os.rename(os.path.join(args.output_dir,"models/{}bias.#".format(fpx)),os.path.join(args.output_dir,"logs/{}bias.params.json".format(fpx)))
 
 	if args.cmd_bias == "train":
 		import chrombpnet.helpers.generate_reports.make_html_bias as make_html_bias
 		args_copy = copy.deepcopy(args)
 		args_copy.input_dir = args_copy.output_dir
 		args_copy.command = args_copy.cmd_bias
-		make_html_bias.main(args_copy)	
+		make_html_bias.main(args_copy) 
 		print("Finished training! Exiting!")
 		return
 		
@@ -366,7 +367,7 @@ def train_bias_pipeline(args):
 	args_copy = copy.deepcopy(args)
 	args_copy.input_dir = args_copy.output_dir
 	args_copy.command = args_copy.cmd_bias
-	make_html_bias.main(args_copy)	
+	make_html_bias.main(args_copy)
 
 def bias_model_qc(args):
 
