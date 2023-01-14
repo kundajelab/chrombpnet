@@ -5,6 +5,10 @@ from chrombpnet.data import print_meme_motif_file
 import chrombpnet.pipelines as pipelines
 import copy
 import pandas as pd
+import logging
+logging.getLogger('matplotlib.font_manager').disabled = True
+
+
 # invoke pipeline modules based on command
 
 def main():

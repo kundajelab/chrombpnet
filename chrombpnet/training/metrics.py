@@ -11,8 +11,7 @@ from scipy.interpolate import interpn
 from chrombpnet.training.utils.metrics_utils import * 
 
 plt.rcParams["figure.figsize"]=10,5
-font = {'family' : 'normal',
-        'weight' : 'bold',
+font = {'weight' : 'bold',
         'size'   : 10}
 matplotlib.rc('font', **font)
 

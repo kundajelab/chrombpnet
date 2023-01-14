@@ -4,7 +4,7 @@ import json
 import copy
 from chrombpnet.data import DefaultDataFile, get_default_data_path
 from chrombpnet.data import print_meme_motif_file
-
+import numpy as np
 
 def chrombpnet_train_pipeline(args):
 

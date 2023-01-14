@@ -75,7 +75,7 @@ def main(args):
                 args.data_type,
                 ref_motifs_file)
     
-        print("Current estimated shift in bams: {:+}/{:+}".format(plus_shift, minus_shift))
+        print("Current estimated shift: {:+}/{:+}".format(plus_shift, minus_shift))
 
     else:
         print("The specified shift is: {:+}/{:+}".format(plus_shift, minus_shift))
