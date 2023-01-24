@@ -152,6 +152,7 @@ def read_parser():
         required_qc_parser.add_argument("-fl", "--chr-fold-path", type=str, required=True, help="Fold information - dictionary with test,valid and train keys and values with corresponding chromosomes") 
         optional_qc_parser.add_argument("-fp","--file-prefix",type=str,required=False, default=None, help="File prefix for output to use. All the files will be prefixed with this string if provided.")
         optional_qc_parser.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
+        optional_qc_parser.add_argument('-hp', '--html-prefix', required=False, default="./", help="The html prefix to use for the html file output.")
  
 
         # bias model pipeline arguments
@@ -199,6 +200,7 @@ def read_parser():
         required_bqc_parser.add_argument("-fl", "--chr-fold-path", type=str, required=True, help="Fold information - dictionary with test,valid and train keys and values with corresponding chromosomes") 
         optional_bqc_parser.add_argument("-fp","--file-prefix",type=str,required=False, default=None, help="File prefix for output to use. All the files will be prefixed with this string if provided.")
         optional_bqc_parser.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
+        optional_bqc_parser.add_argument('-hp', '--html-prefix', required=False, default="./", help="The html prefix to use for the html file output.")
  
 
         # Make prediction bigwigs
