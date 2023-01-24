@@ -147,7 +147,7 @@ def main(args):
 			ofile.close()
 		else:
 			ofile = open("{}_max_bias_resonse.txt".format(args.output_prefix), "w")
-			ofile.write("uncorrected:"+str(round(np.mean(avg_response_at_tn5),3))+"/".join(list(map(str,avg_response_at_tn5))))
+			ofile.write("uncorrected_"+str(round(np.mean(avg_response_at_tn5),3))+"_"+"/".join(list(map(str,avg_response_at_tn5))))
 			ofile.close()
 
 	print("Saving marginal footprints")
