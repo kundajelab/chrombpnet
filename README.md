@@ -45,12 +45,15 @@ Install non-Python  requirements via conda
 ```
 conda install -y -c conda-forge -c bioconda samtools bedtools ucsc-bedgraphtobigwig pybigwig meme
 ```
-#### Install from pypi 
+#### Install package using one of the two ways
+
+- from pypi 
 
 ```
 pip install chrombpnet
 ```
-#### Install from source
+
+- from source
 ```
 git clone https://github.com/kundajelab/chrombpnet.git
 pip install -e chrombpnet
