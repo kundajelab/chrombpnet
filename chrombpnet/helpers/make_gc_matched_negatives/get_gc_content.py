@@ -6,14 +6,13 @@ import pandas as pd
 def parse_args():
     parser=argparse.ArgumentParser(description="get gc content from a foreground bed file")
     parser.add_argument("-i","--input_bed", help="bed file in narrow peak format - we will find gc content of these regions centered on the summit")
-    parser.add_argument("-cz","--chrom_sizes",type=str, required=True, help="TSV file with chromosome name in first column and size in the second column")
+    parser.add_argument("-c","--chrom_sizes",type=str, required=True, help="TSV file with chromosome name in first column and size in the second column")
     parser.add_argument("-g", "--genome", help="reference genome fasta")
-    parser.add_argument("-o", "--output_prefix", help="output file prefix for storing gc-content values of given foreground bed")
+    parser.add_argument("-op", "--output_prefix", help="output file prefix for storing gc-content values of given foreground bed")
     parser.add_argument("-il","--inputlen",type=int,default=2114, help="inputlen to use to find gc-content")
     return parser.parse_args()
 
-def main():
-    args=parse_args()
+def main(args):
     chrom_sizes_dict = {line.strip().split("\t")[0]:int(line.strip().split("\t")[1]) for line in open(args.chrom_sizes).readlines()}
     ref=pyfaidx.Fasta(args.genome)
     data=pd.read_csv(args.input_bed,header=None,sep='\t')
@@ -51,7 +50,9 @@ def main():
 
     print("Number of regions filtered because inputlen sequence cannot be constructed: " + str(filtered_points))
     print("Percentage of regions filtered " + str(round(filtered_points*100.0/data.shape[0],3)) + "%" )
-    print("WARNING: If percentage of regions filtered is high - your genome is very small - consider using a reduced input/output length for your genome")
+    if round(filtered_points*100.0/data.shape[0],3) > 25:
+    	print("WARNING: If percentage of regions filtered is high (>25%) - your genome is very small - consider using a reduced input/output length for your genome")
         
 if __name__=="__main__":
-    main()
+    args=parse_args()
+    main(args)

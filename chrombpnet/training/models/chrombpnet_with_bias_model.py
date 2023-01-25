@@ -143,4 +143,4 @@ def save_model_without_bias(model, output_prefix):
     #counts_output_without_bias = model.get_layer("wo_bias_bpnet_logcount_predictions").output
     model_without_bias = Model(inputs=model.get_layer("model_wo_bias").inputs,outputs=[model_wo_bias[0], model_wo_bias[1]])
     print('save model without bias') 
-    model_without_bias.save(output_prefix+"_wo_bias.h5")
+    model_without_bias.save(output_prefix+"_nobias.h5")

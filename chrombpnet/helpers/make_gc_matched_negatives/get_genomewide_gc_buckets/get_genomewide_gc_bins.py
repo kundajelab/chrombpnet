@@ -2,10 +2,10 @@ import pyfaidx
 import argparse
 
 def parse_args():
-    parser=argparse.ArgumentParser(description="get gc content after binning the entire genome into bins")
+    parser=argparse.ArgumentParser(description="Bin the entire genome into bins and get gc content")
     parser.add_argument("-g","--genome", required=True, help="reference genome file")
-    parser.add_argument("-o","--output_prefix", required=True, help="output BED file prefix to store the gc content of binned genome. suffix .bed will be appended by the code. If the prefix contains a directory path make sure it exists.")
-    parser.add_argument("-f","--inputlen", type=int,default=2114, help="inputlen to use to find gc content")
+    parser.add_argument("-o","--output-prefix", required=True, help="output BED file prefix to store the gc content of binned genome. suffix .bed will be appended by the code. If the prefix contains a directory path make sure it exists.")
+    parser.add_argument("-f","--inputlen", type=int,default=2114, help="inputlen to use to make bins and find gc content")
     parser.add_argument("-s","--stride", type=int,default=1000, help="stride to use for shifting the bins")
     return parser.parse_args()
 

@@ -72,10 +72,8 @@ def get_model_param_dict(args):
 
     return params 
 
-def main():
+def main(args):
 
-    # read arguments
-    args=argmanager.fetch_train_args()
 
     # read tab-seperated parameters file
     parameters = get_model_param_dict(args)
@@ -95,9 +93,12 @@ def main():
     # store arguments and and parameters to checkpoint
     with open(args.output_prefix+'.args.json', 'w') as fp:
         json.dump(args.__dict__, fp,  indent=4)
-    with open(args.output_prefix+'.params.json', 'w') as fp:
-        json.dump(parameters, fp,  indent=4)
+    #with open(args.output_prefix+'.params.json', 'w') as fp:
+    #    json.dump(parameters, fp,  indent=4)
 
 
 if __name__=="__main__":
-    main()
+    # read arguments
+    args=argmanager.fetch_train_args()
+    main(args)
+

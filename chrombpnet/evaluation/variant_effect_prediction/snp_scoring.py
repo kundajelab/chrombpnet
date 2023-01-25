@@ -15,10 +15,10 @@ SNP_SCHEMA = ["CHR", "POS0", "REF", "ALT", "META_DATA"]
 
 def fetch_variant_args():
     parser=argparse.ArgumentParser(description="variant effect scoring scripts on SNPS")
-    parser.add_argument("-i", "--snp_data", type=str, required=True, help="Path to a tsv output with the following information in columns - chr, position to insert allele (0-based), ref allele, alt allele")
+    parser.add_argument("-snps", "--snp_data", type=str, required=True, help="Path to a tsv output with the following information in columns - chr, position to insert allele (0-based), ref allele, alt allele")
     parser.add_argument("-g", "--genome", type=str, required=True, help="Genome fasta")
     parser.add_argument("-m","--model_h5", type=str, required=True, help="Path to model hdf5")
-    parser.add_argument("-o","--output_dir", type=str, required=True, help="Path to storing snp effect score predictions from the script, directory should already exist")
+    parser.add_argument("-op","--output-prefix", type=str, required=True, help="Path to storing snp effect score predictions from the script, directory should already exist")
     parser.add_argument("-bs","--batch_size", type=int, default=64, help="Batch size to use for model")
     parser.add_argument("-dm","--debug_mode_on", type=int, default=0, help="Use this mode to print the flanks of first five SNP insert locations")
     args = parser.parse_args()
@@ -109,8 +109,7 @@ def predict_snp_effect_scores(rsids, ref_count_preds, alt_count_preds, ref_prob_
     return log_counts_diff, log_probs_diff_abs_sum, probs_jsd_diff
 
 
-def main():
-    args = fetch_variant_args()
+def main(args):
     debug_mode_on = args.debug_mode_on
 
     # load the model
@@ -143,7 +142,7 @@ def main():
     snp_effect_scores_pd["log_probs_diff_abs_sum"] = log_probs_diff_abs_sum
     snp_effect_scores_pd["probs_jsd_diff"] = probs_jsd_diff
 
-    snp_effect_scores_pd.to_csv(os.path.join(args.output_dir, "snp_scores.tsv"), sep="\t", index=False)
+    snp_effect_scores_pd.to_csv(args.output_prefix+"_snp_scores.tsv", sep="\t", index=False)
 
     # store predictions at snps too - can compute variant effect metrics of your interest - let me know if you find something interesting :)
     data={}
@@ -154,9 +153,11 @@ def main():
     data["alt_prob_preds"] = alt_prob_preds
 
     
-    pkl.dump(data, open(os.path.join(args.output_dir+"predictions_at_snp.pkl"),'wb'))
+    pkl.dump(data, open(args.output_prefix+"_predictions_at_snp.pkl",'wb'))
 
 
 
 if __name__=="__main__":
-    main()
+    args = fetch_variant_args()
+    main(args)
+

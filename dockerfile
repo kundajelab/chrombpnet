@@ -33,7 +33,7 @@ RUN ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
 ENV PATH /opt/conda/bin:$PATH
 
 # Install SAMtools, BEDtools, and UCSC BedGraphToBigWig
-RUN conda install -y -c bioconda samtools bedtools ucsc-bedgraphtobigwig 
+RUN conda install -y -c conda-forge -c bioconda samtools bedtools ucsc-bedgraphtobigwig pybigwig meme
 
 # Install jq
 RUN apt-get install -y jq
