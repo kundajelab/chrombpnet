@@ -13,7 +13,7 @@ config = {
     'include_package_data': True,
     'description': 'chrombpnet predicts chromatin accessibility from sequence',
     'download_url': 'https://github.com/kundajelab/chrombpnet',
-    'version': '2.0',
+    'version': '0.1.0',
     'packages': find_packages(),
     'python_requires': '>=3.8',
     'install_requires': install_requires,
