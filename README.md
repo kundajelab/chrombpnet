@@ -213,13 +213,15 @@ For more information, also see:
 
 If you're using ChromBPNet in your work, please cite as follows:
 
-software{kundaje_chrombpnet_2022,
+```
+software{kundaje_chrombpnet_2023,
 author = {Pampari, Anusri},
 doi = {10.5281/zenodo.7567627},
 month = {01},
 title = {{Bias factorized, base-resolution deep learning models of chromatin accessibility reveal cis-regulatory sequence syntax, transcription factor footprints and regulatory variants}},
 url = {https://github.com/kundajelab/chrombpnet},year = {2023}
 }
+```
 
 Here is the full list of authors -
 
