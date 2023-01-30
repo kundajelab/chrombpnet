@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Pampari"
+  given-names: "Anusri"
+  orcid: "https://orcid.org/0000-0002-6579-4070"
+title: "Bias factorized, base-resolution deep learning models of chromatin accessibility reveal cis-regulatory sequence syntax, transcription factor footprints and regulatory variants."
+version: 0.1.0
+doi: 10.5281/zenodo.7567627
+date-released: 2023-01-24
+url: "https://github.com/kundajelab/chrombpnet"

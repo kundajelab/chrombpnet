@@ -45,15 +45,12 @@ Install non-Python  requirements via conda
 ```
 conda install -y -c conda-forge -c bioconda samtools bedtools ucsc-bedgraphtobigwig pybigwig meme
 ```
-#### Install package using one of the two ways
-
-- from pypi 
+#### Install from pypi 
 
 ```
 pip install chrombpnet
 ```
-
-- from source
+#### Install from source
 ```
 git clone https://github.com/kundajelab/chrombpnet.git
 pip install -e chrombpnet
@@ -214,12 +211,18 @@ For more information, also see:
  
 ## How to Cite
 
-If you're using ChromBPNet in your work, please cite:
+If you're using ChromBPNet in your work, please cite as follows:
 
-Bias factorized, base-resolution deep learning models of chromatin accessibility reveal cis-regulatory sequence syntax, transcription factor footprints and regulatory variants. 
+software{kundaje_chrombpnet_2022,
+author = {Pampari, Anusri},
+doi = {10.5281/zenodo.7567627},
+month = {01},
+title = {{Bias factorized, base-resolution deep learning models of chromatin accessibility reveal cis-regulatory sequence syntax, transcription factor footprints and regulatory variants}},
+url = {https://github.com/kundajelab/chrombpnet},year = {2023}
+}
+
+Here is the full list of authors -
 
 Anusri Pampari, Anna Shcherbina, Surag Nair, Jacob Schreiber, Aman Patel, Austin Wang, Soumya Kundu, Avanti Shrikumar, Anshul Kundaje.
-link: https://github.com/kundajelab/chrombpnet
-
 
 
