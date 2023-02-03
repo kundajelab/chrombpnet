@@ -141,7 +141,7 @@ def main(args):
 		plt.savefig(args.output_prefix+".{}.footprint.png".format(motif))
 
 	if len(avg_response_at_tn5) > 0:
-		if np.mean(avg_response_at_tn5) < 0.003:
+		if np.all(np.array(avg_response_at_tn5) < 0.003):
 			ofile = open("{}_max_bias_resonse.txt".format(args.output_prefix), "w")
 			ofile.write("corrected_"+str(round(np.mean(avg_response_at_tn5),3))+"_"+"/".join(list(map(str,avg_response_at_tn5))))
 			ofile.close()
