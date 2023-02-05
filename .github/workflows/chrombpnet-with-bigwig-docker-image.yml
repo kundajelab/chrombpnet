@@ -9,7 +9,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    if: GitHub.ref == 'refs/heads/master'
+    if: GitHub.ref == 'refs/heads/chrombpnet-with-bigwig'
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
@@ -21,8 +21,8 @@ jobs:
               
     - name: Build the Docker image
 
-      run: docker build . --file dockerfile --tag kundajelab/chrombpnet:latest
+      run: docker build . --file dockerfile --tag kundajelab/chrombpnet:chrombpnet_with_bigwig
       
     - name: Docker Push
-      run: docker push kundajelab/chrombpnet:latest
+      run: docker push kundajelab/chrombpnet:chrombpnet_with_bigwig
       
