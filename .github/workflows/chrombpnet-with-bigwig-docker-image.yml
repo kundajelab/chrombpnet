@@ -9,7 +9,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    if: GitHub.ref == 'refs/heads/chrombpnet-with-bigwig'
+    if: GitHub.ref == 'refs/heads/chrombpnet_with_bigwig'
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
