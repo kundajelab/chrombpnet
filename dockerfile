@@ -38,6 +38,7 @@ RUN conda install -y -c conda-forge -c bioconda samtools bedtools ucsc-bedgrapht
 # Install jq
 RUN apt-get install -y jq
 RUN apt-get install -y libcairo2
+RUN apt-get install -y libpango-1.0-0
 
 # Clean up after apt and conda
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
