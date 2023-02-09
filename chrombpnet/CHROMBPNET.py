@@ -90,7 +90,7 @@ def main():
 	
 		modisco_command = "modisco motifs -i {} -n 50000 -o {} -w 500".format(args.h5py,args.output_prefix+"_modisco.h5")
 		os.system(modisco_command)
-		modisco_command = "modisco report -i {} -o {} -m {}".format(args.output_prefix+"_modisco.h5",args.output_prefix+"_reports",meme_dir)
+		modisco_command = "modisco report -i {} -o {} -m {}".format(args.output_prefix+"_modisco.h5",args.output_prefix+"_reports",meme_file)
 		os.system(modisco_command)
 		
 		import chrombpnet.evaluation.modisco.convert_html_to_pdf as convert_html_to_pdf
