@@ -168,6 +168,16 @@ def qc_report(fpx,prefix,data_type):
 	#table_profile = open(os.path.join(prefix,"evaluation/modisco_profile/motifs.html")).read().replace("./","./modisco_profile/").replace("width=\"240\"","class=\"cover\"").replace("border=\"1\" class=\"dataframe\"","").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs").replace("dataframe","new")
 	#table_counts = open(os.path.join(prefix,"auxiliary/interpret_subsample/modisco_counts/motifs.html")).read().replace("./","./modisco_counts/").replace("width=\"240\"","class=\"cover\"").replace("border=\"1\" class=\"dataframe\"","").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs")
 
+	html_perf = f'''
+			
+			<body style="font-size:20px;">
+				<h3>{chrombpnet_model_perf_hed}</h3>
+				<p>{chrombpnet_model_perf_text}</p>
+				{pdf.to_html(classes='mystyle')}
+				{pdf1.to_html(classes='mystyle')}
+			</body>	
+		'''
+		
 	if data_type == "ATAC":
 		tn5_1 = os.path.join("./","{}chrombpnet_nobias.tn5_1.footprint.png".format(fpx))
 		tn5_2 = os.path.join("./","{}chrombpnet_nobias.tn5_2.footprint.png".format(fpx))
@@ -202,6 +212,18 @@ def qc_report(fpx,prefix,data_type):
 						</table>
 					</body>
 		'''	
+		html_motifs = f'''			
+				<body style="font-size:20px;">
+					<h3>{tf_hed}</h3>
+					<p>{tf_text_profile}</p>
+				</body>
+				<body>
+					 {table_profile}
+				</body>
+			'''
+		html = html_perf+html_table+html_motifs
+		return html.format(tn5_1=tn5_1,tn5_2=tn5_2,tn5_3=tn5_3,tn5_4=tn5_4,tn5_5=tn5_5)
+
 	elif data_type == "DNASE":
 		dnase_1 = os.path.join("./","{}chrombpnet_nobias.dnase_1.footprint.png".format(fpx))
 		dnase_2 = os.path.join("./","{}chrombpnet_nobias.dnase_2.footprint.png".format(fpx))
@@ -227,18 +249,22 @@ def qc_report(fpx,prefix,data_type):
 						</table>
 					</body>	
 		'''
+		html_motifs = f'''			
+				<body style="font-size:20px;">
+					<h3>{tf_hed}</h3>
+					<p>{tf_text_profile}</p>
+				</body>
+				<body>
+					 {table_profile}
+				</body>
+			'''
+		html = html_perf+html_table+html_motifs
+		return html.format(dnase_1=dnase_1,dnase_2=dnase_2)
+
 	else:
 		print("Unknown data type: "+data_type)
 
-	html_perf = f'''
-			
-			<body style="font-size:20px;">
-				<h3>{chrombpnet_model_perf_hed}</h3>
-				<p>{chrombpnet_model_perf_text}</p>
-				{pdf.to_html(classes='mystyle')}
-				{pdf1.to_html(classes='mystyle')}
-			</body>	
-		'''
+
 		
 # 	html_motifs = f'''			
 # 			<body style="font-size:20px;">
@@ -255,17 +281,6 @@ def qc_report(fpx,prefix,data_type):
 # 				 {table_counts}
 # 			</body>
 # 		'''					
-	html_motifs = f'''			
-			<body style="font-size:20px;">
-				<h3>{tf_hed}</h3>
-				<p>{tf_text_profile}</p>
-			</body>
-			<body>
-				 {table_profile}
-			</body>
-		'''
-	html = html_perf+html_table+html_motifs
-	return html.format(tn5_1=tn5_1,tn5_2=tn5_2,tn5_3=tn5_3,tn5_4=tn5_4,tn5_5=tn5_5)
 
 def main(args):
 
