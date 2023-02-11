@@ -21,7 +21,7 @@ authors:
 - family-names: "Kundaje"
   given-names: "Anshul"
 title: "Bias factorized, base-resolution deep learning models of chromatin accessibility reveal cis-regulatory sequence syntax, transcription factor footprints and regulatory variants."
-version: 0.1.0
+version: 0.1.1
 doi: 10.5281/zenodo.7567627
 date-released: 2023-01-24
 url: "https://github.com/kundajelab/chrombpnet"
