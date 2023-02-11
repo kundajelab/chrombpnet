@@ -136,8 +136,12 @@ def main(args):
     # find counts loss weight for model training - using train and validation set
     counts_loss_weight = np.median(final_cnts[(final_cnts <= upper_thresh) & (final_cnts>=lower_thresh)])/10
     assert(counts_loss_weight != 0)
-    assert(counts_loss_weight > 1.0) # counts loss weight can go less than 1.0 if you have very low-read depth - make sure you have enough density in counts
+    #assert(counts_loss_weight > 1.0) # counts loss weight can go less than 1.0 if you have very low-read depth - make sure you have enough density in counts
                                      # check peak-calling
+
+    if counts_loss_weight < 1.0:
+        counts_loss_weight = 1.0
+        print("WARNING: you are training on low-read depth data")
 
     # adjust bias model for training  - using train and validation set
     # the bias model might be trained on a difference read depth compared to the given data - so this step scales the bias model to account for that
