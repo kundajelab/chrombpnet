@@ -9,10 +9,11 @@ WORKDIR /scratch
 
 # Install some basic utilities
 RUN apt-get update --fix-missing && \
-    apt-get install -y wget bzip2 ca-certificates curl git
+    apt-get install -y --allow-unauthenticated wget bzip2 ca-certificates curl git jq libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Google Cloud SDK
-RUN apt-get update && apt install -y --allow-unauthenticated wget
 RUN cd /opt/ && \
     wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-307.0.0-linux-x86_64.tar.gz && \
     tar xvfz google-cloud-sdk-307.0.0-linux-x86_64.tar.gz && \
@@ -35,16 +36,7 @@ ENV PATH /opt/conda/bin:$PATH
 # Install SAMtools, BEDtools, and UCSC BedGraphToBigWig
 RUN conda install -y -c conda-forge -c bioconda samtools bedtools ucsc-bedgraphtobigwig pybigwig meme
 
-# Install jq
-RUN apt-get install -y jq
-RUN apt-get install -y libcairo2
-RUN apt-get install -y libpango-1.0-0
-RUN apt-get install -y libpangocairo-1.0-0
-RUN apt-get install -y libgdk-pixbuf2.0-0
-RUN apt-get install -y libffi-dev
-
-# Clean up after apt and conda
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# Clean up after conda
 RUN conda clean -tipy
 
 # Set environment variables for Python
