@@ -220,7 +220,7 @@ doi = {10.5281/zenodo.7567627},
 month = {1},
 title = {{Bias factorized, base-resolution deep learning models of chromatin accessibility reveal cis-regulatory sequence syntax, transcription factor footprints and regulatory variants.}},
 url = {https://github.com/kundajelab/chrombpnet},
-version = {0.1.0},
+version = {0.1.1},
 year = {2023}
 }
 ```
