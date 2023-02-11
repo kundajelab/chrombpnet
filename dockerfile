@@ -28,16 +28,14 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Linu
 # Enable Conda and alter bashrc so the Conda default environment is always activated
 RUN ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc
+    echo "conda activate base" >> ~/.bashrc && \
+    conda clean -tipy 
 
 # Attach Conda to PATH
 ENV PATH /opt/conda/bin:$PATH
 
 # Install SAMtools, BEDtools, and UCSC BedGraphToBigWig
 RUN conda install -y -c conda-forge -c bioconda samtools bedtools ucsc-bedgraphtobigwig pybigwig meme
-
-# Clean up after conda
-RUN conda clean -tipy
 
 # Set environment variables for Python
 ENV LC_ALL=C.UTF-8
@@ -48,10 +46,8 @@ RUN mkdir /scratch/chrombpnet
 COPY . /scratch/chrombpnet
 
 # need to upgrade pip for faster dependency resolution
-RUN pip install --upgrade pip 
-
-# Install any needed packages specified in requirements.txt
-RUN pip install -r /scratch/chrombpnet/requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r /scratch/chrombpnet/requirements.txt
 
 #Install chrombpnet itself
 WORKDIR /scratch
