@@ -5,6 +5,9 @@ import subprocess
 import pandas as pd
 import numpy as np
 import itertools
+import warnings
+import tempfile
+from termcolor import colored
 import os
 from modisco.visualization import viz_sequence
 import chrombpnet.training.utils.one_hot as one_hot
@@ -35,6 +38,22 @@ def convolve(to_scan, longer_seq):
     for i in range(len(longer_seq) - len(to_scan) + 1):
         vals.append(np.sum(to_scan*longer_seq[i:i+len(to_scan)]))
     return vals
+    
+def filtered_tagalign_stream(tagaligns_stream, genome_file):
+    tmp_tagaligns = tempfile.NamedTemporaryFile()
+    has_unknown_chroms = False
+    with open(tmp_tagaligns.name, 'w') as f, pyfaidx.Fasta(genome_file) as g:
+        for line in iter(tagaligns_stream.stdout.readline, b''):
+            line = line.decode('utf-8')
+            tagalign_chrom = line.strip().split('\t')[0]
+            if tagalign_chrom in g.keys():
+                f.write(line)
+            else:
+                has_unknown_chroms = True
+        tagaligns_stream.stdout.close()
+        p = subprocess.Popen(["cat", tmp_tagaligns.name], stdout=subprocess.PIPE)
+    tmp_tagaligns.close()
+    return has_unknown_chroms, p
 
 def is_gz_file(filepath):
     # https://stackoverflow.com/questions/3703276/how-to-tell-if-a-file-is-gzip-compressed
@@ -63,7 +82,7 @@ def tagalign_stream(tagalign_file_path):
     p = subprocess.Popen(["zcat" if ta_is_gz else "cat", tagalign_file_path], stdout=subprocess.PIPE)
     return p
 
-def sample_reads(bam_path, fragment_file_path, tagalign_file_path, num_samples):
+def sample_reads(bam_path, fragment_file_path, tagalign_file_path, num_samples, genome_fasta_path):
     # only one of bam, fragment, tagalign is not None
     if bam_path:
         p1 = bam_to_tagalign_stream(bam_path)
@@ -71,6 +90,16 @@ def sample_reads(bam_path, fragment_file_path, tagalign_file_path, num_samples):
         p1 = fragment_to_tagalign_stream(fragment_file_path)
     elif tagalign_file_path:
         p1 = tagalign_stream(tagalign_file_path)
+    
+    # filter out reads from chromosomes not present in reference, and show warning if any
+    has_unknown_chroms, filtered_stream = filtered_tagalign_stream(p1, genome_fasta_path)
+    p1 = filtered_stream
+    if has_unknown_chroms:
+        msg = '!!! WARNING: Input reads contain chromosomes not in the reference' \
+            ' genome fasta provided. Please ensure you are using the correct' \
+            ' reference genome. If you are confident you are using the correct reference' \
+            ' genome, you can safely ignore this message.'
+        warnings.warn(colored(msg, 'red'))
 
     # num_samples is per strand, so multiply by 2
     p2 = subprocess.Popen(["shuf", "-n", str(2*num_samples)], stdin=p1.stdout, stdout=subprocess.PIPE)
@@ -193,7 +222,7 @@ def compute_shift(input_bam_file, input_fragment_file, input_tagalign_file, num_
     # only one of the 3 inputs should be non None
     assert (input_bam_file is None) + (input_fragment_file is None) + (input_tagalign_file is None) == 2, "Only one input file!"
 
-    sampled_plus_reads, sampled_minus_reads = sample_reads(input_bam_file, input_fragment_file, input_tagalign_file, num_samples)
+    sampled_plus_reads, sampled_minus_reads = sample_reads(input_bam_file, input_fragment_file, input_tagalign_file, num_samples, genome_fasta_path)
 
     plus_pwm, minus_pwm = get_pwms(sampled_plus_reads, sampled_minus_reads, genome_fasta_path)
     ref_plus_pwms, ref_minus_pwms = get_ref_pwms(ref_motifs_file)

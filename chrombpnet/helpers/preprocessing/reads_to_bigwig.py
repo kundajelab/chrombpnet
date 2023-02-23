@@ -36,6 +36,7 @@ def generate_bigwig(input_bam_file, input_fragment_file, input_tagalign_file, ou
         p1 = auto_shift_detect.fragment_to_tagalign_stream(input_fragment_file)
     elif input_tagalign_file:
         p1 = auto_shift_detect.tagalign_stream(input_tagalign_file)
+    _, p1 = auto_shift_detect.filtered_tagalign_stream(p1, genome_fasta_file)
 
     cmd = """awk -v OFS="\\t" '{{if ($6=="+"){{print $1,$2{0:+},$3,$4,$5,$6}} else if ($6=="-") {{print $1,$2,$3{1:+},$4,$5,$6}}}}' | sort -k1,1 | bedtools genomecov -bg -5 -i stdin -g {2} | bedtools sort -i stdin """.format(plus_shift_delta, minus_shift_delta, chrom_sizes_file)
 
