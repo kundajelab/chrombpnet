@@ -44,7 +44,6 @@ def generate_bigwig(input_bam_file, input_fragment_file, input_tagalign_file, ou
     with open(tmp_bedgraph.name, 'w') as f:
         p2 = subprocess.Popen([cmd], stdin=subprocess.PIPE, stdout=f, shell=True)
         auto_shift_detect.stream_filtered_tagaligns(p1, genome_fasta_file, p2)
-        p1.stdout.close()
         p2.communicate()
 
     print("Making Bigwig")
