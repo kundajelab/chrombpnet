@@ -6,7 +6,6 @@ import pandas as pd
 import numpy as np
 import itertools
 import warnings
-import tempfile
 from termcolor import colored
 import os
 from modisco.visualization import viz_sequence
