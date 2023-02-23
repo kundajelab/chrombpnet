@@ -39,21 +39,26 @@ def convolve(to_scan, longer_seq):
         vals.append(np.sum(to_scan*longer_seq[i:i+len(to_scan)]))
     return vals
     
-def filtered_tagalign_stream(tagaligns_stream, genome_file):
-    tmp_tagaligns = tempfile.NamedTemporaryFile()
+def stream_filtered_tagaligns(src_tagaligns_stream, genome_file, out_stream):
+    '''
+    Given a tagalign subprocess stream and reference genome file, filters
+    out any reads in chromosomes not included in the reference. Reads in the
+    reference chromosomes are sent to the specified output stream.
+    
+    Returns:
+        Boolean. Indicates whether any reads not in the reference fasta were 
+        detected.
+    '''
     has_unknown_chroms = False
-    with open(tmp_tagaligns.name, 'w') as f, pyfaidx.Fasta(genome_file) as g:
-        for line in iter(tagaligns_stream.stdout.readline, b''):
-            line = line.decode('utf-8')
-            tagalign_chrom = line.strip().split('\t')[0]
+    with pyfaidx.Fasta(genome_file) as g:
+        for line in iter(src_tagaligns_stream.stdout.readline, b''):
+            tagalign_chrom = line.decode('utf-8').strip().split('\t')[0]
             if tagalign_chrom in g.keys():
-                f.write(line)
+                out_stream.stdin.write(line)
             else:
                 has_unknown_chroms = True
-        tagaligns_stream.stdout.close()
-        p = subprocess.Popen(["cat", tmp_tagaligns.name], stdout=subprocess.PIPE)
-    tmp_tagaligns.close()
-    return has_unknown_chroms, p
+        src_tagaligns_stream.stdout.close()
+    return has_unknown_chroms
 
 def is_gz_file(filepath):
     # https://stackoverflow.com/questions/3703276/how-to-tell-if-a-file-is-gzip-compressed
@@ -90,21 +95,18 @@ def sample_reads(bam_path, fragment_file_path, tagalign_file_path, num_samples, 
         p1 = fragment_to_tagalign_stream(fragment_file_path)
     elif tagalign_file_path:
         p1 = tagalign_stream(tagalign_file_path)
+
+    # num_samples is per strand, so multiply by 2
+    p2 = subprocess.Popen(["shuf", "-n", str(2*num_samples)], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    has_unknown_chroms = stream_filtered_tagaligns(p1, genome_fasta_path, p2)
+    output = p2.communicate()[0]
     
-    # filter out reads from chromosomes not present in reference, and show warning if any
-    has_unknown_chroms, filtered_stream = filtered_tagalign_stream(p1, genome_fasta_path)
-    p1 = filtered_stream
     if has_unknown_chroms:
         msg = '!!! WARNING: Input reads contain chromosomes not in the reference' \
             ' genome fasta provided. Please ensure you are using the correct' \
             ' reference genome. If you are confident you are using the correct reference' \
             ' genome, you can safely ignore this message.'
         warnings.warn(colored(msg, 'red'))
-
-    # num_samples is per strand, so multiply by 2
-    p2 = subprocess.Popen(["shuf", "-n", str(2*num_samples)], stdin=p1.stdout, stdout=subprocess.PIPE)
-    p1.stdout.close()
-    output = p2.communicate()[0]
 
     output = [x.split("\t") for x in output.decode('utf-8').split("\n")[:-1]]
     reads = pd.DataFrame(output)
