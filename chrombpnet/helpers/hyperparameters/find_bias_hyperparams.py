@@ -104,6 +104,10 @@ def main(args):
     print("counts_loss_weight:", counts_loss_weight)
     assert(counts_loss_weight != 0)
 
+    if counts_loss_weight < 1.0:
+        counts_loss_weight = 1.0
+        print("WARNING: you are training on low-read depth data")
+
     # store the parameters being used  - in a TSV file
     file = open("{}bias_data_params.tsv".format(args.output_prefix),"w")
     file.write("\t".join(["counts_sum_min_thresh", str(round(lower_thresh,2))]))
