@@ -41,9 +41,9 @@ def generate_shap_dict(seqs, scores):
     # the projected shap scores
     # MODISCO workflow expects one hot sequences with shape (None,4,inputlen)
     d = {
-            'raw': {'seq': np.transpose(seqs, (0, 2, 1))},
-            'shap': {'seq': np.transpose(scores, (0, 2, 1))},
-            'projected_shap': {'seq': np.transpose(seqs*scores, (0, 2, 1))}
+            'raw': {'seq': np.transpose(seqs, (0, 2, 1)).astype(np.int8)},
+            'shap': {'seq': np.transpose(scores, (0, 2, 1)).astype(np.float16)},
+            'projected_shap': {'seq': np.transpose(seqs*scores, (0, 2, 1)).astype(np.float16)}
         }
 
     return d
