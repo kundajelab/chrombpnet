@@ -25,7 +25,7 @@ def fetch_arguments():
 	parser.add_argument("-mo", "--modisco-obj", type=str, required=True, help="Modisco object to extract pfms")
 	parser.add_argument("--modisco-motifs-exclude", type=str, required=False, default=None, help="File path with modisco motif names (in format metacluster_pattern eg (0_0) per line.  If provied the motifs in file are excluded. If you have noisy motifs  (eg motif sequences of AAA or GGG) they degrade the quality of hitcaller so exclude them. You can also exlude hererodimers.")	
 	parser.add_argument("-o", "--output-dir", type=str, required=True, help="Output directory to store results")
-	parser.add_argument("-fdr","--contribs-fdr", type=float, required=False, default=0.05, help="FDR cut off to filter hits based on contribution scores")
+	parser.add_argument("-fdr","--contribs-fdr", type=float, required=False, default=0.1, help="FDR cut off to filter hits based on contribution scores")
 	parser.add_argument("-pval","--init-scan-pval", type=str, required=False, default=0.01, help="pvalue cut off to use for mood or fimo for initial hitcalling")
 	parser.add_argument("-hc","--hit-caller", type=str, required=False, default="fimo", choices=["moods", "fimo"], help="Use one of the hit callers")
 	parser.add_argument("-th","--trim-threshold", type=float, required=False, default=0.3, help="trim threshold for motifs (Cut off anything less than x frac of max score)")
