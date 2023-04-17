@@ -6,8 +6,8 @@ python hitcalling.py \
         -t [tomtom annotation file for motifs (TSV, optional)] \
         -r [genomic regions to run hit caller (bed format - 10 columns)] \
         -cbw [contributions at genomic regions (bigwig)] \
-        -bgr  [gc-matched genomic regions to run hit caller (bed format - 10 columns)] \
-        -bgcbw [contributions at gc-matched genomic regions (bigwig)] \
+        -bgr  [gc-matched genomic regions to run hit caller for background (bed format - 10 columns)] \
+        -bgcbw [contributions at gc-matched genomic regions for background (bigwig)] \
         -mo [modisco h5py objects] \
         -o [output dir]  \
         --modisco-motifs-exclude [.txt file for motifs to exclude (for example to exclude `metacluster_0_pattern_0` and  `metacluster_0_pattern_1` for hit call annotations provide "0_0" and "0_1" per line)] \
