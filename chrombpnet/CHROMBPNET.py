@@ -159,7 +159,7 @@ def main():
 			negatives[6]="."
 			negatives[7]="."
 			negatives[8]="."
-			negatives[9]=1057
+			negatives[9]=args.inputlen//2
 			negatives.to_csv(args.output_prefix+"_negatives.bed", sep="\t", header=False, index=False)
 
 		elif args.cmd_prep == "splits":
