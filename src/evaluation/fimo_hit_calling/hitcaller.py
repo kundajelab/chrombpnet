@@ -64,21 +64,24 @@ def export_motifs_meme_format(pfms, out_dir):
             motif
         `out_dir`: directory to save motifs in a meme format
     """
-    outfile = os.path.join(out_dir, "motifs.pfm")
-    with open(outfile, "w") as f:
-        f.write("MEME version 4" + "\n"+ "\n")
-        f.write("ALPHABET= ACGT" + "\n"+ "\n")
-        f.write("Background letter frequencies \n"+"A 0.25 C 0.25 G 0.25 T 0.25 \n"+ "\n")
-    f.close()
-
+    os.makedirs(os.path.join(out_dir, "motifs/"), exist_ok=True) 
+    
+    out_dir_new = os.path.join(out_dir, "motifs/")
     for key, pfm in pfms.items():
-        with open(outfile, "a") as f:
+    	outfile = os.path.join(out_dir_new, key+".pfm")
+    	with open(outfile, "w") as f:
+        	f.write("MEME version 4" + "\n"+ "\n")
+        	f.write("ALPHABET= ACGT" + "\n"+ "\n")
+        	f.write("Background letter frequencies \n"+"A 0.25 C 0.25 G 0.25 T 0.25 \n"+ "\n")
+    	f.close()
+
+    	with open(outfile, "a") as f:
             f.write(f"MOTIF {key}" + "\n")
             f.write("letter-probability matrix:"+ "\n")
             for i in range(pfm.shape[0]):
                 f.write(" ".join([str(x) for x in pfm[i,:]]) + "\n")
             f.write("\n")
-    f.close()
+    	f.close()
 
 def run_moods(out_dir, reference_fasta, peaks_bed_path, pval_thresh=0.01):
     """
@@ -111,31 +114,25 @@ def run_moods(out_dir, reference_fasta, peaks_bed_path, pval_thresh=0.01):
     proc = subprocess.Popen(comm)
     proc.wait()
     
-def run_fimo(out_dir, reference_fasta, peaks_bed_path, pval_thresh=0.01):
+def run_fimo(out_dir, pval_thresh):
 
+	os.makedirs(os.path.join(out_dir, "fimo_out/"), exist_ok=True) 
 
-	comm = ["bedtools"]
-	comm += ["getfasta"]
-	comm += ["-fi"]
-	comm += [reference_fasta]
-	comm += ["-bed"]
-	comm += [peaks_bed_path]
-	comm += ["-fo"]
-	comm += [os.path.join(out_dir, "peaks.fa")]
-	proc = subprocess.Popen(comm)
-	proc.wait()
-    
-	comm = ["fimo"]
-	comm += ["--thresh", str(pval_thresh)]
-	comm += ["--no-qvalue", "--verbosity", "5"]
-	comm += ["--max-stored-scores", "1000000"]
-	comm += ["--parse-genomic-coord"]
-	comm += ["--bfile", "--uniform--"]
-	comm += ["--o", os.path.join(out_dir, "fimo_out")]
-	comm += [os.path.join(out_dir, "motifs.pfm")]
-	comm += [os.path.join(out_dir, "peaks.fa")]
-	proc = subprocess.Popen(comm)
-	proc.wait()
+	for file in os.listdir(os.path.join(out_dir,"motifs/")):
+		if file.endswith(".pfm"):
+			print(os.path.join(os.path.join(out_dir,"motifs/"), file))
+			file_path = os.path.join(os.path.join(out_dir,"motifs/"), file)
+			comm = ["fimo"]
+			comm += ["--thresh", str(pval_thresh[file])]
+			comm += ["--no-qvalue", "--verbosity", "5"]
+			comm += ["--max-stored-scores", "2000000000"]
+			comm += ["--parse-genomic-coord"]
+			comm += ["--bfile", os.path.join(out_dir, "frequency.txt")]
+			comm += ["--o", os.path.join(out_dir, "fimo_out/"+file.replace(".pfm",""))]
+			comm += [file_path]
+			comm += [os.path.join(out_dir, "peaks.fa")]
+			proc = subprocess.Popen(comm)
+			proc.wait()
 
 def moods_hits_to_bed(moods_out_csv_path, moods_out_bed_path):
     """
@@ -169,23 +166,35 @@ def moods_hits_to_bed(moods_out_csv_path, moods_out_bed_path):
     f.close()
     g.close()
 
-def fimo_hits_to_bed(moods_out_csv_path, moods_out_bed_path):
-    """
-    Converts MOODS hits into BED file.
-    """
-    f = pd.read_csv(moods_out_csv_path, sep="\t", header=0)
-    print(f.shape)
-    
-    cols = ["sequence_name", "start", "stop", "motif_id", "strand", "score" ]
-    g = f[cols]
-    print(g.head())
-    g = g[g['start'].notna()]
-    g = g[g['stop'].notna()]
-    print(g.shape)
-    g["start"] = g["start"].astype(int)
-    g["stop"] = g["stop"].astype(int)
+def fimo_hits_to_bed(moods_out_path, moods_out_bed_path):
+	"""
+	Converts MOODS hits into BED file.
+	"""
+	frames = []
+	for file in os.listdir(moods_out_path):
+	
+		#if file.endswith(".tsv"):
+		#	print(file)
+		odir = os.path.join(moods_out_path,file)
+		print(odir)
+		if os.path.isfile(os.path.join(odir,"fimo.tsv")):
+			print(os.path.join(odir,"fimo.tsv"))		
 
-    g.to_csv(moods_out_bed_path, sep="\t", header=False, index=False)
+			f = pd.read_csv(os.path.join(odir,"fimo.tsv"), sep="\t", header=0)
+
+			cols = ["sequence_name", "start", "stop", "motif_id", "strand", "score" ]
+			g = f[cols]
+			#print(g.head())
+			g = g[g['start'].notna()]
+			g = g[g['stop'].notna()]
+			#print(g.shape)
+			g["start"] = g["start"].astype(int)
+			g["stop"] = g["stop"].astype(int)
+
+			frames.append(g)
+    	
+	new_data = pd.concat(frames)
+	new_data.to_csv(moods_out_bed_path, sep="\t", header=False, index=False)
 
 
 
@@ -289,7 +298,7 @@ def compute_hits_importance_scores(
     merged_hits["motif_rel_start"] = \
         merged_hits["start"] - merged_hits["peak_start"]
     merged_hits["motif_rel_end"] = \
-        merged_hits["end"] - merged_hits["peak_start"]
+        merged_hits["end"] - merged_hits["peak_start"] + 1
 
     # Careful! Because of the merging step that only kept the top peak hit, some
     # hits might overrun the edge of the peak; we limit the motif hit indices
@@ -309,25 +318,29 @@ def compute_hits_importance_scores(
     scores = np.empty(len(merged_hits))
     for peak_index, group in merged_hits.groupby("peak_index"):
         # Iterate over grouped table by peak
-        score_track = np.abs(imp_scores[peak_index])
-        total_score = np.mean(score_track)
+        #score_track = np.abs(imp_scores[peak_index])
+        score_track = imp_scores[peak_index]
+        total_score = np.abs(np.mean(score_track))
         for i, row in group.iterrows():
             if method=="sum_norm":
-                scores[i] = np.sum(
+                scores[i] = np.abs(np.sum(
                         score_track[row["motif_rel_start"]:row["motif_rel_end"]]
-                )/total_score
+                ))/total_score
             if method=="sum":
-                scores[i] = np.sum(
+                scores[i] = np.abs(np.sum(
                         score_track[row["motif_rel_start"]:row["motif_rel_end"]]
-                )
+                ))
             if method=="mean_norm":
-                scores[i] = np.mean(
+                scores[i] = np.abs(np.mean(
                         score_track[row["motif_rel_start"]:row["motif_rel_end"]]
-                )/total_score
+                ))/total_score
+                #scores[i] = np.mean(
+                #        score_track[row["motif_rel_start"]:row["motif_rel_end"]]/total_score
+                #)
             if method=="mean":
-                scores[i] = np.mean(
+                scores[i] = np.abs(np.mean(
                         score_track[row["motif_rel_start"]:row["motif_rel_end"]]
-                )
+                ))
     merged_hits["imp_frac_score"] = scores
     new_hit_table = merged_hits[[
         "chrom", "start", "end", "key", "strand", "score", "peak_index",
@@ -356,7 +369,7 @@ def import_moods_hits(hits_bed):
 
 def get_hits(
     pfm_dict, reference_fasta, peak_bed_path, shap_scores_hdf5_path, peak_table_in,
-    moods_pval_thresh=0.01, temp_dir=None, method="sum", hit_caller="fimo"
+    moods_pval_thresh, temp_dir=None, method="sum", hit_caller="fimo"
 ):
     """
     From a dictionary of PFMs, runs MOODS and returns the result as a Pandas
@@ -386,15 +399,36 @@ def get_hits(
     The coordinates of the DeepSHAP scores must be identical, and must match
     the peaks in the BED file (after expansion, if specified).
     """
+    
+    if not os.path.exists(temp_dir):
+    	os.makedirs(temp_dir)
 
     pfm_keys = list(pfm_dict.keys())
+    
+    comm = ["bedtools"]
+    comm += ["getfasta"]
+    comm += ["-fi"]
+    comm += [reference_fasta]
+    comm += ["-bed"]
+    comm += [peak_bed_path]
+    comm += ["-fo"]
+    comm += [os.path.join(temp_dir, "peaks.fa")]
+    proc = subprocess.Popen(comm)
+    proc.wait()
+    
+    comm = ["fasta-get-markov"]
+    comm += [os.path.join(temp_dir, "peaks.fa")]
+    comm += [os.path.join(temp_dir, "frequency.txt")]
+    comm += ["-m", "1"]
+    proc = subprocess.Popen(comm)
+    proc.wait()	
     
     if hit_caller == "fimo":
         export_motifs_meme_format(pfm_dict, temp_dir)
         print("Running fimo...")
-        run_fimo(temp_dir, reference_fasta, peak_bed_path, pval_thresh=moods_pval_thresh)
+        run_fimo(temp_dir, pval_thresh=moods_pval_thresh)
         fimo_hits_to_bed(
-        	os.path.join(temp_dir, "fimo_out/fimo.tsv"),
+        	os.path.join(temp_dir, "fimo_out/"),
         	os.path.join(temp_dir, "moods_out.bed")
         )
     
@@ -428,7 +462,7 @@ def get_hits(
 
     return hit_table
 
-def resolve_overlaps(output_dir,filtered_hits_path,contribs_bw,reference_fasta, pfms):
+def resolve_overlaps(output_dir,filtered_hits_path,contribs_bw,reference_fasta, tomtom_anotation_path, pfms, cfms, signs):
 
 	comm = ["bedtools", "sort", "-i"]
 	comm += [filtered_hits_path]
@@ -439,45 +473,108 @@ def resolve_overlaps(output_dir,filtered_hits_path,contribs_bw,reference_fasta, 
 	proc.wait()
 	f.close()
 	
-	data = pd.read_csv(os.path.join(output_dir, "moods_filtered_clustered.bed"), sep="\t", header=None)
+	names=["chr", "hit_start", "hit_end", "hit_name", "strand", "pwm_match_score", "peak_index", "imp_score", "pvalue", "qvalue",  "cluster_idx"]
+	
+	data = pd.read_csv(os.path.join(output_dir, "moods_filtered_clustered.bed"), sep="\t", header=None, names=names)
 	bw = pyBigWig.open(contribs_bw)
 	genome = pyfaidx.Fasta(reference_fasta)
 	
 	corrs=[]
 	for i,r in tqdm(data.iterrows()):
-		chrom = r[0]
-		start = r[1]
-		end = r[2]
-		key = r[3]
+		chrom = r["chr"]
+		start = r["hit_start"]
+		end = r["hit_end"]
+		key = r["hit_name"]
+		strand = r["strand"]
 		
+			
+		left_extend_bp = cfms[key][1]
+		right_extend_bp = cfms[key][2]
+		
+		start = start-left_extend_bp
+		end = end+right_extend_bp
+		
+		#print(key, end-start)
 		val = np.nan_to_num(bw.values(chrom,start,end)).reshape((-1,1))
 		seq = dna_to_one_hot([str(genome[chrom][start:end])])[0]
-		output = val*seq
 		
-		# check correlation with both orginal pfm motif and is reverse complement
-		corr1 = np.max(signal.correlate2d(np.abs(pfms[key][::-1, ::-1]),output, mode="valid"))
-		corr2 = np.max(signal.correlate2d(np.abs(pfms[key]),output, mode="valid"))
-
-		corr = np.max([corr1, corr2])
-		corrs.append(corr/(end-start)) # dividing it by length - this prefers shorter motifs while resolving clashes - so if you have 2 CTCF variants in your list and one is shorter that will get most of the hits
-		
-	data[9] = corrs
-			
-	new_data = []
-	clusters = list(set(data[8].values))
-	for idx in tqdm(clusters):
-		obc = data[data[8]==idx].reset_index(drop=True)
-		if len(obc) == 1:
-			new_data.append(obc.loc[0,:].values)
-		elif len(obc) == 0:
-			continue
+		if np.sum(val) > 0:
+			output = np.abs(val)*seq
 		else:
-			while len(obc) > 0:
-				idx = obc[9].idxmax()
-				new_data.append(obc.loc[idx,:].values)
-				width = (obc.loc[idx,2] - obc.loc[idx,1])//4
-				obc = obc[ (obc[2] < (obc.loc[idx,1]+width)) | (obc[1] > (obc.loc[idx,2]-width))].reset_index(drop=True)
+			output = np.abs(val)*seq*-1
+
+		# check correlation with both orginal pfm motif and is reverse complement
+		# check correlation with both orginal cfm motif and is reverse complement
 		
+		#print(chrom, start, end, key)
+		#print(pfms[key])
+		if strand == "-":
+			corr1 = np.max(signal.correlate2d(pfms[key][0][::-1, ::-1]*signs[key],output, mode="valid"))
+			corr2 = np.max(signal.correlate2d(cfms[key][0][::-1, ::-1]*signs[key],output, mode="valid"))
+		else:
+			corr1 = np.max(signal.correlate2d(pfms[key][0]*signs[key],output, mode="valid"))
+			corr2 = np.max(signal.correlate2d(cfms[key][0]*signs[key],output, mode="valid"))
+		
+		corr = np.max([corr1, corr2])
+		corrs.append(corr) # dividing it by length - this prefers shorter motifs while resolving clashes - so if you have 2 CTCF variants in your list and one is shorter that will get most of the hits
+		
+	data["correlation_scores"] = corrs
+	
+	data.to_csv(os.path.join(output_dir, "cwm_scores.bed"), sep="\t", index=False, header=False)
+	
+	names=["chr", "hit_start", "hit_end", "hit_name", "strand", "pwm_match_score", "peak_index", "imp_score", "pvalue", "qvalue", "cluster_idx", "correlation_scores"]
+
+	data = pd.read_csv(os.path.join(output_dir, "cwm_scores.bed"), sep="\t", header=None, names=names)
+	print("loading scores")
+	# annotate motifs with tomtom annotations
+	if tomtom_anotation_path:
+		tomtom = pd.read_csv(tomtom_anotation_path, sep="\t")
+		label_dict = {}
+		for index,row in tomtom.iterrows():
+			keyd = str(row['Pattern']).replace("metacluster_","").replace("pattern_","").replace(".","_")
+			label_dict[keyd] = keyd + "_" + str(row['Match_1'])
+			data['hit_name'] = data['hit_name'].apply(lambda x: label_dict[x] if x in label_dict else x)
+
+	new_data = []
+	# iterate through each cluster
+	clusters = list(set(data["cluster_idx"].values))
+	
+	# resolve overlaps per cluster
+	for jdx in tqdm(clusters):
+		obc = data[data["cluster_idx"]==jdx].reset_index(drop=True)
+		if len(obc) == 1: # if only one hit per cluster keep it
+			new_data.append(obc.loc[0,:].values)
+		elif len(obc) == 0: # no hit generally not possible but this is for completeness 
+			continue
+		else: # more than one hit per cluster - resolve overlaps 
+			while len(obc) > 0:
+				idx = obc["correlation_scores"].idxmax() # find highest correlated hit and keep it
+				bed_row=obc.loc[idx,:].values
+				corr_scores = 0.90 * obc.loc[idx,"correlation_scores"]
+				#print(corr_scores)
+				new_data.append(bed_row)
+			
+				
+				# discard hits for next round of resolving if they overlap more than 25% of the selected hit on either sides
+				width = (obc.loc[idx,"hit_end"] - obc.loc[idx,"hit_start"])//4
+				temp = obc[~((obc["hit_end"] < (obc.loc[idx,"hit_start"]+width)) | (obc["hit_start"] > (obc.loc[idx,"hit_end"]-width)))].reset_index(drop=True)
+				temp = temp[temp["correlation_scores"]>corr_scores]
+				temp = temp.sort_values(by=["correlation_scores"], ascending=False)
+				obc = obc[ (obc["hit_end"] < (obc.loc[idx,"hit_start"]+width)) | (obc["hit_start"] > (obc.loc[idx,"hit_end"]-width))].reset_index(drop=True)
+				
+				for i,r in temp.iterrows():
+ 					if r["hit_name"] != bed_row[3]:
+ 						#bed_row[3] = bed_row[3] + "/" + r["hit_name"]
+ 						#bed_row[4] = bed_row[4] + "/" + r["strand"]
+ 						#bed_row[5] = bed_row[5] + "/" + r["pwm_match_score"]
+ 						#bed_row[6] = bed_row[6] + "/" + r["peak_index"]
+ 						#bed_row[7] = bed_row[7] + "/" + r["imp_score"]
+ 						new_data.append(r.values)
+ 						break
+
+				#new_data.append(bed_row)
+
+
 	new_data = pd.DataFrame(new_data)
 
 	return new_data
