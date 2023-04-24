@@ -110,9 +110,7 @@ def interpret(model, seqs, output_prefix, profile_or_counts):
                     compression='blosc')
 
 
-def main():
-    # parse the command line arguments
-    args = fetch_interpret_args()
+def main(args):
 
     # check if the output directory exists
     if not os.path.exists(os.path.dirname(args.output_prefix)):
@@ -147,4 +145,8 @@ def main():
     interpret(model, seqs, args.output_prefix, args.profile_or_counts)
 
 if __name__ == '__main__':
-    main()
+
+    # parse the command line arguments
+    args = fetch_interpret_args()
+
+    main(args)

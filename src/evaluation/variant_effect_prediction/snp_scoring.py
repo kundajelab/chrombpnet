@@ -72,14 +72,29 @@ def fetch_snp_predictions(snp_regions, inputlen, genome_fasta, batch_size, debug
 
         batch_rsids, ref_seqs, alt_seqs = snp_gen[i]
 
+        #print(batch_rsids)
         ref_batch_preds=model.predict(ref_seqs)
         alt_batch_preds=model.predict(alt_seqs)
 
-        ref_logcount_preds.extend(np.squeeze(ref_batch_preds[1]))
-        alt_logcount_preds.extend(np.squeeze(alt_batch_preds[1]))
+        if len(batch_rsids) > 1:
+            ref_logcount_preds.extend(np.squeeze(ref_batch_preds[1]))
+            alt_logcount_preds.extend(np.squeeze(alt_batch_preds[1]))
 
-        ref_prob_preds.extend(np.squeeze(softmax(ref_batch_preds[0])))
-        alt_prob_preds.extend(np.squeeze(softmax(alt_batch_preds[0])))
+            ref_prob_preds.extend(np.squeeze(softmax(ref_batch_preds[0])))
+            alt_prob_preds.extend(np.squeeze(softmax(alt_batch_preds[0])))
+            #print(np.squeeze(ref_batch_preds[1]).shape)
+            #print(np.squeeze(softmax(ref_batch_preds[0])).shape)
+
+            #print(np.squeeze(ref_batch_preds[1]).shape)
+
+        else:
+            ref_logcount_preds.extend(np.array(ref_batch_preds[1][0]))
+            alt_logcount_preds.extend(np.array(alt_batch_preds[1][0]))
+
+            ref_prob_preds.extend(softmax(ref_batch_preds[0]))
+            alt_prob_preds.extend(softmax(alt_batch_preds[0]))
+            #print(np.array(ref_batch_preds[1][0]).shape)
+            #print(softmax(alt_batch_preds[0]).shape)
 
         rsids.extend(batch_rsids)
 
@@ -153,7 +168,7 @@ if __name__=="__main__":
     data["alt_prob_preds"] = alt_prob_preds
 
     
-    pkl.dump(data, open(os.path.join(args.output_dir+"predictions_at_snp.pkl"),'wb'))
+    pkl.dump(data, open(os.path.join(args.output_dir, "predictions_at_snp.pkl"),'wb'))
 
 
 
