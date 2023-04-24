@@ -1,9 +1,8 @@
-output_dir=/mnt/lab_data3/anusri/chrombpnet/results/chrombpnet/ATAC_PE/K562/K562_02.17.2022_bias_128_4_1234_0.5_fold_0/09_06_2022_motif_scanning_profile_new/
+output_dir=/mnt/lab_data3/anusri/chrombpnet/results/chrombpnet/ATAC_PE/K562/K562_02.17.2022_bias_128_4_1234_0.5_fold_0/08_01_2023_motif_scanning/mooods_run/
 peak_bed=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/K562/nautilus_runs/K562_02.17.2022_bias_128_4_1234_0.5_fold_0/interpret/merged.K562.interpreted_regions.bed
-modisco_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/modisco_jun_30/modisco/ATAC/K562/modisco_crop_500_100K_seqs_1
+modisco_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/modisco_jun_30/modisco/ATAC/K562/modiscolite_crop_500_1M_seqs
 shap_dir=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/K562/nautilus_runs/K562_02.17.2022_bias_128_4_1234_0.5_fold_0/interpret/merged.K562
 genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa 
-
 
 mkdir  $output_dir
 echo $output_dir
@@ -23,20 +22,21 @@ else
         bedtools sort -i $output_dir/merged_peaks_no_blacklist.w1000.bed | bedtools merge -i stdin   > $output_dir/merged.k562.bed
 
         # create equal intervals from your merged peaks - this is optional - this will affect how you consider co-occurence of hits not the annotation or the output hit bed file itself.
-        #python create_equal_width_peaks.py --bed $output_dir/merged.k562.bed --outf $output_dir/equal.spaced.merged.k562.bed --input_len 1000
+        python create_equal_width_peaks.py --bed $output_dir/merged.k562.bed --outf $output_dir/equal.spaced.merged.k562.bed --input_len 1000
 
 
         #peaks_bed=$output_dir/equal.spaced.merged.k562.bed
         peaks_bed=$output_dir/merged.k562.bed
-        #wc -l $output_dir/equal.spaced.merged.k562.bed
+        wc -l $output_dir/equal.spaced.merged.k562.bed
 fi
 	
 # update to the new peak file
-#peak_bed=$output_dir/equal.spaced.merged.k562.bed
+peak_bed=$output_dir/equal.spaced.merged.k562.bed
 
-peak_bed=$output_dir/merged.k562.bed
+#peak_bed=$output_dir/merged.k562.bed
 
 
-bash run_moods_hits_test_profile.sh $modisco_dir $shap_dir $output_dir $peak_bed "mean_norm"
+#bash run_moods_hits_test_profile.sh $modisco_dir $shap_dir $output_dir $peak_bed "mean_norm"
+bash run_moods_hits_test.sh $modisco_dir $shap_dir $output_dir $peak_bed "mean_norm"
 
 

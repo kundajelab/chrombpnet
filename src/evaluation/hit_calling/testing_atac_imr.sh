@@ -1,6 +1,7 @@
-output_dir=/mnt/lab_data3/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/IMR90_04.09.2022_bias_128_4_1234_0.4_fold_0/09_06_2022_motif_scanning/mooods_run/
+output_dir=/mnt/lab_data3/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/IMR90_04.09.2022_bias_128_4_1234_0.4_fold_0/08_01_2023_motif_scanning/mooods_run/
 peak_bed=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/nautilus_runs_apr12/IMR90_04.09.2022_bias_128_4_1234_0.4_fold_0/interpret/merged.IMR90.interpreted_regions.bed
-modisco_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/modisco_jun_30/modisco/ATAC/IMR90/modisco_crop_500_100K_seqs_1
+#modisco_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/modisco_jun_30/modisco/ATAC/IMR90/modisco_crop_500_100K_seqs_1
+modisco_dir=/oak/stanford/groups/akundaje/projects/chrombpnet_paper_new/modisco_jun_30/modisco/ATAC/IMR90/modiscolite_crop_500_1M_seqs
 shap_dir=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/nautilus_runs_apr12/IMR90_04.09.2022_bias_128_4_1234_0.4_fold_0/interpret/merged.IMR90
 genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa 
 
