@@ -5,14 +5,14 @@ metadata:
 spec:
   containers:
   - name: populate-pod-container
-    image: kundajelab/chrombpnet:dev
+    image: kundajelab/chrombpnet:latest
     resources:
       requests:
         cpu: 1
-        memory: 10Gi
+        memory: 20Gi
       limits:
         cpu: 1
-        memory: 10Gi
+        memory: 20Gi
     command:
     - /bin/bash
     - -c

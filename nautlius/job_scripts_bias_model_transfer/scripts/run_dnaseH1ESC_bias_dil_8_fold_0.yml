@@ -58,7 +58,7 @@ spec:
            cp -r /chrombpnet/reference/ /scratch/chrombpnet/;
            cp -r /chrombpnet/splits/ /scratch/chrombpnet/;
            bash dnase_run_withbias.sh 1234 H1ESC 0 8 2114 fold_0/bias.h5 DNASE_SE;
-           cp -r /scratch/chrombpnet/models/* /chrombpnet/ATAC_PE/H1ESC/; 
+           cp -r /scratch/chrombpnet/models/* /chrombpnet/DNASE_SE/H1ESC/; 
          volumeMounts:
          - mountPath: /chrombpnet
            name: chrombpnet
