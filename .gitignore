@@ -11,6 +11,7 @@
 *.png
 *.bed
 *.pfm
+*.pwm
 *.bam
 *.gz
 *.bai
@@ -23,3 +24,4 @@ experimental_scripts
 tracks
 needs_cleanup
 old
+reference
