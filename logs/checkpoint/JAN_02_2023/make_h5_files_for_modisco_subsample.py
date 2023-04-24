@@ -23,7 +23,7 @@ modeldir=args.modeldir
 
 #print(celltype,modelname,data_type,modeldir)
 print(celltype,modeldir)
-#celltype="GM12878"
+#celltype="K562"
 #modelname="GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0"
 #data_type="ATAC_PE"
 #modeldir="nautilus_runs"
@@ -50,6 +50,7 @@ for i, val in enumerate(tqdm(merged_val)):
 
 print(len(indices))
 print(len(merged_val))
+print(len(boi))
 
 merged.iloc[indices].to_csv("{}.interpreted_regions.bed".format(output_prefix), header=False, index=False, sep="\t")
 # subsample counts
