@@ -129,7 +129,7 @@ def qc_report(fpx,prefix,data_type):
 	marg_text = 'The marginal footprints are the response of the ChromBPNet no bias model to the hetergenous bias motifs. \
 	If the bias correction is complete the max of the profiles below should be below 0.003 on all the \
 	bias motifs. '
-	data = open(os.path.join(prefix,"evaluation/{}chrombpnet_nobias_max_bias_resonse.txt".format(fpx))).read()
+	data = open(os.path.join(prefix,"evaluation/{}chrombpnet_nobias_max_bias_response.txt".format(fpx))).read()
 	vals = data.split("_")
 	marg_text1 = "For your convenience we calculate here the average of the max of the profiles: "+vals[1]+" And the model according to this is <b>"+vals[0]+"</b> \
 	<br> \
