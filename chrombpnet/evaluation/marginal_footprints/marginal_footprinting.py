@@ -142,11 +142,11 @@ def main(args):
 
 	if len(avg_response_at_tn5) > 0:
 		if np.all(np.array(avg_response_at_tn5) < 0.003):
-			ofile = open("{}_max_bias_resonse.txt".format(args.output_prefix), "w")
+			ofile = open("{}_max_bias_response.txt".format(args.output_prefix), "w")
 			ofile.write("corrected_"+str(round(np.mean(avg_response_at_tn5),3))+"_"+"/".join(list(map(str,avg_response_at_tn5))))
 			ofile.close()
 		else:
-			ofile = open("{}_max_bias_resonse.txt".format(args.output_prefix), "w")
+			ofile = open("{}_max_bias_response.txt".format(args.output_prefix), "w")
 			ofile.write("uncorrected_"+str(round(np.mean(avg_response_at_tn5),3))+"_"+"/".join(list(map(str,avg_response_at_tn5))))
 			ofile.close()
 
