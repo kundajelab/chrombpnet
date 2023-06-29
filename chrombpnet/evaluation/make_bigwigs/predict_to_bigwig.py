@@ -130,7 +130,7 @@ def main(args):
         outputlen = int(model_chrombpnet_nb.output_shape[0][1])
 
         # load data
-        regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
+        regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA, comment='#')
         print(regions_df.head())
         gs = bigwig_helper.read_chrom_sizes(args.chrom_sizes)
         regions = bigwig_helper.get_regions(args.regions, outputlen) # output regions
@@ -169,7 +169,7 @@ def main(args):
 
 
         # load data
-        regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
+        regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA, comment='#')
         print(regions_df.head())
         gs = bigwig_helper.read_chrom_sizes(args.chrom_sizes)
         regions = bigwig_helper.get_regions(args.regions, outputlen) # output regions
@@ -208,7 +208,7 @@ def main(args):
         outputlen = int(model_bias.output_shape[0][1])
 
         # load data
-        regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
+        regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA, comment='#')
         print(regions_df.head())
         gs = bigwig_helper.read_chrom_sizes(args.chrom_sizes)
         regions = bigwig_helper.get_regions(args.regions, outputlen) # output regions

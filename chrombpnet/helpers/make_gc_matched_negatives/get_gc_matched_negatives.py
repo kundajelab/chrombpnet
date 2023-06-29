@@ -116,7 +116,7 @@ def main(args):
 
     negatives=make_gc_dict(args.candidate_negatives, splits_dict)
     used_negatives=dict()
-    cur_peaks=pd.read_csv(args.foreground_gc_bed,header=None,sep='\t')
+    cur_peaks=pd.read_csv(args.foreground_gc_bed,header=None,sep='\t', comment='#')
     negatives_bed = []
     print(len(list(cur_peaks.iterrows())))
     

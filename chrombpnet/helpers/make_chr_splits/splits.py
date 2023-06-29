@@ -14,7 +14,7 @@ def get_parsers():
 
 def main(args): 
 
-    chrom_sizes = pd.read_csv(args.chrom_sizes,sep="\t",header=None)
+    chrom_sizes = pd.read_csv(args.chrom_sizes,sep="\t",header=None, comment='#')
 
 
     chroms = chrom_sizes[0].values

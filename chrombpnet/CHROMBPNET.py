@@ -116,12 +116,12 @@ def main():
 	
 			# prepare candidate negatives
 	
-			exclude_bed = pd.read_csv(args.peaks, sep="\t", header=None)
+			exclude_bed = pd.read_csv(args.peaks, sep="\t", header=None, comment='#')
 			os.system("bedtools slop -i {peaks} -g {chrom_sizes} -b {flank_size} > {output}".format(peaks=args.peaks,
 												chrom_sizes=args.chrom_sizes,
 												flank_size=args.inputlen//2,
 												output=args.output_prefix+"_auxiliary/peaks_slop.bed"))
-			exclude_bed = pd.read_csv(args.output_prefix+"_auxiliary/peaks_slop.bed", sep="\t", header=None, usecols=[0,1,2])
+			exclude_bed = pd.read_csv(args.output_prefix+"_auxiliary/peaks_slop.bed", sep="\t", header=None, usecols=[0,1,2], comment='#')
 	
 			if args.blacklist_regions:
 				os.system("bedtools slop -i {blacklist} -g {chrom_sizes} -b {flank_size} > {output}".format(blacklist=args.blacklist_regions,
@@ -129,7 +129,7 @@ def main():
 												flank_size=args.inputlen//2,
 												output=args.output_prefix+"_auxiliary/blacklist_slop.bed"))
 										
-				exclude_bed = pd.concat([exclude_bed,pd.read_csv(args.output_prefix+"_auxiliary/blacklist_slop.bed",sep="\t",header=None, usecols=[0,1,2])])
+				exclude_bed = pd.concat([exclude_bed,pd.read_csv(args.output_prefix+"_auxiliary/blacklist_slop.bed",sep="\t",header=None, usecols=[0,1,2], comment='#')])
 
 			exclude_bed.to_csv(args.output_prefix+"_auxiliary/exclude_unmerged.bed", sep="\t", header=False, index=False)
 			os.system("bedtools sort -i {inputb} | bedtools merge -i stdin > {output}".format(inputb=args.output_prefix+"_auxiliary/exclude_unmerged.bed",
@@ -152,7 +152,7 @@ def main():
 	
 			get_gc_matched_negatives.main(args_copy)
 	
-			negatives = pd.read_csv(args.output_prefix+"_auxiliary/negatives.bed", sep="\t", header=None)
+			negatives = pd.read_csv(args.output_prefix+"_auxiliary/negatives.bed", sep="\t", header=None, comment='#')
 			negatives[3]="."
 			negatives[4]="."
 			negatives[5]="."

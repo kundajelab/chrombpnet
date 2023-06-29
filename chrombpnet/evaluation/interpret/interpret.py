@@ -108,7 +108,7 @@ def main(args):
     with open("{}.interpret.args.json".format(args.output_prefix), "w") as fp:
         json.dump(vars(args), fp, ensure_ascii=False, indent=4)
 
-    regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
+    regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA, comment='#')
 
     if args.debug_chr:
         regions_df = regions_df[regions_df['chr'].isin(args.debug_chr)]

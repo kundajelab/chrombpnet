@@ -116,7 +116,7 @@ def main(args):
     model = load_model_wrapper(args)
 
     # load the snp data
-    snp_regions=pd.read_csv(args.snp_data,header=None,sep='\t', names=SNP_SCHEMA)
+    snp_regions=pd.read_csv(args.snp_data,header=None,sep='\t', names=SNP_SCHEMA, comment='#')
     snp_regions["META_DATA"].fillna('', inplace=True)
     snp_regions['RSID']=snp_regions['CHR'].astype(str)+'_'+snp_regions['POS0'].astype(str)+'_'+snp_regions['REF'].astype(str)+'_'+snp_regions['ALT'].astype('str')+"_"+snp_regions['META_DATA'].astype('str')
     print("printing first 5 rows of the input SNP data provided..")

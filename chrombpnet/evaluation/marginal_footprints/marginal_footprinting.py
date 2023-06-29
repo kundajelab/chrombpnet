@@ -92,7 +92,7 @@ def main(args):
 	splits_dict = json.load(open(args.chr_fold_path))
 	chroms_to_keep = set(splits_dict["test"])
 
-	regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
+	regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA, comment='#')
 	regions_subsample = regions_df[(regions_df["chr"].isin(chroms_to_keep))]
 	regions_seqs = get_seq(regions_subsample, genome_fasta, inputlen)
 

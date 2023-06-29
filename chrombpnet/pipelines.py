@@ -119,7 +119,7 @@ def chrombpnet_train_pipeline(args):
 	# get contributions scores with model
 	args_copy = copy.deepcopy(args)
 	import chrombpnet.evaluation.interpret.interpret as interpret
-	peaks = pd.read_csv(os.path.join(args.peaks),sep="\t",header=None)
+	peaks = pd.read_csv(os.path.join(args.peaks),sep="\t",header=None, comment='#')
 	if peaks.shape[0] > 30000:
 		sub_peaks = peaks.sample(30000, random_state=1234)
 	else:

@@ -13,7 +13,7 @@ def import_tfmodisco_hits(hits_bed):
     index of the peak file from which it was originally found.
     """
     hit_table = pd.read_csv(
-        hits_bed, sep="\t", header=None, index_col=False,
+        hits_bed, sep="\t", header=None, index_col=False, comment='#'
         names=[
             "chrom", "start", "end", "key", "strand", "peak_index",
             "imp_total_signed_score", "imp_total_score", "imp_frac_score",
@@ -69,7 +69,7 @@ def main(
 
     # Import peaks
     peak_table = pd.read_csv(
-        peak_bed_path, sep="\t", header=None, index_col=False,
+        peak_bed_path, sep="\t", header=None, index_col=False, comment='#'
         usecols=[0, 1, 2, 9],
         names=["peak_chrom", "peak_start", "peak_end", "summit_offset"]
     )

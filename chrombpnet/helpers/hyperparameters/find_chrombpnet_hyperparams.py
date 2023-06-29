@@ -74,11 +74,11 @@ def main(args):
     in_peaks =  pd.read_csv(args.peaks,
                            sep='\t',
                            header=None,
-                           names=["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"])
+                           names=["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"], comment='#')
     in_nonpeaks =  pd.read_csv(args.nonpeaks,
                            sep='\t',
                            header=None,
-                           names=["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"])
+                           names=["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"], comment='#')
 
     assert(in_peaks.shape[0] != 0) # peaks file is empty
     assert(in_nonpeaks.shape[0] !=0) # non peaks file is empty

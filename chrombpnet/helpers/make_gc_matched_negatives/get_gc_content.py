@@ -15,7 +15,7 @@ def parse_args():
 def main(args):
     chrom_sizes_dict = {line.strip().split("\t")[0]:int(line.strip().split("\t")[1]) for line in open(args.chrom_sizes).readlines()}
     ref=pyfaidx.Fasta(args.genome)
-    data=pd.read_csv(args.input_bed,header=None,sep='\t')
+    data=pd.read_csv(args.input_bed,header=None,sep='\t', comment='#')
     assert(args.inputlen%2 == 0) # for symmtery
 
     num_rows=str(data.shape[0])
