@@ -1,6 +1,6 @@
 # ChromBPNet-pre-release
 
-This repo is deprecated and can only be used to reproduce results in the linked paper. For the user-facing main mage of this repo please refer to - https://github.com/kundajelab/chrombpnet
+This repo is deprecated and can only be used to reproduce results in the linked paper. For the user-facing main page of this repo please refer to - https://github.com/kundajelab/chrombpnet
 
 ### Installation
 
