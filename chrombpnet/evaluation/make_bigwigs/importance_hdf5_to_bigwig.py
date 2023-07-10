@@ -23,8 +23,9 @@ if args.hdf5:
     d = deepdish.io.load(args.hdf5, '/projected_shap/seq')
 elif args.npz:
     d = np.load(args.npz)['arr_0']
-    o = np.load(args.onehot)['arr_0']
-    d = d * o
+    if args.onehot:
+        o = np.load(args.onehot)['arr_0']
+        d = d * o
 
 SEQLEN = d.shape[2]
 assert(SEQLEN%2==0)
