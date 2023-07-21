@@ -27,7 +27,7 @@ def get_genomewide_gc(genome_fa, outf, width, stride):
     3000-4000 and delete 1000-2000. And repeat.
     """
 
-    f = pyfaidx.Fasta(genome_fa, as_raw=True)
+    f = pyfaidx.Fasta(genome_fa, as_raw=True, rebuild=False)
     outf = open(outf, 'w')
 
     div = width//stride
