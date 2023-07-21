@@ -90,8 +90,8 @@ def main(args):
     upper_thresh = np.quantile(final_cnts, args.outlier_threshold)
     lower_thresh = np.quantile(final_cnts, 1-args.outlier_threshold)
 
-    nonpeaks = nonpeaks[(nonpeak_cnts<upper_thresh) & (nonpeak_cnts>lower_thresh)]
-    assert(nonpeaks.empty) # bound cut-off is too stringent, please set a smaller value for --outlier-threshold
+    nonpeaks = nonpeaks[(nonpeak_cnts<=upper_thresh) & (nonpeak_cnts>=lower_thresh)]
+    assert(nonpeaks.empty) # bound cut-off is too stringent so there are no points left for training
 
     print("Number of nonpeaks after applying upper-bound cut-off and removing outliers : ", nonpeaks.shape[0])
 
