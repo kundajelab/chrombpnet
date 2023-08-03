@@ -1,0 +1,3 @@
+[console_scripts]
+chrombpnet = chrombpnet.CHROMBPNET:main
+print_meme_motif_file = chrombpnet.data.__init__:print_meme_motif_file

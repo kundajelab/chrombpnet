@@ -238,7 +238,8 @@ def read_parser():
         optional_contribs.add_argument("-os", "--output-prefix-stats", type=str, default=None, required=False, help="Output stats on bigwig")
         optional_contribs.add_argument("-t", "--tqdm", type=int,default=1, help="Use tqdm. If yes then you need to have it installed.")
         optional_contribs.add_argument("-d", "--debug-chr", nargs="+", type=str, default=None, help="Run for specific chromosomes only (e.g. chr1 chr2) for debugging")
-    
+        optional_contribs.add_argument("-cw", "--chunk_write",action='store_true',default=False, help="writing shap to h5 file in chunk")                   
+
    
         # Get marginal footprints
         

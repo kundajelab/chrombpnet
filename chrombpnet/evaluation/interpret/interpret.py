@@ -28,6 +28,8 @@ def fetch_interpret_args():
     parser.add_argument("-d", "--debug_chr", nargs="+", type=str, default=None, help="Run for specific chromosomes only (e.g. chr1 chr2) for debugging")
     parser.add_argument("-p", "--profile_or_counts", nargs="+", type=str, default=["counts", "profile"], choices=["counts", "profile"],
                         help="use either counts or profile or both for running shap")
+    parser.add_argument("-b", "--batch_size", type=int, default=512,help="batch size for computing shap")
+    parser.add_argument("-cw", "--chunk_write",action='store_true',default=False, help="writing shap to h5 file in chunk")                   
 
     args = parser.parse_args()
     return args
@@ -59,26 +61,53 @@ def interpret(model, seqs, output_prefix, profile_or_counts):
     counts_input = seqs
 
     if "counts" in profile_or_counts:
+        print("Generating 'counts' shap scores")
         profile_model_counts_explainer = shap.explainers.deep.TFDeepExplainer(
             (counts_model_input, tf.reduce_sum(model.outputs[1], axis=-1)),
             shap_utils.shuffle_several_times,
             combine_mult_and_diffref=shap_utils.combine_mult_and_diffref)
 
-        print("Generating 'counts' shap scores")
-        counts_shap_scores = profile_model_counts_explainer.shap_values(
-            counts_input, progress_message=100)
+        if args.chunk_write:
+            batch_size=args.batch_size
+            output_file="{}.counts_scores.h5".format(output_prefix)
+            raw_writer = output_file.create_group('raw')
+            shap_writer  = output_file.create_group('shap')
+            projected_shap_writer  = output_file.create_group('projected_shap')
 
-        counts_scores_dict = generate_shap_dict(seqs, counts_shap_scores)
+            raw_writer = raw_writer.create_dataset('seq',(len(seqs),4,2114), chunks= (batch_size,4,2114),dtype=np.float16, compression='gzip', compression_opts=9)
+            shap_writer = shap_writer.create_dataset('seq',(len(seqs),4,2114), chunks= (batch_size,4,2114),dtype=np.float16, compression='gzip', compression_opts=9)
+            projected_shap_writer = projected_shap_writer.create_dataset('seq',(len(seqs),4,2114), chunks= (batch_size,4,2114),dtype=np.float16, compression='gzip', compression_opts=9)
 
-        # save the dictionary in HDF5 formnat
-        print("Saving 'counts' scores")
-        dd.io.save("{}.counts_scores.h5".format(output_prefix),
-                    counts_scores_dict,
-                    compression='blosc')
+            print("Generating 'counts' shap scores")
+            num_batches=len(variants_table)//batch_size
+            for i in range(num_batches):
+                sub_sequence = seqs[i*batch_size:(i+1)*batch_size]
 
-        del counts_shap_scores, counts_scores_dict
+                counts_shap_scores = profile_model_counts_explainer.shap_values(
+                    sub_sequence, progress_message=100)
+
+                raw_writer[i*batch_size:(i+1)*batch_size] = np.transpose(sub_sequence, (0, 2, 1))
+                shap_writer[i*batch_size:(i+1)*batch_size] =  np.transpose(counts_shap_scores, (0, 2, 1))
+                projected_shap_writer[i*batch_size:(i+1)*batch_size] = np.transpose(sub_sequence*counts_shap_scores, (0, 2, 1))
+
+            # counts_scores_dict = generate_shap_dict(seqs, counts_shap_scores)
+
+        else:
+            counts_shap_scores = profile_model_counts_explainer.shap_values(
+                counts_input, progress_message=100)
+
+            counts_scores_dict = generate_shap_dict(seqs, counts_shap_scores)
+
+            # save the dictionary in HDF5 formnat
+            print("Saving 'counts' scores")
+            dd.io.save("{}.counts_scores.h5".format(output_prefix),
+                        counts_scores_dict,
+                        compression='blosc')
+
+            del counts_shap_scores, counts_scores_dict
 
     if "profile" in profile_or_counts:
+        output_file="{}.profile_scores.h5".format(output_prefix),
         weightedsum_meannormed_logits = shap_utils.get_weightedsum_meannormed_logits(model)
         profile_model_profile_explainer = shap.explainers.deep.TFDeepExplainer(
             (profile_model_input, weightedsum_meannormed_logits),
