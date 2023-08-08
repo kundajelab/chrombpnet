@@ -13,6 +13,7 @@ import os
 import argparse
 import chrombpnet.evaluation.interpret.shap_utils as shap_utils
 import chrombpnet.evaluation.interpret.input_utils as input_utils
+import h5py
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 
@@ -50,7 +51,7 @@ def generate_shap_dict(seqs, scores):
 
     return d
 
-def interpret(model, seqs, output_prefix, profile_or_counts):
+def interpret(model, seqs, output_prefix, profile_or_counts,chunk_write,batch_size):
     print("Seqs dimension : {}".format(seqs.shape))
 
     outlen = model.output_shape[0][1]
@@ -67,9 +68,8 @@ def interpret(model, seqs, output_prefix, profile_or_counts):
             shap_utils.shuffle_several_times,
             combine_mult_and_diffref=shap_utils.combine_mult_and_diffref)
 
-        if args.chunk_write:
-            batch_size=args.batch_size
-            output_file="{}.counts_scores.h5".format(output_prefix)
+        if chunk_write:
+            output_file=h5py.File("{}.counts_scores.h5".format(output_prefix),'w')
             raw_writer = output_file.create_group('raw')
             shap_writer  = output_file.create_group('shap')
             projected_shap_writer  = output_file.create_group('projected_shap')
@@ -79,7 +79,7 @@ def interpret(model, seqs, output_prefix, profile_or_counts):
             projected_shap_writer = projected_shap_writer.create_dataset('seq',(len(seqs),4,2114), chunks= (batch_size,4,2114),dtype=np.float16, compression='gzip', compression_opts=9)
 
             print("Generating 'counts' shap scores")
-            num_batches=len(variants_table)//batch_size
+            num_batches=len(seqs)//batch_size
             for i in range(num_batches):
                 sub_sequence = seqs[i*batch_size:(i+1)*batch_size]
 
@@ -89,6 +89,16 @@ def interpret(model, seqs, output_prefix, profile_or_counts):
                 raw_writer[i*batch_size:(i+1)*batch_size] = np.transpose(sub_sequence, (0, 2, 1))
                 shap_writer[i*batch_size:(i+1)*batch_size] =  np.transpose(counts_shap_scores, (0, 2, 1))
                 projected_shap_writer[i*batch_size:(i+1)*batch_size] = np.transpose(sub_sequence*counts_shap_scores, (0, 2, 1))
+
+            if len(seqs)%batch_size != 0:
+                sub_sequence = seqs[num_batches*batch_size:len(seqs)] 
+
+                counts_shap_scores = profile_model_counts_explainer.shap_values(
+                    sub_sequence, progress_message=100)
+
+                raw_writer[num_batches*batch_size:len(seqs)] = np.transpose(sub_sequence, (0, 2, 1))
+                shap_writer[num_batches*batch_size:len(seqs)] =  np.transpose(counts_shap_scores, (0, 2, 1))
+                projected_shap_writer[num_batches*batch_size:len(seqs)] = np.transpose(sub_sequence*counts_shap_scores, (0, 2, 1))
 
             # counts_scores_dict = generate_shap_dict(seqs, counts_shap_scores)
 
@@ -158,7 +168,7 @@ def main(args):
 
     regions_df[peaks_used].to_csv("{}.interpreted_regions.bed".format(args.output_prefix), header=False, sep='\t')
 
-    interpret(model, seqs, args.output_prefix, args.profile_or_counts)
+    interpret(model, seqs, args.output_prefix, args.profile_or_counts,args.chunk_write,args.batch_size)
 
 if __name__ == '__main__':
     # parse the command line arguments

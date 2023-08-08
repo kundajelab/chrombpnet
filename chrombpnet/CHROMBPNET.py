@@ -15,10 +15,10 @@ def main():
 	args = parsers.read_parser()
 	
 	if args.cmd == "pipeline" or args.cmd == "train":
-		os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
-		os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
-		os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=False)
-		os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+		# os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
+		# os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
+		# os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=False)
+		# os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
 
 		pipelines.chrombpnet_train_pipeline(args)
 	

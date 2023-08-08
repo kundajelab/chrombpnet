@@ -18,7 +18,7 @@ def chrombpnet_train_pipeline(args):
 	args.output_prefix = os.path.join(args.output_dir,"auxiliary/{}data".format(fpx))
 	args.plus_shift = None
 	args.minus_shift = None
-	reads_to_bigwig.main(args)
+	# reads_to_bigwig.main(args)
 	
 	# QC bigwig
 	import chrombpnet.helpers.preprocessing.analysis.build_pwm_from_bigwig as build_pwm_from_bigwig	
@@ -28,7 +28,7 @@ def chrombpnet_train_pipeline(args):
 	assert(len(folds["valid"]) > 0) # validation list of chromosomes is empty
 	args.chr = folds["valid"][0]
 	args.pwm_width=24
-	build_pwm_from_bigwig.main(args)
+	# build_pwm_from_bigwig.main(args)
 	
 	# make predictions with input bias model in peaks
 	import chrombpnet.training.predict as predict
@@ -36,7 +36,7 @@ def chrombpnet_train_pipeline(args):
 	args_copy.output_prefix = os.path.join(args_copy.output_dir,"evaluation/bias")
 	args_copy.model_h5 = args.bias_model_path
 	args_copy.nonpeaks = "None"
-	predict.main(args_copy)
+	# predict.main(args_copy)
 	
 	# QC bias model performance in peaks
 	bias_metrics = json.load(open(os.path.join(args_copy.output_dir,"evaluation/bias_metrics.json")))
@@ -47,12 +47,12 @@ def chrombpnet_train_pipeline(args):
 	import chrombpnet.helpers.hyperparameters.find_chrombpnet_hyperparams as find_chrombpnet_hyperparams
 	args_copy = copy.deepcopy(args)
 	args_copy.output_prefix = os.path.join(args.output_dir,"auxiliary/{}".format(fpx))
-	find_chrombpnet_hyperparams.main(args_copy)
+	# find_chrombpnet_hyperparams.main(args_copy)
 	
 	# separating models from logs
-	os.rename(os.path.join(args.output_dir,"auxiliary/{}bias_model_scaled.h5".format(fpx)),os.path.join(args.output_dir,"models/{}bias_model_scaled.h5".format(fpx)))
-	os.rename(os.path.join(args.output_dir,"auxiliary/{}chrombpnet_model_params.tsv".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet_model_params.tsv".format(fpx)))
-	os.rename(os.path.join(args.output_dir,"auxiliary/{}chrombpnet_data_params.tsv".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet_data_params.tsv".format(fpx)))
+	# os.rename(os.path.join(args.output_dir,"auxiliary/{}bias_model_scaled.h5".format(fpx)),os.path.join(args.output_dir,"models/{}bias_model_scaled.h5".format(fpx)))
+	# os.rename(os.path.join(args.output_dir,"auxiliary/{}chrombpnet_model_params.tsv".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet_model_params.tsv".format(fpx)))
+	# os.rename(os.path.join(args.output_dir,"auxiliary/{}chrombpnet_data_params.tsv".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet_data_params.tsv".format(fpx)))
 
 	params = open(os.path.join(args.output_dir,"logs/{}chrombpnet_model_params.tsv".format(fpx))).read()
 	params = params.replace(os.path.join(args.output_dir,"auxiliary/{}bias_model_scaled.h5".format(fpx)),os.path.join(args.output_dir,"models/{}bias_model_scaled.h5".format(fpx)))
@@ -69,13 +69,13 @@ def chrombpnet_train_pipeline(args):
 	args_copy.nonpeaks = os.path.join(args.output_dir,"auxiliary/{}filtered.nonpeaks.bed".format(fpx))
 	args_copy.output_prefix = os.path.join(args.output_dir,"models/{}chrombpnet".format(fpx))
 	args_copy.params = os.path.join(args.output_dir,"logs/{}chrombpnet_model_params.tsv".format(fpx))
-	train.main(args_copy)
+	# train.main(args_copy)
 	
 	# separating models from logs
-	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.log".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.log".format(fpx)))
-	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.log.batch".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.log.batch".format(fpx)))
+	#os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.log".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.log".format(fpx)))
+	#os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.log.batch".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.log.batch".format(fpx)))
 	#os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.params.json".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.params.json".format(fpx)))
-	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.args.json").format(fpx),os.path.join(args.output_dir,"logs/{}chrombpnet.args.json".format(fpx)))
+	#os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.args.json").format(fpx),os.path.join(args.output_dir,"logs/{}chrombpnet.args.json".format(fpx)))
 
 	if args.cmd == "train":
 		import chrombpnet.helpers.generate_reports.make_html as make_html
@@ -91,7 +91,7 @@ def chrombpnet_train_pipeline(args):
 	args_copy.output_prefix = os.path.join(args.output_dir,"evaluation/{}chrombpnet".format(fpx))
 	args_copy.model_h5 = os.path.join(args.output_dir,"models/{}chrombpnet.h5".format(fpx))
 	args_copy.nonpeaks = "None"
-	predict.main(args_copy)
+	# predict.main(args_copy)
 	
 	# marginal footprinting with model
 	import chrombpnet.evaluation.marginal_footprints.marginal_footprinting as marginal_footprinting
@@ -111,10 +111,10 @@ def chrombpnet_train_pipeline(args):
 	args_copy.output_prefix = os.path.join(args.output_dir,"evaluation/{}chrombpnet_nobias".format(fpx))
 	args_copy.motifs_to_pwm = os.path.join(args_copy.output_dir,"auxiliary/motif_to_pwm.tsv")
 	args_copy.ylim = None
-	marginal_footprinting.main(args_copy)
+	# marginal_footprinting.main(args_copy)
 	
 	# separating models from logs
-	os.rename(os.path.join(args.output_dir,"evaluation/{}chrombpnet_nobias_footprints.h5".format(fpx)),os.path.join(args.output_dir,"auxiliary/{}chrombpnet_nobias_footprints.h5".format(fpx)))
+	#os.rename(os.path.join(args.output_dir,"evaluation/{}chrombpnet_nobias_footprints.h5".format(fpx)),os.path.join(args.output_dir,"auxiliary/{}chrombpnet_nobias_footprints.h5".format(fpx)))
 
 	# get contributions scores with model
 	args_copy = copy.deepcopy(args)
@@ -125,14 +125,14 @@ def chrombpnet_train_pipeline(args):
 	else:
 		sub_peaks = peaks
 	sub_peaks.to_csv(os.path.join(args_copy.output_dir,"auxiliary/{}30K_subsample_peaks.bed".format(fpx)),sep="\t", header=False, index=False)
-	os.makedirs(os.path.join(args.output_dir,"auxiliary/interpret_subsample/"), exist_ok=False)
+	# os.makedirs(os.path.join(args.output_dir,"auxiliary/interpret_subsample/"), exist_ok=False)
 
 	args_copy.profile_or_counts = ["counts", "profile"]
 	#args_copy.profile_or_counts = ["profile"]	
 	args_copy.regions = os.path.join(args_copy.output_dir,"auxiliary/{}30K_subsample_peaks.bed".format(fpx))	
 	args_copy.model_h5 = os.path.join(args.output_dir,"models/{}chrombpnet_nobias.h5".format(fpx))
 	args_copy.output_prefix = os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}chrombpnet_nobias".format(fpx))
-	args_copy.debug_chr = None
+	args_copy.debug_chr = None	
 	interpret.main(args_copy)
 	
 	import chrombpnet
