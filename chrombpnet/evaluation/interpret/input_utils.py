@@ -36,3 +36,29 @@ def load_model_wrapper(args):
     model.summary()
     return model
 
+
+def get_valid_peaks(peaks_df, genome, width):
+    """
+    Same as get_cts, but fetches sequence from a given genome.
+    """
+    peaks_used = []
+    for i, r in peaks_df.iterrows():
+        sequence = str(genome[r['chr']][(r['start']+r['summit'] - width//2):(r['start'] + r['summit'] + width//2)])
+        if len(sequence) == width:
+            peaks_used.append(True)
+        else:
+            peaks_used.append(False)
+
+    return np.array(peaks_used)
+
+def get_seq_batch(peaks_df, genome, width):
+    """
+    Same as get_cts, but fetches sequence from a given genome.
+    """
+    vals = []
+    
+    for i, r in peaks_df.iterrows():
+        sequence = str(genome[r['chr']][(r['start']+r['summit'] - width//2):(r['start'] + r['summit'] + width//2)])
+        vals.append(sequence)
+
+    return one_hot.dna_to_one_hot(vals)

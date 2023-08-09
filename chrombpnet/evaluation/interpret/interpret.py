@@ -51,7 +51,7 @@ def generate_shap_dict(seqs, scores):
 
     return d
 
-def interpret(model, seqs, output_prefix, profile_or_counts,chunk_write,batch_size):
+def interpret(model, seqs, output_prefix, profile_or_counts):
     print("Seqs dimension : {}".format(seqs.shape))
 
     outlen = model.output_shape[0][1]
@@ -62,62 +62,26 @@ def interpret(model, seqs, output_prefix, profile_or_counts,chunk_write,batch_si
     counts_input = seqs
 
     if "counts" in profile_or_counts:
-        print("Generating 'counts' shap scores")
         profile_model_counts_explainer = shap.explainers.deep.TFDeepExplainer(
             (counts_model_input, tf.reduce_sum(model.outputs[1], axis=-1)),
             shap_utils.shuffle_several_times,
             combine_mult_and_diffref=shap_utils.combine_mult_and_diffref)
 
-        if chunk_write:
-            output_file=h5py.File("{}.counts_scores.h5".format(output_prefix),'w')
-            raw_writer = output_file.create_group('raw')
-            shap_writer  = output_file.create_group('shap')
-            projected_shap_writer  = output_file.create_group('projected_shap')
+        print("Generating 'counts' shap scores")
+        counts_shap_scores = profile_model_counts_explainer.shap_values(
+            counts_input, progress_message=100)
 
-            raw_writer = raw_writer.create_dataset('seq',(len(seqs),4,2114), chunks= (batch_size,4,2114),dtype=np.float16, compression='gzip', compression_opts=9)
-            shap_writer = shap_writer.create_dataset('seq',(len(seqs),4,2114), chunks= (batch_size,4,2114),dtype=np.float16, compression='gzip', compression_opts=9)
-            projected_shap_writer = projected_shap_writer.create_dataset('seq',(len(seqs),4,2114), chunks= (batch_size,4,2114),dtype=np.float16, compression='gzip', compression_opts=9)
+        counts_scores_dict = generate_shap_dict(seqs, counts_shap_scores)
 
-            print("Generating 'counts' shap scores")
-            num_batches=len(seqs)//batch_size
-            for i in range(num_batches):
-                sub_sequence = seqs[i*batch_size:(i+1)*batch_size]
+        # save the dictionary in HDF5 formnat
+        print("Saving 'counts' scores")
+        dd.io.save("{}.counts_scores.h5".format(output_prefix),
+                    counts_scores_dict,
+                    compression='blosc')
 
-                counts_shap_scores = profile_model_counts_explainer.shap_values(
-                    sub_sequence, progress_message=100)
-
-                raw_writer[i*batch_size:(i+1)*batch_size] = np.transpose(sub_sequence, (0, 2, 1))
-                shap_writer[i*batch_size:(i+1)*batch_size] =  np.transpose(counts_shap_scores, (0, 2, 1))
-                projected_shap_writer[i*batch_size:(i+1)*batch_size] = np.transpose(sub_sequence*counts_shap_scores, (0, 2, 1))
-
-            if len(seqs)%batch_size != 0:
-                sub_sequence = seqs[num_batches*batch_size:len(seqs)] 
-
-                counts_shap_scores = profile_model_counts_explainer.shap_values(
-                    sub_sequence, progress_message=100)
-
-                raw_writer[num_batches*batch_size:len(seqs)] = np.transpose(sub_sequence, (0, 2, 1))
-                shap_writer[num_batches*batch_size:len(seqs)] =  np.transpose(counts_shap_scores, (0, 2, 1))
-                projected_shap_writer[num_batches*batch_size:len(seqs)] = np.transpose(sub_sequence*counts_shap_scores, (0, 2, 1))
-
-            # counts_scores_dict = generate_shap_dict(seqs, counts_shap_scores)
-
-        else:
-            counts_shap_scores = profile_model_counts_explainer.shap_values(
-                counts_input, progress_message=100)
-
-            counts_scores_dict = generate_shap_dict(seqs, counts_shap_scores)
-
-            # save the dictionary in HDF5 formnat
-            print("Saving 'counts' scores")
-            dd.io.save("{}.counts_scores.h5".format(output_prefix),
-                        counts_scores_dict,
-                        compression='blosc')
-
-            del counts_shap_scores, counts_scores_dict
+        del counts_shap_scores, counts_scores_dict
 
     if "profile" in profile_or_counts:
-        output_file="{}.profile_scores.h5".format(output_prefix),
         weightedsum_meannormed_logits = shap_utils.get_weightedsum_meannormed_logits(model)
         profile_model_profile_explainer = shap.explainers.deep.TFDeepExplainer(
             (profile_model_input, weightedsum_meannormed_logits),
@@ -136,7 +100,96 @@ def interpret(model, seqs, output_prefix, profile_or_counts,chunk_write,batch_si
                     profile_scores_dict,
                     compression='blosc')
 
+def interpret_batch(model, region_df, genome, inputlen, output_prefix, profile_or_counts,batch_size):
 
+    print("Region dimension : {}".format(len(region_df)))
+    outlen = model.output_shape[0][1]
+    profile_model_input = model.input
+    counts_model_input = model.input
+    
+
+    if "counts" in profile_or_counts:
+        print("Generating 'counts' shap scores")
+        profile_model_counts_explainer = shap.explainers.deep.TFDeepExplainer(
+            (counts_model_input, tf.reduce_sum(model.outputs[1], axis=-1)),
+            shap_utils.shuffle_several_times,
+            combine_mult_and_diffref=shap_utils.combine_mult_and_diffref)
+
+        output_file=h5py.File("{}.counts_scores.h5".format(output_prefix),'w')
+        raw_writer = output_file.create_group('raw')
+        shap_writer  = output_file.create_group('shap')
+        projected_shap_writer  = output_file.create_group('projected_shap')
+
+        raw_writer = raw_writer.create_dataset('seq',(len(region_df),4,2114), chunks= (batch_size,4,2114),dtype=np.float16, compression='gzip', compression_opts=9)
+        shap_writer = shap_writer.create_dataset('seq',(len(region_df),4,2114), chunks= (batch_size,4,2114),dtype=np.float16, compression='gzip', compression_opts=9)
+        projected_shap_writer = projected_shap_writer.create_dataset('seq',(len(region_df),4,2114), chunks= (batch_size,4,2114),dtype=np.float16, compression='gzip', compression_opts=9)
+        
+        num_batches=len(region_df)//batch_size
+        for i in range(num_batches):
+            sub_df = region_df[i*batch_size:(i+1)*batch_size]
+            sub_sequence = input_utils.get_seq_batch(sub_df, genome, inputlen)
+
+            counts_shap_scores = profile_model_counts_explainer.shap_values(
+                sub_sequence, progress_message=100)
+
+            raw_writer[i*batch_size:(i+1)*batch_size] = np.transpose(sub_sequence, (0, 2, 1))
+            shap_writer[i*batch_size:(i+1)*batch_size] =  np.transpose(counts_shap_scores, (0, 2, 1))
+            projected_shap_writer[i*batch_size:(i+1)*batch_size] = np.transpose(sub_sequence*counts_shap_scores, (0, 2, 1))
+
+        if len(region_df)%batch_size != 0:
+            sub_df = region_df[num_batches*batch_size:len(region_df)] 
+            sub_sequence = input_utils.get_seq_batch(sub_df, genome, inputlen)
+
+            counts_shap_scores = profile_model_counts_explainer.shap_values(
+                sub_sequence, progress_message=100)
+
+            raw_writer[num_batches*batch_size:len(region_df)] = np.transpose(sub_sequence, (0, 2, 1))
+            shap_writer[num_batches*batch_size:len(region_df)] =  np.transpose(counts_shap_scores, (0, 2, 1))
+            projected_shap_writer[num_batches*batch_size:len(region_df)] = np.transpose(sub_sequence*counts_shap_scores, (0, 2, 1))
+        output_file.close()
+
+    if "profile" in profile_or_counts:
+        print("Generating 'profile' shap scores")
+
+        weightedsum_meannormed_logits = shap_utils.get_weightedsum_meannormed_logits(model)
+        profile_model_profile_explainer = shap.explainers.deep.TFDeepExplainer(
+            (profile_model_input, weightedsum_meannormed_logits),
+            shap_utils.shuffle_several_times,
+            combine_mult_and_diffref=shap_utils.combine_mult_and_diffref)
+            
+        output_file=h5py.File("{}.profile_scores.h5".format(output_prefix),'w')
+        raw_writer = output_file.create_group('raw')
+        shap_writer  = output_file.create_group('shap')
+        projected_shap_writer  = output_file.create_group('projected_shap')
+
+        raw_writer = raw_writer.create_dataset('seq',(len(region_df),4,2114), chunks= (batch_size,4,2114),dtype=np.float16, compression='gzip', compression_opts=9)
+        shap_writer = shap_writer.create_dataset('seq',(len(region_df),4,2114), chunks= (batch_size,4,2114),dtype=np.float16, compression='gzip', compression_opts=9)
+        projected_shap_writer = projected_shap_writer.create_dataset('seq',(len(region_df),4,2114), chunks= (batch_size,4,2114),dtype=np.float16, compression='gzip', compression_opts=9)
+        
+        num_batches=len(region_df)//batch_size
+        for i in range(num_batches):
+            sub_df = region_df[i*batch_size:(i+1)*batch_size]
+            sub_sequence = input_utils.get_seq_batch(sub_df, genome, inputlen)
+
+            counts_shap_scores = profile_model_profile_explainer.shap_values(
+                sub_sequence, progress_message=100)
+
+            raw_writer[i*batch_size:(i+1)*batch_size] = np.transpose(sub_sequence, (0, 2, 1))
+            shap_writer[i*batch_size:(i+1)*batch_size] =  np.transpose(counts_shap_scores, (0, 2, 1))
+            projected_shap_writer[i*batch_size:(i+1)*batch_size] = np.transpose(sub_sequence*counts_shap_scores, (0, 2, 1))
+
+        if len(region_df)%batch_size != 0:
+            sub_df = region_df[num_batches*batch_size:len(region_df)] 
+            sub_sequence = input_utils.get_seq_batch(sub_df, genome, inputlen)
+
+            counts_shap_scores = profile_model_counts_explainer.shap_values(
+                sub_sequence, progress_message=100)
+
+            raw_writer[num_batches*batch_size:len(region_df)] = np.transpose(sub_sequence, (0, 2, 1))
+            shap_writer[num_batches*batch_size:len(region_df)] =  np.transpose(counts_shap_scores, (0, 2, 1))
+            projected_shap_writer[num_batches*batch_size:len(region_df)] = np.transpose(sub_sequence*counts_shap_scores, (0, 2, 1))
+
+        output_file.close()
 def main(args):
 
     # check if the output directory exists
@@ -163,12 +216,17 @@ def main(args):
     #       centered at the summit (start + 10th column) and peaks used after filtering
 
     genome = pyfaidx.Fasta(args.genome)
-    seqs, peaks_used = input_utils.get_seq(regions_df, genome, inputlen)
-    genome.close()
+
+    if args.chunk_write:
+        peaks_used = input_utils.get_valid_peaks(regions_df, genome, inputlen)
+        regions_df = regions_df[peaks_used].reset_index(drop=True)
+        interpret_batch(model, regions_df, genome, inputlen, args.output_prefix, args.profile_or_counts,args.batch_size)
+    else:
+        seqs, peaks_used = input_utils.get_seq(regions_df, genome, inputlen)
+        interpret(model, seqs, args.output_prefix, args.profile_or_counts)
 
     regions_df[peaks_used].to_csv("{}.interpreted_regions.bed".format(args.output_prefix), header=False, sep='\t')
-
-    interpret(model, seqs, args.output_prefix, args.profile_or_counts,args.chunk_write,args.batch_size)
+    genome.close()
 
 if __name__ == '__main__':
     # parse the command line arguments
