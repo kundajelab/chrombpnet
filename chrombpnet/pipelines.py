@@ -29,11 +29,18 @@ def chrombpnet_train_pipeline(args):
 	args.chr = folds["valid"][0]
 	args.pwm_width=24
 	build_pwm_from_bigwig.main(args)
+
+	# fetch hyperparameters for training
+	import chrombpnet.helpers.hyperparameters.find_chrombpnet_hyperparams as find_chrombpnet_hyperparams
+	args_copy = copy.deepcopy(args)
+	args_copy.output_prefix = os.path.join(args.output_dir,"auxiliary/{}".format(fpx))
+	find_chrombpnet_hyperparams.main(args_copy)
 	
 	# make predictions with input bias model in peaks
 	import chrombpnet.training.predict as predict
 	args_copy = copy.deepcopy(args)
 	args_copy.output_prefix = os.path.join(args_copy.output_dir,"evaluation/bias")
+	args_copy.peaks = os.path.join(args.output_dir,"auxiliary/{}filtered.peaks.bed".format(fpx))
 	args_copy.model_h5 = args.bias_model_path
 	args_copy.nonpeaks = "None"
 	predict.main(args_copy)
@@ -42,12 +49,6 @@ def chrombpnet_train_pipeline(args):
 	bias_metrics = json.load(open(os.path.join(args_copy.output_dir,"evaluation/bias_metrics.json")))
 	print("Bias model pearsonr performance in peaks is: {}".format(str(np.round(bias_metrics["counts_metrics"]["peaks"]["pearsonr"],2))))
 	assert(bias_metrics["counts_metrics"]["peaks"]["pearsonr"] > -0.5) # bias model has negative correlation in peaks - AT rich bias model. Increase bias threshold and retrain bias model. Or use a different bias model with higher bias threshold. 
-
-	# fetch hyperparameters for training
-	import chrombpnet.helpers.hyperparameters.find_chrombpnet_hyperparams as find_chrombpnet_hyperparams
-	args_copy = copy.deepcopy(args)
-	args_copy.output_prefix = os.path.join(args.output_dir,"auxiliary/{}".format(fpx))
-	find_chrombpnet_hyperparams.main(args_copy)
 	
 	# separating models from logs
 	os.rename(os.path.join(args.output_dir,"auxiliary/{}bias_model_scaled.h5".format(fpx)),os.path.join(args.output_dir,"models/{}bias_model_scaled.h5".format(fpx)))
@@ -91,6 +92,7 @@ def chrombpnet_train_pipeline(args):
 	args_copy.output_prefix = os.path.join(args.output_dir,"evaluation/{}chrombpnet".format(fpx))
 	args_copy.model_h5 = os.path.join(args.output_dir,"models/{}chrombpnet.h5".format(fpx))
 	args_copy.nonpeaks = "None"
+	args_copy.peaks = os.path.join(args.output_dir,"auxiliary/{}filtered.peaks.bed".format(fpx))
 	predict.main(args_copy)
 	
 	# marginal footprinting with model
@@ -118,8 +120,9 @@ def chrombpnet_train_pipeline(args):
 
 	# get contributions scores with model
 	args_copy = copy.deepcopy(args)
+	args_copy.peaks = os.path.join(args.output_dir,"auxiliary/{}filtered.peaks.bed".format(fpx))
 	import chrombpnet.evaluation.interpret.interpret as interpret
-	peaks = pd.read_csv(os.path.join(args.peaks),sep="\t",header=None)
+	peaks = pd.read_csv(os.path.join(args_copy.peaks),sep="\t",header=None)
 	if peaks.shape[0] > 30000:
 		sub_peaks = peaks.sample(30000, random_state=1234)
 	else:
@@ -188,6 +191,7 @@ def chrombpnet_qc(args):
 	args_copy = copy.deepcopy(args)
 	args_copy.output_prefix = os.path.join(args.output_dir,"evaluation/{}chrombpnet".format(fpx))
 	args_copy.model_h5 = args.chrombpnet_model
+	args_copy.peaks = os.path.join(args.output_dir,"auxiliary/{}filtered.peaks.bed".format(fpx))
 	args_copy.nonpeaks = "None"
 	predict.main(args_copy)
 	
@@ -217,7 +221,8 @@ def chrombpnet_qc(args):
 	# get contributions scores with model
 	args_copy = copy.deepcopy(args)
 	import chrombpnet.evaluation.interpret.interpret as interpret
-	peaks = pd.read_csv(os.path.join(args.peaks),sep="\t",header=None)
+	args_copy.peaks = os.path.join(args.output_dir,"auxiliary/{}filtered.peaks.bed".format(fpx))
+	peaks = pd.read_csv(os.path.join(args_copy.peaks),sep="\t",header=None)
 	if peaks.shape[0] > 30000:
 		sub_peaks = peaks.sample(30000, random_state=1234)
 	else:
@@ -323,13 +328,16 @@ def train_bias_pipeline(args):
 	# make predictions with trained bias model 
 	import chrombpnet.training.predict as predict
 	args_copy = copy.deepcopy(args)
+	args_copy.nonpeaks = os.path.join(args_copy.output_dir,"auxiliary/{}filtered.bias_nonpeaks.bed".format(fpx))
+	args_copy.peaks = os.path.join(args_copy.output_dir,"auxiliary/{}filtered.bias_peaks.bed".format(fpx))
 	args_copy.output_prefix = os.path.join(args_copy.output_dir,"evaluation/{}bias".format(fpx))
 	args_copy.model_h5 = os.path.join(args.output_dir,"models/{}bias.h5".format(fpx))
 	predict.main(args_copy)
 
 	# get contributions scores with model
 	import chrombpnet.evaluation.interpret.interpret as interpret
-	peaks = pd.read_csv(os.path.join(args.peaks),sep="\t",header=None)
+	args_copy.peaks = os.path.join(args_copy.output_dir,"auxiliary/{}filtered.bias_peaks.bed".format(fpx))
+	peaks = pd.read_csv(os.path.join(args_copy.peaks),sep="\t",header=None)
 	if peaks.shape[0] > 30000:
 		sub_peaks = peaks.sample(30000, random_state=1234)
 	else:
@@ -395,13 +403,16 @@ def bias_model_qc(args):
 	# make predictions with trained bias model 
 	import chrombpnet.training.predict as predict
 	args_copy = copy.deepcopy(args)
+	args_copy.nonpeaks = os.path.join(args_copy.output_dir,"auxiliary/{}filtered.bias_nonpeaks.bed".format(fpx))
+	args_copy.peaks = os.path.join(args_copy.output_dir,"auxiliary/{}filtered.bias_peaks.bed".format(fpx))
 	args_copy.output_prefix = os.path.join(args_copy.output_dir,"evaluation/{}bias".format(fpx))
 	args_copy.model_h5 = args.bias_model
 	predict.main(args_copy)
 
 	# get contributions scores with model
 	import chrombpnet.evaluation.interpret.interpret as interpret
-	peaks = pd.read_csv(os.path.join(args.peaks),sep="\t",header=None)
+	args_copy.peaks = os.path.join(args_copy.output_dir,"auxiliary/{}filtered.bias_peaks.bed".format(fpx))
+	peaks = pd.read_csv(os.path.join(args_copy.peaks),sep="\t",header=None)
 	if peaks.shape[0] > 30000:
 		sub_peaks = peaks.sample(30000, random_state=1234)
 	else:
