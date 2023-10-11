@@ -69,6 +69,7 @@ def main(args):
     test_nonpeaks = param_utils.filter_edge_regions(test_nonpeaks, bw, args.inputlen, peaks_bool=0)
 
     peaks = param_utils.filter_edge_regions(peaks, bw, args.inputlen, peaks_bool=1)
+    test_peaks = param_utils.filter_edge_regions(test_peaks, bw, args.inputlen, peaks_bool=1)
 
     # step 2 filtering: filter nonpeaks that have counts less than a threshold_factor (minimum of peak counts)
     peak_cnts, _ = param_utils.get_seqs_cts(genome, bw, peaks, args.inputlen, args.outputlen)
@@ -98,6 +99,10 @@ def main(args):
     frames = [nonpeaks, test_nonpeaks]
     all_nonpeaks = pd.concat(frames)
     all_nonpeaks.to_csv("{}filtered.bias_nonpeaks.bed".format(args.output_prefix), sep="\t", header=False, index=False)
+
+    frames = [peaks, test_peaks]
+    all_peaks = pd.concat(frames)
+    all_peaks.to_csv("{}filtered.bias_peaks.bed".format(args.output_prefix), sep="\t", header=False, index=False)
 
     # find counts loss weight for model training - using train and validation set
     counts_loss_weight = np.median(final_cnts[(final_cnts < upper_thresh) & (final_cnts>lower_thresh)])/10
