@@ -132,15 +132,17 @@ def main(args):
         # load data
         regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
         print(regions_df.head())
+        with pyfaidx.Fasta(args.genome) as g:
+            seqs, regions_used = bigwig_helper.get_seq(regions_df, g, inputlen)
+
         gs = bigwig_helper.read_chrom_sizes(args.chrom_sizes)
-        regions = bigwig_helper.get_regions(args.regions, outputlen) # output regions
+        regions = bigwig_helper.get_regions(args.regions, outputlen, regions_used) # output regions
 
         if args.debug_chr is not None:
             regions_df = regions_df[regions_df['chr'].isin(args.debug_chr)]
             regions = [x for x in regions if x[0]==args.debug_chr]
+        regions_df[regions_used].to_csv(args.output_prefix + "_chrombpnet_nobias_preds.bed", sep="\t", header=False, index=False)
 
-        with pyfaidx.Fasta(args.genome) as g:
-            seqs = data_utils.get_seq(regions_df, g, inputlen)
 
         pred_logits_wo_bias, pred_logcts_wo_bias = model_chrombpnet_nb.predict([seqs],
                                           batch_size = args.batch_size,
@@ -167,19 +169,19 @@ def main(args):
         inputlen = int(model_chrombpnet.input_shape[1])
         outputlen = int(model_chrombpnet.output_shape[0][1])
 
-
         # load data
         regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
         print(regions_df.head())
+        with pyfaidx.Fasta(args.genome) as g:
+            seqs, regions_used = bigwig_helper.get_seq(regions_df, g, inputlen)
+
         gs = bigwig_helper.read_chrom_sizes(args.chrom_sizes)
-        regions = bigwig_helper.get_regions(args.regions, outputlen) # output regions
+        regions = bigwig_helper.get_regions(args.regions, outputlen, regions_used) # output regions
+        regions_df[regions_used].to_csv(args.output_prefix + "_chrombpnet_preds.bed", sep="\t", header=False, index=False)
 
         if args.debug_chr is not None:
             regions_df = regions_df[regions_df['chr'].isin(args.debug_chr)]
             regions = [x for x in regions if x[0]==args.debug_chr]
-
-        with pyfaidx.Fasta(args.genome) as g:
-            seqs = data_utils.get_seq(regions_df, g, inputlen)
 
         pred_logits, pred_logcts = model_chrombpnet.predict([seqs],
                                           batch_size = args.batch_size,
@@ -210,15 +212,15 @@ def main(args):
         # load data
         regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
         print(regions_df.head())
-        gs = bigwig_helper.read_chrom_sizes(args.chrom_sizes)
-        regions = bigwig_helper.get_regions(args.regions, outputlen) # output regions
+        with pyfaidx.Fasta(args.genome) as g:
+            seqs, regions_used = bigwig_helper.get_seq(regions_df, g, inputlen)
 
+        regions_df[regions_used].to_csv(args.output_prefix + "_bias_preds.bed", sep="\t", header=False, index=False)
+        gs = bigwig_helper.read_chrom_sizes(args.chrom_sizes)
+        regions = bigwig_helper.get_regions(args.regions, outputlen, regions_used) # output regions
         if args.debug_chr is not None:
             regions_df = regions_df[regions_df['chr'].isin(args.debug_chr)]
             regions = [x for x in regions if x[0]==args.debug_chr]
-
-        with pyfaidx.Fasta(args.genome) as g:
-            seqs = data_utils.get_seq(regions_df, g, inputlen)
 
 
         pred_bias_logits, pred_bias_logcts = model_bias.predict(seqs,
@@ -242,5 +244,5 @@ def main(args):
     
 
 if __name__=="__main__":
-    args = parse_args
+    args = parse_args()
     main(args)

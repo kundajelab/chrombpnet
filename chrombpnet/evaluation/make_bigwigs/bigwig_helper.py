@@ -1,5 +1,6 @@
 import pyBigWig
 import numpy as np
+from chrombpnet.training.utils.data_utils import one_hot
 
 def read_chrom_sizes(fname):
     with open(fname) as f:
@@ -8,7 +9,24 @@ def read_chrom_sizes(fname):
  
     return gs
 
-def get_regions(regions_file, seqlen):
+def get_seq(peaks_df, genome, width):
+    """
+    Same as get_cts, but fetches sequence from a given genome.
+    """
+    vals = []
+    peaks_used = []
+    for i, r in peaks_df.iterrows():
+        sequence = str(genome[r['chr']][(r['start']+r['summit'] - width//2):(r['start'] + r['summit'] + width//2)])
+        if len(sequence) == width:
+            vals.append(sequence)
+            peaks_used.append(True)
+        else:
+            peaks_used.append(False)
+
+    return one_hot.dna_to_one_hot(vals), np.array(peaks_used)
+
+
+def get_regions(regions_file, seqlen, regions_used):
     # regions file is assumed to be centered at summit (2nd + 10th column)
     # it is adjusted to be of length seqlen centered at summit
 
@@ -17,7 +35,7 @@ def get_regions(regions_file, seqlen):
     with open(regions_file) as r:
         regions = [x.strip().split('\t') for x in r]
 
-    regions = [[x[0], int(x[1])+int(x[9])-seqlen//2, int(x[1])+int(x[9])+seqlen//2, int(x[1])+int(x[9])] for x in regions]
+    regions = [[x[0], int(x[1])+int(x[9])-seqlen//2, int(x[1])+int(x[9])+seqlen//2, int(x[1])+int(x[9])] for x in np.array(regions)[regions_used]]
 
     return regions
 
