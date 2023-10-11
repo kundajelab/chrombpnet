@@ -18,16 +18,20 @@ def parse_args():
     parser.add_argument('-c', '--chrom-sizes', type=str, required=True, help="Chrom sizes file")
     parser.add_argument('-op', '--output-prefix', type=str, required=True, help="Output prefix (path/to/prefix)")
     parser.add_argument('-d', '--data-type', required=True, type=str, choices=['ATAC', 'DNASE'], help="assay type")
+    parser.add_argumen('--bsort', required=False, default=False, action='store_true', help="use bedtools sort (default is unix sort)")
+    parser.add_argumen('--no-st', required=False,  default=False, action='store_true', help="No streaming in preprocessing")
+    parser.add_argumen('--tmpdir', required=False,  type=str, default=None, help="tmp dir path for unix sort command")
     parser.add_argument('-ps', '--plus-shift', type=int, default=None, help="Plus strand shift applied to reads. Estimated if not specified")
     parser.add_argument('-ms', '--minus-shift', type=int, default=None, help="Minus strand shift applied to reads. Estimated if not specified")
     parser.add_argument('--ATAC-ref-path', type=str, default=None, help="Path to ATAC reference motifs (chrombpnet/data/ATAC.ref.motifs.txt used by default)")
     parser.add_argument('--DNASE-ref-path', type=str, default=None, help="Path to DNASE reference motifs (chrombpnet/data/DNASE.ref.motifs.txt used by default)")
     parser.add_argument('--num-samples', type=int, default=10000, help="Number of reads to sample from BAM/fragment/tagAlign file for shift estimation")
     args = parser.parse_args()
+
     return args
 
 
-def generate_bigwig(input_bam_file, input_fragment_file, input_tagalign_file, output_prefix, genome_fasta_file, chrom_sizes_file, plus_shift_delta, minus_shift_delta):
+def generate_bigwig(input_bam_file, input_fragment_file, input_tagalign_file, output_prefix, genome_fasta_file, bsort, tmpdir, no_st, chrom_sizes_file, plus_shift_delta, minus_shift_delta):
     assert (input_bam_file is None) + (input_fragment_file is None) + (input_tagalign_file is None) == 2, "Only one input file!"
 
     if input_bam_file:
@@ -37,14 +41,36 @@ def generate_bigwig(input_bam_file, input_fragment_file, input_tagalign_file, ou
     elif input_tagalign_file:
         p1 = auto_shift_detect.tagalign_stream(input_tagalign_file)
 
-    cmd = """awk -v OFS="\\t" '{{if ($6=="+"){{print $1,$2{0:+},$3,$4,$5,$6}} else if ($6=="-") {{print $1,$2,$3{1:+},$4,$5,$6}}}}' | sort -k1,1 | bedtools genomecov -bg -5 -i stdin -g {2} | bedtools sort -i stdin """.format(plus_shift_delta, minus_shift_delta, chrom_sizes_file)
+    if tmpdir is None:
+        if bsort:
+            cmd = """awk -v OFS="\\t" '{{if ($6=="+"){{print $1,$2{0:+},$3,$4,$5,$6}} else if ($6=="-") {{print $1,$2,$3{1:+},$4,$5,$6}}}}' | sort -k1,1 | bedtools genomecov -bg -5 -i stdin -g {2} | bedtools sort -i stdin """.format(plus_shift_delta, minus_shift_delta, chrom_sizes_file)
+        else:
+            cmd = """awk -v OFS="\\t" '{{if ($6=="+"){{print $1,$2{0:+},$3,$4,$5,$6}} else if ($6=="-") {{print $1,$2,$3{1:+},$4,$5,$6}}}}' | sort -k1,1 | bedtools genomecov -bg -5 -i stdin -g {2} | LC_COLLATE="C" sort -k1,1 -k2,2n """.format(plus_shift_delta, minus_shift_delta, chrom_sizes_file)
+    else:
+        assert(os.path.isdir(tmpdir)) # tmp dir path does not exsist
+        if bsort:
+            cmd = """awk -v OFS="\\t" '{{if ($6=="+"){{print $1,$2{0:+},$3,$4,$5,$6}} else if ($6=="-") {{print $1,$2,$3{1:+},$4,$5,$6}}}}' | sort -T {3} -k1,1 | bedtools genomecov -bg -5 -i stdin -g {2} | bedtools sort -i stdin """.format(plus_shift_delta, minus_shift_delta, chrom_sizes_file, tmpdir)
+        else:
+            cmd = """awk -v OFS="\\t" '{{if ($6=="+"){{print $1,$2{0:+},$3,$4,$5,$6}} else if ($6=="-") {{print $1,$2,$3{1:+},$4,$5,$6}}}}' | sort -T {3} -k1,1 | bedtools genomecov -bg -5 -i stdin -g {2} | LC_COLLATE="C" sort -T {3} -k1,1 -k2,2n """.format(plus_shift_delta, minus_shift_delta, chrom_sizes_file, tmpdir)
+
+    print(cmd)
+
 
     tmp_bedgraph = tempfile.NamedTemporaryFile()
-    print("Making BedGraph")
-    with open(tmp_bedgraph.name, 'w') as f:
-        p2 = subprocess.Popen([cmd], stdin=subprocess.PIPE, stdout=f, shell=True)
-        auto_shift_detect.stream_filtered_tagaligns(p1, genome_fasta_file, p2)
-        p2.communicate()
+    if no_st:
+        print("Making BedGraph (Do not filter chromosomes not in reference fasta)")
+
+        with open(tmp_bedgraph.name, 'w') as f:
+            p2 = subprocess.Popen([cmd], stdin=p1.stdout, stdout=f, shell=True)
+            p1.stdout.close()
+            p2.communicate()
+    else:
+        print("Making BedGraph (Filter chromosomes not in reference fasta)")
+
+        with open(tmp_bedgraph.name, 'w') as f:
+            p2 = subprocess.Popen([cmd], stdin=subprocess.PIPE, stdout=f, shell=True)
+            auto_shift_detect.stream_filtered_tagaligns(p1, genome_fasta_file, p2)
+            p2.communicate()
 
     print("Making Bigwig")
     subprocess.run(["bedGraphToBigWig", tmp_bedgraph.name, chrom_sizes_file, output_prefix + "_unstranded.bw"])
@@ -91,6 +117,9 @@ def main(args):
             args.input_tagalign_file,
             args.output_prefix,
             args.genome,
+            args.bsort,
+            args.tmpdir,
+            args.no_st,
             args.chrom_sizes,
             plus_shift_delta,
             minus_shift_delta)
