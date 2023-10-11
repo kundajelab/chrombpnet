@@ -72,6 +72,9 @@ def read_parser():
         	optional_train.add_argument("-a","--architecture-from-file",type=str,required=False, default=None, help="Model to use for training")
         	optional_train.add_argument("-fp","--file-prefix",type=str,required=False, default=None, help="File prefix for output to use. All the files will be prefixed with this string if provided.")
         	optional_train.add_argument('-hp', '--html-prefix', required=False, default="./", help="The html prefix to use for the html file output.")
+        	optional_train.add_argument('--bsort', required=False, default=False, action='store_true', help="In prpeprocess, by deafult we sort bam using unix sort but sometimes LC collate can cause issues, so this can be set to use betools sort which works well but is memory intensive..")
+        	optional_train.add_argument('--tmpdir', required=False, default=None, type=str, help="temp dir for unix sort")
+        	optional_train.add_argument('--no-st', required=False, default=False, action='store_true', help="Dont do streaming  and filtering in preprocessing (short chromosome contrigs not in reference fasta are not removed)")
 
         	return required_train, optional_train
 
