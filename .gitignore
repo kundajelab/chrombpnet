@@ -17,6 +17,7 @@
 *.bai
 *.bw
 *.fai
+*.json
 # Directories #
 # logs
 results
@@ -25,3 +26,5 @@ tracks
 needs_cleanup
 old
 reference
+melanie_models/
+melanie_bias_model.sh

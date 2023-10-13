@@ -1,0 +1,4 @@
+#docker run -it --rm --memory=100g --gpus device=$1 --mount src=/mnt/lab_data2/anusri/chrombpnet,target=/mydata,type=bind  kundajelab/chrombpnet:dev
+docker run -it --rm --memory=100g --gpus device=$1 --mount src=/mnt/lab_data2/anusri/chrombpnet,target=/mydata,type=bind  kundajelab/chrombpnet:latest
+
+

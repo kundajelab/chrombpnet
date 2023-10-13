@@ -1,0 +1,690 @@
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR993XED/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR993XED/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR637OPZ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR637OPZ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR368FYV/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR368FYV/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR700HPA/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR700HPA/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR940YDN/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR940YDN/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR096VEO/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR096VEO/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR208NBF/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR208NBF/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR761TKU/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR761TKU/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR854TTM/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR854TTM/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR275LCF/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR275LCF/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR487SOP/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR487SOP/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR563ZNI/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR563ZNI/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR335JVB/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR335JVB/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR213YPO/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR213YPO/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR373TDL/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR373TDL/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR474XFV/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR474XFV/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR409YCK/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR409YCK/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR762YFD/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR762YFD/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR684KUG/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR684KUG/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR329XFZ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR329XFZ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR999NKW/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR999NKW/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR851EBF/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR851EBF/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR312UCH/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR312UCH/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR509JPT/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR509JPT/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR522FGI/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR522FGI/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR821JHD/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR821JHD/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR490MSG/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR490MSG/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR174SUM/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR174SUM/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR483RKN/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR483RKN/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR123WME/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR123WME/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR231BZU/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR231BZU/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR212LYK/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR212LYK/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR788TRR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR788TRR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR624CTU/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR624CTU/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR544YXV/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR544YXV/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR386HAZ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR386HAZ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR204FCV/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR204FCV/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR220ASC/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR220ASC/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR679NRJ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR679NRJ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR180HEL/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR180HEL/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR095QNB/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR095QNB/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR134OSR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR134OSR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR189VFC/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR189VFC/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR237VSF/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR237VSF/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR065CER/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR065CER/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR059IHA/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR059IHA/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR248ZAC/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR248ZAC/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR673ZMQ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR673ZMQ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR392YGP/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR392YGP/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR915MTG/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR915MTG/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR821QHC/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR821QHC/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR634WYX/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR634WYX/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR653VSR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR653VSR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR603LVR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR603LVR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR540BML/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR540BML/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR872WGW/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR872WGW/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR017RQC/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR017RQC/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR222SCA/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR222SCA/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR345NVR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR345NVR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR712ZRY/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR712ZRY/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR251POP/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR251POP/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR689SDA/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR689SDA/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR390SLL/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR390SLL/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR376YMU/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR376YMU/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR379NMT/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR379NMT/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR960KGO/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR960KGO/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR773USD/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR773USD/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR156FDX/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR156FDX/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR594TMY/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR594TMY/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR227FVE/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR227FVE/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR925LGW/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR925LGW/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR053SGP/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR053SGP/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR355SGJ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR355SGJ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR890DWH/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR890DWH/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR454UTH/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR454UTH/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR315QWI/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR315QWI/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR648JJT/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR648JJT/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR302PTB/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR302PTB/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR854ZBA/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR854ZBA/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR611BQR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR611BQR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR516YAD/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR516YAD/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR905PWV/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR905PWV/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR824DUE/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR824DUE/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR991PBP/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR991PBP/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR283LPH/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR283LPH/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR392UJM/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR392UJM/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR024WOD/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR024WOD/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR608KJD/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR608KJD/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR042AWH/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR042AWH/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR924SDV/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR924SDV/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR437OOJ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR437OOJ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR802GEV/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR802GEV/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR249FXU/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR249FXU/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR408IVU/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR408IVU/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR615YIL/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR615YIL/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR233HSC/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR233HSC/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR535NOD/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR535NOD/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR641KNU/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR641KNU/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR025MEO/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR025MEO/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR452COS/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR452COS/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR040DJK/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR040DJK/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR731ODJ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR731ODJ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR038WVV/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR038WVV/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR241VGH/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR241VGH/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR335LHS/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR335LHS/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR214EIV/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR214EIV/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR331JFZ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR331JFZ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR548QCP/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR548QCP/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR710SMN/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR710SMN/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR414DVK/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR414DVK/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR133CMC/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR133CMC/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR487QSB/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR487QSB/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR835WBW/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR835WBW/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR305QTE/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR305QTE/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR000RBT/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR000RBT/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR705KEB/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR705KEB/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR545UJP/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR545UJP/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR635CAC/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR635CAC/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR163KRG/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR163KRG/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR839IAD/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR839IAD/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR580JBA/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR580JBA/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR470ZNM/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR470ZNM/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR260ZIV/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR260ZIV/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR370QWN/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR370QWN/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR512FHU/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR512FHU/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR117PYB/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR117PYB/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR122NDR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR122NDR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR092SRS/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR092SRS/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR609GST/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR609GST/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR996ZCR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR996ZCR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR419UYY/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR419UYY/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR459AYS/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR459AYS/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR096BPX/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR096BPX/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR584AXZ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR584AXZ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR660WSB/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR660WSB/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR548KIL/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR548KIL/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR858GTE/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR858GTE/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR044ATC/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR044ATC/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR477YSU/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR477YSU/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR305XRF/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR305XRF/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR072UYN/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR072UYN/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR383RDZ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR383RDZ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR558ZSN/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR558ZSN/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR290AUK/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR290AUK/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR372IGW/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR372IGW/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR846VPV/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR846VPV/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR552QUA/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR552QUA/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR846VLJ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR846VLJ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR452OSK/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR452OSK/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR373GMM/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR373GMM/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR926TFY/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR926TFY/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR621JYI/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR621JYI/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR422SUG/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR422SUG/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR846ZBX/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR846ZBX/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR614JAG/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR614JAG/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR424KQH/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR424KQH/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR948MQC/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR948MQC/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR685OFR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR685OFR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR201FIW/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR201FIW/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR628PLS/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR628PLS/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR304ZDQ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR304ZDQ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR492FJO/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR492FJO/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR310UDW/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR310UDW/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR775SYU/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR775SYU/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR326ESM/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR326ESM/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR425WQW/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR425WQW/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR607BTF/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR607BTF/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR131CHJ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR131CHJ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR706GDQ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR706GDQ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR404LLJ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR404LLJ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR917WJS/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR917WJS/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR630REB/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR630REB/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR857MCZ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR857MCZ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR904UKR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR904UKR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR335XRZ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR335XRZ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR830ALP/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR830ALP/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR528YDD/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR528YDD/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR591PIX/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR591PIX/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR011NJP/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR011NJP/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR040PBN/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR040PBN/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR954BDA/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR954BDA/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR914DTI/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR914DTI/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR476VJY/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR476VJY/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR344ZTM/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR344ZTM/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR803FKU/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR803FKU/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR918TVE/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR918TVE/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR359HFH/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR359HFH/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR322SBN/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR322SBN/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR628SXX/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR628SXX/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR939EVW/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR939EVW/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR063UNG/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR063UNG/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR078EBD/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR078EBD/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR439TZT/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR439TZT/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR400ISH/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR400ISH/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR901IEQ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR901IEQ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR902CFR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR902CFR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR204SMO/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR204SMO/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR823ZCR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR823ZCR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR258JCL/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR258JCL/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR635AIF/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR635AIF/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR940QJU/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR940QJU/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR637MUF/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR637MUF/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR605EGR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR605EGR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR831KAH/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR831KAH/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR399OSE/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR399OSE/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR115OIV/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR115OIV/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR373NFA/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR373NFA/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR113MBR/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR113MBR/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR261PWP/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR261PWP/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR554WGQ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR554WGQ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR159GFS/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR159GFS/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR086OGH/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR086OGH/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR357WQH/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR357WQH/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR920FQJ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR920FQJ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR589ROM/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR589ROM/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR524CPZ/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR524CPZ/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR886VCC/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR886VCC/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR442OAV/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR442OAV/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR208HAP/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR208HAP/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR381LJX/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR381LJX/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR926GDT/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR926GDT/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR962ITF/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR962ITF/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR718HWW/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR718HWW/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR512YXO/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR512YXO/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR084FHK/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR084FHK/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR775KMA/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR775KMA/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR729FNL/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR729FNL/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR253QLW/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR253QLW/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR610AQP/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR610AQP/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed
+zcat /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR566LZT/interpret_uploads/selected.regions.valid.merged.bed.gz | LC_COLLATE=C sort -k1,1 -k2,2n > atac_temp.bed
+bedToBigBed atac_temp.bed /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/reference/chrom.sizes /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/ENCSR566LZT/interpret_uploads/selected.regions.valid.merged.bigBed
+rm atac_temp.bed

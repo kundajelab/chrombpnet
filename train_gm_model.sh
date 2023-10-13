@@ -1,0 +1,12 @@
+CUDA_VISIBLE_DEVICES=1 python src/training/train.py \
+       --genome=reference/hg38.genome.fa \
+       --bigwig=results/chrombpnet/DNASE_SE/GM12878/data/GM12878_unstranded.bw \
+       --peaks=results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/over_fitting_test/filtered.peaks.bed \
+       --nonpeaks=results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/over_fitting_test/filtered.nonpeaks.bed \
+       --params=results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/over_fitting_test/chrombpnet_model_params.tsv \
+       --output_prefix=results/chrombpnet/DNASE_SE/GM12878/nautilus_runs/over_fitting_test/chrombpnet \
+       --chr_fold_path=splits/fold_0.json \
+       --seed=1234 \
+       --batch_size=64 \
+       --architecture_from_file=src/training/models/chrombpnet_with_bias_model.py \
+       --trackables logcount_predictions_loss loss logits_profile_predictions_loss val_logcount_predictions_loss val_loss val_logits_profile_predictions_loss

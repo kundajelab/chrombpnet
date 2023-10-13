@@ -39,6 +39,7 @@ def import_tfmodisco_motifs(tfm_results_path, trim=True, only_pos=True):
                     pfms[key] = []
                     
                 for seqlet in pattern["seqlets_and_alnmts"]["seqlets"]:
+                    #pfms[key].append(seqlet.decode("utf-8"))
                     pfms[key].append(seqlet)
                     
                 #break
@@ -76,18 +77,19 @@ def main():
 				peak_id = int(vals[0].split(":")[1])
 				ss = vals[1].split(":")[1]
 				ee = vals[2].split(":")[1]
-				blist = [bed.loc[peak_id,0], bed.loc[peak_id,1]+bed.loc[peak_id,9]-250+int(ss), bed.loc[peak_id,1]+bed.loc[peak_id,9]-250+int(ee), keyd]
+				blist = [bed.loc[peak_id,0], bed.loc[peak_id,1]+bed.loc[peak_id,9]-500+int(ss), bed.loc[peak_id,1]+bed.loc[peak_id,9]-500+int(ee), keyd]
 				lists.append(blist)
 		else:
 			keyd = key.split("_")[1].replace(".pattern","")+"_"+key.split("_")[-1]
 			#keyd = keyd.values[0]
 			#print(keyd)
 			for seqlet in pfms[key]:
+				#print(seqlet)
 				vals = seqlet.split(",")
 				peak_id = int(vals[0].split(":")[1])
 				ss = vals[1].split(":")[1]
 				ee = vals[2].split(":")[1]
-				blist = [bed.loc[peak_id,0], bed.loc[peak_id,1]+bed.loc[peak_id,9]-250+int(ss), bed.loc[peak_id,1]+bed.loc[peak_id,9]-250+int(ee), keyd]
+				blist = [bed.loc[peak_id,0], bed.loc[peak_id,1]+bed.loc[peak_id,9]-500+int(ss), bed.loc[peak_id,1]+bed.loc[peak_id,9]-500+int(ee), keyd]
 				lists.append(blist)
 			print(key)
         
@@ -104,15 +106,19 @@ def main():
 	with open(os.path.join(args.output_dir,"hit_calls_in_modisco_annotations.bed"), "w") as f:
 		proc = subprocess.Popen(comm, stdout=f)
 		proc.wait()
-	
-	if tomtom is not None:
-		names = ["hit_chr", "hit_start", "hit_end", "hit_name", "strand", "match_score", "imp_score", "cwm_score", "pvalue", "qvalue", "tfchr", "tfstart", "tfend", "tfname", "nb"]
 
-	else:
-		names = ["hit_chr", "hit_start", "hit_end", "hit_name", "strand", "imp_score", "peak_index", "cwm_score", "pvalue",  "qvalue","tfchr", "tfstart", "tfend", "tfname", "nb"]
-		#names = ["hit_chr", "hit_start", "hit_end", "hit_name", "strand", "imp_score", "tfchr", "tfstart", "tfend", "tfname", "nb"]
-		#names = ["hit_chr", "hit_start", "hit_end", "hit_name", "strand", "imp_score", "peak_index", "cwm_score", "tfchr", "tfstart", "tfend", "tfname", "nb"]
-		#names = ["hit_chr", "hit_start", "hit_end", "hit_name", "strand", "imp_score", "cwm_score", "tfchr", "tfstart", "tfend", "tfname", "nb"]
+#	names = ["hit_chr", "hit_start", "hit_end", "hit_name", "strand", "match_score", "imp_score", "cwm_score", "pvalue", "qvalue", "cluster", "tfchr", "tfstart", "tfend", "tfname", "nb"]
+#	names = ["hit_chr", "hit_start", "hit_end", "hit_name", "strand", "match_score", "imp_score", "cwm_score", "pvalue", "qvalue", "cluster" , "tfchr", "tfstart", "tfend", "tfname", "nb"]
+	names = ["hit_chr", "hit_start", "hit_end", "hit_name", "strand", "match_score", "imp_score", "cwm_score", "pvalue", "qvalue", "tfchr", "tfstart", "tfend", "tfname", "nb"]
+	
+	#if tomtom is not None:
+	#	names = ["hit_chr", "hit_start", "hit_end", "hit_name", "strand", "match_score", "imp_score", "cwm_score", "pvalue", "qvalue", "tfchr", "tfstart", "tfend", "tfname", "nb"]
+
+	#else:
+	#	#names = ["hit_chr", "hit_start", "hit_end", "hit_name", "strand", "imp_score", "peak_index", "cwm_score", "pvalue",  "qvalue","tfchr", "tfstart", "tfend", "tfname", "nb"]
+	#	#names = ["hit_chr", "hit_start", "hit_end", "hit_name", "strand", "imp_score", "tfchr", "tfstart", "tfend", "tfname", "nb"]
+	#	names = ["hit_chr", "hit_start", "hit_end", "hit_name", "strand", "imp_score", "peak_index", "cwm_score", "tfchr", "tfstart", "tfend", "tfname", "nb"]
+	#	#names = ["hit_chr", "hit_start", "hit_end", "hit_name", "strand", "imp_score", "cwm_score", "tfchr", "tfstart", "tfend", "tfname", "nb"]
 
 	hits = pd.read_csv(os.path.join(args.output_dir,"hit_calls_in_modisco_annotations.bed"), sep="\t", header=None, names=names).drop_duplicates()
 	all_uniq = np.array(list(set(hits["hit_name"].values.tolist())))

@@ -324,8 +324,9 @@ if __name__=="__main__":
 
     # load the snp data
     snp_regions=pd.read_csv(args.snp_data,header=None,sep='\t', names=SNP_SCHEMA)
+    snp_regions['POS0'] = snp_regions['POS0'] - 1
     snp_regions["META_DATA"].fillna('', inplace=True)
-    snp_regions['RSID']=snp_regions['CHR'].astype(str)+'_'+snp_regions['POS0'].astype(str)+'_'+snp_regions['REF'].astype(str)+'_'+snp_regions['ALT'].astype('str')+"_"+snp_regions['META_DATA'].astype('str')
+    snp_regions['RSID']=snp_regions['CHR'].astype(str)+'-'+snp_regions['POS0'].astype(str)+'-'+snp_regions['REF'].astype(str)+'-'+snp_regions['ALT'].astype('str')+"-"+snp_regions['META_DATA'].astype('str')
     print("printing first 5 rows of the input SNP data provided..")
     print(snp_regions.head(5))
 
@@ -371,7 +372,7 @@ if __name__=="__main__":
 
     # unpack rsids to write outputs and write score to output
     snp_effect_scores_pd=pd.DataFrame()
-    snp_effect_scores_pd[["CHR", "POS0", "REF", "ALT", "META_DATA"]] = pd.Series(rsids).str.split('_', expand=True)
+    snp_effect_scores_pd[["CHR", "POS0", "REF", "ALT", "META_DATA"]] = pd.Series(rsids).str.split('-', expand=True)
     snp_effect_scores_pd["log_counts_diff"] = log_counts_diff[used_ids]
     snp_effect_scores_pd["log_probs_diff_abs_sum"] = log_probs_diff_abs_sum[used_ids]
     snp_effect_scores_pd["probs_jsd_diff"] = probs_jsd_diff[used_ids]

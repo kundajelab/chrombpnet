@@ -1,0 +1,47 @@
+#bash retrieve_from_pod_new.sh HEPG2 HEPG2_06.07.2022_bias_128_4_1234_0.8_fold_1 ATAC_PE ATAC 
+#bash retrieve_from_pod_new.sh HEPG2 HEPG2_05.24.2022_bias_128_4_1234_0.8_fold_2 ATAC_PE ATAC
+#bash retrieve_from_pod_new.sh HEPG2 HEPG2_05.22.2022_bias_128_4_1234_0.8_fold_3 ATAC_PE ATAC
+#bash retrieve_from_pod_new.sh HEPG2 HEPG2_05.22.2022_bias_128_4_1234_0.8_fold_4 ATAC_PE ATAC
+
+#bash retrieve_from_pod_new.sh IMR90 IMR90_07.17.2022_bias_128_4_1234_0.3_fold_1_data_type_ATAC_PE ATAC_PE ATAC
+#bash retrieve_from_pod_new.sh IMR90 IMR90_07.17.2022_bias_128_4_1234_0.3_fold_2_data_type_ATAC_PE ATAC_PE ATAC
+#bash retrieve_from_pod_new.sh IMR90 IMR90_07.08.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE ATAC_PE ATAC
+#bash retrieve_from_pod_new.sh IMR90 IMR90_07.07.2022_bias_128_4_1234_0.4_fold_4_data_type_ATAC_PE ATAC_PE ATAC
+
+
+#bash retrieve_from_pod_new.sh H1ESC H1ESC_07.23.2022_bias_128_4_1234_0.7_fold_1_data_type_ATAC_PE ATAC_PE ATAC
+#bash retrieve_from_pod_new.sh H1ESC H1ESC_07.17.2022_bias_128_4_1234_0.8_fold_2_data_type_ATAC_PE ATAC_PE ATAC
+#bash retrieve_from_pod_new.sh H1ESC H1ESC_07.17.2022_bias_128_4_1234_0.8_fold_3_data_type_ATAC_PE ATAC_PE ATAC
+#bash retrieve_from_pod_new.sh H1ESC H1ESC_07.17.2022_bias_128_4_1234_0.8_fold_4_data_type_ATAC_PE ATAC_PE ATAC
+
+bash retrieve_from_pod_new.sh GM12878 GM12878_07.07.2022_bias_128_4_1234_0.8_fold_1_data_type_DNASE_SE DNASE_SE DNASE
+bash retrieve_from_pod_new.sh GM12878 GM12878_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_SE DNASE_SE DNASE 
+bash retrieve_from_pod_new.sh GM12878 GM12878_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_SE DNASE_SE DNASE
+bash retrieve_from_pod_new.sh GM12878 GM12878_07.07.2022_bias_128_4_1234_0.8_fold_4_data_type_DNASE_SE DNASE_SE DNASE
+
+bash retrieve_from_pod_new.sh K562 K562_07.17.2022_bias_128_4_1234_0.4_fold_1_data_type_DNASE_PE DNASE_PE DNASE
+bash retrieve_from_pod_new.sh K562 K562_07.07.2022_bias_128_4_1234_0.5_fold_2_data_type_DNASE_PE DNASE_PE DNASE
+bash retrieve_from_pod_new.sh K562 K562_07.07.2022_bias_128_4_1234_0.5_fold_3_data_type_DNASE_PE DNASE_PE DNASE
+bash retrieve_from_pod_new.sh K562 K562_07.07.2022_bias_128_4_1234_0.5_fold_4_data_type_DNASE_PE DNASE_PE DNASE
+
+bash retrieve_from_pod_new.sh HEPG2 HEPG2_07.13.2022_bias_128_4_1234_0.8_fold_1_data_type_DNASE_PE DNASE_PE DNASE
+bash retrieve_from_pod_new.sh HEPG2 HEPG2_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_PE DNASE_PE DNASE
+bash retrieve_from_pod_new.sh HEPG2 HEPG2_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_PE DNASE_PE DNASE
+bash retrieve_from_pod_new.sh HEPG2 HEPG2_07.07.2022_bias_128_4_1234_0.8_fold_4_data_type_DNASE_PE DNASE_PE DNASE
+
+bash retrieve_from_pod_new.sh IMR90 IMR90_07.07.2022_bias_128_4_1234_0.8_fold_1_data_type_DNASE_SE DNASE_SE DNASE 
+bash retrieve_from_pod_new.sh IMR90 IMR90_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_SE DNASE_SE DNASE
+bash retrieve_from_pod_new.sh IMR90 IMR90_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_SE DNASE_SE DNASE
+bash retrieve_from_pod_new.sh IMR90 IMR90_07.12.2022_bias_128_4_1234_0.8_fold_4_data_type_DNASE_SE DNASE_SE DNASE
+
+bash retrieve_from_pod_new.sh H1ESC H1ESC_07.07.2022_bias_128_4_1234_0.8_fold_1_data_type_DNASE_SE DNASE_SE DNASE
+bash retrieve_from_pod_new.sh H1ESC H1ESC_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_SE DNASE_SE DNASE
+bash retrieve_from_pod_new.sh H1ESC H1ESC_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_SE DNASE_SE DNASE
+bash retrieve_from_pod_new.sh H1ESC H1ESC_07.07.2022_bias_128_4_1234_0.8_fold_4_data_type_DNASE_SE DNASE_SE DNASE
+
+
+
+
+
+
+

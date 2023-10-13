@@ -9,6 +9,7 @@ import pyfaidx
 import sys
 from context import data_utils as data_utils
 from context import load_model_wrapper as load_model_wrapper
+from context import one_hot as one_hot
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 
@@ -28,6 +29,23 @@ parser.add_argument("-d", "--debug-chr", nargs="+", type=str, default=None, help
 args = parser.parse_args()
 
 print(args)
+
+def get_seq(peaks_df, genome, width, regions):
+    """
+    Same as get_cts, but fetches sequence from a given genome.
+    """
+    vals = []
+    included = []
+    pass_regions = []
+    for i, r in peaks_df.iterrows():
+        sequence = str(genome[r['chr']][(r['start']+r['summit'] - width//2):(r['start'] + r['summit'] + width//2)])
+        if len(sequence) == width:
+            vals.append(sequence)
+            included.append(True)
+            pass_regions.append(regions[i])
+        else:
+            included.append(False)
+    return one_hot.dna_to_one_hot(vals), np.array(included), pass_regions
 
 def softmax(x, temp=1):
     norm_x = x - np.mean(x,axis=1, keepdims=True)
@@ -57,7 +75,12 @@ if args.debug_chr is not None:
     regions = [x for x in regions if x[0]==args.debug_chr]
 
 with pyfaidx.Fasta(args.genome) as g:
-    seqs = data_utils.get_seq(regions_df, g, inputlen)
+    seqs, included, regions  = get_seq(regions_df, g, inputlen, regions)
+    print(regions_df.shape)
+    regions_df = regions_df[included].reset_index(drop=True)
+    #regions = np.array(regions)[included].tolist()
+    print(regions_df.shape)
+    print(len(regions))
 
 pred_bias_logits, pred_bias_logcts = model_bias.predict(seqs,
                                       batch_size = args.batch_size,

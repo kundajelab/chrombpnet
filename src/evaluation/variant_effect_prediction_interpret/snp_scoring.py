@@ -158,6 +158,10 @@ def fetch_snp_predictions(snp_regions, inputlen, genome_fasta, batch_size, outpu
             profile_shap[cur_rsid]['ref']=np.sum(profile_explanations[batch_index,:,:]*seqs[batch_index,:,:], axis=1)
             count_shap[cur_rsid]={}
             count_shap[cur_rsid]['ref']=np.sum(count_explanations[batch_index,:,:]*seqs[batch_index,:,:], axis=1)
+            print("ref profile")
+            print(np.max(profile_shap[cur_rsid]['ref']))
+            print("ref counts")
+            print(np.max(count_shap[cur_rsid]['ref']))
 
 
         batch_preds_profile=alt_batch_preds[0]
@@ -175,6 +179,11 @@ def fetch_snp_predictions(snp_regions, inputlen, genome_fasta, batch_size, outpu
             profile_preds[cur_rsid]['alt']=cur_pred_profile 
             profile_shap[cur_rsid]['alt']=np.sum(profile_explanations[batch_index,:,:]*seqs[batch_index,:,:], axis=1)
             count_shap[cur_rsid]['alt']=np.sum(count_explanations[batch_index,:,:]*seqs[batch_index,:,:], axis=1)
+            print("alt profile")
+            print(np.max(profile_shap[cur_rsid]['alt']))
+            print("alt count")
+            print(np.max(count_shap[cur_rsid]['alt']))
+
 
 
     #Store counts
@@ -203,6 +212,7 @@ if __name__=="__main__":
     # load the snp data
     snp_regions=pd.read_csv(args.snp_data,header=None,sep='\t', names=SNP_SCHEMA)
     snp_regions["META_DATA"].fillna('', inplace=True)
+    snp_regions['POS0'] = snp_regions['POS0'] - 1
     snp_regions['RSID']=snp_regions['CHR'].astype(str)+'_'+snp_regions['POS0'].astype(str)+'_'+snp_regions['REF'].astype(str)+'_'+snp_regions['ALT'].astype('str')+"_"+snp_regions['META_DATA'].astype('str')
     print("printing first 5 rows of the input SNP data provided..")
     print(snp_regions.head(5))

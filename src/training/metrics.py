@@ -16,7 +16,87 @@ font = {'family' : 'normal',
         'size'   : 10}
 matplotlib.rc('font', **font)
 
-   
+def get_min_max_normalized_value_new(val, minimum, maximum):
+    ret_val = (val - maximum) / (minimum - maximum)
+
+    if ret_val < 0:
+        return 0
+
+    if ret_val > 1:
+        return 1
+    return ret_val
+
+
+def jsd_min_max_bounds_new(profile):
+    """
+       	Min Max bounds for the jsd metric
+
+        Args:
+            profile (numpy.ndarray): true profile
+
+        Returns:
+            tuple: (min, max) bounds values
+    """
+
+    # uniform distribution profile
+    uniform_profile = np.ones(len(profile)) * (1.0 / len(profile))
+
+    # profile as probabilities
+    profile_prob = profile / np.sum(profile)
+
+    # jsd of profile with uniform profile
+    max_jsd = jensenshannon(profile_prob, uniform_profile)
+
+    # jsd of profile with itself (upper bound)
+    min_jsd = 0.0
+
+    return (min_jsd, max_jsd)
+ 
+def profile_metrics_new(true_counts,pred_probs):
+    '''
+    Get profile metrics
+    '''
+    mnll_pw = []
+    mnll_norm = []
+
+    jsd_pw = []
+    jsd_norm = []
+    jsd_rnd = []
+    jsd_rnd_norm = []
+    mnll_rnd = []
+    mnll_rnd_norm = []
+
+    num_regions = true_counts.shape[0]
+    for idx in range(num_regions):
+
+        # jsd
+        cur_jsd=jensenshannon(true_counts[idx,:]/np.nansum(true_counts[idx,:]),pred_probs[idx,:])
+        jsd_pw.append(cur_jsd)
+        # normalized jsd
+        min_jsd, max_jsd = jsd_min_max_bounds_new(true_counts[idx,:])
+        curr_jsd_norm = get_min_max_normalized_value_new(cur_jsd, min_jsd, max_jsd)
+        jsd_norm.append(curr_jsd_norm)
+
+        # get random shuffling on labels for a worst case performance on metrics - labels versus shuffled labels
+        shuffled_labels=np.random.permutation(true_counts[idx,:])
+        shuffled_labels_prob=shuffled_labels/np.nansum(shuffled_labels)
+
+        # mnll random
+        #curr_rnd_mnll = mnll(true_counts[idx,:],  probs=shuffled_labels_prob)
+        #mnll_rnd.append(curr_rnd_mnll)
+        # normalized mnll random
+        #curr_rnd_mnll_norm = get_min_max_normalized_value_new(curr_rnd_mnll, min_mnll, max_mnll)
+        #mnll_rnd_norm.append(curr_rnd_mnll_norm)
+
+        # jsd random
+        curr_jsd_rnd=jensenshannon(true_counts[idx,:]/np.nansum(true_counts[idx,:]),shuffled_labels_prob)
+        jsd_rnd.append(curr_jsd_rnd)
+        # normalized jsd random
+        curr_rnd_jsd_norm = get_min_max_normalized_value_new(curr_jsd_rnd, min_jsd, max_jsd)
+        jsd_rnd_norm.append(curr_rnd_jsd_norm)
+
+    return np.array(mnll_pw), np.array(mnll_norm), np.array(jsd_pw), np.array(jsd_norm), np.array(jsd_rnd), np.array(jsd_rnd_norm), np.array(mnll_rnd), np.array(mnll_rnd_norm)
+  
 def counts_metrics(labels,preds,outf,title):
     '''
     Get count metrics
