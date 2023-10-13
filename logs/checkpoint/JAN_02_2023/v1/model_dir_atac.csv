@@ -8,7 +8,7 @@ fold_1,K562,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpn
 fold_2,K562,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/K562/K562_07.07.2022_bias_128_4_2356_0.5_fold_2_data_type_ATAC_PE
 fold_3,K562,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/K562/K562_07.07.2022_bias_128_4_2356_0.5_fold_3_data_type_ATAC_PE
 fold_4,K562,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/K562/K562_07.07.2022_bias_128_4_2356_0.5_fold_4_data_type_ATAC_PE
-fold_0,HEPG2,/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/nautilus_runs_jun16/HEPG2_05.09.2022_bias_128_4_1234_0.8_fold_0/
+fold_0,HEPG2,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.09.2022_bias_128_4_1234_0.8_fold_0/
 fold_1,HEPG2,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_06.07.2022_bias_128_4_1234_0.8_fold_1
 fold_2,HEPG2,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.24.2022_bias_128_4_1234_0.8_fold_2
 fold_3,HEPG2,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.22.2022_bias_128_4_1234_0.8_fold_3
