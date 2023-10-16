@@ -20,8 +20,11 @@ def get_model(args, parameters):
     Look at .py models in src/training/models/ for examples. I will try to provide a dummy model as example here - for later.
     The files should have the following two functions - getModelGivenModelOptionsAndWeightInits and save_model_without_bias
     """
-    architecture_module=importlib.machinery.SourceFileLoader('',args.architecture_from_file).load_module()
-    model=architecture_module.getModelGivenModelOptionsAndWeightInits(args, parameters)
+    # get the strategy for multiGPU
+    from chrombpnet.helpers.misc import get_strategy
+    with get_strategy(args).scope():
+        architecture_module=importlib.machinery.SourceFileLoader('',args.architecture_from_file).load_module()
+        model=architecture_module.getModelGivenModelOptionsAndWeightInits(args, parameters)
     print("got the model")
     return model, architecture_module
 

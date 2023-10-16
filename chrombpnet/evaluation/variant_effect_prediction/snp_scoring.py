@@ -31,8 +31,11 @@ def softmax(x, temp=1):
 def load_model_wrapper(args):
     # read .h5 model
     custom_objects={"tf": tf, "multinomial_nll":losses.multinomial_nll}    
-    get_custom_objects().update(custom_objects)    
-    model=load_model(args.model_h5, compile=False)
+    get_custom_objects().update(custom_objects)
+    # get the strategy for multiGPU
+    from chrombpnet.helpers.misc import get_strategy
+    with get_strategy(args).scope():
+        model=load_model(args.model_h5, compile=False)
     print("model loaded succesfully")
     return model
 

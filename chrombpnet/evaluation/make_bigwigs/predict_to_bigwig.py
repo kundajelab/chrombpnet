@@ -112,11 +112,14 @@ def softmax(x, temp=1):
     norm_x = x - np.mean(x,axis=1, keepdims=True)
     return np.exp(temp*norm_x)/np.sum(np.exp(temp*norm_x), axis=1, keepdims=True)
 
-def load_model_wrapper(model_hdf5):
+def load_model_wrapper(args, model_hdf5):
     # read .h5 model
     custom_objects={"multinomial_nll":losses.multinomial_nll, "tf": tf}    
-    get_custom_objects().update(custom_objects)    
-    model=load_model(model_hdf5, compile=False)
+    get_custom_objects().update(custom_objects)
+    # get the strategy for multiGPU
+    from chrombpnet.helpers.misc import get_strategy
+    with get_strategy(args).scope():
+        model=load_model(model_hdf5, compile=False)
     print("got the model")
     model.summary()
     return model
@@ -125,7 +128,7 @@ def main(args):
 
 
     if args.chrombpnet_model_nb:
-        model_chrombpnet_nb = load_model_wrapper(model_hdf5=args.chrombpnet_model_nb)
+        model_chrombpnet_nb = load_model_wrapper(args, model_hdf5=args.chrombpnet_model_nb)
         inputlen = int(model_chrombpnet_nb.input_shape[1])
         outputlen = int(model_chrombpnet_nb.output_shape[0][1])
 
@@ -165,7 +168,7 @@ def main(args):
         	
 
     if args.chrombpnet_model:
-        model_chrombpnet = load_model_wrapper(model_hdf5=args.chrombpnet_model)
+        model_chrombpnet = load_model_wrapper(args, model_hdf5=args.chrombpnet_model)
         inputlen = int(model_chrombpnet.input_shape[1])
         outputlen = int(model_chrombpnet.output_shape[0][1])
 
@@ -205,7 +208,7 @@ def main(args):
         	
 
     if args.bias_model:
-        model_bias = load_model_wrapper(model_hdf5=args.bias_model)
+        model_bias = load_model_wrapper(args, model_hdf5=args.bias_model)
         inputlen = int(model_bias.input_shape[1])
         outputlen = int(model_bias.output_shape[0][1])
 

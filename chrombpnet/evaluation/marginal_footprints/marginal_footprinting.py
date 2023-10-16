@@ -26,7 +26,10 @@ def load_model_wrapper(args):
     # read .h5 model
     custom_objects={"multinomial_nll":losses.multinomial_nll, "tf": tf}    
     get_custom_objects().update(custom_objects)    
-    model=load_model(args.model_h5, compile=False)
+    # get the strategy for multiGPU
+    from chrombpnet.helpers.misc import get_strategy
+    with get_strategy(args).scope():
+	    model=load_model(args.model_h5, compile=False)
     print("got the model")
     model.summary()
     return model

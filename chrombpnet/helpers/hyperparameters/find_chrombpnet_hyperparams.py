@@ -145,7 +145,7 @@ def main(args):
 
     # adjust bias model for training  - using train and validation set
     # the bias model might be trained on a difference read depth compared to the given data - so this step scales the bias model to account for that
-    bias_model = param_utils.load_model_wrapper(args.bias_model_path)
+    bias_model = param_utils.load_model_wrapper(args, args.bias_model_path)
     bias_model_scaled = adjust_bias_model_logcounts(bias_model, nonpeak_seqs[(nonpeak_cnts< upper_thresh) & (nonpeak_cnts>lower_thresh)], nonpeak_cnts[(nonpeak_cnts< upper_thresh) & (nonpeak_cnts>lower_thresh)])
     # save the new bias model
     bias_model_scaled.save("{}bias_model_scaled.h5".format(args.output_prefix))

@@ -170,19 +170,22 @@ def chrombpnet_qc(args):
 	else:
 		fpx = ""
 	
-	def load_model_wrapper(model_hdf5):
+	def load_model_wrapper(args, model_hdf5):
 		# read .h5 model
 		from tensorflow.keras.utils import get_custom_objects
 		from tensorflow.keras.models import load_model
 		import tensorflow as tf
 		import chrombpnet.training.utils.losses as losses
 		custom_objects={"multinomial_nll":losses.multinomial_nll, "tf": tf}    
-		get_custom_objects().update(custom_objects)    
-		model=load_model(model_hdf5)
+		get_custom_objects().update(custom_objects)
+		# get the strategy for multiGPU
+		from chrombpnet.helpers.misc import get_strategy
+		with get_strategy(args).scope():
+			model=load_model(model_hdf5)
 		model.summary()
 		return model
     
-	chrombpnet_md = load_model_wrapper(model_hdf5=args.chrombpnet_model)
+	chrombpnet_md = load_model_wrapper(args, model_hdf5=args.chrombpnet_model)
 	args.inputlen = int(chrombpnet_md.input_shape[1])
 	args.outputlen = int(chrombpnet_md.output_shape[0][1])
 	
@@ -384,19 +387,22 @@ def bias_model_qc(args):
 	else:
 		fpx = ""
 	
-	def load_model_wrapper(model_hdf5):
+	def load_model_wrapper(args, model_hdf5):
 		# read .h5 model
 		from tensorflow.keras.utils import get_custom_objects
 		from tensorflow.keras.models import load_model
 		import tensorflow as tf
 		import chrombpnet.training.utils.losses as losses
 		custom_objects={"multinomial_nll":losses.multinomial_nll, "tf": tf}    
-		get_custom_objects().update(custom_objects)    
-		model=load_model(model_hdf5)
+		get_custom_objects().update(custom_objects)
+		# get the strategy for multiGPU
+		from chrombpnet.helpers.misc import get_strategy
+		with get_strategy(args).scope():
+			model=load_model(model_hdf5)
 		model.summary()
 		return model
     
-	bias_md = load_model_wrapper(model_hdf5=args.bias_model)
+	bias_md = load_model_wrapper(args, model_hdf5=args.bias_model)
 	args.inputlen = int(bias_md.input_shape[1])
 	args.outputlen = int(bias_md.output_shape[0][1])
 	

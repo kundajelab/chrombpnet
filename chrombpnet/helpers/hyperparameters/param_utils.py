@@ -55,11 +55,14 @@ def get_seqs_cts(genome, bw, peaks_df, input_width=2114, output_width=1000):
         vals.append(bigwig_vals)
     return (np.sum(np.array(vals),axis=1), one_hot.dna_to_one_hot(seqs))
 
-def load_model_wrapper(model_h5):
+def load_model_wrapper(args, model_h5):
     # read .h5 model
     custom_objects={"tf": tf, "multinomial_nll":losses.multinomial_nll}    
     get_custom_objects().update(custom_objects)    
-    model=load_model(model_h5)
+    # get the strategy for multiGPU
+    from chrombpnet.helpers.misc import get_strategy
+    with get_strategy(args).scope():
+        model=load_model(model_h5)
     print("got the model")
     model.summary()
     return model
