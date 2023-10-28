@@ -1,5 +1,11 @@
 # Changelog
 
+## Version - 1.4
+- (MAJOR) Bug in chrombpnet modisco_motifs command. seqlets was limited to 50000. If users wanted to change it to 1 million this did not happen.
+- Filter peaks at edges for pred_bw command and bias pipleline. So bias evaluation now done on these filtered peaks.
+- Preprocessing deafulted to use unix sort. Provided option to switch to bedtools sort.
+- Provided option to use filter chromosomes option in preprocessing.
+
 ## Version - 1.3 - Inworks - 2022-12-11
 - Changed pipelines to use modisco-lite, old modisco will soon be removed
 - Added automatic shift scripts to repo and integrated with the pipeline
