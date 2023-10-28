@@ -36,7 +36,7 @@ def read_parser():
         # downstream tool parsers
         preds_parser = subparsers.add_parser("pred_bw", help="Get model prediction bigwigs (Metrics calculated if observed bigwig provided)")
         contribs_parser = subparsers.add_parser("contribs_bw", help="Get contribution score bigwigs")
-        motifs_parser = subparsers.add_parser("modisco_motifs", help="Summarize motifs from contribution scores with TFModisco")
+        motifs_parser = subparsers.add_parser("modisco_motifs", help="(Will soon be deprecated: use modisco motifs from tfmodisco lite) Summarize motifs from contribution scores with TFModisco")
         #custom_preds_parser = subparsers.add_parser("pred_custom", help="Make model predictions on custom sequences and output to .h5 file")
         #custom_contribs_parser = subparsers.add_parser("contribs_custom", help="Get contribution on custom sequences and output to .h5 file")
         footprints_parser = subparsers.add_parser("footprints", help="Get marginal footprinting for given model and given motifs")
