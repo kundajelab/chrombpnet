@@ -1,5 +1,8 @@
 # Changelog
 
+##  Version - 1.5
+- Fixed issue #150, regions_used not found while generating bigwigs from impotance h5s
+
 ## Version - 1.4
 - (MAJOR) Bug in chrombpnet modisco_motifs command. seqlets was limited to 50000. If users wanted to change it to 1 million this did not happen.
 - Filter peaks at edges for pred_bw command and bias pipleline. So bias evaluation now done on these filtered peaks.
