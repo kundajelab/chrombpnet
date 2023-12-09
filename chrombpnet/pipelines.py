@@ -228,7 +228,7 @@ def chrombpnet_qc(args):
 	else:
 		sub_peaks = peaks
 	sub_peaks.to_csv(os.path.join(args_copy.output_dir,"auxiliary/{}30K_subsample_peaks.bed".format(fpx)),sep="\t", header=False, index=False)
-	os.makedirs(os.path.join(args.output_dir,"auxiliary/interpret_subsample/"), exist_ok=False)
+	os.makedirs(os.path.join(args.output_dir,"auxiliary/interpret_subsample/"), exist_ok=True)
 
 	#args_copy.profile_or_counts = ["counts", "profile"]
 	args_copy.profile_or_counts = ["profile"]
