@@ -64,12 +64,14 @@ def main():
 			args_copy = copy.deepcopy(args)
 			args_copy.hdf5 = args_copy.output_prefix + ".counts_scores.h5"
 			args_copy.output_prefix = args.output_prefix + ".counts_scores"
-			
+			args_copy.regions =  args.output_prefix + ".interpreted_regions.bed"
+
 			importance_hdf5_to_bigwig.main(args_copy)
 		if "profile" in  args.profile_or_counts:
 			args_copy = copy.deepcopy(args)
 			args_copy.hdf5 = args_copy.output_prefix + ".profile_scores.h5"
 			args_copy.output_prefix = args.output_prefix + ".profile_scores"
+			args_copy.regions =  args.output_prefix + ".interpreted_regions.bed"
 	
 			importance_hdf5_to_bigwig.main(args_copy)
 			

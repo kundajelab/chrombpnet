@@ -28,6 +28,7 @@ def main(args):
 
 	gs = bigwig_helper.read_chrom_sizes(args.chrom_sizes)
 	regions = bigwig_helper.get_regions(args.regions, SEQLEN)
+	assert(d.shape[0] == len(regions))
 
 	bigwig_helper.write_bigwig(d.sum(1), 
                            regions, 

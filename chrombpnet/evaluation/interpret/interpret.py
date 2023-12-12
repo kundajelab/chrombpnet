@@ -127,7 +127,7 @@ def main(args):
     seqs, peaks_used = input_utils.get_seq(regions_df, genome, inputlen)
     genome.close()
 
-    regions_df[peaks_used].to_csv("{}.interpreted_regions.bed".format(args.output_prefix), header=False, sep='\t')
+    regions_df[peaks_used].to_csv("{}.interpreted_regions.bed".format(args.output_prefix), header=False, index=False, sep='\t')
 
     interpret(model, seqs, args.output_prefix, args.profile_or_counts)
 
