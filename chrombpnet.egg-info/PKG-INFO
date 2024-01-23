@@ -1,0 +1,9 @@
+Metadata-Version: 2.1
+Name: chrombpnet
+Version: 0.1.5
+Summary: chrombpnet predicts chromatin accessibility from sequence
+Download-URL: https://github.com/kundajelab/chrombpnet
+Author-email: anusri @ stanford.edu
+License: MIT
+Requires-Python: >=3.8
+License-File: LICENSE

@@ -11,7 +11,7 @@ def update_data_args(parser):
 
 def update_train_args(parser):
     parser.add_argument("-e", "--epochs", type=int, default=50, help="Maximum epochs to train")
-    parser.add_argument("-es", "--early-stop", type=int, default=5, help="Early stop limit, corresponds to 'patience' in callback")
+    parser.add_argument("-es", "--early-stop", type=int, default=10, help="Early stop limit, corresponds to 'patience' in callback")
     parser.add_argument("-bs", "--batch_size", type=int, default=64)
     parser.add_argument("-l", "--learning-rate", type=float, default=0.001)
     parser.add_argument("-pf", "--params", type=str, required=True, default=None)

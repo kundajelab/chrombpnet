@@ -17,6 +17,21 @@ def get_seq(peaks_df, genome, width):
 
     return one_hot.dna_to_one_hot(vals)
 
+def get_seq_maf(peaks_df, genome, width, maf):
+    """
+    Same as get_cts, but fetches sequence from a given genome.
+    """
+    vals = []
+    peak_coords = []
+
+    for i, r in peaks_df.iterrows():
+        # Fetch sequence from genome
+        sequence = str(genome[r['chr']][(r['start'] + r['summit'] - width // 2):(r['start'] + r['summit'] + width // 2)])
+        vals.append(sequence)
+        peak_coords.append((r['chr'], r['start'] + r['summit'] - width // 2, r['start'] + r['summit'] + width // 2))
+
+    # Apply one-hot encoding considering SNPs
+    return one_hot.dna_to_one_hot_maf(vals, peak_coords, maf)
 
 def get_cts(peaks_df, bw, width):
     """
@@ -45,14 +60,14 @@ def get_coords(peaks_df, peaks_bool):
 
     return np.array(vals)
 
-def get_seq_cts_coords(peaks_df, genome, bw, input_width, output_width, peaks_bool):
+def get_seq_cts_coords(peaks_df, genome, bw, input_width, output_width, peaks_bool, maf):
 
-    seq = get_seq(peaks_df, genome, input_width)
+    seq = get_seq_maf(peaks_df, genome, input_width, maf=maf)
     cts = get_cts(peaks_df, bw, output_width)
     coords = get_coords(peaks_df, peaks_bool)
     return seq, cts, coords
 
-def load_data(bed_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen, outputlen, max_jitter):
+def load_data(bed_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen, outputlen, max_jitter, maf):
     """
     Load sequences and corresponding base resolution counts for training, 
     validation regions in peaks and nonpeaks (2 x 2 x 2 = 8 matrices).
@@ -81,7 +96,8 @@ def load_data(bed_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen,
                                               cts_bw,
                                               inputlen+2*max_jitter,
                                               outputlen+2*max_jitter,
-                                              peaks_bool=1)
+                                              peaks_bool=1,
+                                              maf=maf)
     
     if nonpeak_regions is not None:
         train_nonpeaks_seqs, train_nonpeaks_cts, train_nonpeaks_coords = get_seq_cts_coords(nonpeak_regions,
@@ -89,7 +105,8 @@ def load_data(bed_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen,
                                               cts_bw,
                                               inputlen,
                                               outputlen,
-                                              peaks_bool=0)
+                                              peaks_bool=0,
+                                              maf=maf)
 
 
 

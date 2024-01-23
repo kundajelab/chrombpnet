@@ -5,6 +5,7 @@ https://gist.github.com/amtseng/010dd522daaabc92b014f075a34a0a0b
 """
 
 import numpy as np
+import tabix
 
 def dna_to_one_hot(seqs):
     """
@@ -36,6 +37,54 @@ def dna_to_one_hot(seqs):
     # Get the one-hot encoding for those indices, and reshape back to separate
     return one_hot_map[base_inds[:-4]].reshape((len(seqs), seq_len, 4))
 
+def dna_to_one_hot_maf(seqs, peak_coords, maf_file):
+    """
+    Converts a list of DNA ("ACGT") sequences to one-hot encodings, where the
+    position of 1s is ordered alphabetically by "ACGT". `seqs` must be a list
+    of N strings, where every string is the same length L. Returns an N x L x 4
+    NumPy array of one-hot encodings, in the same order as the input sequences.
+    All bases will be converted to upper-case prior to performing the encoding.
+    Any bases that are not "ACGT" will be given an encoding of all 0s.
+    """
+    seq_len = len(seqs[0])
+    assert np.all(np.array([len(s) for s in seqs]) == seq_len)
+
+    # Join all sequences together into one long string, all uppercase
+    seq_concat = "".join(seqs).upper() + "ACGT"
+    # Add one example of each base, so np.unique doesn't miss indices later
+
+    one_hot_map = np.identity(5)[:, :-1].astype(np.int8)
+
+    # Convert string into array of ASCII character codes;
+    base_vals = np.frombuffer(bytearray(seq_concat, "utf8"), dtype=np.int8)
+
+    # Anything that's not an A, C, G, or T gets assigned a higher code
+    base_vals[~np.isin(base_vals, np.array([65, 67, 71, 84]))] = 85
+
+    # Convert the codes into indices in [0, 4], in ascending order by code
+    _, base_inds = np.unique(base_vals, return_inverse=True)
+
+    # Get the one-hot encoding for those indices, and reshape back to separate
+    one_hot_encoding = one_hot_map[base_inds[:-4]].reshape((len(seqs), seq_len, 4))
+
+    maf = tabix.open(maf_file)
+
+    # Update one-hot encoding based on SNP information
+    for seq_index, (seq_chrom, seq_start, seq_end) in enumerate(peak_coords):
+        # print(seq_index, seq_chrom, seq_start, seq_end)
+        if seq_chrom in ['chr' + str(x) for x in range(1,23)]:
+            matches = maf.query(seq_chrom, seq_start, seq_end)
+            if matches:
+                # print(matches)
+                for match in matches:
+                    ref_allele_idx = "ACGT".index(match[2])
+                    minor_allele_idx = "ACGT".index(match[3])
+                    pos_index = int(match[1]) - 1 - seq_start
+                    one_hot_encoding[seq_index, pos_index, :] = 0.0
+                    one_hot_encoding[seq_index, pos_index, ref_allele_idx] = 1.0 - float(match[4])
+                    one_hot_encoding[seq_index, pos_index, minor_allele_idx] = float(match[4])
+
+    return one_hot_encoding
 
 def one_hot_to_dna(one_hot):
     """

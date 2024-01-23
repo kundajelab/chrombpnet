@@ -2,6 +2,7 @@ import chrombpnet.training.data_generators.batchgen_generator as batchgen_genera
 from chrombpnet.training.utils import data_utils
 import pandas as pd
 import json
+import tabix
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 
@@ -74,6 +75,8 @@ def initialize_generators(args, mode, parameters, return_coords):
         nonpeak_regions=pd.read_csv(args.nonpeaks,header=None,sep='\t',names=NARROWPEAK_SCHEMA)
         nonpeak_regions, chroms=get_bed_regions_for_fold_split(nonpeak_regions, mode, splits_dict) 
 
+    maf_file = '/users/soumyak/maf_encoding/eur.hg38.frq.formatted.tsv.gz'
+
     inputlen, outputlen, \
     nonpeak_regions, negative_sampling_ratio, \
     max_jitter, add_revcomp, shuffle_at_epoch_start  =  fetch_data_and_model_params_based_on_mode(mode, args, parameters, nonpeak_regions, peak_regions)
@@ -89,7 +92,8 @@ def initialize_generators(args, mode, parameters, return_coords):
                                     cts_bw_file=args.bigwig,
                                     add_revcomp=add_revcomp,
                                     return_coords=return_coords,
-                                    shuffle_at_epoch_start=shuffle_at_epoch_start
+                                    shuffle_at_epoch_start=shuffle_at_epoch_start,
+                                    maf=maf_file
                                     )
     
     return generator
