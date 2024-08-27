@@ -3,12 +3,12 @@ fold_1,GM12878,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrom
 fold_2,GM12878,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_SE
 fold_3,GM12878,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_SE
 fold_4,GM12878,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.8_fold_4_data_type_DNASE_SE
-fold_0,K562,/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/nautilus_runs_may18/K562_05.13.2022_bias_128_4_1234_0.5_fold_0/
+fold_0,K562,/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_PE/K562/nautilus_runs_may18/K562_05.13.2022_bias_128_4_1234_0.5_fold_0
 fold_1,K562,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/K562/K562_07.17.2022_bias_128_4_1234_0.4_fold_1_data_type_DNASE_PE
 fold_2,K562,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/K562/K562_07.07.2022_bias_128_4_1234_0.5_fold_2_data_type_DNASE_PE
 fold_3,K562,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/K562/K562_07.07.2022_bias_128_4_1234_0.5_fold_3_data_type_DNASE_PE
 fold_4,K562,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/K562/K562_07.07.2022_bias_128_4_1234_0.5_fold_4_data_type_DNASE_PE
-fold_0,HEPG2,/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_PE/HEPG2/HEPG2_06.08.2022_bias_128_4_1234_0.8_fold_0/
+fold_0,HEPG2,/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/DNASE_PE/HEPG2/HEPG2_06.08.2022_bias_128_4_1234_0.8_fold_0
 fold_1,HEPG2,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/HEPG2/HEPG2_07.13.2022_bias_128_4_1234_0.8_fold_1_data_type_DNASE_PE
 fold_2,HEPG2,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/HEPG2/HEPG2_07.07.2022_bias_128_4_1234_0.8_fold_2_data_type_DNASE_PE
 fold_3,HEPG2,/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/HEPG2/HEPG2_07.07.2022_bias_128_4_1234_0.8_fold_3_data_type_DNASE_PE
