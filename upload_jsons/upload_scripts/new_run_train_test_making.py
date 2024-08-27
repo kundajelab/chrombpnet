@@ -3,11 +3,7 @@ import os
 
 #model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_atac.csv",sep=",", header=None)
 #model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_dnase.csv",sep=",", header=None)
-#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_dnase_v2.1.csv",sep=",",header=None)
-#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_subsample_atac.csv",sep=",",header=None)
-model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts/model_dir_dnase_v2.1_bias.csv",sep=",",header=None)
-
-
+model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_dnase_v2.2.csv",sep=",",header=None)
 
 #encode_id = {"K562": "ENCSR868FGK",
 #        "GM12878": "ENCSR637XSC",
@@ -24,13 +20,11 @@ encode_id = {"K562": "ENCSR000EOT",
 
 for i,r in model_atac.iterrows():
 	fold = r[0]
-	#name = r[2]
-	#model_path = r[3]
 	name = r[1]
 	model_path = r[2]
 
-	input_peaks=os.path.join(model_path,"chrombpnet_model/filtered.peaks.bed")
-	input_nonpeaks=os.path.join(model_path,"chrombpnet_model/filtered.nonpeaks.bed")
+	input_peaks=os.path.join(model_path,"filtered.peaks.bed")
+	input_nonpeaks=os.path.join(model_path,"filtered.nonpeaks.bed")
 	test_nonpeaks="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/"+encode_id[name]+"/negatives_data/test/test."+fold+".filtered.negatives_with_summit.bed"
 	fold="/mnt/lab_data2/anusri/chrombpnet/splits/"+fold+".json"
 	output_path=os.path.join(model_path,"train_test_regions_may_7_2024/")

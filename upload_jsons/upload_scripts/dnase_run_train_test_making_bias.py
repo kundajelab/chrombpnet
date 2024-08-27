@@ -1,10 +1,10 @@
 import pandas as pd
 import os
 
-model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_atac.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_atac.csv",sep=",", header=None)
 #model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_dnase.csv",sep=",", header=None)
 #model_atac=pd.read_csv("bias_models_atlas.csv", sep=',', header=None)
-#model_atac=pd.read_csv("model_dir_dnase_v2.1_bias.csv", sep=',', header=None)
+model_atac=pd.read_csv("model_dir_dnase_v2.1_bias.csv", sep=',', header=None)
 
 
 
@@ -38,7 +38,13 @@ for i,r in model_atac.iterrows():
 		biasth=input_nonpeaks.split("/")[11].split("_")[6]
 		foldn=input_nonpeaks.split("/")[11].split("_")[8]
 		#print(cellline,biasth,foldn)
-		ddatype="ATAC_PE"
+		if cellline in ["K562", "HEPG2"]:
+			ddatype="DNASE_PE"
+		elif cellline in ["H1ESC"]:
+			ddatype="DNASE_SE"
+		else:
+			print(cellline)
+			break
 		outputdir=os.path.join(model_path,"bias_model/newgen/")
 		if not  os.path.isfile(os.path.join(model_path,"bias_model/newgen/filtered.bias_nonpeaks.bed")):
 			os.makedirs(outputdir, exist_ok=True)

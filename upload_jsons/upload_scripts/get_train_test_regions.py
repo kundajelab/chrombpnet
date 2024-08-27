@@ -15,7 +15,7 @@ NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summi
 
 peaks = pd.read_csv(args.input_peaks, sep="\t", header=None, names=NARROWPEAK_SCHEMA)
 nonpeaks = pd.read_csv(args.input_nonpeaks, sep="\t", header=None, names=NARROWPEAK_SCHEMA)
-nonpeaks_test =  pd.read_csv(args.input_nonpeaks_test, sep="\t", header=None, names=NARROWPEAK_SCHEMA)
+#nonpeaks_test =  pd.read_csv(args.input_nonpeaks_test, sep="\t", header=None, names=NARROWPEAK_SCHEMA)
 
 splits_dict=json.load(open(args.chr_fold_path))
 
@@ -41,7 +41,7 @@ nonpeaks_train.to_csv(path_nonpeaks_train,sep="\t", index=False, header=False, c
 path_nonpeaks_valid = os.path.join(args.output_path,"nonpeaks.validationset.bed.gz")
 nonpeaks_valid.to_csv(path_nonpeaks_valid,sep="\t", index=False, header=False, compression='gzip')
 
-path_nonpeaks_test = os.path.join(args.output_path,"nonpeaks.testset.bed.gz")
-nonpeaks_test.to_csv(path_nonpeaks_test,sep="\t", index=False, header=False, compression='gzip')
+#path_nonpeaks_test = os.path.join(args.output_path,"nonpeaks.testset.bed.gz")
+#nonpeaks_test.to_csv(path_nonpeaks_test,sep="\t", index=False, header=False, compression='gzip')
 
 

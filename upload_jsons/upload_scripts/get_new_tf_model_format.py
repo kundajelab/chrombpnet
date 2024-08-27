@@ -3,6 +3,7 @@ from tensorflow.keras.models import load_model
 import argparse
 from tensorflow.keras.utils import get_custom_objects
 import os
+from tensorflow.keras.layers import Input, Cropping1D, add, Conv1D, GlobalAvgPool1D, Dense, Add, Concatenate, Lambda, Flatten
 
 parser = argparse.ArgumentParser(description="converting model types")
 parser.add_argument("-i", "--input_model")
@@ -13,7 +14,8 @@ args = parser.parse_args()
 
 
 output_path=os.path.join(args.output_dir, args.file_path+"/")
-custom_objects={"tf": tf}
+#custom_objects={"tf": tf}
+custom_objects={"logcount_predictions":  Lambda(lambda x: tf.math.reduce_logsumexp(x, axis=-1, keepdims=True)), "tf": tf}
 get_custom_objects().update(custom_objects)
 model=load_model(args.input_model,compile=False)
 model.save(output_path)
