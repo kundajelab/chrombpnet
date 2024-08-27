@@ -1,5 +1,6 @@
 import pyBigWig
 import numpy as np
+import pandas as pd
 
 def read_chrom_sizes(fname):
     with open(fname) as f:
@@ -8,16 +9,25 @@ def read_chrom_sizes(fname):
  
     return gs
 
-def get_regions(regions_file, seqlen):
+def get_regions(regions_file, seqlen, regions_used=None):
     # regions file is assumed to be centered at summit (2nd + 10th column)
     # it is adjusted to be of length seqlen centered at summit
 
     assert(seqlen%2==0)
 
-    with open(regions_file) as r:
-        regions = [x.strip().split('\t')[0:] for x in r]
+    #with open(regions_file) as r:
+    #    regions = [x.strip().split('\t')[0:] for x in r]
     #print(regions) 
-    regions = [[x[0], int(x[1])+int(x[9])-seqlen//2, int(x[1])+int(x[9])+seqlen//2, int(x[1])+int(x[9])] for x in regions]
+    #regions = [[x[0], int(x[1])+int(x[9])-seqlen//2, int(x[1])+int(x[9])+seqlen//2, int(x[1])+int(x[9])] for x in regions]
+
+    try:
+        regions = pd.read_csv(regions_file,sep='\t',header=None, compression='gzip')
+    except:
+        regions = pd.read_csv(regions_file,sep='\t',header=None)
+    if regions_used is None:
+        regions = [[x[0], int(x[1])+int(x[9])-seqlen//2, int(x[1])+int(x[9])+seqlen//2, int(x[1])+int(x[9])] for x in np.array(regions.values)]
+    else:
+        regions = [[x[0], int(x[1])+int(x[9])-seqlen//2, int(x[1])+int(x[9])+seqlen//2, int(x[1])+int(x[9])] for x in np.array(regions.values)[regions_used]]
 
     return regions
 

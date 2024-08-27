@@ -69,8 +69,8 @@ class SNPGenerator(Sequence):
 
             if self.debug_mode_on:
                 print("CHR_POS_REF_ALT_META : " + cur_chrom+"_"+str(cur_pos)+"_"+ref_snp+"_"+alt_snp+"_"+meta + "\n")
-                print("reference/alternate allele right flank : " +  right_flank + "\n")
-                print("reference/alternate allele left flank : " + left_flank + "\n")
+                print("reference/alternate allele right flank : " +  str(list(set(right_flank))) + "\n")
+                print("reference/alternate allele left flank : " + str(list(set(left_flank))) + "\n")
            
             if len(cur_ref_seq) != self.inputlen or len(cur_alt_seq) != self.inputlen:
                 print("Exception input size is not 2114 - skipping snp", len(cur_ref_seq))
