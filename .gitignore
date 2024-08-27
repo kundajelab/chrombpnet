@@ -18,6 +18,7 @@
 *.bw
 *.fai
 *.json
+*.tsv
 # Directories #
 # logs
 results
@@ -28,3 +29,4 @@ old
 reference
 melanie_models/
 melanie_bias_model.sh
+jan_5_2024/

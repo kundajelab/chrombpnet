@@ -1,0 +1,1074 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                print(output_path)
+                os.makedirs(output_path, exist_ok=True)
+                command=["python get_train_test_regions_bias.py "]+["-inp"]+[input_nonpeaks]+["-f"]+[fold]+["-o"]+[output_path]
+                command = " ".join(command)
+                print(command)
+                os.system(command)
+
+        else:
+                print(output_path)
+        break
+
+
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ python run_train_test_making_bias.py
+/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/train_test_regions_bias_may_7_2024/
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ nano run_train_test_making_bias.py
+
+import pandas as pd
+import os
+
+model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_atac.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_dnase.csv",sep=",", header=None)
+#model_atac=pd.read_csv("bias_models_atlas.csv", sep=',', header=None)
+#model_atac=pd.read_csv("model_dir_dnase_v2.1_bias.csv", sep=',', header=None)
+
+
+
+
+encode_id = {"K562": "ENCSR868FGK",
+        "GM12878": "ENCSR637XSC",
+        "HEPG2": "ENCSR291GJU",
+        "IMR90": "ENCSR200OML",
+        "H1ESC": "ENCDUMMY"}
+
+encode_id = {"K562": "ENCSR000EOT",
+        "GM12878": "ENCSR000EMT",
+        "HEPG2": "ENCSR149XIL",
+        "IMR90": "ENCSR477RTP",
+        "H1ESC": "ENCSR000EMU"}
+
+
+for i,r in model_atac.iterrows():
+        fold = r[0]
+  GNU nano 6.2                                          run_train_test_making_bias.py
+        name = r[1]
+        model_path = r[2]
+
+        #input_peaks=os.path.join(model_path,"chrombpnet_model/filtered.peaks.bed")
+        input_nonpeaks=os.path.join(model_path,"bias_model/filtered.bias_nonpeaks.bed")
+        #test_nonpeaks="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/DNASE/"+encode_id[name]+"/negatives_data/test/test.>
+        fold="/mnt/lab_data2/anusri/chrombpnet/splits/"+fold+".json"
+        output_path=os.path.join(model_path,"train_test_regions_bias_may_7_2024/")
+
+        if not os.path.isfile(input_nonpeaks):
+                cellline=input_nonpeaks.split("/")[10]
+                biasth=input_nonpeaks.split("/")[11].split("_")[6]
+                foldn=input_nonpeaks.split("/")[11].split("_")[8]
+                #print(cellline,biasth,foldn)
+                ddatype="ATAC_PE"
+                outputdir=os.path.join(model_path,"bias_model/newgen/")
+                if not  os.path.isfile(os.path.join(model_path,"bias_model/newgen/filtered.bias_nonpeaks.bed")):
+                        os.makedirs(outputdir, exist_ok=True)
+                        print(outputdir)
+                        command = "bash make_missing_bed_regions.sh "+cellline+" "+biasth+" "+foldn+" "+outputdir+" "+ddatype
+                        os.system(command)
+                        print(command)
+                else:
+                        input_nonpeaks=os.path.join(model_path,"bias_model/newgen/filtered.bias_nonpeaks.bed")
+
+        if not os.path.isfile(output_path+"nonpeaks.validationset.bed.gz"):
+                print(output_path)
+                os.makedirs(output_path, exist_ok=True)
+                command=["python get_train_test_regions_bias.py "]+["-inp"]+[input_nonpeaks]+["-f"]+[fold]+["-o"]+[output_path]
+                command = " ".join(command)
+                print(command)
+                os.system(command)
+                break
+        else:
+                print(output_path)
+
+
+
+
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ python run_train_test_making_bias.py
+/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.08.2022_bias_128_4_1234_0.4_fold_1_data_type_ATAC_PE/train_test_r
+egions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.08.2022_bias_128_4_1234_0.4_fold_2_data_type_ATAC_PE/train_test_r
+egions_bias_may_7_2024/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.08.2022_bias_128_4_12
+34_0.4_fold_2_data_type_ATAC_PE/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_2.json -o /oak/stanford/groups/akundaje/p
+rojects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.08.2022_bias_128_4_1234_0.4_fold_2_data_type_ATAC_PE/train_test_regions_bias_may_7_2024/
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ ls /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/fol
+ds/ATAC/GM12878/GM12878_07.08.2022_bias_128_4_1234_0.4_fold_2_data_type_ATAC_PE/train_test_regions_bias_may_7_2024/
+nonpeaks.testset.bed.gz  nonpeaks.trainingset.bed.gz  nonpeaks.validationset.bed.gz
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ ls                                             bias_models_atlas.csv
+  k562.samstats.qc                   __pycache__                    run_train_test_making.py              convert_to_compressed.py        make_missing_bed_regions.sh
+       README.md                      temp
+get_new_tf_model_format.py      model_dir_dnase_v2.1_bias.csv      run_conversion_bias.py         upload_utils.py
+get_train_test_regions_bias.py  new_metrics                        run_conversion_new.py
+get_train_test_regions.py       new_run_train_test_making.py       run_conversion.py
+GM12878                         prepare_file_for_upload_models.py  run_train_test_making_bias.py
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ nano run_train_test_making_bias.py
+
+import pandas as pd
+import os
+
+model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_atac.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_dnase.csv",sep=",", header=None)
+#model_atac=pd.read_csv("bias_models_atlas.csv", sep=',', header=None)
+#model_atac=pd.read_csv("model_dir_dnase_v2.1_bias.csv", sep=',', header=None)
+
+
+
+
+encode_id = {"K562": "ENCSR868FGK",
+        "GM12878": "ENCSR637XSC",
+        "HEPG2": "ENCSR291GJU",
+        "IMR90": "ENCSR200OML",
+        "H1ESC": "ENCDUMMY"}
+
+encode_id = {"K562": "ENCSR000EOT",
+        "GM12878": "ENCSR000EMT",
+        "HEPG2": "ENCSR149XIL",
+        "IMR90": "ENCSR477RTP",
+        "H1ESC": "ENCSR000EMU"}
+
+
+for i,r in model_atac.iterrows():
+  GNU nano 6.2                                          run_train_test_making_bias.py
+        fold = r[0]
+        name = r[1]
+        model_path = r[2]
+
+        #input_peaks=os.path.join(model_path,"chrombpnet_model/filtered.peaks.bed")
+        input_nonpeaks=os.path.join(model_path,"bias_model/filtered.bias_nonpeaks.bed")
+        #test_nonpeaks="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/DNASE/"+encode_id[name]+"/negatives_data/test/test.>
+        fold="/mnt/lab_data2/anusri/chrombpnet/splits/"+fold+".json"
+        output_path=os.path.join(model_path,"train_test_regions_bias_may_7_2024/")
+
+        if not os.path.isfile(input_nonpeaks):
+                cellline=input_nonpeaks.split("/")[10]
+                biasth=input_nonpeaks.split("/")[11].split("_")[6]
+                foldn=input_nonpeaks.split("/")[11].split("_")[8]
+                #print(cellline,biasth,foldn)
+                ddatype="ATAC_PE"
+                outputdir=os.path.join(model_path,"bias_model/newgen/")
+                if not  os.path.isfile(os.path.join(model_path,"bias_model/newgen/filtered.bias_nonpeaks.bed")):
+                        os.makedirs(outputdir, exist_ok=True)
+                        print(outputdir)
+                        command = "bash make_missing_bed_regions.sh "+cellline+" "+biasth+" "+foldn+" "+outputdir+" "+ddatype
+                        os.system(command)
+                        print(command)
+                else:
+                        input_nonpeaks=os.path.join(model_path,"bias_model/newgen/filtered.bias_nonpeaks.bed")
+
+        if not os.path.isfile(output_path+"nonpeaks.validationset.bed.gz"):
+                print(output_path)
+                os.makedirs(output_path, exist_ok=True)
+                command=["python get_train_test_regions_bias.py "]+["-inp"]+[input_nonpeaks]+["-f"]+[fold]+["-o"]+[output_path]
+                command = " ".join(command)
+                print(command)
+                os.system(command)
+                break
+        else:
+                print(output_path)
+
+
+
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ nano make_missing_bed_regions.sh
+
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+  GNU nano 6.2                                           make_missing_bed_regions.sh
+cellline=$1
+biasth=$2
+foldn=$3
+outputdir=$4
+ddatype=$5
+echo "python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \\
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \\
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/$ddatype/$cellline/data/$cellline"_unstranded.bw" \\
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/$ddatype/$cellline/data/peaks_no_blacklist.bed \\
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/$ddatype/$cellline/negatives_data_$foldn/negatives_with_summit.be>
+       --outlier_threshold=0.99 \\
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_$foldn.json \\
+       --inputlen=2114 \\
+       --outputlen=1000 \\
+       --max_jitter=0 \\
+       --filters=128 \\
+       --n_dilation_layers=4 \\
+       --bias_threshold_factor=$biasth \\
+       --output_dir $outputdir"
+
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/$ddatype/$cellline/data/$cellline"_unstranded.bw" \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/$ddatype/$cellline/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/$ddatype/$cellline/negatives_data_$foldn/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_$foldn.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=$biasth \
+       --output_dir $outputdir
+
+
+
+
+
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ python run_train_test_making_bias.py
+/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.08.2022_bias_128_4_1234_0.4_fold_1_data_type_ATAC_PE/train_test_r
+egions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.08.2022_bias_128_4_1234_0.4_fold_2_data_type_ATAC_PE/train_test_r
+egions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/bias_model/n
+ewgen/
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/data/GM12878_unstranded.bw \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/negatives_data_3/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=0.4 \
+       --output_dir /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_1234_0.4_fold_3_data_type_
+ATAC_PE/bias_model/newgen/
+evaluating hyperparameters on the following chromosomes ['chr1', 'chr2', 'chr3', 'chr4', 'chr7', 'chr8', 'chr9', 'chr11', 'chr12', 'chr13', 'chr15', 'chr16', 'chr17',
+ 'chr19', 'chrX', 'chrY', 'chr6', 'chr21']
+Number of non peaks input:  443544
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  443544
+Number of non peaks input:  56135
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  56135
+Number of peaks input:  221772
+Number of peaks filtered because the input/output is on the edge:  0
+Number of peaks being used:  221772
+Upper bound counts cut-off for bias model training:  82.4
+Number of nonpeaks after the upper-bount cut-off:  221322
+Number of nonpeaks after applying upper-bound cut-off and removing outliers :  206958
+counts_loss_weight: 5.2
+bash make_missing_bed_regions.sh GM12878 0.4 3 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4
+_1234_0.4_fold_3_data_type_ATAC_PE/bias_model/newgen/ ATAC_PE
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/train_test_r
+egions_bias_may_7_2024/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_12
+34_0.4_fold_3_data_type_ATAC_PE/bias_model/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json -o /oak/stanford/groups/akundaje/projects
+/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/train_test_regions_bias_may_7_2024/
+Traceback (most recent call last):
+  File "get_train_test_regions_bias.py", line 17, in <module>
+    nonpeaks = pd.read_csv(args.input_nonpeaks, sep="\t", header=None, names=NARROWPEAK_SCHEMA)
+  File "/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/pandas/util/_decorators.py", line 211, in wrapper
+    return func(*args, **kwargs)
+  File "/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/pandas/util/_decorators.py", line 331, in wrapper
+    return func(*args, **kwargs)
+  File "/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 950, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 605, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 1442, in __init__
+    self._engine = self._make_engine(f, self.engine)
+  File "/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 1735, in _make_engine
+    self.handles = get_handle(
+  File "/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/pandas/io/common.py", line 856, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_
+bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/bias_model/filtered.bias_nonpeaks.bed'
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ ls /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/fol
+ds/ATAC/GM12878/GM12878_07.14.2022_bias_12
+ls: cannot access '/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_bias_12': No such file or directory
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ ls /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/fol
+ds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/bias_model/
+bias.h5  newgen  new_model_formats  new_model_formats_v1  new_model_formats_v2  new_model_formats_vf
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ ls /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/fol
+ds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/bias_model/new
+ls: cannot access '/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_1234_0.4_fold_3_data_type_A
+TAC_PE/bias_model/new': No such file or directory
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ ls /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/fol
+ds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/bias_model/newgen/
+bias_data_params.tsv  bias_model_params.tsv  filtered.bias_nonpeaks.bed
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ nano
+bias_models_atlas.csv              make_missing_bed_regions.sh        run_conversion_bias.py
+convert_to_compressed.py           model_dir_dnase_v2.1_bias.csv      run_conversion_new.py
+get_new_tf_model_format.py         new_metrics/                       run_conversion.py
+get_train_test_regions_bias.py     new_run_train_test_making.py       run_train_test_making_bias.py
+get_train_test_regions.py          prepare_file_for_upload_models.py  run_train_test_making.py
+GM12878/                           __pycache__/                       temp/
+k562.samstats.qc                   README.md                          upload_utils.py
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ nano run_train_test_making_bias.py
+
+import pandas as pd
+import os
+
+model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_atac.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_dnase.csv",sep=",", header=None)
+#model_atac=pd.read_csv("bias_models_atlas.csv", sep=',', header=None)
+#model_atac=pd.read_csv("model_dir_dnase_v2.1_bias.csv", sep=',', header=None)
+
+
+
+
+encode_id = {"K562": "ENCSR868FGK",
+        "GM12878": "ENCSR637XSC",
+        "HEPG2": "ENCSR291GJU",
+        "IMR90": "ENCSR200OML",
+        "H1ESC": "ENCDUMMY"}
+
+encode_id = {"K562": "ENCSR000EOT",
+        "GM12878": "ENCSR000EMT",
+        "HEPG2": "ENCSR149XIL",
+        "IMR90": "ENCSR477RTP",
+        "H1ESC": "ENCSR000EMU"}
+
+
+for i,r in model_atac.iterrows():
+  GNU nano 6.2                                          run_train_test_making_bias.py
+        fold = r[0]
+        name = r[1]
+        model_path = r[2]
+
+        #input_peaks=os.path.join(model_path,"chrombpnet_model/filtered.peaks.bed")
+        input_nonpeaks=os.path.join(model_path,"bias_model/filtered.bias_nonpeaks.bed")
+        #test_nonpeaks="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/DNASE/"+encode_id[name]+"/negatives_data/test/test.>
+        fold="/mnt/lab_data2/anusri/chrombpnet/splits/"+fold+".json"
+        output_path=os.path.join(model_path,"train_test_regions_bias_may_7_2024/")
+
+        if not os.path.isfile(input_nonpeaks):
+                cellline=input_nonpeaks.split("/")[10]
+                biasth=input_nonpeaks.split("/")[11].split("_")[6]
+                foldn=input_nonpeaks.split("/")[11].split("_")[8]
+                #print(cellline,biasth,foldn)
+                ddatype="ATAC_PE"
+                outputdir=os.path.join(model_path,"bias_model/newgen/")
+                if not  os.path.isfile(os.path.join(model_path,"bias_model/newgen/filtered.bias_nonpeaks.bed")):
+                        os.makedirs(outputdir, exist_ok=True)
+                        print(outputdir)
+                        command = "bash make_missing_bed_regions.sh "+cellline+" "+biasth+" "+foldn+" "+outputdir+" "+ddatype
+                        os.system(command)
+                        print(command)
+                        input_nonpeaks=os.path.join(model_path,"bias_model/newgen/filtered.bias_nonpeaks.bed")
+                else:
+                        input_nonpeaks=os.path.join(model_path,"bias_model/newgen/filtered.bias_nonpeaks.bed")
+
+        if not os.path.isfile(output_path+"nonpeaks.validationset.bed.gz"):
+                print(output_path)
+                os.makedirs(output_path, exist_ok=True)
+                command=["python get_train_test_regions_bias.py "]+["-inp"]+[input_nonpeaks]+["-f"]+[fold]+["-o"]+[output_path]
+                command = " ".join(command)
+                print(command)
+                os.system(command)
+                break
+        else:
+                print(output_path)
+
+
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ python run_train_test_making_bias.py           /mnt/lab_data2/anusri/chrombpn
+et/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.08.2022_bias_128_4_1234_0.4_fold_1_data_type_ATAC_PE/train_test_r
+egions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.08.2022_bias_128_4_1234_0.4_fold_2_data_type_ATAC_PE/train_test_r
+egions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/train_test_r
+egions_bias_may_7_2024/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_12
+34_0.4_fold_3_data_type_ATAC_PE/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json -o /oak/stanford/groups/akundaje/p
+rojects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/train_test_regions_bias_may_7_2024/
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ nano run_train_test_making_bias.py
+
+import pandas as pd
+import os
+
+model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_atac.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_dnase.csv",sep=",", header=None)
+#model_atac=pd.read_csv("bias_models_atlas.csv", sep=',', header=None)
+#model_atac=pd.read_csv("model_dir_dnase_v2.1_bias.csv", sep=',', header=None)
+
+
+
+
+encode_id = {"K562": "ENCSR868FGK",
+        "GM12878": "ENCSR637XSC",
+        "HEPG2": "ENCSR291GJU",
+        "IMR90": "ENCSR200OML",
+        "H1ESC": "ENCDUMMY"}
+
+encode_id = {"K562": "ENCSR000EOT",
+        "GM12878": "ENCSR000EMT",
+        "HEPG2": "ENCSR149XIL",
+        "IMR90": "ENCSR477RTP",
+        "H1ESC": "ENCSR000EMU"}
+
+
+for i,r in model_atac.iterrows():
+        fold = r[0]
+                break
+  GNU nano 6.2                                          run_train_test_making_bias.py
+        name = r[1]
+        model_path = r[2]
+
+        #input_peaks=os.path.join(model_path,"chrombpnet_model/filtered.peaks.bed")
+        input_nonpeaks=os.path.join(model_path,"bias_model/filtered.bias_nonpeaks.bed")
+        #test_nonpeaks="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/DNASE/"+encode_id[name]+"/negatives_data/test/test.>
+        fold="/mnt/lab_data2/anusri/chrombpnet/splits/"+fold+".json"
+        output_path=os.path.join(model_path,"train_test_regions_bias_may_7_2024/")
+
+        if not os.path.isfile(input_nonpeaks):
+                cellline=input_nonpeaks.split("/")[10]
+                biasth=input_nonpeaks.split("/")[11].split("_")[6]
+                foldn=input_nonpeaks.split("/")[11].split("_")[8]
+                #print(cellline,biasth,foldn)
+                ddatype="ATAC_PE"
+                outputdir=os.path.join(model_path,"bias_model/newgen/")
+                if not  os.path.isfile(os.path.join(model_path,"bias_model/newgen/filtered.bias_nonpeaks.bed")):
+                        os.makedirs(outputdir, exist_ok=True)
+                        print(outputdir)
+                        command = "bash make_missing_bed_regions.sh "+cellline+" "+biasth+" "+foldn+" "+outputdir+" "+ddatype
+                        os.system(command)
+                        print(command)
+                        input_nonpeaks=os.path.join(model_path,"bias_model/newgen/filtered.bias_nonpeaks.bed")
+                else:
+                        input_nonpeaks=os.path.join(model_path,"bias_model/newgen/filtered.bias_nonpeaks.bed")
+
+        if not os.path.isfile(output_path+"nonpeaks.validationset.bed.gz"):
+                print(output_path)
+                os.makedirs(output_path, exist_ok=True)
+                command=["python get_train_test_regions_bias.py "]+["-inp"]+[input_nonpeaks]+["-f"]+[fold]+["-o"]+[output_path]
+                command = " ".join(command)
+                print(command)
+                os.system(command)
+        else:
+                print(output_path)
+
+
+
+
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ ls -l
+total 112
+-rwxr-xr-x 1 anusri kundaje  3349 Aug 28  2023 bias_models_atlas.csv
+-rwxr-xr-x 1 anusri kundaje  1885 Jul 26  2023 convert_to_compressed.py
+-rwxr-xr-x 1 anusri kundaje  1043 May 24 13:08 get_new_tf_model_format.py
+-rwxr-xr-x 1 anusri kundaje  1779 Aug 17  2023 get_train_test_regions_bias.py
+-rwxr-xr-x 1 anusri kundaje  2171 May  7 17:48 get_train_test_regions.py
+drwxr-xr-x 3 anusri kundaje  4096 May  8 17:06 GM12878
+-rwxr-xr-x 1 anusri kundaje   323 Jul 26  2023 k562.samstats.qc
+-rw-r--r-- 1 anusri kundaje  1800 May 24 16:00 make_missing_bed_regions.sh
+-rwxr-xr-x 1 anusri kundaje  2401 May 24 12:44 model_dir_dnase_v2.1_bias.csv
+drwxr-xr-x 2 anusri kundaje  4096 Jul 26  2023 new_metrics
+-rwxr-xr-x 1 anusri kundaje  1610 May  8 00:28 new_run_train_test_making.py
+-rwxr-xr-x 1 anusri kundaje 11094 Aug 17  2023 prepare_file_for_upload_models.py
+drwxr-xr-x 2 anusri kundaje  4096 Jul 26  2023 __pycache__
+-rw-r--r-- 1 anusri kundaje    68 May  6 23:11 README.md
+-rwxr-xr-x 1 anusri kundaje  1471 May 24 12:47 run_conversion_bias.py
+-rwxr-xr-x 1 anusri kundaje  1954 May 24 13:49 run_conversion_new.py
+-rwxr-xr-x 1 anusri kundaje  2219 May  8 17:10 run_conversion.py
+-rwxr-xr-x 1 anusri kundaje  2459 May 24 16:12 run_train_test_making_bias.py
+-rwxr-xr-x 1 anusri kundaje  1786 May  8 18:14 run_train_test_making.py
+drwxr-xr-x 2 anusri kundaje  4096 May  7 18:59 temp
+-rwxr-xr-x 1 anusri kundaje 23747 Jul 26  2023 upload_utils.py
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ python run_train_test_making_bias.py
+/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.08.2022_bias_128_4_1234_0.4_fold_1_data_type_ATAC_PE/train_test_r
+egions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.08.2022_bias_128_4_1234_0.4_fold_2_data_type_ATAC_PE/train_test_r
+egions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/train_test_r
+egions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.4_fold_4_data_type_ATAC_PE/bias_model/n
+ewgen/
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/data/GM12878_unstranded.bw \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/negatives_data_4/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_4.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=0.4 \
+       --output_dir /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.4_fold_4_data_type_
+ATAC_PE/bias_model/newgen/
+evaluating hyperparameters on the following chromosomes ['chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr8', 'chr9', 'chr11', 'chr12', 'chr14', 'chr15', 'chr16',
+'chr20', 'chr22', 'chrY', 'chr10', 'chr18']
+Number of non peaks input:  449946
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  449946
+Number of non peaks input:  52934
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  52934
+Number of peaks input:  224973
+Number of peaks filtered because the input/output is on the edge:  0
+Number of peaks being used:  224973
+Upper bound counts cut-off for bias model training:  82.0
+Number of nonpeaks after the upper-bount cut-off:  217013
+Number of nonpeaks after applying upper-bound cut-off and removing outliers :  202523
+counts_loss_weight: 5.3
+bash make_missing_bed_regions.sh GM12878 0.4 4 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.07.2022_bias_128_4
+_1234_0.4_fold_4_data_type_ATAC_PE/bias_model/newgen/ ATAC_PE
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.4_fold_4_data_type_ATAC_PE/train_test_r
+egions_bias_may_7_2024/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.07.2022_bias_128_4_12
+34_0.4_fold_4_data_type_ATAC_PE/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_4.json -o /oak/stanford/groups/akundaje/p
+rojects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.4_fold_4_data_type_ATAC_PE/train_test_regions_bias_may_7_2024/
+/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/K562/nautilus_runs/K562_02.17.2022_bias_128_4_1234_0.5_fold_0/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/K562/K562_07.07.2022_bias_128_4_2356_0.5_fold_1_data_type_ATAC_PE/train_test_regions
+_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/K562/K562_07.07.2022_bias_128_4_2356_0.5_fold_2_data_type_ATAC_PE/train_test_regions
+_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/K562/K562_07.07.2022_bias_128_4_2356_0.5_fold_3_data_type_ATAC_PE/train_test_regions
+_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/K562/K562_07.07.2022_bias_128_4_2356_0.5_fold_4_data_type_ATAC_PE/train_test_regions
+_bias_may_7_2024/
+/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/nautilus_runs_jun16/HEPG2_05.09.2022_bias_128_4_1234_0.8_fold_0/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_06.07.2022_bias_128_4_1234_0.8_fold_1/bias_model/newgen/
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/data/HEPG2_unstranded.bw \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/negatives_data_1/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_1.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=0.8 \
+       --output_dir /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_06.07.2022_bias_128_4_1234_0.8_fold_1/bias_model/new
+gen/
+evaluating hyperparameters on the following chromosomes ['chr1', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr10', 'chr11', 'chr13', 'chr14', 'chr15', 'chr18', 'chr19'
+, 'chr20', 'chr21', 'chr22', 'chrX', 'chrY', 'chr12', 'chr17']
+Number of non peaks input:  432360
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  432360
+Number of non peaks input:  63456
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  63456
+Number of peaks input:  216180
+Number of peaks filtered because the input/output is on the edge:  0
+Number of peaks being used:  216180
+Upper bound counts cut-off for bias model training:  179.20000000000002
+Number of nonpeaks after the upper-bount cut-off:  301394
+Number of nonpeaks after applying upper-bound cut-off and removing outliers :  290833
+counts_loss_weight: 8.9
+bash make_missing_bed_regions.sh HEPG2 0.8 1 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_06.07.2022_bias_128_4_1234_
+0.8_fold_1/bias_model/newgen/ ATAC_PE
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_06.07.2022_bias_128_4_1234_0.8_fold_1/train_test_regions_bias_may_7_2024
+/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_06.07.2022_bias_128_4_1234_0
+.8_fold_1/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_1.json -o /oak/stanford/groups/akundaje/projects/chromatin-atla
+s-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_06.07.2022_bias_128_4_1234_0.8_fold_1/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.24.2022_bias_128_4_1234_0.8_fold_2/bias_model/newgen/
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/data/HEPG2_unstranded.bw \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/negatives_data_2/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_2.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=0.8 \
+       --output_dir /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.24.2022_bias_128_4_1234_0.8_fold_2/bias_model/new
+gen/
+evaluating hyperparameters on the following chromosomes ['chr1', 'chr2', 'chr3', 'chr5', 'chr6', 'chr8', 'chr9', 'chr10', 'chr13', 'chr14', 'chr16', 'chr17', 'chr18',
+ 'chr19', 'chr20', 'chr21', 'chrX', 'chr22', 'chr7']
+Number of non peaks input:  469546
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  469546
+Number of non peaks input:  44863
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  44863
+Number of peaks input:  234773
+Number of peaks filtered because the input/output is on the edge:  0
+Number of peaks being used:  234773
+Upper bound counts cut-off for bias model training:  183.20000000000002
+Number of nonpeaks after the upper-bount cut-off:  323981
+Number of nonpeaks after applying upper-bound cut-off and removing outliers :  312059
+counts_loss_weight: 9.3
+bash make_missing_bed_regions.sh HEPG2 0.8 2 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.24.2022_bias_128_4_1234_
+0.8_fold_2/bias_model/newgen/ ATAC_PE
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.24.2022_bias_128_4_1234_0.8_fold_2/train_test_regions_bias_may_7_2024
+/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.24.2022_bias_128_4_1234_0
+.8_fold_2/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_2.json -o /oak/stanford/groups/akundaje/projects/chromatin-atla
+s-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.24.2022_bias_128_4_1234_0.8_fold_2/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.22.2022_bias_128_4_1234_0.8_fold_3/bias_model/newgen/
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/data/HEPG2_unstranded.bw \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/negatives_data_3/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=0.8 \
+       --output_dir /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.22.2022_bias_128_4_1234_0.8_fold_3/bias_model/new
+gen/
+evaluating hyperparameters on the following chromosomes ['chr1', 'chr2', 'chr3', 'chr4', 'chr7', 'chr8', 'chr9', 'chr11', 'chr12', 'chr13', 'chr15', 'chr16', 'chr17',
+ 'chr19', 'chrX', 'chrY', 'chr6', 'chr21']
+Number of non peaks input:  442374
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  442374
+Number of non peaks input:  58449
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  58449
+Number of peaks input:  221187
+Number of peaks filtered because the input/output is on the edge:  0
+Number of peaks being used:  221187
+Upper bound counts cut-off for bias model training:  180.8
+Number of nonpeaks after the upper-bount cut-off:  307832
+Number of nonpeaks after applying upper-bound cut-off and removing outliers :  295914
+counts_loss_weight: 9.0
+bash make_missing_bed_regions.sh HEPG2 0.8 3 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.22.2022_bias_128_4_1234_
+0.8_fold_3/bias_model/newgen/ ATAC_PE
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.22.2022_bias_128_4_1234_0.8_fold_3/train_test_regions_bias_may_7_2024
+/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.22.2022_bias_128_4_1234_0
+.8_fold_3/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json -o /oak/stanford/groups/akundaje/projects/chromatin-atla
+s-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.22.2022_bias_128_4_1234_0.8_fold_3/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.22.2022_bias_128_4_1234_0.8_fold_4/bias_model/newgen/
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/data/HEPG2_unstranded.bw \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/HEPG2/negatives_data_4/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_4.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=0.8 \
+       --output_dir /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.22.2022_bias_128_4_1234_0.8_fold_4/bias_model/new
+gen/
+evaluating hyperparameters on the following chromosomes ['chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr8', 'chr9', 'chr11', 'chr12', 'chr14', 'chr15', 'chr16',
+'chr20', 'chr22', 'chrY', 'chr10', 'chr18']
+Number of non peaks input:  452368
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  452368
+Number of non peaks input:  53452
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  53452
+Number of peaks input:  226184
+Number of peaks filtered because the input/output is on the edge:  0
+Number of peaks being used:  226184
+Upper bound counts cut-off for bias model training:  181.60000000000002
+Number of nonpeaks after the upper-bount cut-off:  312731
+Number of nonpeaks after applying upper-bound cut-off and removing outliers :  301166
+counts_loss_weight: 9.3
+bash make_missing_bed_regions.sh HEPG2 0.8 4 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.22.2022_bias_128_4_1234_
+0.8_fold_4/bias_model/newgen/ ATAC_PE
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.22.2022_bias_128_4_1234_0.8_fold_4/train_test_regions_bias_may_7_2024
+/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.22.2022_bias_128_4_1234_0
+.8_fold_4/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_4.json -o /oak/stanford/groups/akundaje/projects/chromatin-atla
+s-2022/chrombpnet/folds/ATAC/HEPG2/HEPG2_05.22.2022_bias_128_4_1234_0.8_fold_4/train_test_regions_bias_may_7_2024/
+/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/nautilus_runs_apr12/IMR90_04.09.2022_bias_128_4_1234_0.4_fold_0/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.17.2022_bias_128_4_1234_0.3_fold_1_data_type_ATAC_PE/bias_model/newge
+n/
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/data/IMR90_unstranded.bw \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/negatives_data_1/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_1.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=0.3 \
+       --output_dir /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.17.2022_bias_128_4_1234_0.3_fold_1_data_type_ATAC
+_PE/bias_model/newgen/
+evaluating hyperparameters on the following chromosomes ['chr1', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr10', 'chr11', 'chr13', 'chr14', 'chr15', 'chr18', 'chr19'
+, 'chr20', 'chr21', 'chr22', 'chrX', 'chrY', 'chr12', 'chr17']
+Number of non peaks input:  421900
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  421900
+Number of non peaks input:  54195
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  54195
+Number of peaks input:  210950
+Number of peaks filtered because the input/output is on the edge:  0
+Number of peaks being used:  210950
+Upper bound counts cut-off for bias model training:  15.299999999999999
+Number of nonpeaks after the upper-bount cut-off:  245967
+Number of nonpeaks after applying upper-bound cut-off and removing outliers :  210817
+counts_loss_weight: 0.8
+bash make_missing_bed_regions.sh IMR90 0.3 1 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.17.2022_bias_128_4_1234_
+0.3_fold_1_data_type_ATAC_PE/bias_model/newgen/ ATAC_PE
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.17.2022_bias_128_4_1234_0.3_fold_1_data_type_ATAC_PE/train_test_regio
+ns_bias_may_7_2024/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.17.2022_bias_128_4_1234_0
+.3_fold_1_data_type_ATAC_PE/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_1.json -o /oak/stanford/groups/akundaje/proje
+cts/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.17.2022_bias_128_4_1234_0.3_fold_1_data_type_ATAC_PE/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.17.2022_bias_128_4_1234_0.3_fold_2_data_type_ATAC_PE/bias_model/newge
+n/
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/data/IMR90_unstranded.bw \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/negatives_data_2/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_2.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=0.3 \
+       --output_dir /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.17.2022_bias_128_4_1234_0.3_fold_2_data_type_ATAC
+_PE/bias_model/newgen/
+evaluating hyperparameters on the following chromosomes ['chr1', 'chr2', 'chr3', 'chr5', 'chr6', 'chr8', 'chr9', 'chr10', 'chr13', 'chr14', 'chr16', 'chr17', 'chr18',
+ 'chr19', 'chr20', 'chr21', 'chrX', 'chr22', 'chr7']
+Number of non peaks input:  431806
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  431806
+Number of non peaks input:  49242
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  49242
+Number of peaks input:  215903
+Number of peaks filtered because the input/output is on the edge:  0
+Number of peaks being used:  215903
+Upper bound counts cut-off for bias model training:  15.299999999999999
+Number of nonpeaks after the upper-bount cut-off:  249002
+Number of nonpeaks after applying upper-bound cut-off and removing outliers :  215886
+counts_loss_weight: 0.8
+bash make_missing_bed_regions.sh IMR90 0.3 2 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.17.2022_bias_128_4_1234_
+0.3_fold_2_data_type_ATAC_PE/bias_model/newgen/ ATAC_PE
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.17.2022_bias_128_4_1234_0.3_fold_2_data_type_ATAC_PE/train_test_regio
+ns_bias_may_7_2024/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.17.2022_bias_128_4_1234_0
+.3_fold_2_data_type_ATAC_PE/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_2.json -o /oak/stanford/groups/akundaje/proje
+cts/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.17.2022_bias_128_4_1234_0.3_fold_2_data_type_ATAC_PE/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.08.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/bias_model/newge
+n/
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/data/IMR90_unstranded.bw \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/negatives_data_3/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=0.4 \
+       --output_dir /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.08.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC
+_PE/bias_model/newgen/
+evaluating hyperparameters on the following chromosomes ['chr1', 'chr2', 'chr3', 'chr4', 'chr7', 'chr8', 'chr9', 'chr11', 'chr12', 'chr13', 'chr15', 'chr16', 'chr17',
+ 'chr19', 'chrX', 'chrY', 'chr6', 'chr21']
+Number of non peaks input:  423416
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  423416
+Number of non peaks input:  53437
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  53437
+Number of peaks input:  211708
+Number of peaks filtered because the input/output is on the edge:  0
+Number of peaks being used:  211708
+Upper bound counts cut-off for bias model training:  20.400000000000002
+Number of nonpeaks after the upper-bount cut-off:  302560
+Number of nonpeaks after applying upper-bound cut-off and removing outliers :  270679
+counts_loss_weight: 1.0
+bash make_missing_bed_regions.sh IMR90 0.4 3 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.08.2022_bias_128_4_1234_
+0.4_fold_3_data_type_ATAC_PE/bias_model/newgen/ ATAC_PE
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.08.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/train_test_regio
+ns_bias_may_7_2024/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.08.2022_bias_128_4_1234_0
+.4_fold_3_data_type_ATAC_PE/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json -o /oak/stanford/groups/akundaje/proje
+cts/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.08.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.07.2022_bias_128_4_1234_0.4_fold_4_data_type_ATAC_PE/bias_model/newge
+n/
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/data/IMR90_unstranded.bw \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/IMR90/negatives_data_4/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_4.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=0.4 \
+       --output_dir /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.07.2022_bias_128_4_1234_0.4_fold_4_data_type_ATAC
+_PE/bias_model/newgen/
+evaluating hyperparameters on the following chromosomes ['chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr8', 'chr9', 'chr11', 'chr12', 'chr14', 'chr15', 'chr16',
+'chr20', 'chr22', 'chrY', 'chr10', 'chr18']
+Number of non peaks input:  431762
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  431762
+Number of non peaks input:  49264
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  49264
+Number of peaks input:  215881
+Number of peaks filtered because the input/output is on the edge:  0
+Number of peaks being used:  215881
+Upper bound counts cut-off for bias model training:  20.400000000000002
+Number of nonpeaks after the upper-bount cut-off:  310100
+Number of nonpeaks after applying upper-bound cut-off and removing outliers :  277437
+counts_loss_weight: 1.0
+bash make_missing_bed_regions.sh IMR90 0.4 4 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.07.2022_bias_128_4_1234_
+0.4_fold_4_data_type_ATAC_PE/bias_model/newgen/ ATAC_PE
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.07.2022_bias_128_4_1234_0.4_fold_4_data_type_ATAC_PE/train_test_regio
+ns_bias_may_7_2024/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.07.2022_bias_128_4_1234_0
+.4_fold_4_data_type_ATAC_PE/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_4.json -o /oak/stanford/groups/akundaje/proje
+cts/chromatin-atlas-2022/chrombpnet/folds/ATAC/IMR90/IMR90_07.07.2022_bias_128_4_1234_0.4_fold_4_data_type_ATAC_PE/train_test_regions_bias_may_7_2024/
+/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/H1ESC/nautilus_runs_jun16/H1ESC_05.09.2022_bias_128_4_1234_0.8_fold_0/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.23.2022_bias_128_4_1234_0.7_fold_1_data_type_ATAC_PE/bias_model/newge
+n/
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/H1ESC/data/H1ESC_unstranded.bw \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/H1ESC/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/H1ESC/negatives_data_1/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_1.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=0.7 \
+       --output_dir /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.23.2022_bias_128_4_1234_0.7_fold_1_data_type_ATAC
+_PE/bias_model/newgen/
+evaluating hyperparameters on the following chromosomes ['chr1', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr10', 'chr11', 'chr13', 'chr14', 'chr15', 'chr18', 'chr19'
+, 'chr20', 'chr21', 'chr22', 'chrX', 'chrY', 'chr12', 'chr17']
+Number of non peaks input:  374898
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  374898
+Number of non peaks input:  49122
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  49122
+Number of peaks input:  187449
+Number of peaks filtered because the input/output is on the edge:  0
+Number of peaks being used:  187449
+Upper bound counts cut-off for bias model training:  51.8
+Number of nonpeaks after the upper-bount cut-off:  263750
+Number of nonpeaks after applying upper-bound cut-off and removing outliers :  249443
+counts_loss_weight: 3.2
+bash make_missing_bed_regions.sh H1ESC 0.7 1 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.23.2022_bias_128_4_1234_
+0.7_fold_1_data_type_ATAC_PE/bias_model/newgen/ ATAC_PE
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.23.2022_bias_128_4_1234_0.7_fold_1_data_type_ATAC_PE/train_test_regio
+ns_bias_may_7_2024/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.23.2022_bias_128_4_1234_0
+.7_fold_1_data_type_ATAC_PE/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_1.json -o /oak/stanford/groups/akundaje/proje
+cts/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.23.2022_bias_128_4_1234_0.7_fold_1_data_type_ATAC_PE/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.17.2022_bias_128_4_1234_0.8_fold_2_data_type_ATAC_PE/bias_model/newge
+n/
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/H1ESC/data/H1ESC_unstranded.bw \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/H1ESC/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/H1ESC/negatives_data_2/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_2.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=0.8 \
+       --output_dir /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.17.2022_bias_128_4_1234_0.8_fold_2_data_type_ATAC
+_PE/bias_model/newgen/
+evaluating hyperparameters on the following chromosomes ['chr1', 'chr2', 'chr3', 'chr5', 'chr6', 'chr8', 'chr9', 'chr10', 'chr13', 'chr14', 'chr16', 'chr17', 'chr18',
+ 'chr19', 'chr20', 'chr21', 'chrX', 'chr22', 'chr7']
+Number of non peaks input:  383216
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  383216
+Number of non peaks input:  44963
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  44963
+Number of peaks input:  191608
+Number of peaks filtered because the input/output is on the edge:  0
+Number of peaks being used:  191608
+Upper bound counts cut-off for bias model training:  59.2
+Number of nonpeaks after the upper-bount cut-off:  305890
+Number of nonpeaks after applying upper-bound cut-off and removing outliers :  292161
+counts_loss_weight: 3.5
+bash make_missing_bed_regions.sh H1ESC 0.8 2 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.17.2022_bias_128_4_1234_
+0.8_fold_2_data_type_ATAC_PE/bias_model/newgen/ ATAC_PE
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.17.2022_bias_128_4_1234_0.8_fold_2_data_type_ATAC_PE/train_test_regio
+ns_bias_may_7_2024/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.17.2022_bias_128_4_1234_0
+.8_fold_2_data_type_ATAC_PE/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_2.json -o /oak/stanford/groups/akundaje/proje
+cts/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.17.2022_bias_128_4_1234_0.8_fold_2_data_type_ATAC_PE/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.17.2022_bias_128_4_1234_0.8_fold_3_data_type_ATAC_PE/bias_model/newge
+n/
+python /mnt/lab_data2/anusri/chrombpnet/src/helpers/hyperparameters/find_bias_hyperparams.py \
+       --genome=/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa \
+       --bigwig=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/H1ESC/data/H1ESC_unstranded.bw \
+       --peaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/H1ESC/data/peaks_no_blacklist.bed \
+       --nonpeaks=/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/H1ESC/negatives_data_3/negatives_with_summit.be>
+       --outlier_threshold=0.99 \
+       --chr_fold_path=/mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json \
+       --inputlen=2114 \
+       --outputlen=1000 \
+       --max_jitter=0 \
+       --filters=128 \
+       --n_dilation_layers=4 \
+       --bias_threshold_factor=0.8 \
+       --output_dir /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.17.2022_bias_128_4_1234_0.8_fold_3_data_type_ATAC
+_PE/bias_model/newgen/
+evaluating hyperparameters on the following chromosomes ['chr1', 'chr2', 'chr3', 'chr4', 'chr7', 'chr8', 'chr9', 'chr11', 'chr12', 'chr13', 'chr15', 'chr16', 'chr17',
+ 'chr19', 'chrX', 'chrY', 'chr6', 'chr21']
+Number of non peaks input:  380640
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  380640
+Number of non peaks input:  46251
+Number of non peaks filtered because the input/output is on the edge:  0
+Number of non peaks being used:  46251
+Number of peaks input:  190320
+Number of peaks filtered because the input/output is on the edge:  0
+Number of peaks being used:  190320
+Upper bound counts cut-off for bias model training:  59.2
+Number of nonpeaks after the upper-bount cut-off:  304110
+Number of nonpeaks after applying upper-bound cut-off and removing outliers :  290114
+counts_loss_weight: 3.5
+bash make_missing_bed_regions.sh H1ESC 0.8 3 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.17.2022_bias_128_4_1234_
+0.8_fold_3_data_type_ATAC_PE/bias_model/newgen/ ATAC_PE
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.17.2022_bias_128_4_1234_0.8_fold_3_data_type_ATAC_PE/train_test_regio
+ns_bias_may_7_2024/
+python get_train_test_regions_bias.py  -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.17.2022_bias_128_4_1234_0
+.8_fold_3_data_type_ATAC_PE/bias_model/newgen/filtered.bias_nonpeaks.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json -o /oak/stanford/groups/akundaje/proje
+cts/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.17.2022_bias_128_4_1234_0.8_fold_3_data_type_ATAC_PE/train_test_regions_bias_may_7_2024/
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/H1ESC/H1ESC_07.17.2022_bias_128_4_1234_0.8_fold_4_data_type_ATAC_PE/train_test_regio
+ns_bias_may_7_2024/
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$

@@ -1,0 +1,1074 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+API Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:19:42.964276: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/keras/layers/core/lambda_layer.py:303: UserWarning:  is not loaded, but a Lambda layer uses it. It
+ may cause errors.
+  function = cls._parse_function_from_config(config, custom_objects,
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:19:45.953741: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_
+07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/chrombpnet_wo_bias.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpne
+t/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet_wo_bias
+2024-05-08 17:19:56.143978: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:19:56.986398: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:19:58.881749: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_
+07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/bias_model_scaled.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet
+/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f bias_model_scaled
+2024-05-08 17:20:05.765619: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:20:06.720573: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:20:07.852851: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrom
+bpnet_model/new_model_formats_may_7_24/chrombpnet
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_
+07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/chrombpnet.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/
+ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet
+2024-05-08 17:21:06.639026: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:21:07.500995: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/keras/layers/core/lambda_layer.py:303: UserWarning:  is not loaded, but a Lambda layer uses it. It
+ may cause errors.
+  function = cls._parse_function_from_config(config, custom_objects,
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:21:10.411772: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_
+07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/chrombpnet_wo_bias.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpne
+t/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet_wo_bias
+2024-05-08 17:21:18.588274: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:21:19.421367: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:21:21.320962: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_
+07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/bias_model_scaled.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet
+/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f bias_model_scaled
+2024-05-08 17:21:27.980334: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:21:28.847539: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:21:29.972416: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrom
+bpnet_model/new_model_formats_may_7_24/chrombpnet
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_
+07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/chrombpnet.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/
+ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet
+2024-05-08 17:21:35.110948: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:21:35.984856: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/keras/layers/core/lambda_layer.py:303: UserWarning:  is not loaded, but a Lambda layer uses it. It
+ may cause errors.
+  function = cls._parse_function_from_config(config, custom_objects,
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:21:38.919540: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_
+07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/chrombpnet_wo_bias.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpne
+t/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet_wo_bias
+2024-05-08 17:21:47.507873: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:21:48.430584: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:21:50.432826: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_
+07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/bias_model_scaled.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet
+/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f bias_model_scaled
+2024-05-08 17:22:13.871855: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:22:14.828533: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:22:15.902654: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrom
+bpnet_model/new_model_formats_may_7_24/chrombpnet
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_
+07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/chrombpnet.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/
+ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet
+2024-05-08 17:22:21.608257: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:22:22.443972: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/keras/layers/core/lambda_layer.py:303: UserWarning:  is not loaded, but a Lambda layer uses it. It
+ may cause errors.
+  function = cls._parse_function_from_config(config, custom_objects,
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:22:25.417244: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_
+07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/chrombpnet_wo_bias.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpne
+t/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet_wo_bias
+2024-05-08 17:22:33.227533: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:22:34.085172: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:22:36.045850: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_
+07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/bias_model_scaled.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet
+/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f bias_model_scaled
+2024-05-08 17:22:42.261302: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:22:43.177161: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:22:44.292704: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrombp
+net_model/new_model_formats_may_7_24/chrombpnet
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/chrombpnet.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/AT
+AC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet
+2024-05-08 17:22:49.870656: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:22:50.758515: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/keras/layers/core/lambda_layer.py:303: UserWarning:  is not loaded, but a Lambda layer uses it. It
+ may cause errors.
+  function = cls._parse_function_from_config(config, custom_objects,
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:22:53.742819: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/chrombpnet_wo_bias.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/
+folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet_wo_bias
+2024-05-08 17:23:02.190957: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:23:03.032869: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:23:05.011775: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/bias_model_scaled.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/f
+olds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f bias_model_scaled
+2024-05-08 17:23:14.086272: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:23:14.893562: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:23:15.930370: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombp
+net_model/new_model_formats_may_7_24/chrombpnet
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/chrombpnet.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/AT
+AC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet
+2024-05-08 17:23:21.167530: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:23:22.141746: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/keras/layers/core/lambda_layer.py:303: UserWarning:  is not loaded, but a Lambda layer uses it. It
+ may cause errors.
+  function = cls._parse_function_from_config(config, custom_objects,
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:23:25.056023: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/chrombpnet_wo_bias.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/
+folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet_wo_bias
+2024-05-08 17:23:33.568936: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:23:34.375546: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:23:36.298993: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/bias_model_scaled.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/f
+olds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f bias_model_scaled
+2024-05-08 17:23:42.637151: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:23:43.497484: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:23:44.652868: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombp
+net_model/new_model_formats_may_7_24/chrombpnet
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/chrombpnet.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/AT
+AC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet
+2024-05-08 17:23:49.789146: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:23:50.660105: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/keras/layers/core/lambda_layer.py:303: UserWarning:  is not loaded, but a Lambda layer uses it. It
+ may cause errors.
+  function = cls._parse_function_from_config(config, custom_objects,
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:23:53.621238: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/chrombpnet_wo_bias.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/
+folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet_wo_bias
+2024-05-08 17:24:08.639312: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:24:09.491289: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:24:11.554826: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/bias_model_scaled.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/f
+olds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f bias_model_scaled
+2024-05-08 17:24:20.924526: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:24:21.998121: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:24:23.062140: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombp
+net_model/new_model_formats_may_7_24/chrombpnet
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/chrombpnet.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/AT
+AC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet
+2024-05-08 17:24:28.363988: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:24:29.209466: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/keras/layers/core/lambda_layer.py:303: UserWarning:  is not loaded, but a Lambda layer uses it. It
+ may cause errors.
+  function = cls._parse_function_from_config(config, custom_objects,
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:24:32.222758: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/chrombpnet_wo_bias.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/
+folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet_wo_bias
+2024-05-08 17:24:40.218888: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:24:41.039893: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:24:43.089973: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/bias_model_scaled.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/f
+olds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f bias_model_scaled
+2024-05-08 17:24:49.261156: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:24:50.099090: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:24:51.179503: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombp
+net_model/new_model_formats_may_7_24/chrombpnet
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/chrombpnet.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/AT
+AC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet
+2024-05-08 17:24:56.506686: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:24:57.337745: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+/users/anusri/anaconda3/envs/chrombpnet/lib/python3.8/site-packages/keras/layers/core/lambda_layer.py:303: UserWarning:  is not loaded, but a Lambda layer uses it. It
+ may cause errors.
+  function = cls._parse_function_from_config(config, custom_objects,
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:25:00.304870: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/chrombpnet_wo_bias.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/
+folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f chrombpnet_wo_bias
+2024-05-08 17:25:08.477283: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:25:09.441939: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:25:11.421551: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07
+.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/bias_model_scaled.h5 -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/f
+olds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/ -f bias_model_scaled
+2024-05-08 17:25:22.085647: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)
+to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-08 17:25:22.941967: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10544 MB memory:
+  -> device: 0, name: NVIDIA TITAN V, pci bus id: 0000:3b:00.0, compute capability: 7.0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the mod
+el.
+2024-05-08 17:25:24.031961: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding
+ using them.
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ python run_conversion.py
+/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/ATAC_PE/GM12878/nautilus_runs/GM12878_03.01.2022_bias_128_4_1234_0.4_fold_0/chrombpnet_model/new_model_formats_may
+_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.08.2022_bias_128_4_1234_0.4_fold_1_data_type_ATAC_PE/chrombpnet_m
+odel/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.08.2022_bias_128_4_1234_0.4_fold_2_data_type_ATAC_PE/chrombpnet_m
+odel/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.14.2022_bias_128_4_1234_0.4_fold_3_data_type_ATAC_PE/chrombpnet_m
+odel/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878/GM12878_07.07.2022_bias_128_4_1234_0.4_fold_4_data_type_ATAC_PE/chrombpnet_m
+odel/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.19.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chr
+ombpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chr
+ombpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.19.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chr
+ombpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chr
+ombpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chr
+ombpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.19.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chr
+ombpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chr
+ombpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chr
+ombpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chr
+ombpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chr
+ombpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrom
+bpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrom
+bpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrom
+bpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrom
+bpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.19.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrom
+bpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrom
+bpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrom
+bpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrom
+bpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrom
+bpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrom
+bpnet_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrombp
+net_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombp
+net_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombp
+net_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombp
+net_model/new_model_formats_may_7_24/chrombpnet
+/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombp
+net_model/new_model_formats_may_7_24/chrombpnet
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ ls
+bias_models_atlas.csv           get_train_test_regions.py  new_run_train_test_making.py       run_conversion_bias.py         run_train_test_making.py
+convert_to_compressed.py        GM12878                    prepare_file_for_upload_models.py  run_conversion_new.py          temp
+get_new_tf_model_format.py      k562.samstats.qc           __pycache__                        run_conversion.py              upload_utils.py
+get_train_test_regions_bias.py  new_metrics                README.md                          run_train_test_making_bias.py
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ nano run_train_test_making.py
+
+  GNU nano 6.2                                                   run_train_test_making.py
+import pandas as pd
+import os
+
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_atac.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_dnase.csv",sep=",", header=None)
+model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_dnase_v2.1.csv",sep=",",header=None)
+
+#encode_id = {"K562": "ENCSR868FGK",
+#        "GM12878": "ENCSR637XSC",
+#        "HEPG2": "ENCSR291GJU",
+#        "IMR90": "ENCSR200OML",
+#         "H1ESC": "ENCDUMMY"}
+
+encode_id = {"K562": "ENCSR000EOT",
+        "GM12878": "ENCSR000EMT",
+        "HEPG2": "ENCSR149XIL",
+        "IMR90": "ENCSR477RTP",
+        "H1ESC": "ENCSR000EMU"}
+
+
+for i,r in model_atac.iterrows():
+        fold = r[0]
+        name = r[1]
+        model_path = r[2]
+
+        input_peaks=os.path.join(model_path,"chrombpnet_model/filtered.peaks.bed")
+        input_nonpeaks=os.path.join(model_path,"chrombpnet_model/filtered.nonpeaks.bed")
+        test_nonpeaks="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/"+encode_id[name]+"/negatives_data/test/test."+fold+".filtere>
+        fold="/mnt/lab_data2/anusri/chrombpnet/splits/"+fold+".json"
+        output_path=os.path.join(model_path,"train_test_regions_may_7_2024/")
+
+        if not os.path.isfile(output_path+"nonpeaks.validationset.bed.gz"):
+                os.makedirs(output_path, exist_ok=True)
+                command=["python get_train_test_regions.py  -ip"]+[input_peaks]+["-inp"]+[input_nonpeaks]+["-inpt"]+[test_nonpeaks]+["-f"]+[fold]+["->
+                command = " ".join(command)
+                print(command)
+                os.system(command)
+
+
+
+
+
+
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ nano run_conversion.py
+
+  GNU nano 6.2                                                       run_conversion.py
+import pandas as pd
+import os
+
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_atac.csv",sep=",",header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_dnase.csv",sep=",",header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_dnase_v2.1.csv",sep=",",header=None)
+model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_subsample_atac.csv",sep=",",header=None)
+
+
+for i,r in model_atac.iterrows():
+        fold = r[0]
+        name = r[1]
+        model_path = r[3]
+        input_path=os.path.join(model_path,"chrombpnet_model/chrombpnet.h5")
+        output_path=os.path.join(model_path,"chrombpnet_model/new_model_formats_may_7_24/chrombpnet")
+        output_dir=os.path.join(model_path,"chrombpnet_model/new_model_formats_may_7_24/")
+        print(output_path)
+        if not os.path.isfile(output_path+".tar"):
+
+                os.makedirs(os.path.join(model_path,"chrombpnet_model/new_model_formats_may_7_24/"), exist_ok=True)
+                command = "CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i "+input_path+" -o "+output_dir+" -f chrombpnet"
+                print(command)
+                os.system(command)
+
+        input_path=os.path.join(model_path,"chrombpnet_model/chrombpnet_wo_bias.h5")
+        output_path=os.path.join(model_path,"chrombpnet_model/new_model_formats_may_7_24/chrombpnet_wo_bias")
+
+        if not os.path.isfile(output_path+".tar"):
+                os.makedirs(os.path.join(model_path,"chrombpnet_model/new_model_formats_may_7_24/"), exist_ok=True)
+                command = "CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i "+input_path+" -o "+output_dir+" -f chrombpnet_wo_bias"
+                print(command)
+                os.system(command)
+
+        input_path=os.path.join(model_path,"chrombpnet_model/bias_model_scaled.h5")
+        output_path=os.path.join(model_path,"chrombpnet_model/new_model_formats_may_7_24/bias_model_scaled")
+
+        if not os.path.isfile(output_path+".tar"):
+                os.makedirs(os.path.join(model_path,"chrombpnet_model/new_model_formats_may_7_24/"), exist_ok=True)
+                command = "CUDA_VISIBLE_DEVICES=0 python get_new_tf_model_format.py -i "+input_path+" -o "+output_dir+" -f bias_model_scaled"
+                print(command)
+                os.system(command)
+
+
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ nano run_train_test_making.py
+
+  GNU nano 6.2                                                   run_train_test_making.py
+import pandas as pd
+import os
+
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_atac.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_dnase.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_dnase_v2.1.csv",sep=",",header=None)
+model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_subsample_atac.csv",sep=",",header=None)
+
+#encode_id = {"K562": "ENCSR868FGK",
+#        "GM12878": "ENCSR637XSC",
+#        "HEPG2": "ENCSR291GJU",
+#        "IMR90": "ENCSR200OML",
+#         "H1ESC": "ENCDUMMY"}
+
+encode_id = {"K562": "ENCSR000EOT",
+        "GM12878": "ENCSR000EMT",
+        "HEPG2": "ENCSR149XIL",
+        "IMR90": "ENCSR477RTP",
+        "H1ESC": "ENCSR000EMU"}
+
+
+for i,r in model_atac.iterrows():
+        fold = r[0]
+        name = r[1]
+        model_path = r[2]
+
+        input_peaks=os.path.join(model_path,"chrombpnet_model/filtered.peaks.bed")
+        input_nonpeaks=os.path.join(model_path,"chrombpnet_model/filtered.nonpeaks.bed")
+        test_nonpeaks="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/"+encode_id[name]+"/negatives_data/test/test."+fold+".filtere>
+        fold="/mnt/lab_data2/anusri/chrombpnet/splits/"+fold+".json"
+        output_path=os.path.join(model_path,"train_test_regions_may_7_2024/")
+
+        if not os.path.isfile(output_path+"nonpeaks.validationset.bed.gz"):
+                os.makedirs(output_path, exist_ok=True)
+                command=["python get_train_test_regions.py  -ip"]+[input_peaks]+["-inp"]+[input_nonpeaks]+["-inpt"]+[test_nonpeaks]+["-f"]+[fold]+["->
+                command = " ".join(command)
+                print(command)
+                os.system(command)
+
+
+
+
+
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ python run_train_test_making.py
+Traceback (most recent call last):
+  File "run_train_test_making.py", line 29, in <module>
+    test_nonpeaks="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/"+encode_id[name]+"/negatives_data/test/test."+fold+".filtered.negatives_with_summ
+it.bed"
+KeyError: '572M'
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ nano run_train_test_making.py
+
+  GNU nano 6.2                                                   run_train_test_making.py
+import pandas as pd
+import os
+
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_atac.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_dnase.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_dnase_v2.1.csv",sep=",",header=None)
+model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_subsample_atac.csv",sep=",",header=None)
+
+#encode_id = {"K562": "ENCSR868FGK",
+#        "GM12878": "ENCSR637XSC",
+#        "HEPG2": "ENCSR291GJU",
+#        "IMR90": "ENCSR200OML",
+#         "H1ESC": "ENCDUMMY"}
+
+encode_id = {"K562": "ENCSR000EOT",
+        "GM12878": "ENCSR000EMT",
+        "HEPG2": "ENCSR149XIL",
+        "IMR90": "ENCSR477RTP",
+        "H1ESC": "ENCSR000EMU"}
+
+
+for i,r in model_atac.iterrows():
+        fold = r[0]
+        name = r[1]
+        model_path = r[3]
+
+        input_peaks=os.path.join(model_path,"chrombpnet_model/filtered.peaks.bed")
+        input_nonpeaks=os.path.join(model_path,"chrombpnet_model/filtered.nonpeaks.bed")
+        test_nonpeaks="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/"+encode_id[name]+"/negatives_data/test/test."+fold+".filtere>
+        fold="/mnt/lab_data2/anusri/chrombpnet/splits/"+fold+".json"
+        output_path=os.path.join(model_path,"train_test_regions_may_7_2024/")
+
+        if not os.path.isfile(output_path+"nonpeaks.validationset.bed.gz"):
+                os.makedirs(output_path, exist_ok=True)
+                command=["python get_train_test_regions.py  -ip"]+[input_peaks]+["-inp"]+[input_nonpeaks]+["-inpt"]+[test_nonpeaks]+["-f"]+[fold]+["->
+                command = " ".join(command)
+                print(command)
+                os.system(command)
+
+
+
+
+
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ ls /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/fol
+ds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_4_data_type
+
+ls: cannot access '/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_4_data_t
+ype': No such file or directory
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ _ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/chrombpnet
+bash: _ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/chrombpnet: No such file or directory
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ ls /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/fol
+ds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/
+bias_metrics.json                              chrombpnet.log.batch                           chrombpnet_wo_bias_only_nonpeaks.jsd.png
+bias_model_scaled.h5                           chrombpnet_metrics.json                        chrombpnet_wo_bias_only_nonpeaks.png
+bias_only_nonpeaks.jsd.png                     chrombpnet_model_params.tsv                    chrombpnet_wo_bias_only_peaks.jsd.png
+bias_only_nonpeaks.png                         chrombpnet_only_nonpeaks.jsd.png               chrombpnet_wo_bias_only_peaks.png
+bias_only_peaks.jsd.png                        chrombpnet_only_nonpeaks.png                   chrombpnet_wo_bias_peaks_and_nonpeaks.jsd.png
+bias_only_peaks.png                            chrombpnet_only_peaks.jsd.png                  chrombpnet_wo_bias_peaks_and_nonpeaks.png
+bias_peaks_and_nonpeaks.jsd.png                chrombpnet_only_peaks.png                      chrombpnet_wo_bias_predictions.h5
+bias_peaks_and_nonpeaks.png                    chrombpnet.params.json                         filtered.nonpeaks.bed
+bias_predictions.h5                            chrombpnet_peaks_and_nonpeaks.jsd.png          filtered.peaks.bed
+chrombpnet.args.json                           chrombpnet_peaks_and_nonpeaks.png              footprints/
+chrombpnet_data_params.tsv                     chrombpnet_predictions.h5                      interpret/
+chrombpnet.h5                                  chrombpnet_wo_bias.h5                          new_model_formats_may_7_24/
+chrombpnet.log                                 chrombpnet_wo_bias_metrics.json                train_chrombpnet_model.log
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ ls /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/fol
+ds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/new_model_formats_may_7_24/
+bias_model_scaled  bias_model_scaled.tar  chrombpnet  chrombpnet.tar  chrombpnet_wo_bias  chrombpnet_wo_bias.tar
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ nano run_train_test_making.py
+  GNU nano 6.2                                                   run_train_test_making.py
+import pandas as pd
+import os
+
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_atac.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_dnase.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_dnase_v2.1.csv",sep=",",header=None)
+model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_subsample_atac.csv",sep=",",header=None)
+
+#encode_id = {"K562": "ENCSR868FGK",
+#        "GM12878": "ENCSR637XSC",
+#        "HEPG2": "ENCSR291GJU",
+#        "IMR90": "ENCSR200OML",
+#         "H1ESC": "ENCDUMMY"}
+
+encode_id = {"K562": "ENCSR000EOT",
+        "GM12878": "ENCSR000EMT",
+        "HEPG2": "ENCSR149XIL",
+        "IMR90": "ENCSR477RTP",
+        "H1ESC": "ENCSR000EMU"}
+
+
+for i,r in model_atac.iterrows():
+        fold = r[0]
+        name = r[1]
+        model_path = r[3]
+
+        input_peaks=os.path.join(model_path,"chrombpnet_model/filtered.peaks.bed")
+        input_nonpeaks=os.path.join(model_path,"chrombpnet_model/filtered.nonpeaks.bed")
+        test_nonpeaks="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/"+encode_id[name]+"/negatives_data/test/test."+fold+".filtere>
+        fold="/mnt/lab_data2/anusri/chrombpnet/splits/"+fold+".json"
+        output_path=os.path.join(model_path,"train_test_regions_may_7_2024/")
+
+        if not os.path.isfile(output_path+"nonpeaks.validationset.bed.gz"):
+                os.makedirs(output_path, exist_ok=True)
+                command=["python get_train_test_regions.py  -ip"]+[input_peaks]+["-inp"]+[input_nonpeaks]+["-inpt"]+[test_nonpeaks]+["-f"]+[fold]+["->
+                command = " ".join(command)
+                print(command)
+                os.system(command)
+
+
+
+
+
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ python run_train_test_making.py
+Traceback (most recent call last):
+  File "run_train_test_making.py", line 29, in <module>
+    test_nonpeaks="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/"+encode_id[name]+"/negatives_data/test/test."+fold+".filtered.negatives_with_summ
+it.bed"
+KeyError: '572M'
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ nano run_train_test_making.py
+
+  GNU nano 6.2                                                   run_train_test_making.py
+import pandas as pd
+import os
+
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_atac.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_dnase.csv",sep=",", header=None)
+#model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_dnase_v2.1.csv",sep=",",header=None)
+model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/v1/model_dir_subsample_atac.csv",sep=",",header=None)
+
+#encode_id = {"K562": "ENCSR868FGK",
+#        "GM12878": "ENCSR637XSC",
+#        "HEPG2": "ENCSR291GJU",
+#        "IMR90": "ENCSR200OML",
+#         "H1ESC": "ENCDUMMY"}
+
+encode_id = {"K562": "ENCSR000EOT",
+        "GM12878": "ENCSR000EMT",
+        "HEPG2": "ENCSR149XIL",
+        "IMR90": "ENCSR477RTP",
+        "H1ESC": "ENCSR000EMU"}
+
+
+for i,r in model_atac.iterrows():
+        fold = r[0]
+        name = r[2]
+        model_path = r[3]
+
+        input_peaks=os.path.join(model_path,"chrombpnet_model/filtered.peaks.bed")
+        input_nonpeaks=os.path.join(model_path,"chrombpnet_model/filtered.nonpeaks.bed")
+        test_nonpeaks="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/ATAC/"+encode_id[name]+"/negatives_data/test/test."+fold+".filtere>
+        fold="/mnt/lab_data2/anusri/chrombpnet/splits/"+fold+".json"
+        output_path=os.path.join(model_path,"train_test_regions_may_7_2024/")
+
+        if not os.path.isfile(output_path+"nonpeaks.validationset.bed.gz"):
+                os.makedirs(output_path, exist_ok=True)
+                command=["python get_train_test_regions.py  -ip"]+[input_peaks]+["-inp"]+[input_nonpeaks]+["-inpt"]+[test_nonpeaks]+["-f"]+[fold]+["->
+                command = " ".join(command)
+                print(command)
+                os.system(command)
+
+
+
+
+
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ python run_train_test_making.py
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.19.2022_bias_tran
+sfer_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_
+250M/GM12878_250M_07.19.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin
+-atlas-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_0.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_0.json -o /oak/stanfor
+d/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.19.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/train_test_regi
+ons_may_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.18.2022_bias_tran
+sfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_
+250M/GM12878_250M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin
+-atlas-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_1.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_1.json -o /oak/stanfor
+d/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/train_test_regi
+ons_may_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.19.2022_bias_tran
+sfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_
+250M/GM12878_250M_07.19.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin
+-atlas-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_2.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_2.json -o /oak/stanfor
+d/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.19.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/train_test_regi
+ons_may_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.18.2022_bias_tran
+sfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_
+250M/GM12878_250M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin
+-atlas-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_3.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json -o /oak/stanfor
+d/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/train_test_regi
+ons_may_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.18.2022_bias_tran
+sfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_
+250M/GM12878_250M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin
+-atlas-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_4.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_4.json -o /oak/stanfor
+d/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_250M/GM12878_250M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/train_test_regi
+ons_may_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.19.2022_bias_tran
+sfer_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_
+100M/GM12878_100M_07.19.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin
+-atlas-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_0.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_0.json -o /oak/stanfor
+d/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.19.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/train_test_regi
+ons_may_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.18.2022_bias_tran
+sfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_
+100M/GM12878_100M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin
+-atlas-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_1.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_1.json -o /oak/stanfor
+d/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/train_test_regi
+ons_may_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.18.2022_bias_tran
+sfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_
+100M/GM12878_100M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin
+-atlas-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_2.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_2.json -o /oak/stanfor
+d/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/train_test_regi
+ons_may_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.18.2022_bias_tran
+sfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_
+100M/GM12878_100M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin
+-atlas-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_3.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json -o /oak/stanfor
+d/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/train_test_regi
+ons_may_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.18.2022_bias_tran
+sfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_
+100M/GM12878_100M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin
+-atlas-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_4.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_4.json -o /oak/stanfor
+d/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_100M/GM12878_100M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/train_test_regi
+ons_may_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.18.2022_bias_transf
+er_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50
+M/GM12878_50M_07.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atl
+as-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_0.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_0.json -o /oak/stanford/gr
+oups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/train_test_regions_ma
+y_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.18.2022_bias_transf
+er_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50
+M/GM12878_50M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atl
+as-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_1.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_1.json -o /oak/stanford/gr
+oups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/train_test_regions_ma
+y_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.18.2022_bias_transf
+er_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50
+M/GM12878_50M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atl
+as-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_2.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_2.json -o /oak/stanford/gr
+oups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/train_test_regions_ma
+y_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.18.2022_bias_transf
+er_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50
+M/GM12878_50M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atl
+as-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_3.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json -o /oak/stanford/gr
+oups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/train_test_regions_ma
+y_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.19.2022_bias_transf
+er_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50
+M/GM12878_50M_07.19.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atl
+as-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_4.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_4.json -o /oak/stanford/gr
+oups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_50M/GM12878_50M_07.19.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/train_test_regions_ma
+y_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transf
+er_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25
+M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atl
+as-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_0.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_0.json -o /oak/stanford/gr
+oups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/train_test_regions_ma
+y_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transf
+er_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25
+M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atl
+as-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_1.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_1.json -o /oak/stanford/gr
+oups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/train_test_regions_ma
+y_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transf
+er_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25
+M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atl
+as-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_2.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_2.json -o /oak/stanford/gr
+oups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/train_test_regions_ma
+y_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transf
+er_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25
+M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atl
+as-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_3.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json -o /oak/stanford/gr
+oups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/train_test_regions_ma
+y_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transf
+er_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25
+M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atl
+as-2022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_4.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_4.json -o /oak/stanford/gr
+oups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_25M/GM12878_25M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/train_test_regions_ma
+y_7_2024/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer
+_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/G
+M12878_5M_07.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atlas-2
+022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_0.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_0.json -o /oak/stanford/groups
+/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_0_data_type_ATAC_PE/train_test_regions_may_7_20
+24/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer
+_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/G
+M12878_5M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atlas-2
+022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_1.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_1.json -o /oak/stanford/groups
+/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_1_data_type_ATAC_PE/train_test_regions_may_7_20
+24/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer
+_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/G
+M12878_5M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atlas-2
+022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_2.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_2.json -o /oak/stanford/groups
+/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_2_data_type_ATAC_PE/train_test_regions_may_7_20
+24/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer
+_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/G
+M12878_5M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atlas-2
+022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_3.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_3.json -o /oak/stanford/groups
+/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_3_data_type_ATAC_PE/train_test_regions_may_7_20
+24/
+python get_train_test_regions.py  -ip /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer
+_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/filtered.peaks.bed -inp /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/G
+M12878_5M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/chrombpnet_model/filtered.nonpeaks.bed -inpt /oak/stanford/groups/akundaje/projects/chromatin-atlas-2
+022/ATAC/ENCSR000EMT/negatives_data/test/test.fold_4.filtered.negatives_with_summit.bed -f /mnt/lab_data2/anusri/chrombpnet/splits/fold_4.json -o /oak/stanford/groups
+/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/GM12878_5M/GM12878_5M_07.18.2022_bias_transfer_1234_fold_4_data_type_ATAC_PE/train_test_regions_may_7_20
+24/
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ ls
+bias_models_atlas.csv           GM12878                            __pycache__             run_train_test_making_bias.py
+convert_to_compressed.py        k562.samstats.qc                   README.md               run_train_test_making.py
+get_new_tf_model_format.py      new_metrics                        run_conversion_bias.py  temp
+get_train_test_regions_bias.py  new_run_train_test_making.py       run_conversion_new.py   upload_utils.py
+get_train_test_regions.py       prepare_file_for_upload_models.py  run_conversion.py
+(chrombpnet) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/upload_jsons/upload_scripts$ python run_train_test_making.py

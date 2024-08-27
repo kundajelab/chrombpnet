@@ -1,0 +1,326 @@
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$ nano combine_deepshap.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import pandas as pd
+import os
+import deepdish as dd
+import numpy as np
+from tqdm import tqdm
+
+#data = pd.read_csv("model_dir_atac.csv",header=None)
+#ddtpe="ATAC"
+#ddtpen=ddtpe+"_PE"
+#cell_types=["HEPG2", "K562", "GM12878", "H1ESC", "IMR90"]
+#cell_types=[ "H1ESC", "IMR90"]
+#cell_types=["K562", "GM12878", "H1ESC", "IMR90", "HEPG2"]
+#cell_types=["IMR90"]
+#itype="counts"
+
+#data = pd.read_csv("model_dir_dnase.csv",header=None)
+data = pd.read_csv("v1/model_dir_dnase_v2_interpret.csv",header=None)
+ddtpe="DNASE"
+ddtpen=ddtpe+"_SE"
+#ddtpen=ddtpe+"_SE"
+#cell_types=["HEPG2", "K562", "GM12878", "H1ESC", "IMR90"]
+#cell_types=["K562", "GM12878", "H1ESC", "IMR90", "HEPG2"]
+#cell_types=["HEPG2", "K562"]
+#cell_types=["K562"]
+#cell_types=["GM12878", "IMR90"]
+#cell_types=["GM12878_new", "IMR90_new", "H1ESC_new"]
+cell_types=["GM12878", "IMR90", "H1ESC"]
+#cell_types=[ "IMR90"]
+itype="counts"
+
+
+
+#data = pd.read_csv("model_dir_dnase.csv",header=None)
+
+
+NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
+
+def filter_regions_to_peaks(bed_of_interest, merged, scores):
+
+        output_prefix="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24_atac/in_peaks"
+
+        boi = bed_of_interest[["chr", "start", "end", "summit"]].to_numpy().tolist()
+        merged_val = merged[[0,1,2,9]].to_numpy().tolist()
+
+        indices=[]
+        dups = []
+        #for i, val in enumerate(tqdm(merged_val)):
+        for i, val in enumerate(merged_val):
+                if val in boi:
+                        if val not in dups:
+                                indices.append(i)
+                                dups.append(val)
+
+        print(len(indices))
+        print(len(merged_val))
+        print(len(boi))
+        #assert(len(indices)==len(boi))
+        merged.iloc[indices].to_csv(output_prefix+"."+itype+".interpreted_regions.bed", header=False, index=False, sep="\t")
+
+        sub_scores = {
+                        'raw': {'seq': scores['raw']['seq'][indices]},
+                        'shap': {'seq': scores['shap']['seq'][indices]},
+                        'projected_shap': {'seq': scores['projected_shap']['seq'][indices]}
+                }
+
+        print(sub_scores['raw']['seq'].shape)
+
+        dd.io.save(output_prefix+"."+itype+"_scores_new_compressed.h5",
+                                        sub_scores,
+                                        compression='blosc')
+
+
+for cell_type in cell_types:
+        ndata = data[data[1]==cell_type].reset_index()
+        cell_type = cell_type+"_new"
+        bed_of_interest = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/"+ddtpen+"/"+cell_type+"/data/peaks_no_blacklist.bed", sep="\t", header=No>
+        one_hots=None
+        for i,r in ndata.iterrows():
+                print(i,r[2])
+
+                beds_path = os.path.join(r[2],"chrombpnet_model/interpret/full_"+cell_type+".interpreted_regions_"+itype+".bed")
+                if os.path.exists(beds_path):
+                        beds = pd.read_csv(beds_path, sep="\t", header=None)
+                elif os.path.exists(os.path.join(r[2],"chrombpnet_model/interpret/merged."+cell_type+".interpreted_regions.bed")):
+                        beds_path = os.path.join(r[2],"chrombpnet_model/interpret/merged."+cell_type+".interpreted_regions.bed")
+                        beds = pd.read_csv(beds_path, sep="\t", header=None)
+                else:
+                        beds_path = os.path.join(r[2],"interpret/merged."+cell_type+".interpreted_regions.bed")
+                        beds = pd.read_csv(beds_path, sep="\t", header=None)
+
+                print(beds.head())
+                beds["key"] = beds[0] + "_" + beds[1].astype(str) + "_" + beds[2].astype(str) + "_" + + beds[9].astype(str)
+
+                ppath = os.path.join(r[2],"chrombpnet_model/interpret/full_"+cell_type+"."+itype+"_scores_new_compressed.h5")
+                if os.path.exists(ppath):
+                        scores = dd.io.load(ppath)
+                elif os.path.exists(os.path.join(r[2],"interpret/merged."+cell_type+"."+itype+"_scores_new_compressed.h5")):
+                        ppath = os.path.join(r[2],"interpret/merged."+cell_type+"."+itype+"_scores_new_compressed.h5")
+                        scores = dd.io.load(ppath)
+                else:
+                        ppath = os.path.join(r[2],"chrombpnet_model/interpret/full_"+cell_type+"."+itype+"_scores_new_compressed.h5")
+                        scores = dd.io.load(ppath)
+
+                if i == 0 :
+                        output = scores['shap']['seq']
+                        shapez = output.shape
+                        init_beds = beds
+                        print(scores.keys())
+                        #raw = scores['raw']['seq']
+                        if 'raw' in scores:
+                                if one_hots is None:
+                                        one_hots = scores['raw']['seq']
+                                        print("one hots found")
+                else:
+        print(len(indices))
+        print(len(merged_val))
+        print(len(boi))
+        #assert(len(indices)==len(boi))
+        merged.iloc[indices].to_csv(output_prefix+"."+itype+".interpreted_regions.bed", header=False, index=False, sep="\t")
+
+        sub_scores = {
+                        'raw': {'seq': scores['raw']['seq'][indices]},
+                        'shap': {'seq': scores['shap']['seq'][indices]},
+                        'projected_shap': {'seq': scores['projected_shap']['seq'][indices]}
+  GNU nano 6.2                                                              combine_deepshap.py *
+
+#data = pd.read_csv("model_dir_dnase.csv",header=None)
+data = pd.read_csv("v1/model_dir_dnase_v2_interpret.csv",header=None)
+ddtpe="DNASE"
+ddtpen=ddtpe+"_SE"
+#ddtpen=ddtpe+"_SE"
+#cell_types=["HEPG2", "K562", "GM12878", "H1ESC", "IMR90"]
+#cell_types=["K562", "GM12878", "H1ESC", "IMR90", "HEPG2"]
+#cell_types=["HEPG2", "K562"]
+#cell_types=["K562"]
+#cell_types=["GM12878", "IMR90"]
+#cell_types=["GM12878_new", "IMR90_new", "H1ESC_new"]
+cell_types=["GM12878", "IMR90", "H1ESC"]
+#cell_types=[ "IMR90"]
+itype="counts"
+
+
+
+#data = pd.read_csv("model_dir_dnase.csv",header=None)
+
+
+NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
+
+def filter_regions_to_peaks(bed_of_interest, merged, scores):
+
+        output_prefix="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24_atac/in_peaks"
+
+        boi = bed_of_interest[["chr", "start", "end", "summit"]].to_numpy().tolist()
+        merged_val = merged[[0,1,2,9]].to_numpy().tolist()
+
+        indices=[]
+        dups = []
+        #for i, val in enumerate(tqdm(merged_val)):
+        for i, val in enumerate(merged_val):
+                if val in boi:
+                        if val not in dups:
+                                indices.append(i)
+                                dups.append(val)
+
+        print(len(indices))
+        print(len(merged_val))
+        print(len(boi))
+        #assert(len(indices)==len(boi))
+        merged.iloc[indices].to_csv(output_prefix+"."+itype+".interpreted_regions.bed", header=False, index=False, sep="\t")
+
+        sub_scores = {
+
+
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$ nano combine_deepshap.py
+
+  GNU nano 6.2                                                              combine_deepshap.py
+
+import pandas as pd
+import os
+import deepdish as dd
+import numpy as np
+from tqdm import tqdm
+
+#data = pd.read_csv("model_dir_atac.csv",header=None)
+#ddtpe="ATAC"
+#ddtpen=ddtpe+"_PE"
+#cell_types=["HEPG2", "K562", "GM12878", "H1ESC", "IMR90"]
+#cell_types=[ "H1ESC", "IMR90"]
+#cell_types=["K562", "GM12878", "H1ESC", "IMR90", "HEPG2"]
+#cell_types=["IMR90"]
+#itype="counts"
+
+#data = pd.read_csv("model_dir_dnase.csv",header=None)
+data = pd.read_csv("v1/model_dir_dnase_v2_interpret.csv",header=None)
+ddtpe="DNASE"
+ddtpen=ddtpe+"_SE"
+#ddtpen=ddtpe+"_SE"
+#cell_types=["HEPG2", "K562", "GM12878", "H1ESC", "IMR90"]
+#cell_types=["K562", "GM12878", "H1ESC", "IMR90", "HEPG2"]
+#cell_types=["HEPG2", "K562"]
+#cell_types=["K562"]
+#cell_types=["GM12878", "IMR90"]
+#cell_types=["GM12878_new", "IMR90_new", "H1ESC_new"]
+cell_types=["GM12878", "IMR90", "H1ESC"]
+#cell_types=[ "IMR90"]
+itype="profile"
+
+
+
+#data = pd.read_csv("model_dir_dnase.csv",header=None)
+
+
+NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
+
+def filter_regions_to_peaks(bed_of_interest, merged, scores):
+
+        output_prefix="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24_atac/in_peaks"
+
+        boi = bed_of_interest[["chr", "start", "end", "summit"]].to_numpy().tolist()
+        merged_val = merged[[0,1,2,9]].to_numpy().tolist()
+
+        indices=[]
+
+
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$ python combine_deepshap.py
+0 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878_new/fold_0/
+      0          1          2            3    4  5        6         7         8    9
+0  chr1  100027296  100027501  Peak_249793  205  .  2.96340  20.50725  18.78049  111
+1  chr1  100028565  100029246  Peak_167826  551  .  4.46107  55.12105  53.20545  364
+2  chr1  100034564  100034745  Peak_131731  932  .  2.44294  93.27672  91.24131   94
+3  chr1  100037049  100037386  Peak_143616  778  .  2.20879  77.80008  75.80809  249
+4  chr1  100037049  100037386  Peak_266435  174  .  1.51482  17.42906  15.73164   89
+dict_keys(['shap'])
+(277907, 4, 2114)
+1 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878_new/fold_1/
+      0          1          2            3    4  5        6         7         8    9
+0  chr1  100027296  100027501  Peak_249793  205  .  2.96340  20.50725  18.78049  111
+1  chr1  100028565  100029246  Peak_167826  551  .  4.46107  55.12105  53.20545  364
+2  chr1  100034564  100034745  Peak_131731  932  .  2.44294  93.27672  91.24131   94
+3  chr1  100037049  100037386  Peak_143616  778  .  2.20879  77.80008  75.80809  249
+4  chr1  100037049  100037386  Peak_266435  174  .  1.51482  17.42906  15.73164   89
+(277907, 4, 2114)
+(277907, 4, 2114)
+2 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878_new/fold_2/
+      0          1          2            3    4  5        6         7         8    9
+0  chr1  100027296  100027501  Peak_249793  205  .  2.96340  20.50725  18.78049  111
+1  chr1  100028565  100029246  Peak_167826  551  .  4.46107  55.12105  53.20545  364
+2  chr1  100034564  100034745  Peak_131731  932  .  2.44294  93.27672  91.24131   94
+3  chr1  100037049  100037386  Peak_143616  778  .  2.20879  77.80008  75.80809  249
+4  chr1  100037049  100037386  Peak_266435  174  .  1.51482  17.42906  15.73164   89
+(277907, 4, 2114)
+(277907, 4, 2114)
+3 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878_new/fold_3/
+      0          1          2            3    4  5        6         7         8    9
+0  chr1  100027296  100027501  Peak_249793  205  .  2.96340  20.50725  18.78049  111
+1  chr1  100028565  100029246  Peak_167826  551  .  4.46107  55.12105  53.20545  364
+2  chr1  100034564  100034745  Peak_131731  932  .  2.44294  93.27672  91.24131   94
+3  chr1  100037049  100037386  Peak_143616  778  .  2.20879  77.80008  75.80809  249
+4  chr1  100037049  100037386  Peak_266435  174  .  1.51482  17.42906  15.73164   89
+(277907, 4, 2114)
+(277907, 4, 2114)
+4 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878_new/fold_4/
+      0          1          2            3    4  5        6         7         8    9
+0  chr1  100027296  100027501  Peak_249793  205  .  2.96340  20.50725  18.78049  111
+1  chr1  100028565  100029246  Peak_167826  551  .  4.46107  55.12105  53.20545  364
+2  chr1  100034564  100034745  Peak_131731  932  .  2.44294  93.27672  91.24131   94
+3  chr1  100037049  100037386  Peak_143616  778  .  2.20879  77.80008  75.80809  249
+4  chr1  100037049  100037386  Peak_266435  174  .  1.51482  17.42906  15.73164   89
+(277907, 4, 2114)
+(277907, 4, 2114)
+Traceback (most recent call last):
+  File "combine_deepshap.py", line 131, in <module>
+    assert(one_hots.shape==output.shape)
+AttributeError: 'NoneType' object has no attribute 'shape'
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$

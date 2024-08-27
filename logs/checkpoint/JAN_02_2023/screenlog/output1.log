@@ -1,0 +1,408 @@
+        -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.stats \
+
+cellty=GM12878_new
+dtty=DNASE
+python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+        -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".profil
+e_scores_new_compressed.h5 \
+        -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".profile
+_scores_new_compressed.bed.gz \
+        -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+        -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.bw  \
+        -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.stats \
+
+
+
+cellty=IMR90
+dtty=ATAC
+python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+        -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts
+_scores_new_compressed.h5 \
+        -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts_
+scores_new_compressed.bed.gz \
+        -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+        -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.bw  \
+        -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.stats \
+
+cellty=GM12878
+dtty=ATAC
+python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+        -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts
+_scores_new_compressed.h5 \
+        -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts_
+scores_new_compressed.bed.gz \
+        -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+        -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.bw  \
+        -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.stats \
+
+cellty=H1ESC
+dtty=ATAC
+python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+        -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts
+_scores_new_compressed.h5 \
+        -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts_
+scores_new_compressed.bed.gz \
+        -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+        -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.bw  \
+        -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.stats \
+
+cellty=IMR90_new
+dtty=DNASE
+python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+        -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts
+_scores_new_compressed.h5 \
+        -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts_
+scores_new_compressed.bed.gz \
+        -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+        -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.bw  \
+
+
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$ nano script_make_bigwig.sh
+
+
+#merge_folds_all_regions_may_05_24/$cellty"_folds_merged".counts_scores_new_compressed.bw
+
+# cellty=IMR90
+# dtty=ATAC
+# python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+#       -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_may_05_24/$cellty"_folds_merged".profil
+e_scores_new_compressed.h5 \
+#       -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_may_05_24/$cellty"_folds_merged".profile
+_scores_new_compressed.bed.gz \
+#       -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+#       -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.bw  \
+#       -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.stats \
+#
+# cellty=GM12878
+# dtty=ATAC
+# python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+#       -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_may_05_24/$cellty"_folds_merged".profil
+e_scores_new_compressed.h5 \
+#       -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_may_05_24/$cellty"_folds_merged".profile
+_scores_new_compressed.bed.gz \
+#       -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+#       -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.bw  \
+#       -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.stats \
+#
+# cellty=H1ESC
+# dtty=ATAC
+# python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+#       -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_may_05_24/$cellty"_folds_merged".profil
+e_scores_new_compressed.h5 \
+#       -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_may_05_24/$cellty"_folds_merged".profile
+_scores_new_compressed.bed.gz \
+#       -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+#       -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.bw  \
+#       -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.stats \
+
+cellty=IMR90_new
+dtty=DNASE
+python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+        -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".profil
+e_scores_new_compressed.h5 \
+        -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".profile
+_scores_new_compressed.bed.gz \
+        -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+        -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.bw  \
+        -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.stats \
+
+cellty=H1ESC_new
+dtty=DNASE
+python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+        -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".profil
+e_scores_new_compressed.h5 \
+        -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".profile
+_scores_new_compressed.bed.gz \
+        -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+        -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.bw  \
+        -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.stats \
+
+cellty=GM12878_new
+dtty=DNASE
+python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+        -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".profil
+e_scores_new_compressed.h5 \
+        -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".profile
+_scores_new_compressed.bed.gz \
+        -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+        -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.bw  \
+        -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".profile_sc
+ores_new_compressed.stats \
+
+
+
+# cellty=IMR90
+# dtty=ATAC
+# python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+#       -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_may_05_24/$cellty"_folds_merged".counts
+_scores_new_compressed.h5 \
+#       -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_may_05_24/$cellty"_folds_merged".counts_
+scores_new_compressed.bed.gz \
+#       -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+#       -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.bw  \
+#       -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.stats \
+#
+# cellty=GM12878
+# dtty=ATAC
+# python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+#       -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_may_05_24/$cellty"_folds_merged".counts
+_scores_new_compressed.h5 \
+#       -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_may_05_24/$cellty"_folds_merged".counts_
+scores_new_compressed.bed.gz \
+#       -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+#       -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.bw  \
+#       -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.stats \
+#
+# cellty=H1ESC
+# dtty=ATAC
+# python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+#       -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_may_05_24/$cellty"_folds_merged".counts
+_scores_new_compressed.h5 \
+#       -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_may_05_24/$cellty"_folds_merged".counts_
+scores_new_compressed.bed.gz \
+#       -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+#       -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.bw  \
+#       -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.stats \
+
+cellty=IMR90_new
+dtty=DNASE
+python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+        -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts
+_scores_new_compressed.h5 \
+        -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts_
+scores_new_compressed.bed.gz \
+        -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+        -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.bw  \
+        -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.stats \
+  GNU nano 6.2                                                                                     script_make_bigwig.sh
+
+
+cellty=H1ESC_new
+dtty=DNASE
+python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+        -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts
+_scores_new_compressed.h5 \
+        -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts_
+scores_new_compressed.bed.gz \
+        -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+        -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.bw  \
+        -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.stats \
+
+cellty=GM12878_new
+dtty=DNASE
+python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+        -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts
+_scores_new_compressed.h5 \
+        -r /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/merge_folds_all_regions_jun_11_24/$cellty"_folds_merged".counts_
+scores_new_compressed.bed.gz \
+        -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+        -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.bw  \
+        -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/$dtty/$cellty/interpret_upload/average_preds/$cellty"_folds_merged".counts_sco
+res_new_compressed.stats \
+
+
+#python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+#       -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/HEPG2/merge_folds_new_may_05_24/HEPG2_folds_merged.counts_scores_new_co
+mpressed.h5 \
+#       -r /mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/hepg2.merged.atac.dnase.peaks.bed \
+#       -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+#       -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/HEPG2/interpret_upload/average_preds/HEPG2_folds_merged.counts_scores.bw
+  \
+#       -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/HEPG2/interpret_upload/average_preds/HEPG2_folds_merged.counts_scores.st
+ats \
+
+#python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+#       -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/K562/merge_folds_new_may_05_24/K562_folds_merged.counts_scores_new_comp
+ressed.h5 \
+#       -r /mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/k562.merged.atac.dnase.peaks.bed \
+#       -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+#       -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/K562/interpret_upload/average_preds/K562_folds_merged.counts_scores.bw
+\
+#       -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/K562/interpret_upload/average_preds/K562_folds_merged.counts_scores.stat
+s \
+
+
+#python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+#       -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/merge_folds_new_may_05_24/HEPG2_folds_merged.profile_scores_new_co
+mpressed.h5 \
+#       -r /mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/hepg2.merged.atac.dnase.peaks.bed \
+#       -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+#       -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/interpret_upload/average_preds/HEPG2_folds_merged.profile_scores.bw
+  \
+#       -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/HEPG2/interpret_upload/average_preds/HEPG2_folds_merged.profile_scores.st
+ats \
+
+#python /mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py \
+#       -h5 /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/K562/merge_folds_new_may_05_24/K562_folds_merged.profile_scores_new_comp
+ressed.h5 \
+#       -r /mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/k562.merged.atac.dnase.peaks.bed \
+#       -c  /mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes \
+#       -o /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/K562/interpret_upload/average_preds/K562_folds_merged.profile_scores.bw
+\
+#       -s /oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/K562/interpret_upload/average_preds/K562_folds_merged.profile_scores.stat
+s \
+
+
+
+
+
+
+
+
+
+
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$ bash script_make_bigwig.sh
+Namespace(chrom_sizes='/mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes', debug_chr=None, hdf5='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chro
+mbpnet/folds/DNASE/IMR90_new/merge_folds_all_regions_jun_11_24/IMR90_new_folds_merged.profile_scores_new_compressed.h5', outfile='/oak/stanford/groups/akundaje/projec
+ts/chromatin-atlas-2022/chrombpnet/folds/DNASE/IMR90_new/interpret_upload/average_preds/IMR90_new_folds_merged.profile_scores_new_compressed.bw', outstats='/oak/stanf
+ord/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/IMR90_new/interpret_upload/average_preds/IMR90_new_folds_merged.profile_scores_new_compressed
+.stats', regions='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/IMR90_new/merge_folds_all_regions_jun_11_24/IMR90_new_folds_merge
+d.profile_scores_new_compressed.bed.gz', tqdm=0)
+/mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py:26: DtypeWarning: Columns (4,6,7,8) have mixed types.Specify dtype option on
+ import or set low_memory=False.
+  regions = bigwig_helper.get_regions(args.regions, SEQLEN)
+Namespace(chrom_sizes='/mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes', debug_chr=None, hdf5='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chro
+mbpnet/folds/DNASE/H1ESC_new/merge_folds_all_regions_jun_11_24/H1ESC_new_folds_merged.profile_scores_new_compressed.h5', outfile='/oak/stanford/groups/akundaje/projec
+ts/chromatin-atlas-2022/chrombpnet/folds/DNASE/H1ESC_new/interpret_upload/average_preds/H1ESC_new_folds_merged.profile_scores_new_compressed.bw', outstats='/oak/stanf
+ord/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/H1ESC_new/interpret_upload/average_preds/H1ESC_new_folds_merged.profile_scores_new_compressed
+.stats', regions='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/H1ESC_new/merge_folds_all_regions_jun_11_24/H1ESC_new_folds_merge
+d.profile_scores_new_compressed.bed.gz', tqdm=0)
+/mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py:26: DtypeWarning: Columns (4,6,7,8) have mixed types.Specify dtype option on
+ import or set low_memory=False.
+  regions = bigwig_helper.get_regions(args.regions, SEQLEN)
+Namespace(chrom_sizes='/mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes', debug_chr=None, hdf5='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chro
+mbpnet/folds/DNASE/GM12878_new/merge_folds_all_regions_jun_11_24/GM12878_new_folds_merged.profile_scores_new_compressed.h5', outfile='/oak/stanford/groups/akundaje/pr
+ojects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878_new/interpret_upload/average_preds/GM12878_new_folds_merged.profile_scores_new_compressed.bw', outstats='/o
+ak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878_new/interpret_upload/average_preds/GM12878_new_folds_merged.profile_scores_ne
+w_compressed.stats', regions='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878_new/merge_folds_all_regions_jun_11_24/GM12878
+_new_folds_merged.profile_scores_new_compressed.bed.gz', tqdm=0)
+/mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py:26: DtypeWarning: Columns (4,6,7,8) have mixed types.Specify dtype option on
+ import or set low_memory=False.
+  regions = bigwig_helper.get_regions(args.regions, SEQLEN)
+Namespace(chrom_sizes='/mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes', debug_chr=None, hdf5='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chro
+mbpnet/folds/DNASE/IMR90_new/merge_folds_all_regions_jun_11_24/IMR90_new_folds_merged.counts_scores_new_compressed.h5', outfile='/oak/stanford/groups/akundaje/project
+s/chromatin-atlas-2022/chrombpnet/folds/DNASE/IMR90_new/interpret_upload/average_preds/IMR90_new_folds_merged.counts_scores_new_compressed.bw', outstats='/oak/stanfor
+d/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/IMR90_new/interpret_upload/average_preds/IMR90_new_folds_merged.counts_scores_new_compressed.st
+ats', regions='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/IMR90_new/merge_folds_all_regions_jun_11_24/IMR90_new_folds_merged.c
+ounts_scores_new_compressed.bed.gz', tqdm=0)
+/mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py:26: DtypeWarning: Columns (4,6,7,8) have mixed types.Specify dtype option on
+ import or set low_memory=False.
+  regions = bigwig_helper.get_regions(args.regions, SEQLEN)
+Namespace(chrom_sizes='/mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes', debug_chr=None, hdf5='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chro
+mbpnet/folds/DNASE/H1ESC_new/merge_folds_all_regions_jun_11_24/H1ESC_new_folds_merged.counts_scores_new_compressed.h5', outfile='/oak/stanford/groups/akundaje/project
+s/chromatin-atlas-2022/chrombpnet/folds/DNASE/H1ESC_new/interpret_upload/average_preds/H1ESC_new_folds_merged.counts_scores_new_compressed.bw', outstats='/oak/stanfor
+d/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/H1ESC_new/interpret_upload/average_preds/H1ESC_new_folds_merged.counts_scores_new_compressed.st
+ats', regions='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/H1ESC_new/merge_folds_all_regions_jun_11_24/H1ESC_new_folds_merged.c
+ounts_scores_new_compressed.bed.gz', tqdm=0)
+/mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py:26: DtypeWarning: Columns (4,6,7,8) have mixed types.Specify dtype option on
+ import or set low_memory=False.
+  regions = bigwig_helper.get_regions(args.regions, SEQLEN)
+Namespace(chrom_sizes='/mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes', debug_chr=None, hdf5='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chro
+mbpnet/folds/DNASE/GM12878_new/merge_folds_all_regions_jun_11_24/GM12878_new_folds_merged.counts_scores_new_compressed.h5', outfile='/oak/stanford/groups/akundaje/pro
+jects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878_new/interpret_upload/average_preds/GM12878_new_folds_merged.counts_scores_new_compressed.bw', outstats='/oak
+/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878_new/interpret_upload/average_preds/GM12878_new_folds_merged.counts_scores_new_c
+ompressed.stats', regions='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/GM12878_new/merge_folds_all_regions_jun_11_24/GM12878_ne
+w_folds_merged.counts_scores_new_compressed.bed.gz', tqdm=0)
+/mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py:26: DtypeWarning: Columns (4,6,7,8) have mixed types.Specify dtype option on
+ import or set low_memory=False.
+  regions = bigwig_helper.get_regions(args.regions, SEQLEN)
+Namespace(chrom_sizes='/mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes', debug_chr=None, hdf5='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chro
+mbpnet/folds/DNASE/HEPG2/merge_folds_all_regions_jun_11_24/HEPG2_folds_merged.counts_scores_new_compressed.h5', outfile='/oak/stanford/groups/akundaje/projects/chroma
+tin-atlas-2022/chrombpnet/folds/DNASE/HEPG2/interpret_upload/average_preds/HEPG2_folds_merged.counts_scores.bw', outstats='/oak/stanford/groups/akundaje/projects/chro
+matin-atlas-2022/chrombpnet/folds/DNASE/HEPG2/interpret_upload/average_preds/HEPG2_folds_merged.counts_scores.stats', regions='/oak/stanford/groups/akundaje/projects/
+chromatin-atlas-2022/chrombpnet/folds/DNASE/HEPG2/merge_folds_all_regions_jun_11_24/HEPG2_folds_merged.counts_scores_new_compressed.bed.gz', tqdm=0)
+/mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py:26: DtypeWarning: Columns (4,6,7,8) have mixed types.Specify dtype option on
+ import or set low_memory=False.
+  regions = bigwig_helper.get_regions(args.regions, SEQLEN)
+Namespace(chrom_sizes='/mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes', debug_chr=None, hdf5='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chro
+mbpnet/folds/DNASE/HEPG2/merge_folds_all_regions_jun_11_24/HEPG2_folds_merged.profile_scores_new_compressed.h5', outfile='/oak/stanford/groups/akundaje/projects/chrom
+atin-atlas-2022/chrombpnet/folds/DNASE/HEPG2/interpret_upload/average_preds/HEPG2_folds_merged.profile_scores.bw', outstats='/oak/stanford/groups/akundaje/projects/ch
+romatin-atlas-2022/chrombpnet/folds/DNASE/HEPG2/interpret_upload/average_preds/HEPG2_folds_merged.profile_scores.stats', regions='/oak/stanford/groups/akundaje/projec
+ts/chromatin-atlas-2022/chrombpnet/folds/DNASE/HEPG2/merge_folds_all_regions_jun_11_24/HEPG2_folds_merged.profile_scores_new_compressed.bed.gz', tqdm=0)
+/mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py:26: DtypeWarning: Columns (4,6,7,8) have mixed types.Specify dtype option on
+ import or set low_memory=False.
+  regions = bigwig_helper.get_regions(args.regions, SEQLEN)
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$ bash script_make_bigwig.sh
+Namespace(chrom_sizes='/mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes', debug_chr=None, hdf5='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chro
+mbpnet/folds/DNASE/K562/merge_folds_all_regions_jun_11_24/K562_folds_merged.counts_scores_new_compressed.h5', outfile='/oak/stanford/groups/akundaje/projects/chromati
+n-atlas-2022/chrombpnet/folds/DNASE/K562/interpret_upload/average_preds/K562_folds_merged.counts_scores.bw', outstats='/oak/stanford/groups/akundaje/projects/chromati
+n-atlas-2022/chrombpnet/folds/DNASE/K562/interpret_upload/average_preds/K562_folds_merged.counts_scores.stats', regions='/oak/stanford/groups/akundaje/projects/chroma
+tin-atlas-2022/chrombpnet/folds/DNASE/K562/merge_folds_all_regions_jun_11_24/K562_folds_merged.profile_scores_new_compressed.bed.gz', tqdm=0)
+/mnt/lab_data2/anusri/chrombpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py:26: DtypeWarning: Columns (4,6,7,8) have mixed types.Specify dtype option on
+ import or set low_memory=False.
+  regions = bigwig_helper.get_regions(args.regions, SEQLEN)
+Namespace(chrom_sizes='/mnt/lab_data2/anusri/chrombpnet/reference/chrom.sizes', debug_chr=None, hdf5='/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chro
+mbpnet/folds/DNASE/K562/merge_folds_all_regions_jun_11_24/K562_folds_merged.profile_scores_new_compressed.h5', outfile='/oak/stanford/groups/akundaje/projects/chromat
+in-atlas-2022/chrombpnet/folds/DNASE/K562/interpret_upload/average_preds/K562_folds_merged.profile_scores.bw', outstats='/oak/stanford/groups/akundaje/projects/chroma
+tin-atlas-2022/chrombpnet/folds/DNASE/K562/interpret_upload/average_preds/K562_folds_merged.profile_scores.stats', regions='/oak/stanford/groups/akundaje/projects/chr
+omatin-atlas-2022/chrombpnet/folds/DNASE/K562/merge_folds_all_regions_jun_11_24/K562_folds_merged.profile_scores_new_compressed.bed.gz', tqdm=0)
+^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B^[[B/mnt/lab_data2/anusri/chro
+mbpnet/src/evaluation/make_bigwigs/importance_hdf5_to_bigwig.py:26: DtypeWarning: Columns (4,6,7,8) have mixed types.Specify dtype option on import or set low_memory=
+False.
+  regions = bigwig_helper.get_regions(args.regions, SEQLEN)
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$ mkdir screenlog
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$ hardcopy -h screenlog/out1.txt
+bash: hardcopy: command not found
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$ screen hardcopy -h screenlog/out1.txt
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$ screen -ls
+There are screens on:
+        3740381.pts-62.brahma   (08/06/2024 06:03:37 PM)        (Attached)
+        3644261.pts-56.brahma   (07/31/2024 03:44:41 PM)        (Detached)
+        2370989.pts-34.brahma   (05/24/2024 12:27:02 PM)        (Detached)
+        2293758.pts-34.brahma   (05/20/2024 04:17:07 PM)        (Detached)
+        1995284.pts-40.brahma   (05/12/2024 08:32:42 PM)        (Detached)
+        1897790.pts-34.brahma   (05/08/2024 05:10:48 PM)        (Detached)
+        1864976.pts-35.brahma   (05/07/2024 10:22:08 PM)        (Detached)
+        1824483.pts-36.brahma   (05/07/2024 03:57:21 PM)        (Detached)
+        1789131.pts-1.brahma    (05/05/2024 11:57:03 PM)        (Detached)
+        1788878.pts-1.brahma    (05/05/2024 11:46:21 PM)        (Detached)
+        1766561.backup_lab_data_3       (05/04/2024 01:31:01 PM)        (Detached)
+        1753443.backup_lab_data2        (05/03/2024 05:09:13 PM)        (Detached)
+        1753280.backup_home     (05/03/2024 05:06:46 PM)        (Detached)
+        936016.pts-8.brahma     (04/21/2024 01:12:59 AM)        (Detached)
+        860877.pts-17.brahma    (04/19/2024 04:50:50 PM)        (Detached)
+        860533.pts-17.brahma    (04/19/2024 04:49:52 PM)        (Detached)
+        860064.pts-8.brahma     (04/19/2024 04:44:45 PM)        (Detached)
+        859980.pts-8.brahma     (04/19/2024 04:44:35 PM)        (Detached)
+        408994.pts-8.brahma     (04/09/2024 03:19:03 PM)        (Detached)
+        292942.pts-8.brahma     (04/08/2024 06:35:59 PM)        (Detached)
+        285213.pts-8.brahma     (04/08/2024 06:07:50 PM)        (Detached)
+        162710.pts-8.brahma     (04/02/2024 06:24:51 PM)        (Detached)
+        137607.pts-8.brahma     (04/02/2024 11:51:24 AM)        (Detached)
+        102542.pts-4.brahma     (02/19/2024 05:20:30 PM)        (Detached)
+24 Sockets in /run/screen/S-anusri.
+(base) anusri@brahma:/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023$
