@@ -7,9 +7,11 @@ from tqdm import tqdm
 import pyfaidx
 import one_hot
 
-#data = pd.read_csv("model_dir_atac.csv",header=None)
-#ddtpe="ATAC"
-#ddtpen=ddtpe+"_PE"
+NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
+
+data = pd.read_csv("model_dir_atac.csv",header=None)
+ddtpe="ATAC"
+ddtpen=ddtpe+"_PE"
 #cell_types=["HEPG2", "K562", "GM12878", "H1ESC", "IMR90"]
 #cell_types=[ "H1ESC", "IMR90"]
 #cell_types=["K562", "GM12878", "H1ESC", "IMR90", "HEPG2"]
@@ -17,9 +19,9 @@ import one_hot
 #itype="counts"
 
 #data = pd.read_csv("model_dir_dnase.csv",header=None)
-data = pd.read_csv("v1/model_dir_dnase_v2_interpret.csv",header=None)
-ddtpe="DNASE"
-ddtpen=ddtpe+"_SE"
+#data = pd.read_csv("v1/model_dir_dnase_v2_interpret.csv",header=None)
+#ddtpe="DNASE"
+#ddtpen=ddtpe+"_SE"
 #ddtpen=ddtpe+"_SE"
 #cell_types=["HEPG2", "K562", "GM12878", "H1ESC", "IMR90"]
 #cell_types=["K562", "GM12878", "H1ESC", "IMR90", "HEPG2"]
@@ -29,7 +31,7 @@ ddtpen=ddtpe+"_SE"
 #cell_types=["GM12878_new", "IMR90_new", "H1ESC_new"]
 cell_types=["GM12878", "IMR90", "H1ESC"]
 #cell_types=[ "IMR90"]
-itype="profile"
+itype="counts"
 
 
 
@@ -56,10 +58,10 @@ def get_seq(peaks_df, genome, width):
     return one_hot.dna_to_one_hot(vals)
 
 
-def filter_regions_to_peaks(bed_of_interest, merged, scores):
+def filter_regions_to_peaks(bed_of_interest, merged, scores, output_prefix):
 
-	output_prefix="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24_atac/in_peaks"
-
+	output_prefix=output_prefix+'/'+cell_type+'_ATAC_in_peaks'
+	print(output_prefix)
 	boi = bed_of_interest[["chr", "start", "end", "summit"]].to_numpy().tolist()
 	merged_val = merged[[0,1,2,9]].to_numpy().tolist()
 	
@@ -79,12 +81,10 @@ def filter_regions_to_peaks(bed_of_interest, merged, scores):
 	merged.iloc[indices].to_csv(output_prefix+"."+itype+".interpreted_regions.bed", header=False, index=False, sep="\t")
 
 	sub_scores = {
-			'raw': {'seq': scores['raw']['seq'][indices]},
-			'shap': {'seq': scores['shap']['seq'][indices]},
-			'projected_shap': {'seq': scores['projected_shap']['seq'][indices]}
+			'shap': {'seq': scores[indices]},
 		}
 
-	print(sub_scores['raw']['seq'].shape)
+	print(sub_scores['shap']['seq'].shape)
 
 	dd.io.save(output_prefix+"."+itype+"_scores_new_compressed.h5",
 					sub_scores,
@@ -93,7 +93,7 @@ def filter_regions_to_peaks(bed_of_interest, merged, scores):
 	
 for cell_type in cell_types:
 	ndata = data[data[1]==cell_type].reset_index()
-	cell_type = cell_type+"_new"
+	#cell_type = cell_type+"_new"
 	bed_of_interest = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/results/chrombpnet/"+ddtpen+"/"+cell_type+"/data/peaks_no_blacklist.bed", sep="\t", header=None, names=NARROWPEAK_SCHEMA).astype(str)
 	one_hots=None
 	for i,r in ndata.iterrows():
@@ -142,43 +142,13 @@ for cell_type in cell_types:
 					one_hots = scores['raw']['seq']
 					print("one hots found")
 
-			output += scores['shap']['seq']
+			output = scores['shap']['seq']
 
 		print(output.shape)
+
+		os.makedirs(os.path.join(r[2],"interpret_peaks"), exist_ok=True)
+		print(os.path.join(r[2],"interpret_peaks"))
+
+		filter_regions_to_peaks(bed_of_interest, beds.astype(str), scores['shap']['seq'], os.path.join(r[2],"interpret_peaks"))
+
 		del scores
-
-
-	if one_hots is None:
-		genome = pyfaidx.Fasta(genome_fa)
-		one_hots = get_seq(beds, genome, 2114):
-
-	assert(one_hots.shape==output.shape)
-
-	#for i,r in ndata.iterrows():
-	#	print(i,r[2])
-	#	ppath = os.path.join(r[2],"chrombpnet_model/interpret/full_"+cell_type+"."+itype+"_scores_new_compressed.h5")
-	#	if os.path.exists(ppath):
-	#		scores = dd.io.load(ppath)
-	#	else:
-	#		ppath = os.path.join(r[2],"interpret/merged."+cell_type+"."+itype+"_scores_new_compressed.h5")
-	#		scores = dd.io.load(ppath)
-		
-
-
-	profile_scores_dict = {
-			'raw': {'seq': one_hots},
-			'shap': {'seq': output/5},
-			'projected_shap': {'seq': one_hots*(output/5)}
-			}
-
-
-	os.makedirs("/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24_atac/", exist_ok=True)
-	output_prefix="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24_atac/"+cell_type+"_folds_merged"
-	dd.io.save(output_prefix+"."+itype+"_scores_new_compressed.h5",
-						profile_scores_dict,
-						compression='blosc')
-	output_prefix_bed="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24_atac/"+cell_type+"_folds_merged"						
-	beds.to_csv(output_prefix+"."+itype+"_scores_new_compressed.bed", sep="\t", header=False, index=False, compression='gzip')
-							
-		
-	#filter_regions_to_peaks(bed_of_interest, beds.astype(str), profile_scores_dict)

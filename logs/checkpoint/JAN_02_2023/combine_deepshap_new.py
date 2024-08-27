@@ -27,9 +27,10 @@ ddtpen=ddtpe+"_SE"
 #cell_types=["K562"]
 #cell_types=["GM12878", "IMR90"]
 #cell_types=["GM12878_new", "IMR90_new", "H1ESC_new"]
+#cell_types=["GM12878"]
 cell_types=["GM12878", "IMR90", "H1ESC"]
-#cell_types=[ "IMR90"]
-itype="profile"
+
+itype="counts"
 
 
 
@@ -37,7 +38,7 @@ itype="profile"
 
 genome_fa="/mnt/lab_data2/anusri/chrombpnet/reference/hg38.genome.fa"
 
-
+NARROWPEAK_SCHEMA=["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 
 def get_seq(peaks_df, genome, width):
     """
@@ -52,13 +53,14 @@ def get_seq(peaks_df, genome, width):
             peaks_used.append(True)
         else:
             peaks_used.append(False)
-    assert(len(peaks_used)==peaks_df.shape[0])
+    #assert(le(peaks_used)==peaks_df.shape[0])
+    print(sum(peaks_used), len(peaks_used))
     return one_hot.dna_to_one_hot(vals)
 
 
 def filter_regions_to_peaks(bed_of_interest, merged, scores):
 
-	output_prefix="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24_atac/in_peaks"
+	output_prefix="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24/in_peaks"
 
 	boi = bed_of_interest[["chr", "start", "end", "summit"]].to_numpy().tolist()
 	merged_val = merged[[0,1,2,9]].to_numpy().tolist()
@@ -99,27 +101,27 @@ for cell_type in cell_types:
 	for i,r in ndata.iterrows():
 		print(i,r[2])
 		
-		beds_path = os.path.join(r[2],"chrombpnet_model/interpret/full_"+cell_type+".interpreted_regions_"+itype+".bed")
+		beds_path = os.path.join(r[2],"chrombpnet_model/interpret_orig/full_"+cell_type+".interpreted_regions_"+itype+".bed")
 		if os.path.exists(beds_path):
 			beds = pd.read_csv(beds_path, sep="\t", header=None)
-		elif os.path.exists(os.path.join(r[2],"chrombpnet_model/interpret/merged."+cell_type+".interpreted_regions.bed")):
-			beds_path = os.path.join(r[2],"chrombpnet_model/interpret/merged."+cell_type+".interpreted_regions.bed")
+		elif os.path.exists(os.path.join(r[2],"chrombpnet_model/interpret_orig/merged."+cell_type+".interpreted_regions.bed")):
+			beds_path = os.path.join(r[2],"chrombpnet_model/interpret_orig/merged."+cell_type+".interpreted_regions.bed")
 			beds = pd.read_csv(beds_path, sep="\t", header=None)
 		else:
-			beds_path = os.path.join(r[2],"interpret/merged."+cell_type+".interpreted_regions.bed")
+			beds_path = os.path.join(r[2],"interpret_orig/merged."+cell_type+".interpreted_regions.bed")
 			beds = pd.read_csv(beds_path, sep="\t", header=None)
 
 		print(beds.head())
 		beds["key"] = beds[0] + "_" + beds[1].astype(str) + "_" + beds[2].astype(str) + "_" + + beds[9].astype(str)
 
-		ppath = os.path.join(r[2],"chrombpnet_model/interpret/full_"+cell_type+"."+itype+"_scores_new_compressed.h5")
+		ppath = os.path.join(r[2],"chrombpnet_model/interpret_orig/full_"+cell_type+"."+itype+"_scores_new_compressed.h5")
 		if os.path.exists(ppath):
 			scores = dd.io.load(ppath)
-		elif os.path.exists(os.path.join(r[2],"interpret/merged."+cell_type+"."+itype+"_scores_new_compressed.h5")):
-			ppath = os.path.join(r[2],"interpret/merged."+cell_type+"."+itype+"_scores_new_compressed.h5")
+		elif os.path.exists(os.path.join(r[2],"interpret_orig/merged."+cell_type+"."+itype+"_scores_new_compressed.h5")):
+			ppath = os.path.join(r[2],"interpret_orig/merged."+cell_type+"."+itype+"_scores_new_compressed.h5")
 			scores = dd.io.load(ppath)
 		else:
-			ppath = os.path.join(r[2],"chrombpnet_model/interpret/full_"+cell_type+"."+itype+"_scores_new_compressed.h5")
+			ppath = os.path.join(r[2],"chrombpnet_model/interpret_orig/full_"+cell_type+"."+itype+"_scores_new_compressed.h5")
 			scores = dd.io.load(ppath)
 	
 		if i == 0 :
@@ -150,34 +152,42 @@ for cell_type in cell_types:
 
 	if one_hots is None:
 		genome = pyfaidx.Fasta(genome_fa)
-		one_hots = get_seq(beds, genome, 2114):
+		seqs = get_seq(beds, genome, 2114)
+		one_hots = np.transpose(seqs, (0, 2, 1))
 
+	print(one_hots.shape)
 	assert(one_hots.shape==output.shape)
 
 	#for i,r in ndata.iterrows():
 	#	print(i,r[2])
-	#	ppath = os.path.join(r[2],"chrombpnet_model/interpret/full_"+cell_type+"."+itype+"_scores_new_compressed.h5")
+	#	ppath = os.path.join(r[2],"chrombpnet_model/interpret_orig/full_"+cell_type+"."+itype+"_scores_new_compressed.h5")
 	#	if os.path.exists(ppath):
 	#		scores = dd.io.load(ppath)
 	#	else:
-	#		ppath = os.path.join(r[2],"interpret/merged."+cell_type+"."+itype+"_scores_new_compressed.h5")
+	#		ppath = os.path.join(r[2],"interpret_orig/merged."+cell_type+"."+itype+"_scores_new_compressed.h5")
 	#		scores = dd.io.load(ppath)
 		
 
-
+	index = beds[0]!="chrM"
+	assert(one_hots[index].shape==output[index].shape)
+	print(one_hots[index].shape)
+	print(sum(index))
 	profile_scores_dict = {
-			'raw': {'seq': one_hots},
-			'shap': {'seq': output/5},
-			'projected_shap': {'seq': one_hots*(output/5)}
+			'raw': {'seq': one_hots[index]},
+			'shap': {'seq': output[index]/5},
+			'projected_shap': {'seq': one_hots[index]*(output[index]/5)}
 			}
 
 
-	os.makedirs("/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24_atac/", exist_ok=True)
-	output_prefix="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24_atac/"+cell_type+"_folds_merged"
+	os.makedirs("/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24/", exist_ok=True)
+	#output_prefix="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24/"+cell_type+"_folds_merged"
+	output_prefix="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24/in_peaks"
 	dd.io.save(output_prefix+"."+itype+"_scores_new_compressed.h5",
 						profile_scores_dict,
 						compression='blosc')
-	output_prefix_bed="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24_atac/"+cell_type+"_folds_merged"						
+	#output_prefix_bed="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24/"+cell_type+"_folds_merged"
+	output_prefix_bed="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/"+ddtpe+"/"+cell_type+"/merge_folds_new_may_05_24/in_peaks"
+						
 	beds.to_csv(output_prefix+"."+itype+"_scores_new_compressed.bed", sep="\t", header=False, index=False, compression='gzip')
 							
 		
