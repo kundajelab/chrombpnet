@@ -1,0 +1,63 @@
+# Directory Structure Format
+.
+├── peaks.all_input_regions.encid.bed.gz              # Peaks input to the bias training script
+├── logs.bias.training_test_regions.encid             # folder containing log files for peak and nonpeak generation scripts
+│  
+├── fold_0                                            
+│   ├── cv_params.fold_0.json                           # training, validation and test chromosomes used in fold 0
+│   ├── nonpeaks.all_input_regions.fold_0.encid.bed.gz  # Non peaks input to the bias training script
+│   ├── nonpeaks.trainingset.fold_0.encid.bed.gz        # nonpeaks used in training set of fold 0 bias model
+│   ├── nonpeaks.validationset.fold_0.encid.bed.gz      # nonpeaks used in validation set of fold 0 bias model
+│   ├── nonpeaks.testset.fold_0.encid.bed.gz            # nonpeaks used in test set of fold 0 bias model
+│   └── logs.bias.training_test_regions.fold_0.encid    # folder containing log files for training bias model on fold 0
+│
+├── fold_1
+│   └── ...                                           # similar directory structure as fold_0 directory above
+│	
+├── fold_2
+│   └── ...                                           #	similar directory structure as fold_0 directory above
+│
+├── fold_3
+│   └── ...                                           # similar directory structure as fold_0 directory above
+│
+└── fold_4
+    └── ...                                           #	similar directory structure as fold_0 directory above
+
+# Bed File Format for Peaks
+
+* All the bed files are in narrowpeak format with 10 columns. 
+
+1) chrom - Name of the chromosome (or contig, scaffold, etc.).
+2) chromStart - The starting position of the feature in the chromosome or scaffold. The first base in a chromosome is numbered 0.
+3) chromEnd - The ending position of the feature in the chromosome or scaffold. The chromEnd base is not included in the display of the feature. For example, the first 100 bases of a chromosome are defined as chromStart=0, chromEnd=100, and span the bases numbered 0-99.
+4) name - Name given to a region (preferably unique). Use "." if no name is assigned.
+5) score - Indicates how dark the peak will be displayed in the browser (0-1000). If all scores were "'0"' when the data were submitted to the DCC, the DCC assigned scores 1-1000 based on signal value. Ideally the average signalValue per base spread is between 100-1000.
+6) strand - +/- to denote strand or orientation (whenever applicable). Use "." if no orientation is assigned.
+7) signalValue - Measurement of overall (usually, average) enrichment for the region.
+8) pValue - Measurement of statistical significance (-log10). Use -1 if no pValue is assigned.
+9) qValue - Measurement of statistical significance using false discovery rate (-log10). Use -1 if no qValue is assigned.
+10) peak - Point-source called for this peak; 0-based offset from chromStart. Use -1 if no point-source called.
+
+# Bed File Format for Nonpeaks
+
+* All the bed files are in narrowpeak format with 10 columns. 
+
+1) chrom - Name of the chromosome (or contig, scaffold, etc.).
+2) chromStart - The starting position of the feature in the chromosome or scaffold. The first base in a chromosome is numbered 0.
+3) chromEnd - The ending position of the feature in the chromosome or scaffold. The chromEnd base is not included in the display of the feature. For example, the first 100 bases of a chromosome are defined as chromStart=0, chromEnd=100, and span the bases numbered 0-99.
+4) empty character - "."
+5) empty character - "."
+6) empty character - "."
+7) empty character - "."
+8) empty character - "."
+9) empty character - "."
+10) (chromEnd-chromStart)/2
+
+# Format of file `cv_params.fold_0.json`
+
+A dictionary with following (key,value) pairs,
+
+1) ("CV_type", "chr_holdout")
+2) ("train", list_of_chrs_trainingset)
+3) ("valid", list_of_chrs_validationset)
+4) ("test", list_of_chrs_testset)

@@ -22,11 +22,11 @@ def bias_fetch_preprocessing_log_files(odir, encid, main_dir, name):
 	if os.stat(preprocessing_log).st_size != 0:
 			log_paths.append((preprocessing_log,"logfile.preprocessing."+encid+".stdout.txt"))
 
-	preprocessing_log = os.path.join(main_dir, name + "/data/k562_atac_fold_0.sh")
+	preprocessing_log = os.path.join(main_dir, name + "/data/"+name.lower()+"_atac_fold_0.sh")
 	if os.stat(preprocessing_log).st_size != 0:
-			log_paths.append((preprocessing_log,"logfile.preprocessing."+encid+".script_v2.sh"))
+			log_paths.append((preprocessing_log,"logfile.preprocessing."+encid+".script.sh"))
 
-	preprocessing_log = os.path.join(main_dir, name + "/data/K562_bias_pwm.png")
+	preprocessing_log = os.path.join(main_dir, name + "/data/"+name+"_bias_pwm.png")
 	if os.stat(preprocessing_log).st_size != 0:
 			log_paths.append((preprocessing_log,"logfile.preprocessing."+encid+".bias_pwm.png"))
 			
@@ -120,7 +120,7 @@ def fetch_per_fold_bias_models(odir, model_dir, encid, fold_num):
 	else:
 		return None, None
 			
-	bm_model = os.path.join(model_dir, "bias_model/new_model_formats_v1/bias.tar")
+	bm_model = os.path.join(model_dir, "bias_model/new_model_formats_vf/bias.tar")
 	if os.path.isfile(bm_model):
 		input_paths.append((bm_model,"model.bias.fold_"+str(fold_num)+"."+encid+".tar"))
 	else:
@@ -129,33 +129,42 @@ def fetch_per_fold_bias_models(odir, model_dir, encid, fold_num):
 	#### fetch model training log files ########
 	
 	modelling_log = os.path.join(model_dir, "bias_model/train_bias_model.log")
-	if os.path.exists(modelling_log)
+	if os.path.exists(modelling_log):
 		if os.stat(modelling_log).st_size != 0:
 			log_paths.append((modelling_log,"logfile.modelling.fold_"+str(fold_num)+"."+encid+".stdout.txt"))
-	else:
-		print(modelling_log)
+	#else:
+	#	print(modelling_log)
 	modelling_log = os.path.join(model_dir, "bias_model/bias.args.json")
-	if os.stat(modelling_log).st_size != 0:
+	if os.path.isfile(modelling_log):
 		log_paths.append((modelling_log,"logfile.modelling.fold_"+str(fold_num)+"."+encid+".args.json"))
 	
 	modelling_log = os.path.join(model_dir, "bias_model/bias_data_params.tsv")
-	if os.stat(modelling_log).st_size != 0:
+	if os.path.isfile(modelling_log):
 		log_paths.append((modelling_log,"logfile.modelling.fold_"+str(fold_num)+"."+encid+".bias_data_params.tsv"))
+	else:
+		modelling_log = os.path.join(model_dir, "bias_model/newgen/bias_data_params.tsv")
+		if os.path.isfile(modelling_log):
+			log_paths.append((modelling_log,"logfile.modelling.fold_"+str(fold_num)+"."+encid+".bias_data_params.tsv"))
 
+	
 	modelling_log = os.path.join(model_dir, "bias_model/bias_model_params.tsv")
-	if os.stat(modelling_log).st_size != 0:
+	if os.path.isfile(modelling_log):
 		log_paths.append((modelling_log,"logfile.modelling.fold_"+str(fold_num)+"."+encid+".bias_train_params.tsv"))
+	else:
+		modelling_log = os.path.join(model_dir, "bias_model/newgen/bias_model_params.tsv")
+		if os.path.isfile(modelling_log):
+			log_paths.append((modelling_log,"logfile.modelling.fold_"+str(fold_num)+"."+encid+".bias_train_params.tsv"))
 
 	modelling_log = os.path.join(model_dir, "bias_model/bias.params.json")
-	if os.stat(modelling_log).st_size != 0:
+	if os.path.isfile(modelling_log):
 		log_paths.append((modelling_log,"logfile.modelling.fold_"+str(fold_num)+"."+encid+".bias_train_params.json"))
 
 	modelling_log = os.path.join(model_dir, "bias_model/bias.log")
-	if os.stat(modelling_log).st_size != 0:
+	if os.path.isfile(modelling_log):
 		log_paths.append((modelling_log,"logfile.modelling.fold_"+str(fold_num)+"."+encid+".epoch_loss.csv"))
 
 	modelling_log = os.path.join(model_dir, "bias_model/bias.log.batch")
-	if os.stat(modelling_log).st_size != 0:
+	if os.path.isfile(modelling_log):
 		log_paths.append((modelling_log,"logfile.modelling.fold_"+str(fold_num)+"."+encid+".batch_loss.tsv"))
 
 	return input_paths, log_paths

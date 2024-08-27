@@ -1,0 +1,98 @@
+# Directory Structure Format
+.
+├── fold_0
+│   ├── model.chrombpnet.fold_0.encid.h5            # full chrombpnet model that combines both bias and corrected model in .h5 format
+│   ├── model.chrombpnet_nobias.fold_0.encid.h5     # bias-corrected accessibility model in .h5 format (Use for all biological discovery)
+│   ├── model.bias_scaled.fold_0.encid.h5           # bias model in .h5 format
+│   ├── model.chrombpnet.fold_0.encid.tar           # full chrombpnet model that combines both bias and  corrected model in SavedModel format.
+│   │                                                 after being untarred, it results in a directory named "chrombpnet".
+│   ├── model.chrombpnet_nobias.fold_0.encid.tar    # bias-corrected accessibility model in SavedModel format (Use for all biological discovery).
+│   │                                                 after being untarred, it results in a directory named "chrombpnet_wo_bias".
+│   ├── model.bias_scaled.fold_0.encid.h5           # bias model in SavedModel format
+│   │                                                 after being untarred, it results in a directory named "bias_model_scaled".
+│   └── logs.models.fold_0.encid                    # folder containing log files for training models 
+│
+├── fold_1
+│   └── ...                                         # similar directory structure as fold_0 directory above
+│
+├── fold_2
+│   └── ...                                         # similar directory structure as fold_0 directory above
+│
+├── fold_3
+│   └── ...                                         # similar directory structure as fold_0 directory above
+│
+└── fold_4
+    └── ...                                         # similar directory structure as fold_0 directory above
+
+
+# Pseudocode for loading models in .h5 format 
+
+(1) Use the code in python after appropriately defining `model_in_h5_format` and `inputs`. 
+(2) `inputs` is a one hot encoded sequence of shape (N,2114,4). Here N corresponds to the 
+number of tested sequences, 2114 is the input sequence length and 4 corresponds to [A,C,G,T].
+
+```
+import tensorflow as tf
+from tensorflow.keras.utils import get_custom_objects
+from tensorflow.keras.models import load_model
+
+custom_objects={"tf": tf}
+get_custom_objects().update(custom_objects)
+
+model=load_model(model_in_h5_format,compile=False)
+outputs = model(inputs)
+```
+
+The list `outputs` consists of two elements. The first element has a shape of (N, 1000) and
+contains logit predictions for a 1000-base-pair output. The second element, with a shape of
+(N, 1), contains logcount predictions. To transform these predictions into per-base signals, 
+follow the provided pseudo code lines below.
+
+```
+import numpy as np
+
+def softmax(x, temp=1):
+    norm_x = x - np.mean(x,axis=1, keepdims=True)
+    return np.exp(temp*norm_x)/np.sum(np.exp(temp*norm_x), axis=1, keepdims=True)
+    
+predictions = softmax(outputs[0]) * (np.exp(outputs[1])-1)
+```
+
+# Pseudocode for loading models in .tar format
+
+(1) First untar the directory as follows `tar -xvf model.tar`
+(2) Use the code below in python after appropriately defining `model_dir_untared` and `inputs`
+(3) `inputs` is a one hot encoded sequence of shape (N,2114,4). Here N corresponds to the number
+of tested sequences, 2114 is the input sequence length and 4 corresponds to ACGT.
+
+Reference: https://www.tensorflow.org/api_docs/python/tf/saved_model/load
+
+```
+import tensorflow as tf
+
+model = tf.saved_model.load('model_dir_untared')
+outputs = model.signatures['serving_default'](**{'sequence':inputs.astype('float32')})
+```
+
+The variable `outputs` represents a dictionary containing two key-value pairs. The first key
+is `logits_profile_predictions`, holding a value with a shape of (N, 1000). This value corresponds
+to logit predictions for a 1000-base-pair output. The second key, named `logcount_predictions``, 
+is associated with a value of shape (N, 1), representing logcount predictions. To transform these
+predictions into per-base signals, utilize the provided pseudo code lines mentioned below.
+
+```
+import numpy as np
+def softmax(x, temp=1):
+    norm_x = x - np.mean(x,axis=1, keepdims=True)
+    return np.exp(temp*norm_x)/np.sum(np.exp(temp*norm_x), axis=1, keepdims=True)
+    
+predictions = softmax(outputs["logits_profile_predictions"]) * (np.exp(outputs["logcount_predictions"])-1)
+```)
+
+# Docker image to load and use the models
+
+https://hub.docker.com/r/kundajelab/chrombpnet-atlas/ (tag:v1)
+
+# Tool box to do downstream analysis with the models
+
+https://github.com/kundajelab/chrombpnet/wiki

@@ -1,0 +1,71 @@
+# Directory Structure Format
+.
+├── input_regions.pred.chrombpnet.encid.bed.gz      # Input bed regions to obtain prediction h5s from chrombpnet.h5 model for each fold
+├── pred.chrombpnet.fold_mean.encid.h5              # Average of prediction h5s from chrombpnet.h5 model across all folds  (input format discussed below)
+├── logs.pred.chrombpnet.fold_mean.encid            # Directory containing log files
+├── fold_0
+│   ├── pred.chrombpnet.fold_0.encid.h5            # prediction h5s for fold_0 from chrombpnet.h5 model (input format discussed below)
+│   └── logs.pred.chrombpnet.fold_0.encid          # Directory containing log files
+│
+├── fold_1
+│   └── ...                                           # similar directory structure as fold_0 directory above
+│
+├── fold_2
+│   └── ...                                           # similar directory structure as fold_0 directory above
+│
+├── fold_3
+│   └── ...                                           # similar directory structure as fold_0 directory above
+│
+└── fold_4
+    └── ...                                           # similar directory structure as fold_0 directory above
+
+# Format of bed file
+
+* All the bed files are in narrowpeak format with 10 columns and follow GRCh38 assembly coordinates.
+
+1) chrom - Name of the chromosome (or contig, scaffold, etc.).
+2) chromStart - The starting position of the feature in the chromosome or scaffold. The first base in a chromosome is numbered 0.
+3) chromEnd - The ending position of the feature in the chromosome or scaffold. The chromEnd is a 1-based coordinate. For example, the first 100 bases of a chromosome are defined as chromStart=0, chromEnd=100, and span the bases 1 to 100.
+4) name - Name given to a region (preferably unique). Use "." if no name is assigned.
+5) score - Indicates how dark the peak will be displayed in the browser (0-1000). If all scores were "'0"' when the data were submitted to the DCC, the DCC assigned scores 1-1000 based on signal value. Ideally the average signalValue per base spread is between 100-1000.
+6) strand - +/- to denote strand or orientation (whenever applicable). Use "." if no orientation is assigned.
+7) signalValue - Measurement of overall (usually, average) enrichment for the region.
+8) pValue - Measurement of statistical significance (-log10). Use -1 if no pValue is assigned.
+9) qValue - Measurement of statistical significance using false discovery rate (-log10). Use -1 if no qValue is assigned.
+10) peak summit - Point-source called for this peak; 0-based offset from chromStart. Use -1 if no point-source called.
+
+# Format of h5s
+
+The h5py object consists of two keys: `coords`, `predictions`
+
+Each `coords` object has three keys - `coords_chrom`, `coords_start_dset`, `coords_end_dset`
+(a) The `coords_chrom` has an array of length N (N is the number of regions) containing chromosome names
+(b) The `coords_start_dset` has an array of length N containing chromosome start coordinates. The first base in a chromosome is numbered 0. Follows GRCh38 assembly coordinates.
+(c) The `coords_end_dset` has an array of length N containing chromosome end coordinates. The `coords_end_dset` is a 1-based coordinate.
+
+Each `predictions` object has two keys - `logcounts`, `logits`
+(a)  The `logcounts`  is again an array of shape Nx1 with logcount (log base e) predictions
+(b)  The `logits`  is an array of shape Nx1000, which represents the logits of the base resolution predicted probability profiles over 1000 bp for each of the N profiles
+
+The `predictions` align with regions specified in the bed file, centered at the summit and expanded by 500 base pairs (bp) 
+on each side. The 'coords' object should contain the corresponding coordinates for each prediction, and the difference 
+between 'coords_end_dset' and 'coords_start_dset' should equal 1000.
+
+# Obtaining average h5s and then prediction bigwigs from individual folds
+
+To create the `fold_mean.encid.h5` file from individual h5 files, we start by averaging the logcounts and logits across various folds.
+Next, we utilize a softmax operation on the averaged logits to transition them into probability profiles. In parallel, we exponentiate 
+the logcounts to convert them into counts. Multiplying the counts with the derived probability profiles, we generate base-resolution 
+predictions, which are subsequently recorded into both h5 and bigWig files.
+
+# Pseudocode for loading h5s
+
+```
+import h5py
+data = h5py.File(predictions_h5, "r")
+logcounts_preds = data['predictions']['logcounts']
+logit_preds = data['predictions']['logits']
+chrom_coords = data['coords']['coords_chrom']
+start_coords = data['coords']['coords_start_dset']
+end_coords = data['coords']['coords_end_dset']
+```
