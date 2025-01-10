@@ -11,7 +11,7 @@ import chrombpnet.training.metrics as metrics
 import chrombpnet.training.data_generators.initializers as initializers
 from tensorflow.keras.utils import get_custom_objects
 from tensorflow.keras.models import load_model
-from scipy import nanmean, nanstd
+#from scipy import nanmean, nanstd
 
 def write_predictions_h5py(output_prefix, profile, logcts, coords):
     # open h5 file for writing predictions
