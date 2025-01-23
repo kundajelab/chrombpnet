@@ -229,15 +229,4 @@ If you're using ChromBPNet in your work, please cite as follows:
 }
 ```
 
-```
-@software{Pampari_Bias_factorized_base-resolution_2023,
-author = {Pampari, Anusri and Shcherbina, Anna and Nair, Surag and Schreiber, Jacob and Patel, Aman and Wang, Austin and Kundu, Soumya and Shrikumar, Avanti and Kundaje, Anshul},
-doi = {10.5281/zenodo.7567627},
-month = {1},
-title = {{Bias factorized, base-resolution deep learning models of chromatin accessibility reveal cis-regulatory sequence syntax, transcription factor footprints and regulatory variants.}},
-url = {https://github.com/kundajelab/chrombpnet},
-version = {0.1.1},
-year = {2023}
-}
-```
 
