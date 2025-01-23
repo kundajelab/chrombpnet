@@ -23,8 +23,8 @@ def main():
 		pipelines.chrombpnet_train_pipeline(args)
 	
 	elif args.cmd == "qc":
-		os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
-		os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+		os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=True)
+		os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=True)
 		
 		pipelines.chrombpnet_qc(args)
 		
@@ -38,8 +38,8 @@ def main():
 			pipelines.train_bias_pipeline(args)
 		
 		elif args.cmd_bias == "qc":
-			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
-			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=True)
+			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=True)
 			
 			pipelines.bias_model_qc(args)
 			
