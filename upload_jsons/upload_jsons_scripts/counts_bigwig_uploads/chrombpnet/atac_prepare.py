@@ -32,8 +32,9 @@ def make_sel_bedfile(in_bed, out_bed):
 	input_bed = input_bed[input_bed[0].isin(chrs)]
 	print(input_bed.shape)
 
-	input_bed[1] = input_bed[1]+input_bed[9]-500
-	input_bed[2] = input_bed[1]  + 1000
+	#input_bed[1] = input_bed[1]+input_bed[9]-500
+	#input_bed[2] = input_bed[1]  + 1000
+
 	print(input_bed.head())
 	x = pybedtools.BedTool.from_dataframe(input_bed[[0,1,2]])
 	x = x.sort().merge()
@@ -79,7 +80,8 @@ for encid in encids:
 
 			continue
 	
-	ofile = "/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/"+encid+"/interpret_upload/average_preds/per_folds.inputs.bed.gz"
+	#ofile = "/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/"+encid+"/interpret_upload/average_preds/per_folds.inputs.bed.gz"
+	ofile = "/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/"+encid+"/preds_upload/average_preds/filtered.regions.bed.gz"
 	if os.path.isfile(ofile):
 		sel_path = os.path.join("/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/", encid+"/interpret_upload/average_preds/selected.regions.valid.merged.bed.gz" )
 		sel_path_bb = os.path.join("/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/ATAC/", encid+"/interpret_upload/average_preds/selected.regions.valid.merged.bigBed" )

@@ -33,7 +33,8 @@ def main_fetch_training_files(encid, args_json, model_paths, name):
 	
 	# find the training test regions
 	args_json["training and test regions tar"] = {}	
-	readme_file = "READMEs/bias.models.README"
+	readme_file = "/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022-uploads/dummy/chrombpnet_test/READMEs/training.README"
+
 	assert(os.path.isfile(readme_file))
 	args_json["training and test regions tar"]["file.paths"] = [(readme_file, "README.md")]
 
@@ -109,7 +110,7 @@ def main_fetch_preprocessing_files(encid, args_json, bam_ids, name):
 def main_fetch_model_files(encid, args_json, model_paths, name):
 	success = False
 	args_json["models tar"] = {}
-	readme_file = "READMEs/models.README"
+	readme_file = "/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022-uploads/dummy/chrombpnet_test/READMEs/models.README"
 	assert(os.path.isfile(readme_file))
 	args_json["models tar"]["file.paths"] = [(readme_file, "README.md")]
 	args_json["models tar"]["logs.models."+encid] = {"file.paths": None}
@@ -134,7 +135,8 @@ def main_fetch_model_files(encid, args_json, model_paths, name):
 def main_fetch_bias_model_files(encid, args_json, models_path):
 	success = False
 	args_json["bias models tar"] = {}
-	readme_file = "READMEs/bias.models.README"
+	readme_file = "/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022-uploads/dummy/chrombpnet_test/READMEs/bias.models.README"
+
 	assert(os.path.isfile(readme_file))
 	args_json["bias models tar"]["file.paths"] = [(readme_file, "README.md")]
 	#args_json["bias models tar"]["logs.bias.models."+encid] = {"file.paths": None}
@@ -163,7 +165,8 @@ def main_fetch_bias_training_files(encid, args_json, models_path, name):
 	
 	# find the training test regions
 	args_json["bias training and test regions tar"] = {}	
-	readme_file = "READMEs/bias.training.README"
+	readme_file = "/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022-uploads/dummy/chrombpnet_test/READMEs/bias.training.README"
+
 	assert(os.path.isfile(readme_file))
 	args_json["bias training and test regions tar"]["file.paths"] = [(readme_file, "README.md")]
 

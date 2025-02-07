@@ -109,17 +109,17 @@ coordinates =  [[r[0], r[1], r[2]] for r in regions]
 pred_logits = np.squeeze(pred_logits)
 write_predictions_h5py(args.out_prefix+"_w_bias", pred_logits, pred_logcts, coordinates)
 
-del pred_logits
-del pred_logcts
+#del pred_logits
+#del pred_logcts
 
-pred_logits_wo_bias, pred_logcts_wo_bias = model_chrombpnet_nb.predict([seqs],
-                                      batch_size = args.batch_size,
-                                      verbose=True)
+#pred_logits_wo_bias, pred_logcts_wo_bias = model_chrombpnet_nb.predict([seqs],
+#                                      batch_size = args.batch_size,
+#                                      verbose=True)
 
 
-pred_logits_wo_bias = np.squeeze(pred_logits_wo_bias)
+#pred_logits_wo_bias = np.squeeze(pred_logits_wo_bias)
 
-write_predictions_h5py(args.out_prefix+"_wo_bias", pred_logits_wo_bias, pred_logcts_wo_bias, coordinates)
+#write_predictions_h5py(args.out_prefix+"_wo_bias", pred_logits_wo_bias, pred_logcts_wo_bias, coordinates)
 
 f = open(args.out_prefix+"_preds_done.txt", "w")
 f.write("done")

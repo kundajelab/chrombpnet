@@ -55,7 +55,8 @@ def main_fetch_preprocessing_files(encid, args_json, bias_encid):
 def main_fetch_model_files(encid, args_json):
 	success = False
 	args_json["models tar"] = {}
-	readme_file = "READMEs/bias.models.README"
+
+	readme_file = "/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022-uploads/dummy/chrombpnet_test/READMEs/models.README"
 	assert(os.path.isfile(readme_file))
 	args_json["models tar"]["file.paths"] = [(readme_file, "README.md")]
 	#args_json["models tar"]["logs.models."+encid] = {"file.paths": None}
@@ -83,8 +84,7 @@ def main_fetch_training_files(encid, args_json):
 	
 	# find the training test regions
 	args_json["training and test regions tar"] = {}	
-	#readme_file = "/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/READMES/training_test_regions.README"
-	readme_file = "READMEs/bias.models.README"
+	readme_file = "/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022-uploads/dummy/chrombpnet_test/READMEs/new.training.README"
 	assert(os.path.isfile(readme_file))
 	args_json["training and test regions tar"]["file.paths"] = [(readme_file, "README.md")]
 

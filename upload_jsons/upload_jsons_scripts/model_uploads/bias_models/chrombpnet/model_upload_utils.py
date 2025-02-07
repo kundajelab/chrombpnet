@@ -61,7 +61,7 @@ def fetch_per_fold_models(odir, model_dir, encid, fold_num):
 	if os.path.isfile(bm_model):
 		input_paths.append((bm_model,"model.bias_scaled.fold_"+str(fold_num)+"."+encid+".h5"))
 	else:
-		print(cmb)
+		print(bm_model)
 		return None, None, None
 
 	cmb = os.path.join(model_dir, "new_model_formats_may_7_24_vf/chrombpnet.tar")

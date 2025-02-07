@@ -225,16 +225,16 @@ if __name__ == '__main__':
 				plt.ylabel('Counts',fontsize=18)
 				plt.xlabel('200bp around motif',fontsize=18)
 				plt.title(args.title+"_"+motif, fontsize=18)
-				plt.savefig("{}/{}/{}/{}.footprint.png".format(args.output_prefix, datype, cell_type, motif))
+				plt.savefig("{}/{}/{}/{}.footprint.png".format(args.output_prefix, datype+"_NEW", cell_type, motif))
 
 
 			print("Saving marginal footprints")
-			dd.io.save("{}/{}/{}/footprints.h5".format(args.output_prefix, datype, cell_type),
+			dd.io.save("{}/{}/{}/footprints.h5".format(args.output_prefix, datype+"_NEW", cell_type),
 				footprints_at_motifs,
 				compression='blosc')
 
 			print("Saving marginal footprints")
-			dd.io.save("{}/{}/{}/uncorrected_footprints.h5".format(args.output_prefix, datype, cell_type),
+			dd.io.save("{}/{}/{}/uncorrected_footprints.h5".format(args.output_prefix, datype+"_NEW", cell_type),
 				footprints_at_motifs_uncorrected,
 				compression='blosc')
 

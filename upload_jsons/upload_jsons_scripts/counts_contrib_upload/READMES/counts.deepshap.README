@@ -1,0 +1,91 @@
+# Directory Structure Format
+.
+├── seq_contrib.counts.fold_mean.all_regions.encid.h5   # hypothetical shap scores from chrombpnet_nobias models counts head for peak regions called in atac and dnase dataset in a given celltype
+│                                                       # the scores are averaged across 5 folds and are in .h5 format (see below for formatting details)
+│
+├── seq_contrib.counts.fold_mean.modisco_input.encid.h5 # hypothetical and projected shap scores from chrombpnet_nobias models counts head in atac peak regions input to tfmodisco-lite pipeline
+│                                                       # the scores are averaged across 5 folds and are in .h5 format (see below for formatting details)
+│ 
+│── logs.seq_contrib.counts.encid                       # folder containing log files for generating shap scores                
+│   ├── logs.seq_contrib.counts.input_regions.per_fold.encid.bed.gz  # Input bed regions to obtain contribution h5s from chrombpnet_nobias.h5 for each fold
+│   ├── logs.seq_contrib.counts.input_regions.fold_mean.encid.bed.gz # Input bed regions corresponding to contribution file all_regions.encid.h5
+│   ├── logs.seq_contrib.counts.input_regions.modisco.encid.bed.gz   # Input bed regions corresponding to contribution file modisco_input.encid.h5
+│   └── ...
+│      
+├── fold_0
+│   ├── seq_contrib.counts.fold_0.all_regions.encid.h5  # hypothetical shap scores for peak regions called in atac and dnase dataset in a given celltype
+│   │                                                   # the scores are for fold 0 chrombpnet_nobias models counts head and are in .h5 format (see below for formatting details)
+│   └── logs.seq_contrib.counts.fold_0.encid            # folder containing log files for generating shap scores for fold 0 
+│
+├── fold_1
+│   └── ...                                             # similar directory structure as fold_0 directory above
+│
+├── fold_2
+│   └── ...                                             # similar directory structure as fold_0 directory above
+│
+├── fold_3
+│   └── ...                                             # similar directory structure as fold_0 directory above
+│
+└── fold_4
+    └── ...                                             # similar directory structure as fold_0 directory above
+    
+# Format of all_regions.encid.h5
+
+The h5py object consists of two keys: `coords`, `attributions`
+
+Each `coords` object has three keys - `coords_chrom`, `coords_start_dset`, `coords_end_dset`
+(a) The `coords_chrom` has an array of length N (number of regions) containing chromosome names
+(b) The `coords_start_dset` has an array of length N containing chromosome start coordinates.  The first base in a chromosome is numbered 0. Follows GRCh38 assembly coordinates.
+(c) The `coords_end_dset` has an array of length N containing chromosome end coordinates. The `coords_end_dset` is a 1-based coordinate.
+
+Each `attributions` object has one keys - `shap`
+(a)  The `shap` is an array of shape Nx4x2114, containing hypothetical shap scores for N regions 
+
+
+The 'coords' object contains the corresponding coordinates for each interpreted regions, and the difference
+between 'coords_end_dset' and 'coords_start_dset' should equal 2114. The `attributions` are the hypothetical shap scores 
+for peak regions in atac and dnase dataset for a celltype. For atac and dnase ENCIDs used for a given celltype 
+refer to the ChromBPNet paper. 
+
+
+# Pseudocode for loading all_regions.encid.h5
+
+```
+import h5py
+data = h5py.File(h5_file_name, "r")
+
+shap = data["attributions"]["shap"] 
+coords_chrom = data["coords"]["coords_chrom"] 
+coords_start = data["coords"]["coords_start_dset"] 
+coords_end = data["coords"]["coords_end_dset"] 
+```
+
+# Format of modisco_input.encid.h5
+
+This file is formatted to be a suitable input for the tfmodisco-lite package (2.2.0) and contains 
+the hypothetical and projected shap scores along with the one-hot encoded sequence for peak regions.
+To obtain the bed coordinates for the N regions used in generating this .h5 file refer to the bed file 
+ `logs.seq_contrib.counts.input_regions.modisco.encid.bed.gz` in folder `logs.seq_contrib.counts.encid`. 
+The regions are obtained by centering on the summit column (10th column) and expanding by 1057 on either directions. 
+
+The h5py object consists of three keys: `shap`, `raw` and `projected_shap`. 
+
+(a) The `shap` has an array of size (Nx4x2114) containing hypothetical shap scores for peak regions 
+(b) The `raw` has an array of of size (Nx4x2114) containing one-hot encoding for peak regions
+(c) The `projected_shap` has an array of size (Nx4x2114) containing projected shap scores for peak regions (obtained by multiplying the one-hot array and hypothetical shap scores array)
+
+# Pseudocode for loading modisco_input.encid.h5
+
+```
+import h5py
+data = h5py.File(h5_file_name, "r")
+
+hypothetical_shap = data["shap"]["seq"]       
+one_hot = data["raw"]["seq"]                  
+projected_shap = data["projected_shap"]["seq"] 
+```
+
+# SHAP version used
+
+https://github.com/kundajelab/shap/ (1.0)
+

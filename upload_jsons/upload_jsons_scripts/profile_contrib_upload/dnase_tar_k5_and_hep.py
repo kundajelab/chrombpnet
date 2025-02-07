@@ -5,11 +5,8 @@ import pandas as pd
 #encids = ["K562", "HEPG2", "IMR90_new", "H1ESC_new", "GM12878_new"]
 encids = ["K562", "HEPG2"]
 
-encode_id = {"HEPG2": "ENCSR149XIL",
-        "K562": "ENCSR000EOT",
-        "IMR90_new": "ENCSR477RTP",
-        "GM12878_new": "ENCSR000EMT",
-        "H1ESC_new": "ENCSR000EMU"}
+encode_id = {"K562": "ENCSR000EOT",
+"HEPG2": "ENCSR149XIL"} 
 odir='dnase/'
 
 model_atac = pd.read_csv("/mnt/lab_data2/anusri/chrombpnet/logs/checkpoint/JAN_02_2023/model_dir_dnase.csv",sep=",", header=None)
@@ -24,7 +21,8 @@ def fetch_per_fold_profile(odir,model_path, encid, i, name):
 		
 		odir="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/"+name+"/interpret_upload/fold_"+str(i)+"/"
 		input_h5 = os.path.join(odir, name+"_profile_attribs_reformatted.h5")
-		data_paths.append((input_h5, "seq_contrib.profile.fold_"+str(i)+"."+encid+".h5"))
+		if os.path.isfile(input_h5):
+			data_paths.append((input_h5, "seq_contrib.profile.fold_"+str(i)+".all_regions."+encid+".h5"))
 		
 		#model_path="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/"+name+"/ATAC_SE_04.27.2024//chrombpnet_model"
 	
@@ -105,7 +103,7 @@ def fetch_per_fold_profile(odir,model_path, encid, i, name):
 def fetch_profile_tar(encid, args_json, model_paths, name):
 		success = False
 		args_json["profile sequence contribution scores tar"] = {}
-		readme_file = "READMES/profile.deepshap.README"
+		readme_file = "/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022-uploads/dummy/chrombpnet_test/READMEs/dnase.profile.deepshap.README"
 		assert(os.path.isfile(readme_file))
 		args_json["profile sequence contribution scores tar"]["file.paths"] = [(readme_file, "README.md")]
 		args_json["profile sequence contribution scores tar"]["logs.seq_contrib.profile."+encid] = {"file.paths": []}
@@ -116,7 +114,7 @@ def fetch_profile_tar(encid, args_json, model_paths, name):
 		
 		input_h5 = os.path.join(odir, name+"_profile_attribs_reformatted.h5")
 		if os.path.isfile(input_h5):
-				args_json["profile sequence contribution scores tar"]["file.paths"].append((input_h5,"seq_contrib.profile.fold_mean."+encid+".h5"))               
+				args_json["profile sequence contribution scores tar"]["file.paths"].append((input_h5,"seq_contrib.profile.fold_mean.all_regions."+encid+".h5"))               
 		else:
 				print(input_h5)
 				success = False
@@ -142,6 +140,14 @@ def fetch_profile_tar(encid, args_json, model_paths, name):
 			if not os.path.isfile(newf):
 				input_bed.to_csv(newf, sep='\t', header=False, index=False, compression='gzip')
 			args_json["profile sequence contribution scores tar"]["logs.seq_contrib.profile."+encid]["file.paths"].append((newf,"logs.seq_contrib.profile.input_regions.per_fold."+encid+".bed.gz"))              
+
+		
+			newf="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/"+name+"/interpret_upload/average_preds/mean_folds.inputs.bed.gz"
+			if os.path.isfile(input_file):
+				if not os.path.isfile(newf):
+					input_bed = input_bed[~(input_bed[0]=="chrM")]
+					input_bed.to_csv(newf, sep='\t', header=False, index=False, compression='gzip')
+				args_json["profile sequence contribution scores tar"]["logs.seq_contrib.profile."+encid]["file.paths"].append((newf,"logs.seq_contrib.profile.input_regions.fold_mean."+encid+".bed.gz"))              
 		
 		
 		input_file="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/"+name+"/merge_folds_new_may_05_24/in_peaks.profile.interpreted_regions.bed"
@@ -150,19 +156,19 @@ def fetch_profile_tar(encid, args_json, model_paths, name):
 		if os.path.isfile(input_file):
 			if not os.path.isfile(newf):
 				input_bed.to_csv(newf, sep='\t', header=False, index=False, compression='gzip')
-			args_json["profile sequence contribution scores tar"]["logs.seq_contrib.profile."+encid]["file.paths"].append((newf,"logs.seq_contrib.profile.input_regions."+encid+".bed.gz"))              
+			args_json["profile sequence contribution scores tar"]["logs.seq_contrib.profile."+encid]["file.paths"].append((newf,"logs.seq_contrib.profile.input_regions.modisco."+encid+".bed.gz"))              
 		
 		odir="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/"+name+"/interpret_upload/average_preds/"
 		
 		input_log = os.path.join(odir, "reformat.log.e")
 		if os.path.isfile(input_log):
-				args_json["profile sequence contribution scores tar"]["logs.seq_contrib.profile."+encid]["file.paths"].append((input_log, "logs.seq_contrib.profile.fold_mean.reformat"+encid+".stderr.txt"))
+				args_json["profile sequence contribution scores tar"]["logs.seq_contrib.profile."+encid]["file.paths"].append((input_log, "logs.seq_contrib.profile.fold_mean.reformat."+encid+".stderr.txt"))
 		
-		input_log = os.path.join(odir, "reformat.log.e")
+		input_log = os.path.join(odir, "reformat.log.o")
 		if os.path.isfile(input_log):
-				args_json["profile sequence contribution scores tar"]["logs.seq_contrib.profile."+encid]["file.paths"].append((input_log, "logs.seq_contrib.profile.fold_mean.reformat"+encid+".stdout.txt"))
+				args_json["profile sequence contribution scores tar"]["logs.seq_contrib.profile."+encid]["file.paths"].append((input_log, "logs.seq_contrib.profile.fold_mean.reformat."+encid+".stdout.txt"))
 			   
-		assert(len(args_json["profile sequence contribution scores tar"]["logs.seq_contrib.profile."+encid]["file.paths"])==4) 
+		assert(len(args_json["profile sequence contribution scores tar"]["logs.seq_contrib.profile."+encid]["file.paths"])==5) 
 						
 		for i in range(5):
 				data_paths, log_paths, log_paths_opt = fetch_per_fold_profile(odir,model_paths[i], encid, i, name)

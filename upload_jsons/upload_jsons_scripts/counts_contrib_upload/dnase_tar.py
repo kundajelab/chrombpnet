@@ -22,7 +22,8 @@ def fetch_per_fold_counts(odir,model_path, encid, i, name):
 		
 		odir="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/"+name+"/interpret_upload/fold_"+str(i)+"/"
 		input_h5 = os.path.join(odir, name+"_counts_attribs_reformatted.h5")
-		data_paths.append((input_h5, "seq_contrib.counts.fold_"+str(i)+"."+encid+".h5"))
+		if os.path.isfile(input_h5):
+			data_paths.append((input_h5, "seq_contrib.counts.fold_"+str(i)+".all_regions."+encid+".h5"))
 		
 		#model_path="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/"+name+"/DNASE_SE_04.27.2024//chrombpnet_model"
 		
@@ -108,7 +109,7 @@ def fetch_per_fold_counts(odir,model_path, encid, i, name):
 def fetch_counts_tar(encid, args_json, model_paths, name):
 		success = False
 		args_json["counts sequence contribution scores tar"] = {}
-		readme_file = "READMES/counts.deepshap.README"
+		readme_file = "/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022-uploads/dummy/chrombpnet_test/READMEs/dnase.counts.deepshap.README"
 		assert(os.path.isfile(readme_file))
 		args_json["counts sequence contribution scores tar"]["file.paths"] = [(readme_file, "README.md")]
 		args_json["counts sequence contribution scores tar"]["logs.seq_contrib.counts."+encid] = {"file.paths": []}
@@ -119,7 +120,7 @@ def fetch_counts_tar(encid, args_json, model_paths, name):
 		
 		input_h5 = os.path.join(odir, name+"_counts_attribs_reformatted.h5")
 		if os.path.isfile(input_h5):
-				args_json["counts sequence contribution scores tar"]["file.paths"].append((input_h5,"seq_contrib.counts.fold_mean."+encid+".h5"))               
+				args_json["counts sequence contribution scores tar"]["file.paths"].append((input_h5,"seq_contrib.counts.fold_mean.all_regions."+encid+".h5"))               
 		else:
 				success = False
 				return success, args_json
@@ -143,7 +144,13 @@ def fetch_counts_tar(encid, args_json, model_paths, name):
 			if not os.path.isfile(newf):
 				input_bed.to_csv(newf, sep='\t', header=False, index=False, compression='gzip')
 			args_json["counts sequence contribution scores tar"]["logs.seq_contrib.counts."+encid]["file.paths"].append((newf,"logs.seq_contrib.counts.input_regions.per_fold."+encid+".bed.gz"))              
-		
+	
+			newf="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/"+name+"/interpret_upload/average_preds/mean_folds.inputs.bed.gz"
+			if not os.path.isfile(newf):
+				input_bed = input_bed[~(input_bed[0]=="chrM")]
+				input_bed.to_csv(newf, sep='\t', header=False, index=False, compression='gzip')
+			args_json["counts sequence contribution scores tar"]["logs.seq_contrib.counts."+encid]["file.paths"].append((newf,"logs.seq_contrib.counts.input_regions.fold_mean."+encid+".bed.gz"))              
+	
 		
 		input_file="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/"+name+"/merge_folds_new_may_05_24/in_peaks.counts_scores_new_compressed.bed"
 		newf="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/"+name+"/interpret_upload/average_preds/modisco.inputs.bed.gz"
@@ -152,19 +159,19 @@ def fetch_counts_tar(encid, args_json, model_paths, name):
 			if not os.path.isfile(newf):
 				input_bed = input_bed[~(input_bed[0]=="chrM")]
 				input_bed.to_csv(newf, sep='\t', header=False, index=False, compression='gzip')
-			args_json["counts sequence contribution scores tar"]["logs.seq_contrib.counts."+encid]["file.paths"].append((newf,"logs.seq_contrib.counts.input_regions."+encid+".bed.gz"))              
+			args_json["counts sequence contribution scores tar"]["logs.seq_contrib.counts."+encid]["file.paths"].append((newf,"logs.seq_contrib.counts.input_regions.modisco."+encid+".bed.gz"))              
 		
 		odir="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022/chrombpnet/folds/DNASE/"+name+"/interpret_upload/average_preds/"
 		
 		input_log = os.path.join(odir, "reformat.log.e")
 		if os.path.isfile(input_log):
-				args_json["counts sequence contribution scores tar"]["logs.seq_contrib.counts."+encid]["file.paths"].append((input_log, "logs.seq_contrib.counts.fold_mean.reformat"+encid+".stderr.txt"))
+				args_json["counts sequence contribution scores tar"]["logs.seq_contrib.counts."+encid]["file.paths"].append((input_log, "logs.seq_contrib.counts.fold_mean.reformat."+encid+".stderr.txt"))
 		
-		input_log = os.path.join(odir, "reformat.log.e")
+		input_log = os.path.join(odir, "reformat.log.o")
 		if os.path.isfile(input_log):
-				args_json["counts sequence contribution scores tar"]["logs.seq_contrib.counts."+encid]["file.paths"].append((input_log, "logs.seq_contrib.counts.fold_mean.reformat"+encid+".stdout.txt"))
+				args_json["counts sequence contribution scores tar"]["logs.seq_contrib.counts."+encid]["file.paths"].append((input_log, "logs.seq_contrib.counts.fold_mean.reformat."+encid+".stdout.txt"))
 			   
-		assert(len(args_json["counts sequence contribution scores tar"]["logs.seq_contrib.counts."+encid]["file.paths"])==4) 
+		assert(len(args_json["counts sequence contribution scores tar"]["logs.seq_contrib.counts."+encid]["file.paths"])==5) 
 						
 		for i in range(5):
 				data_paths, log_paths, log_paths_opt = fetch_per_fold_counts(odir,model_paths[i], encid, i, name)

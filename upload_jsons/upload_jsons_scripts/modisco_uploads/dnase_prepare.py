@@ -23,7 +23,7 @@ for name in encids:
 	args_json["sequence motifs tar"] = {}
 
 	success=True
-	readme_file="READMEs/modisco.report.README"
+	readme_file="/oak/stanford/groups/akundaje/projects/chromatin-atlas-2022-uploads/dummy/chrombpnet_test/READMEs/modisco.report.README"
 	if os.path.isfile(readme_file):
 		args_json["sequence motifs tar"]["file.paths"] = [(readme_file, "README.md")]
 		

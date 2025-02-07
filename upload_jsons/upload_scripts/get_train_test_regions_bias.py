@@ -4,7 +4,7 @@ import argparse
 import os
 
 parser = argparse.ArgumentParser(description="do bed formatting")
-parser.add_argument("-ip", "--input_peaks")
+#parser.add_argument("-ip", "--input_peaks")
 parser.add_argument("-inp", "--input_nonpeaks")
 #parser.add_argument("-inpt", "--input_nonpeaks_test")
 parser.add_argument("-f", "--chr_fold_path")
