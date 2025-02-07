@@ -1,0 +1,20 @@
+# Directory Structure Format 
+var.chrom:Chromosome of the variant (GRCh37)
+var.pos_hg19:Position of the variant (GRCh37, 1-based)
+var.allele1:Allele 1 for the variant
+var.allele2:Allele 2 for the variant
+var.rsid:dbSNP rsid identifier
+obs.label:True if variant has significant observed effect size
+var.isused:True if variant is used in final ChromBPNet benchmarking
+obs.estimate:Observed effect size
+pred.gkmsvm.encsr000emt.varscore.deltasvm:deltasvm predictions in encsr000emt
+pred.enformer.encsr000emt.varscore.global_sad:Enformer SAD predictions (downloaded) in encsr000emt
+pred.enformer.encsr000emt.varscore.global_sar:Enformer SAR predictions (downloaded) in encsr000emt
+pred.enformer.encsr000emt.varscore.local_logfc:Enformer logFC (local) predictions (re-computed) in encsr000emt
+pred.chrombpnet.xxx.varscore.logfc:ChromBPNet logFC predictions in encid xxx
+pred.chrombpnet.xxx.varscore.jsd:ChromBPNet JSD predictions in encid xxx
+pred.chrombpnet.xxx.varscore.ips:ChromBPNet IPS predictions in encid xxx
+pred.chrombpnet.xxx.varscore.aaq:ChromBPNet AAQ predictions in encid xxx
+pred.chrombpnet.xxx.varscore.ies:ChromBPNet IES predictions in encid xxx
+pred.chrombpnet.xxx.varscore.jsd_x_aaq:ChromBPNet JSD x AAQ predictions in encid xxx
+pred.chrombpnet.xxx.varscore.logfc_x_aaq:ChromBPNet logFC x AAQ predictions in encid xxx
