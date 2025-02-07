@@ -19,6 +19,7 @@
 *.fai
 *.json
 *.tsv
+*.h5
 # Directories #
 # logs
 results
@@ -30,3 +31,5 @@ reference
 melanie_models/
 melanie_bias_model.sh
 jan_5_2024/
+filtered_variants/
+full_variants/
