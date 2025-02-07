@@ -8,7 +8,7 @@ celline = ["GM12878", "K562", "HEPG2", "H1ESC"]
 
 
 def script1(celltype, moitf, outf, chipencid):
-	command="bash script.sh "+celltype+" "+moitf+" "+outf+" "+chipencid
+	command="bash script_new.sh "+celltype+" "+moitf+" "+outf+" "+chipencid
 	print(command)
 	os.system(command)
 
@@ -46,8 +46,8 @@ for cellty in celline:
 
 				arguments_list = []
 				motif = dictss["pattern_"+str(i)]
-				os.makedirs("new_output_jan_18/"+cl+"/"+"pattern_"+str(i)+"_"+r[1]+"/", exist_ok=True)
-				outf = "new_output_jan_18/"+cl+"/"+"pattern_"+str(i)+"_"+r[1]+"/"+encid+".bed"
+				os.makedirs("new_output_oct_25/"+cl+"/"+"pattern_"+str(i)+"_"+r[1]+"/", exist_ok=True)
+				outf = "new_output_oct_25/"+cl+"/"+"pattern_"+str(i)+"_"+r[1]+"/"+encid+".bed"
 				if not os.path.isfile(outf):
 					script1(cl, motif, outf, encid)
 
