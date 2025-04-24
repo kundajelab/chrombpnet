@@ -139,7 +139,7 @@ For more information, also see:
  
 ## Bias Model training
 
-The command to train a custom bias bias model will look like this:
+The command to train a custom bias model will look like this:
 
 ```
 chrombpnet bias pipeline \
