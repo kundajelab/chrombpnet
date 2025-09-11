@@ -12,7 +12,8 @@ pd.options.display.max_rows = 500
 pd.options.display.max_columns = 500
 
 mode="counts"
-sourcetypes=["BIAS", "SIGNAL"]
+#sourcetypes=["BIAS", "SIGNAL"]
+sourcetypes=["SIGNAL"]
 rows = []
 
 default_chars = {0:"A", 1:"C", 2:"G", 3:"T"}
@@ -60,5 +61,7 @@ for idx,srct in enumerate(sourcetypes):
 
 
 df = pd.DataFrame(rows, columns=["MOTIF_ID", "MOTIF_SEQ"])
-df.to_csv("gm_benchmarking_motifs.tsv", sep="\t", header=True, index=False)
+#df.to_csv("gm_benchmarking_motifs.tsv", sep="\t", header=True, index=False)
+df.to_csv("gm_benchmarking_motifs_new.tsv", sep="\t", header=True, index=False)
+
 
