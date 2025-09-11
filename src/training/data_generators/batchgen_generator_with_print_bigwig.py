@@ -113,9 +113,6 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         batch_bias_cts = self.bias_cur_cts[idx*self.batch_size:(idx+1)*self.batch_size]
         batch_coords = self.cur_coords[idx*self.batch_size:(idx+1)*self.batch_size]
 
-        #row_sums = batch_bias_cts.sum(-1, keepdims=True)
-        #prob = batch_bias_cts / (row_sums + 1e-12) 
-        #batch_logits = np.log(prob + 1e-12)
         if self.return_coords:
             return ([batch_seq, batch_bias_cts, np.log(1+batch_bias_cts.sum(-1, keepdims=True))], [batch_cts, np.log(1+batch_cts.sum(-1, keepdims=True))], batch_coords)
         else:

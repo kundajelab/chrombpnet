@@ -35,7 +35,7 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         """
 
         peak_seqs, peak_cts, peak_coords, nonpeak_seqs, nonpeak_cts, nonpeak_coords, = data_utils.load_data(peak_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen, outputlen, max_jitter)
-        _, bias_peak_cts, bias_peak_coords, _, bias_nonpeak_cts, bias_nonpeak_coords, = data_utils.load_data(peak_regions, nonpeak_regions, genome_fasta, cts_bias_bw_file, inputlen, outputlen+100, max_jitter)
+        _, bias_peak_cts, bias_peak_coords, _, bias_nonpeak_cts, bias_nonpeak_coords, = data_utils.load_data(peak_regions, nonpeak_regions, genome_fasta, cts_bias_bw_file, inputlen, outputlen, max_jitter)
 
         assert(bias_peak_coords.shape==peak_coords.shape)
         assert(bias_peak_coords[:,1].astype(float).all()==peak_coords[:,1].astype(float).all())
@@ -68,7 +68,7 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         #Sample a fraction of the negative samples according to the specified ratio
         if (self.peak_seqs is not None) and (self.nonpeak_seqs is not None):
             # crop peak data before stacking
-            cropped_peaks, cropped_cnts, cropped_bias_cnts, cropped_coords = augment.random_crop(self.peak_seqs, self.peak_cts, self.bias_peak_cts, self.inputlen, self.outputlen,self.outputlen+100, self.peak_coords)
+            cropped_peaks, cropped_cnts, cropped_bias_cnts, cropped_coords = augment.random_crop(self.peak_seqs, self.peak_cts, self.bias_peak_cts, self.inputlen, self.outputlen,self.outputlen, self.peak_coords)
             #print(cropped_peaks.shape)
             #print(self.nonpeak_seqs.shape)
             if self.negative_sampling_ratio < 1.0:
@@ -85,7 +85,7 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
 
         elif self.peak_seqs is not None:
             # crop peak data before stacking
-            cropped_peaks, cropped_cnts, cropped_bias_cnts, cropped_coords = augment.random_crop(self.peak_seqs, self.peak_cts, self.bias_peak_cts, self.inputlen, self.outputlen, self.outputlen+100, self.peak_coords)
+            cropped_peaks, cropped_cnts, cropped_bias_cnts, cropped_coords = augment.random_crop(self.peak_seqs, self.peak_cts, self.bias_peak_cts, self.inputlen, self.outputlen, self.outputlen, self.peak_coords)
 
             self.seqs = cropped_peaks
             self.cts = cropped_cnts
@@ -113,13 +113,15 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
         batch_bias_cts = self.bias_cur_cts[idx*self.batch_size:(idx+1)*self.batch_size]
         batch_coords = self.cur_coords[idx*self.batch_size:(idx+1)*self.batch_size]
 
-        #row_sums = batch_bias_cts.sum(-1, keepdims=True)
-        #prob = batch_bias_cts / (row_sums + 1e-12) 
-        #batch_logits = np.log(prob + 1e-12)
+        batch_bias_cts[batch_bias_cts < 0] = 0
+        row_sums = batch_bias_cts.sum(-1, keepdims=True)
+        prob = batch_bias_cts / (row_sums + 1e-12) 
+        batch_logits = np.log(prob + 1e-12)
+        #print(batch_logits.shape)
         if self.return_coords:
-            return ([batch_seq, batch_bias_cts, np.log(1+batch_bias_cts.sum(-1, keepdims=True))], [batch_cts, np.log(1+batch_cts.sum(-1, keepdims=True))], batch_coords)
+            return ([batch_seq, batch_logits], [batch_cts, np.log(1+batch_cts.sum(-1, keepdims=True))], batch_coords)
         else:
-            return ([batch_seq, batch_bias_cts, np.log(1+batch_bias_cts.sum(-1, keepdims=True))], [batch_cts, np.log(1+batch_cts.sum(-1, keepdims=True))])
+            return ([batch_seq, batch_logits], [batch_cts, np.log(1+batch_cts.sum(-1, keepdims=True))])
 
     def on_epoch_end(self):
         self.crop_revcomp_data()

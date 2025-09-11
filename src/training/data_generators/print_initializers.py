@@ -1,4 +1,4 @@
-import data_generators.batchgen_generator_with_print_bigwig as batchgen_generator
+import data_generators.batchgen_generator_with_printbias_bigwig as batchgen_generator
 from utils import data_utils
 import pandas as pd
 import json

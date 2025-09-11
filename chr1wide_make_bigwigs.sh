@@ -8,7 +8,9 @@ gpu=$6
 
 #regions=results/chrombpnet/auprc_curves/narrowpeak_genomewide_chr1.bed 
 regions=results/chrombpnet/auprc_curves/downloads/$fold"_w_1000_s_250_narrowpeak.bed"
-output_dir=results/chrombpnet/auprc_curves/$cellline/$dtype"_uncorrected"
+#output_dir=results/chrombpnet/auprc_curves/$cellline/$dtype"_uncorrected"
+output_dir=results/chrombpnet/auprc_curves/subsampling/$cellline/
+
 mkdir $output_dir
 
 
