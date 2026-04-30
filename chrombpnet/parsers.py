@@ -10,7 +10,7 @@ desc = """======================================================================
 def read_parser():
 
         parser = argparse.ArgumentParser(description=desc,formatter_class=RawTextHelpFormatter)
-        subparsers = parser.add_subparsers(help="Must be eithier 'pipeline', 'train', 'qc', 'bias', 'prep', 'pred_bw', 'contribs_bw', 'modisco_motifs' ,'footprints', or 'snp_score'.", required=True, dest='cmd')
+        subparsers = parser.add_subparsers(help="Must be eithier 'pipeline', 'train', 'qc', 'bias', 'posttrain', 'prep', 'pred_bw', 'contribs_bw', 'modisco_motifs' ,'footprints', or 'snp_score'.", required=True, dest='cmd')
         
         # main parsers
         
@@ -25,6 +25,16 @@ def read_parser():
         bias_parser = bias_parser_sub.add_parser("pipeline", help="End-to-end pipline with train, quality check and test for bias model")
         bias_parser_train = bias_parser_sub.add_parser("train", help="Train bias model")
         bias_parser_qc = bias_parser_sub.add_parser("qc", help="Do quality checks and get test metrics for the bias model")
+
+        # post-training bias correction parsers
+
+        posttrain_parser_full = subparsers.add_parser("posttrain", help="Post-training bias correction: fine-tune existing bias model(s), train a separate BPNet, subtract")
+        posttrain_parser_sub = posttrain_parser_full.add_subparsers(help="Must be one of 'pipeline', 'bpnet', 'bias-finetune', 'bias-scale', 'subtract'.", required=True, dest='cmd_posttrain')
+        posttrain_pipeline_parser = posttrain_parser_sub.add_parser("pipeline", help="End-to-end post-training bias-correction pipeline")
+        posttrain_bpnet_parser = posttrain_parser_sub.add_parser("bpnet", help="Train just the BPNet on raw peaks (no bias attached)")
+        posttrain_bias_finetune_parser = posttrain_parser_sub.add_parser("bias-finetune", help="Fine-tune one or more pre-existing bias models on background regions")
+        posttrain_bias_scale_parser = posttrain_parser_sub.add_parser("bias-scale", help="Delta-scale a bias model's counts head to the current dataset's read depth")
+        posttrain_subtract_parser = posttrain_parser_sub.add_parser("subtract", help="Build the Keras wrapper that subtracts a scaled bias from a BPNet, saved as *_nobias.h5")
         
         # helper parsers
 
@@ -36,20 +46,25 @@ def read_parser():
         # downstream tool parsers
         preds_parser = subparsers.add_parser("pred_bw", help="Get model prediction bigwigs (Metrics calculated if observed bigwig provided)")
         contribs_parser = subparsers.add_parser("contribs_bw", help="Get contribution score bigwigs")
-        #motifs_parser = subparsers.add_parser("modisco_motifs", help="(Will soon be deprecated: use modisco motifs from tfmodisco lite) Summarize motifs from contribution scores with TFModisco")
+        motifs_parser = subparsers.add_parser("modisco_motifs", help="(Will soon be deprecated: use modisco motifs from tfmodisco lite) Summarize motifs from contribution scores with TFModisco")
         #custom_preds_parser = subparsers.add_parser("pred_custom", help="Make model predictions on custom sequences and output to .h5 file")
         #custom_contribs_parser = subparsers.add_parser("contribs_custom", help="Get contribution on custom sequences and output to .h5 file")
         footprints_parser = subparsers.add_parser("footprints", help="Get marginal footprinting for given model and given motifs")
-        #variants_parser = subparsers.add_parser("snp_score", help="Score SNPs with model")
+        variants_parser = subparsers.add_parser("snp_score", help="Score SNPs with model")
 
         def general_training_args(required_train, optional_train):
 		
         	required_train.add_argument('-g','--genome', required=True, type=str, help="reference genome fasta file")
        		required_train.add_argument('-c', '--chrom-sizes', type=str, required=True, help="Chrom sizes file")
-        	group = required_train.add_mutually_exclusive_group(required=True)
+        	# Either supply one of {bam, fragment, tagAlign} so reads_to_bigwig
+        	# can build the +4/-4 shifted bigwig from reads, OR pass --input-bigwig
+        	# with a pre-built shifted bigwig (only the posttrain subcommands honour
+        	# --input-bigwig).
+        	group = required_train.add_mutually_exclusive_group(required=False)
        		group.add_argument('-ibam', '--input-bam-file', type=str, help="Input BAM file")
         	group.add_argument('-ifrag', '--input-fragment-file', type=str, help="Input fragment file")
         	group.add_argument('-itag', '--input-tagalign-file', type=str, help="Input tagAlign file")
+        	group.add_argument('-ibw', '--input-bigwig', type=str, help="Pre-built +4/-4 shifted bigwig; bypasses reads_to_bigwig. Honoured by `posttrain` subcommands.")
         	required_train.add_argument('-o', '--output-dir', type=str, required=True, help="Output dir (path/to/output/dir)")
         	required_train.add_argument('-d', '--data-type', required=True, type=str, choices=['ATAC', 'DNASE'], help="assay type")
         	required_train.add_argument("-p", "--peaks", type=str, required=True, help="10 column bed file of peaks. Sequences and labels will be extracted centered at start (2nd col) + summit (10th col).")
@@ -57,8 +72,8 @@ def read_parser():
         	required_train.add_argument("-fl", "--chr-fold-path", type=str, required=True, help="Fold information - dictionary with test,valid and train keys and values with corresponding chromosomes")
  
         	optional_train.add_argument("-oth", "--outlier-threshold", type=float, default=0.9999, help="threshold to use to filter outlies")
-        	#optional_train.add_argument('-ps', '--plus-shift', type=int, default=None, help="Plus strand shift applied to reads. Estimated if not specified")
-        	#optional_train.add_argument('-ms', '--minus-shift', type=int, default=None, help="Minus strand shift applied to reads. Estimated if not specified")
+        	# optional_train.add_argument('-ps', '--plus-shift', type=int, default=None, help="Plus strand shift applied to reads. Estimated if not specified")
+        	# optional_train.add_argument('-ms', '--minus-shift', type=int, default=None, help="Minus strand shift applied to reads. Estimated if not specified")
         	optional_train.add_argument('--ATAC-ref-path', type=str, default=None, help="Path to ATAC reference motifs (ATAC.ref.motifs.txt used by default)")
         	optional_train.add_argument('--DNASE-ref-path', type=str, default=None, help="Path to DNASE reference motifs (DNASE.ref.motifs.txt used by default)")
         	optional_train.add_argument('--num-samples', type=int, default=10000, help="Number of reads to sample from BAM/fragment/tagAlign file for shift estimation")
@@ -117,9 +132,11 @@ def read_parser():
 
         optional_main_parser.add_argument("-sr", "--negative-sampling-ratio", type=float, default=0.1, help="Ratio of negatives to positive samples per epoch")
         optional_main_parser.add_argument("-fil", "--filters", type=int, default=512, help="Number of filters to use in chrombpnet mode")
+        optional_main_parser.add_argument("-grp", "--convgroups", type=int, default=1, help="Number of groups of filters to use; filters must be multiple of convgroups. convgroups=1 all filters are interacting together")
         optional_main_parser.add_argument("-dil", "--n-dilation-layers", type=int, default=8, help="Number of dilation layers to use in chrombpnet model")
         optional_main_parser.add_argument("-j", "--max-jitter", type=int, default=500, help="Maximum jitter applied on either side of region (default 500 for chrombpnet model)")
         optional_main_parser.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
+        optional_main_parser.add_argument("-ptm", "--pretrained-model", type=str, default=None, help="Path to pretrained full chrombpnet model. It will be fine_tuned during this step")
  
          # chrombpnet pipeline arguments
 		
@@ -133,9 +150,13 @@ def read_parser():
 
         optional_pipeline_parser.add_argument("-sr", "--negative-sampling-ratio", type=float, default=0.1, help="Ratio of negatives to positive samples per epoch")
         optional_pipeline_parser.add_argument("-fil", "--filters", type=int, default=512, help="Number of filters to use in chrombpnet mode")
+        optional_pipeline_parser.add_argument("-grp", "--convgroups", type=int, default=1, help="Number of groups of filters to use; filters must be multiple of convgroups. convgroups=1 all filters are interacting together")
         optional_pipeline_parser.add_argument("-dil", "--n-dilation-layers", type=int, default=8, help="Number of dilation layers to use in chrombpnet model")
         optional_pipeline_parser.add_argument("-j", "--max-jitter", type=int, default=500, help="Maximum jitter applied on either side of region (default 500 for chrombpnet model)")
         optional_pipeline_parser.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
+        optional_pipeline_parser.add_argument("-ptm", "--pretrained-model", type=str, default=None, help="Path to pretrained full chrombpnet model. It will be fine_tuned during this step")
+        optional_pipeline_parser.add_argument('-ps', '--plus-shift', type=int, default=None, help="Plus strand shift applied to reads. Estimated if not specified")
+        optional_pipeline_parser.add_argument('-ms', '--minus-shift', type=int, default=None, help="Minus strand shift applied to reads. Estimated if not specified")
  
         # chrombpnet model qc arguments
 
@@ -168,9 +189,13 @@ def read_parser():
         required_bias_parser.add_argument("-b", "--bias-threshold-factor", type=float, required=True, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions). Recommended start value 0.5 for ATAC and 0.8 for DNase.")
 
         optional_bias_parser.add_argument("-fil", "--filters", type=int, default=128, help="Number of filters to use in chrombpnet mode")
+        optional_bias_parser.add_argument("-grp", "--convgroups", type=int, default=1, help="Number of groups of filters to use; filters must be multiple of convgroups. convgroups=1 all filters are interacting together")
         optional_bias_parser.add_argument("-dil", "--n-dilation-layers", type=int, default=4, help="Number of dilation layers to use in chrombpnet model")
         optional_bias_parser.add_argument("-j", "--max-jitter", type=int, default=0, help="Maximum jitter applied on either side of region (default 500 for chrombpnet model)")
         optional_bias_parser.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
+        optional_bias_parser.add_argument("-ptm", "--pretrained-model", type=str, default=None, help="Path to pretrained bias chrombpnet model. It will be fine_tuned during this step")
+        optional_bias_parser.add_argument('-ps', '--plus-shift', type=int, default=None, help="Plus strand shift applied to reads. Estimated if not specified")
+        optional_bias_parser.add_argument('-ms', '--minus-shift', type=int, default=None, help="Minus strand shift applied to reads. Estimated if not specified")
 
        # bias model training arguments
 
@@ -182,9 +207,12 @@ def read_parser():
         required_biast_parser.add_argument("-b", "--bias-threshold-factor", type=float, required=True, help="A threshold is applied on maximum count of non-peak region for training bias model, which is set as this threshold x min(count over peak regions). Recommended start value 0.5 for ATAC and 0.8 for DNas")
 
         optional_biast_parser.add_argument("-fil", "--filters", type=int, default=128, help="Number of filters to use in chrombpnet mode")
+        optional_biast_parser.add_argument("-grp", "--convgroups", type=int, default=1, help="Number of groups of filters to use; filters must be multiple of convgroups. convgroups=1 all filters are interacting together")
         optional_biast_parser.add_argument("-dil", "--n-dilation-layers", type=int, default=4, help="Number of dilation layers to use in chrombpnet model")
         optional_biast_parser.add_argument("-j", "--max-jitter", type=int, default=0, help="Maximum jitter applied on either side of region (default 500 for chrombpnet model)")
         optional_biast_parser.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
+        optional_biast_parser.add_argument("-ptm", "--pretrained-model", type=str, default=None, help="Path to pretrained bias chrombpnet model. It will be fine_tuned during this step")
+        
  
        # bias model qc arguments
 
@@ -204,7 +232,92 @@ def read_parser():
         optional_bqc_parser.add_argument("-fp","--file-prefix",type=str,required=False, default=None, help="File prefix for output to use. All the files will be prefixed with this string if provided.")
         optional_bqc_parser.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
         optional_bqc_parser.add_argument('-hp', '--html-prefix', required=False, default="./", help="The html prefix to use for the html file output.")
- 
+
+
+        # post-training bias-correction pipeline arguments
+
+        posttrain_pipeline_parser._action_groups.pop()
+        required_posttrain_parser = posttrain_pipeline_parser.add_argument_group('required arguments')
+        optional_posttrain_parser = posttrain_pipeline_parser.add_argument_group('optional arguments')
+        required_posttrain_parser,optional_posttrain_parser = general_training_args(required_posttrain_parser, optional_posttrain_parser)
+
+        required_posttrain_parser.add_argument("-pbm", "--pretrained-bias-model-paths", type=str, nargs='+', required=True, help="One or more paths to pre-existing bias .h5 models. They are frozen except (a) the last dilated conv, (b) the profile precrop conv, and (c) the counts Dense, then fine-tuned together with a learned combiner on background regions.")
+        required_posttrain_parser.add_argument("-b", "--bias-threshold-factor", type=float, required=True, help="Threshold applied on max count of non-peak regions for selecting background regions to fine-tune the bias model. Set as this factor x min(count over peak regions). Recommended start value 0.5 for ATAC and 0.8 for DNase.")
+
+        optional_posttrain_parser.add_argument("-sr", "--negative-sampling-ratio", type=float, default=0.1, help="Ratio of negatives to positive samples per epoch (BPNet stage)")
+        optional_posttrain_parser.add_argument("-bpf", "--bpnet-filters", type=int, default=512, help="Number of filters for the post-training BPNet (stage 3)")
+        optional_posttrain_parser.add_argument("-bpg", "--bpnet-convgroups", type=int, default=1, help="Number of groups of filters for the post-training BPNet; filters must be a multiple of convgroups. convgroups=1 is standard convolution (all filters interact).")
+        optional_posttrain_parser.add_argument("-bpd", "--bpnet-n-dilation-layers", type=int, default=8, help="Number of dilation layers for the post-training BPNet")
+        optional_posttrain_parser.add_argument("-ck", "--combiner-profile-kernel-size", type=int, default=1, help="Kernel size of the Conv1D that combines profile heads across pre-existing bias models. 1 = per-position learned weighted sum (default).")
+        optional_posttrain_parser.add_argument("-j", "--max-jitter", type=int, default=500, help="Maximum jitter applied on either side of region for the BPNet stage. Bias fine-tune stage is forced to jitter=0 internally.")
+        optional_posttrain_parser.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
+        optional_posttrain_parser.add_argument("-ptm", "--pretrained-model", type=str, default=None, help="Path to a pretrained chrombpnet model. If set, train.main warm-starts from it; otherwise training starts from scratch.")
+        optional_posttrain_parser.add_argument('-ps', '--plus-shift', type=int, default=None, help="Plus strand shift applied to reads. Estimated if not specified")
+        optional_posttrain_parser.add_argument('-ms', '--minus-shift', type=int, default=None, help="Minus strand shift applied to reads. Estimated if not specified")
+
+
+        # posttrain bpnet (standalone) arguments
+
+        posttrain_bpnet_parser._action_groups.pop()
+        required_pt_bpnet = posttrain_bpnet_parser.add_argument_group('required arguments')
+        optional_pt_bpnet = posttrain_bpnet_parser.add_argument_group('optional arguments')
+        required_pt_bpnet,optional_pt_bpnet = general_training_args(required_pt_bpnet, optional_pt_bpnet)
+
+        optional_pt_bpnet.add_argument("-sr", "--negative-sampling-ratio", type=float, default=0.1, help="Ratio of negatives to positive samples per epoch")
+        optional_pt_bpnet.add_argument("-bpf", "--bpnet-filters", type=int, default=512, help="Number of filters for the BPNet")
+        optional_pt_bpnet.add_argument("-bpg", "--bpnet-convgroups", type=int, default=1, help="Number of conv groups; filters must be a multiple of convgroups. convgroups=1 is standard convolution.")
+        optional_pt_bpnet.add_argument("-bpd", "--bpnet-n-dilation-layers", type=int, default=8, help="Number of dilation layers for the BPNet")
+        optional_pt_bpnet.add_argument("-j", "--max-jitter", type=int, default=500, help="Maximum jitter applied on either side of region")
+        optional_pt_bpnet.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
+        optional_pt_bpnet.add_argument("-ptm", "--pretrained-model", type=str, default=None, help="Path to a pretrained chrombpnet model. If set, train.main warm-starts from it.")
+        optional_pt_bpnet.add_argument('-ps', '--plus-shift', type=int, default=None, help="Plus strand shift applied to reads. Estimated if not specified")
+        optional_pt_bpnet.add_argument('-ms', '--minus-shift', type=int, default=None, help="Minus strand shift applied to reads. Estimated if not specified")
+
+
+        # posttrain bias-finetune (standalone) arguments
+
+        posttrain_bias_finetune_parser._action_groups.pop()
+        required_pt_bft = posttrain_bias_finetune_parser.add_argument_group('required arguments')
+        optional_pt_bft = posttrain_bias_finetune_parser.add_argument_group('optional arguments')
+        required_pt_bft,optional_pt_bft = general_training_args(required_pt_bft, optional_pt_bft)
+
+        required_pt_bft.add_argument("-pbm", "--pretrained-bias-model-paths", type=str, nargs='+', required=True, help="One or more paths to pre-existing bias .h5 models to fine-tune and combine.")
+        required_pt_bft.add_argument("-b", "--bias-threshold-factor", type=float, required=True, help="Threshold applied on max count of non-peak regions for selecting background regions. Recommended start value 0.5 for ATAC and 0.8 for DNase.")
+
+        optional_pt_bft.add_argument("-ck", "--combiner-profile-kernel-size", type=int, default=1, help="Kernel size of the Conv1D that combines profile heads across pre-existing bias models.")
+        optional_pt_bft.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
+        optional_pt_bft.add_argument("-ptm", "--pretrained-model", type=str, default=None, help="Path to a pretrained model to warm-start from.")
+        optional_pt_bft.add_argument('-ps', '--plus-shift', type=int, default=None, help="Plus strand shift applied to reads. Estimated if not specified")
+        optional_pt_bft.add_argument('-ms', '--minus-shift', type=int, default=None, help="Minus strand shift applied to reads. Estimated if not specified")
+
+
+        # posttrain bias-scale (standalone) arguments
+
+        posttrain_bias_scale_parser._action_groups.pop()
+        required_pt_bsc = posttrain_bias_scale_parser.add_argument_group('required arguments')
+        optional_pt_bsc = posttrain_bias_scale_parser.add_argument_group('optional arguments')
+        required_pt_bsc,optional_pt_bsc = general_training_args(required_pt_bsc, optional_pt_bsc)
+
+        required_pt_bsc.add_argument("-bm", "--bias-model-path", type=str, required=True, help="Path to the bias model .h5 to scale")
+
+        optional_pt_bsc.add_argument("-sr", "--negative-sampling-ratio", type=float, default=0.1, help="Ratio of negatives to positive samples (used for filtering thresholds)")
+        optional_pt_bsc.add_argument("-fil", "--filters", type=int, default=512, help="Placeholder; written into chrombpnet_model_params.tsv but unused for this command.")
+        optional_pt_bsc.add_argument("-grp", "--convgroups", type=int, default=1, help="Placeholder; written into chrombpnet_model_params.tsv but unused for this command.")
+        optional_pt_bsc.add_argument("-dil", "--n-dilation-layers", type=int, default=8, help="Placeholder; written into chrombpnet_model_params.tsv but unused for this command.")
+        optional_pt_bsc.add_argument("-j", "--max-jitter", type=int, default=500, help="Maximum jitter (used for edge filtering)")
+        optional_pt_bsc.add_argument('-ps', '--plus-shift', type=int, default=None, help="Plus strand shift applied to reads. Estimated if not specified")
+        optional_pt_bsc.add_argument('-ms', '--minus-shift', type=int, default=None, help="Minus strand shift applied to reads. Estimated if not specified")
+
+
+        # posttrain subtract (standalone) arguments
+
+        posttrain_subtract_parser._action_groups.pop()
+        required_pt_sub = posttrain_subtract_parser.add_argument_group('required arguments')
+
+        required_pt_sub.add_argument("-bp", "--bpnet-model-path", type=str, required=True, help="Path to the BPNet .h5 (trained on raw peaks)")
+        required_pt_sub.add_argument("-sb", "--scaled-bias-model-path", type=str, required=True, help="Path to the scaled bias model .h5")
+        required_pt_sub.add_argument("-o", "--output-path", type=str, required=True, help="Output path for the bias-corrected wrapper .h5 (typically named *_nobias.h5)")
+
 
         # Make prediction bigwigs
         
@@ -262,31 +375,31 @@ def read_parser():
   
         # Do variant scoring
         
-        #variants_parser._action_groups.pop()
-        #required_ves =  variants_parser.add_argument_group('required arguments')
-        #optional_ves =  variants_parser.add_argument_group('optional arguments')
-        #required_ves.add_argument("-snps", "--snp-data", type=str, required=True, help="Path to a tsv output with the following information in columns - chr, position to insert allele (0-based), ref allele, alt allele")
-        #required_ves.add_argument("-m", "--model-h5", type=str, required=True, help="Path model .h5 file")
-        #required_ves.add_argument("-g", "--genome", type=str, required=True, help="Genome fasta")
-        #required_ves.add_argument("-op", "--output-prefix", type=str, required=True, help="Output prefix for bigwig files")
+        variants_parser._action_groups.pop()
+        required_ves =  variants_parser.add_argument_group('required arguments')
+        optional_ves =  variants_parser.add_argument_group('optional arguments')
+        required_ves.add_argument("-snps", "--snp-data", type=str, required=True, help="Path to a tsv output with the following information in columns - chr, position to insert allele (0-based), ref allele, alt allele")
+        required_ves.add_argument("-m", "--model-h5", type=str, required=True, help="Path model .h5 file")
+        required_ves.add_argument("-g", "--genome", type=str, required=True, help="Genome fasta")
+        required_ves.add_argument("-op", "--output-prefix", type=str, required=True, help="Output prefix for bigwig files")
    
-        #optional_ves.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for prediction")
-        #optional_ves.add_argument("-dm","--debug-mode-on", type=int, default=0, help="Use this mode to print the flanks of first five SNP insert locations")
+        optional_ves.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for prediction")
+        optional_ves.add_argument("-dm","--debug-mode-on", type=int, default=0, help="Use this mode to print the flanks of first five SNP insert locations")
         
         
         # Run TF-Modisco
         
-        #motifs_parser._action_groups.pop()
-        #required_tfm =  motifs_parser.add_argument_group('required arguments')
-        #optional_tfm =  motifs_parser.add_argument_group('optional arguments')
+        motifs_parser._action_groups.pop()
+        required_tfm =  motifs_parser.add_argument_group('required arguments')
+        optional_tfm =  motifs_parser.add_argument_group('optional arguments')
         
-        #required_tfm.add_argument("-i", "--h5py", type=str, required=True, help="A legacy h5py file containing the one-hot encoded sequences and shap scores.")
-        #required_tfm.add_argument("-n", "--max-seqlets", type=int, required=True, help="The maximum number of seqlets per metacluster.")
-        #required_tfm.add_argument("-op", "--output-prefix", type=str, required=True, help="The path to the output file.")
+        required_tfm.add_argument("-i", "--h5py", type=str, required=True, help="A legacy h5py file containing the one-hot encoded sequences and shap scores.")
+        required_tfm.add_argument("-n", "--max-seqlets", type=int, required=True, help="The maximum number of seqlets per metacluster.")
+        required_tfm.add_argument("-op", "--output-prefix", type=str, required=True, help="The path to the output file.")
 
-        #optional_tfm.add_argument("-l", "--n-leiden", type=int, default=2, help="The number of Leiden clusterings to perform with different random seeds.")
-        #optional_tfm.add_argument("-w", "--window", type=int, default=500, help="The window surrounding the peak center that will be considered for motif discovery.")
-        #optional_tfm.add_argument("-v", "--verbose", action="store_true", default=False, help="Controls the amount of output from the code.")
+        optional_tfm.add_argument("-l", "--n-leiden", type=int, default=2, help="The number of Leiden clusterings to perform with different random seeds.")
+        optional_tfm.add_argument("-w", "--window", type=int, default=500, help="The window surrounding the peak center that will be considered for motif discovery.")
+        optional_tfm.add_argument("-v", "--verbose", action="store_true", default=False, help="Controls the amount of output from the code.")
 
         
         # Pull the arguments

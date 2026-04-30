@@ -8,12 +8,19 @@ import pandas as pd
 import logging
 logging.getLogger('matplotlib.font_manager').disabled = True
 
+def _limit_tf_threads(n_intra=4, n_inter=2):
+    os.environ["TF_NUM_INTRAOP_THREADS"] = str(n_intra)
+    os.environ["TF_NUM_INTEROP_THREADS"] = str(n_inter)
+
+    import tensorflow as tf
+    tf.config.threading.set_intra_op_parallelism_threads(n_intra)
+    tf.config.threading.set_inter_op_parallelism_threads(n_inter)
 
 # invoke pipeline modules based on command
 
 def main():
 	args = parsers.read_parser()
-	
+	_limit_tf_threads(6, 2)
 	if args.cmd == "pipeline" or args.cmd == "train":
 		os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
 		os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
@@ -46,8 +53,46 @@ def main():
 		else:
 			print("Command not found")
 
-			
-	
+	elif args.cmd == "posttrain":
+		if args.cmd_posttrain == "pipeline":
+			os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+
+			pipelines.posttrain_bias_correction_pipeline(args)
+
+		elif args.cmd_posttrain == "bpnet":
+			os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+
+			pipelines.posttrain_bpnet_pipeline(args)
+
+		elif args.cmd_posttrain == "bias-finetune":
+			os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+
+			pipelines.posttrain_bias_finetune_pipeline(args)
+
+		elif args.cmd_posttrain == "bias-scale":
+			os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+
+			pipelines.posttrain_bias_scale_pipeline(args)
+
+		elif args.cmd_posttrain == "subtract":
+			# subtract only writes a single output .h5; no dir layout needed.
+			pipelines.posttrain_subtract_pipeline(args)
+
+		else:
+			print("Command not found")
+
 	elif args.cmd == "pred_bw":
 	
 		assert (args.bias_model is None) + (args.chrombpnet_model is None) + (args.chrombpnet_model_nb is None) < 3, "No input model provided!"

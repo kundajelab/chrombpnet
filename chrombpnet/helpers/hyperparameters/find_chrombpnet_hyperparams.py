@@ -25,6 +25,7 @@ def parse_model_args(parser):
     parser.add_argument("-il", "--inputlen", type=int, required=True, help="Sequence input length")
     parser.add_argument("-ol", "--outputlen", type=int, required=True, help="Prediction output length")
     parser.add_argument("-fil", "--filters", type=int, default=512, help="Number of filters to use in chrombpnet mode")
+    parser.add_argument("-grp", "--convgroups", type=int, default=2, help="Number of convgroups to use in chrombpnet mode")
     parser.add_argument("-dil", "--n-dilation-layers", type=int, default=8, help="Number of dilation layers to use in chrombpnet model")
     parser.add_argument("-b", "--bias-model-path", type=str, required=True, help="path of bias model")
     parser.add_argument("-op", "--output-prefix", help="output prefix for storing hyper-param TSV for chrombpnet")
@@ -43,18 +44,23 @@ def adjust_bias_model_logcounts(bias_model, seqs, cts):
     This would change if you change the model.
     """
 
-    # safeguards to prevent misuse
-    #assert(bias_model.layers[-1].name == "logcount_predictions")
-    assert(bias_model.layers[-1].name == "logcounts" or bias_model.layers[-1].name == "logcount_predictions")
-    assert(bias_model.layers[-1].output_shape==(None,1))
-    assert(isinstance(bias_model.layers[-1], keras.layers.Dense))
+    # Find the counts-head Dense by name. Looking up by name (instead of
+    # layers[-1]) keeps this working for models where the Dense is not
+    # topologically last (e.g. the combined fine-tuned bias model produced by
+    # bpnet_finetune_combiner_model, where the profile path is deeper).
+    try:
+        dense = bias_model.get_layer("logcount_predictions")
+    except ValueError:
+        dense = bias_model.get_layer("logcounts")
+    assert(dense.output_shape==(None,1))
+    assert(isinstance(dense, keras.layers.Dense))
 
     print("Predicting within adjust counts")
     _, pred_logcts = bias_model.predict(seqs, verbose=True)
     delta = np.mean(np.log(1+cts) - pred_logcts.ravel())
 
-    dw, db = bias_model.layers[-1].get_weights()
-    bias_model.layers[-1].set_weights([dw, db+delta])
+    dw, db = dense.get_weights()
+    dense.set_weights([dw, db+delta])
     return bias_model
 
 
@@ -145,10 +151,14 @@ def main(args):
 
     # adjust bias model for training  - using train and validation set
     # the bias model might be trained on a difference read depth compared to the given data - so this step scales the bias model to account for that
-    bias_model = param_utils.load_model_wrapper(args.bias_model_path)
-    bias_model_scaled = adjust_bias_model_logcounts(bias_model, nonpeak_seqs[(nonpeak_cnts< upper_thresh) & (nonpeak_cnts>lower_thresh)], nonpeak_cnts[(nonpeak_cnts< upper_thresh) & (nonpeak_cnts>lower_thresh)])
-    # save the new bias model
-    bias_model_scaled.save("{}bias_model_scaled.h5".format(args.output_prefix))
+    # When bias_model_path == "None" (used by the standalone `posttrain bpnet`
+    # subcommand) we skip the bias load/scale/save and the bias_model_path TSV
+    # row, since the BPNet stage trains without any bias attached.
+    if args.bias_model_path != "None":
+        bias_model = param_utils.load_model_wrapper(args.bias_model_path)
+        bias_model_scaled = adjust_bias_model_logcounts(bias_model, nonpeak_seqs[(nonpeak_cnts< upper_thresh) & (nonpeak_cnts>lower_thresh)], nonpeak_cnts[(nonpeak_cnts< upper_thresh) & (nonpeak_cnts>lower_thresh)])
+        # save the new bias model
+        bias_model_scaled.save("{}bias_model_scaled.h5".format(args.output_prefix))
 
     # store the parameters being used  - in a TSV file
     file = open("{}chrombpnet_data_params.tsv".format(args.output_prefix),"w")
@@ -165,10 +175,13 @@ def main(args):
     file.write("\n")
     file.write("\t".join(["filters", str(args.filters)]))
     file.write("\n")
+    file.write("\t".join(["convgroups", str(args.convgroups)]))
+    file.write("\n")
     file.write("\t".join(["n_dil_layers", str(args.n_dilation_layers)]))
     file.write("\n")
-    file.write("\t".join(["bias_model_path", "{}bias_model_scaled.h5".format(args.output_prefix)]))
-    file.write("\n")
+    if args.bias_model_path != "None":
+        file.write("\t".join(["bias_model_path", "{}bias_model_scaled.h5".format(args.output_prefix)]))
+        file.write("\n")
     file.write("\t".join(["inputlen", str(args.inputlen)]))
     file.write("\n")
     file.write("\t".join(["outputlen", str(args.outputlen)]))
