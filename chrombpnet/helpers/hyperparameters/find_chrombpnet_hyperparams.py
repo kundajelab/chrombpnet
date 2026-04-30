@@ -25,7 +25,7 @@ def parse_model_args(parser):
     parser.add_argument("-il", "--inputlen", type=int, required=True, help="Sequence input length")
     parser.add_argument("-ol", "--outputlen", type=int, required=True, help="Prediction output length")
     parser.add_argument("-fil", "--filters", type=int, default=512, help="Number of filters to use in chrombpnet mode")
-    parser.add_argument("-grp", "--convgroups", type=int, default=2, help="Number of convgroups to use in chrombpnet mode")
+    parser.add_argument("-grp", "--convgroups", type=int, default=1, help="Number of convgroups to use in chrombpnet mode")
     parser.add_argument("-dil", "--n-dilation-layers", type=int, default=8, help="Number of dilation layers to use in chrombpnet model")
     parser.add_argument("-b", "--bias-model-path", type=str, required=True, help="path of bias model")
     parser.add_argument("-op", "--output-prefix", help="output prefix for storing hyper-param TSV for chrombpnet")
