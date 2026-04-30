@@ -77,8 +77,8 @@ def chrombpnet_train_pipeline(args):
 	# separating models from logs
 	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.log".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.log".format(fpx)))
 	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.log.batch".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.log.batch".format(fpx)))
-	#os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.params.json".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.params.json".format(fpx)))
-	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.args.json").format(fpx),os.path.join(args.output_dir,"logs/{}chrombpnet.args.json".format(fpx)))
+	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.params.json".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.params.json".format(fpx)))
+	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.args.json".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.args.json".format(fpx)))
 
 	if args.cmd == "train":
 		import chrombpnet.helpers.generate_reports.make_html as make_html
@@ -142,7 +142,7 @@ def chrombpnet_train_pipeline(args):
 	
 	import chrombpnet
 	chrombpnet_src_dir = os.path.dirname(chrombpnet.__file__)
-	meme_file="/oak/stanford/groups/akundaje/projects/celegans/Julie_Ahringer/reference/motifs_db/cisbp/Caenorhabditis_elegans_2025_03_31_7-07_pm/c_elegans.meme"
+	meme_file=get_default_data_path(DefaultDataFile.motifs_meme)
 	
 	# modisco-lite pipeline
 	
