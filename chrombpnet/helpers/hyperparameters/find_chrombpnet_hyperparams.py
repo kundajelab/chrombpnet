@@ -25,7 +25,7 @@ def parse_model_args(parser):
     parser.add_argument("-il", "--inputlen", type=int, required=True, help="Sequence input length")
     parser.add_argument("-ol", "--outputlen", type=int, required=True, help="Prediction output length")
     parser.add_argument("-fil", "--filters", type=int, default=512, help="Number of filters to use in chrombpnet mode")
-    parser.add_argument("-grp", "--convgroups", type=int, default=1, help="Number of convgroups to use in chrombpnet mode")
+    parser.add_argument("-grp", "--convgroups", type=int, default=2, help="Number of convgroups to use in chrombpnet mode")
     parser.add_argument("-dil", "--n-dilation-layers", type=int, default=8, help="Number of dilation layers to use in chrombpnet model")
     parser.add_argument("-b", "--bias-model-path", type=str, required=True, help="path of bias model")
     parser.add_argument("-op", "--output-prefix", help="output prefix for storing hyper-param TSV for chrombpnet")
@@ -48,10 +48,24 @@ def adjust_bias_model_logcounts(bias_model, seqs, cts):
     # layers[-1]) keeps this working for models where the Dense is not
     # topologically last (e.g. the combined fine-tuned bias model produced by
     # bpnet_finetune_combiner_model, where the profile path is deeper).
-    try:
-        dense = bias_model.get_layer("logcount_predictions")
-    except ValueError:
-        dense = bias_model.get_layer("logcounts")
+    # Three possible names depending on which architecture produced the model:
+    #   - `logcount_predictions`        — bpnet_model.py and chrombpnet_with_bias_model.py
+    #   - `logcounts`                   — older naming
+    #   - `combined_logcount_predictions` — bpnet_finetune_combiner_model.py
+    #     (the outer Dense uses this distinct name to avoid an H5 weight-group
+    #     collision with the inner Dense of each loaded sub-model)
+    dense = None
+    for candidate in ("combined_logcount_predictions", "logcount_predictions", "logcounts"):
+        try:
+            dense = bias_model.get_layer(candidate)
+            break
+        except ValueError:
+            continue
+    if dense is None:
+        raise ValueError(
+            "Could not find the counts-head Dense layer in the bias model. "
+            "Tried names: combined_logcount_predictions, logcount_predictions, logcounts."
+        )
     assert(dense.output_shape==(None,1))
     assert(isinstance(dense, keras.layers.Dense))
 
@@ -199,5 +213,3 @@ if __name__=="__main__":
     args = parse_model_args(parser)
 
     main(args)
-
-    

@@ -102,8 +102,15 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
     profile_out = Flatten(name="logits_profile_predictions")(profile_combined)
 
     # Dense is created last so the parent model has a clearly identifiable
-    # counts head; downstream scaling looks it up by name.
-    count_out = Dense(1, name="logcount_predictions")(counts_concat)
+    # counts head. Named `combined_logcount_predictions` (not the bare
+    # `logcount_predictions`) so its weights don't collide with the same-named
+    # Dense layer inside each loaded sub-model when Keras writes the H5 — that
+    # collision otherwise raises "Unable to synchronously create dataset
+    # (name already exists)" at the first ModelCheckpoint save.
+    # `find_chrombpnet_hyperparams.adjust_bias_model_logcounts` knows to look
+    # up this name (in addition to the original two) so the post-finetune
+    # δ-scale step still finds the right Dense.
+    count_out = Dense(1, name="combined_logcount_predictions")(counts_concat)
 
     model = Model(inputs=[inp], outputs=[profile_out, count_out])
 

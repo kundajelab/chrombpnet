@@ -519,8 +519,16 @@ def _pt_finetune_bias_stage(args, fpx):
 		os.path.join(args.output_dir,"auxiliary/{}bias_data_params.tsv".format(fpx)),
 		os.path.join(args.output_dir,"logs/{}bias_finetune_data_params.tsv".format(fpx)),
 	)
+
 	finetune_params_path = os.path.join(args.output_dir,"logs/{}bias_finetune_model_params.tsv".format(fpx))
+	# Ensure the file ends with a newline before appending — `find_bias_hyperparams`
+	# writes its last row without one, which would silently merge it with the
+	# first appended key.
+	with open(finetune_params_path, "r") as f:
+		existing = f.read()
+	sep = "" if (not existing) or existing.endswith("\n") else "\n"
 	with open(finetune_params_path, "a") as f:
+		f.write(sep)
 		f.write("\t".join(["pretrained_bias_model_paths", ",".join(args.pretrained_bias_model_paths)]))
 		f.write("\n")
 		f.write("\t".join(["combiner_profile_kernel_size", str(args.combiner_profile_kernel_size)]))
