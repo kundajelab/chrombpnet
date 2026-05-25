@@ -70,12 +70,12 @@ def write_bigwig(data, regions, gs, bw_out, debug_chr=None, use_tqdm=False, outs
         iterator = tqdm(iterator)
 
     for itr in iterator:
-        # subset to chromosome (debugging)
-        if debug_chr and regions[i][0]!=debug_chr:
-            continue
-
         i = order_of_regs[itr]
         i_chr, i_start, i_end, i_mid = regions[i]
+
+        # subset to chromosome (debugging)
+        if debug_chr and i_chr not in debug_chr:
+            continue
     
         if i_chr != cur_chr: 
             cur_chr = i_chr
