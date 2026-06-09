@@ -130,8 +130,9 @@ def chrombpnet_train_pipeline(args):
 	sub_peaks.to_csv(os.path.join(args_copy.output_dir,"auxiliary/{}30K_subsample_peaks.bed".format(fpx)),sep="\t", header=False, index=False)
 	os.makedirs(os.path.join(args.output_dir,"auxiliary/interpret_subsample/"), exist_ok=False)
 
-	#args_copy.profile_or_counts = ["counts", "profile"]
-	args_copy.profile_or_counts = ["profile"]	
+	# args_copy.profile_or_counts = ["counts", "profile"]
+	# args_copy.profile_or_counts = ["profile"]	
+	args_copy.profile_or_counts = ["counts"]	
 	args_copy.regions = os.path.join(args_copy.output_dir,"auxiliary/{}30K_subsample_peaks.bed".format(fpx))	
 	args_copy.model_h5 = os.path.join(args.output_dir,"models/{}chrombpnet_nobias.h5".format(fpx))
 	args_copy.output_prefix = os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}chrombpnet_nobias".format(fpx))
