@@ -11,12 +11,10 @@ class DefaultDataFile(Enum):
     
 
 def get_default_data_path(default_data_file_entry):    
-    with resources.path("chrombpnet.data", default_data_file_entry.value) as f:
-        data_file_path=f
+    # a pathlib.Path: the package is installed as regular files (no zip imports)
+    data_file_path = resources.files("chrombpnet.data") / default_data_file_entry.value
     return data_file_path
 
 def print_meme_motif_file():
-    with resources.path("chrombpnet.data", DefaultDataFile.motifs_meme.value) as f:
-        data_file_path=f
-    print(f)
-    
+    data_file_path = get_default_data_path(DefaultDataFile.motifs_meme)
+    print(data_file_path)

@@ -1,0 +1,85 @@
+name: docker
+
+# Builds the GPU images and pushes them to ghcr.io/<owner>/<repo>, taken from github.repository and lowercased
+# (ghcr.io/kundajelab/chrombpnet for kundajelab/chrombpnet):
+#   <version>-cuda13, latest-cuda13, <sha>-cuda13   (driver >= 580: H100, B200, RTX PRO 6000 Blackwell)
+#   <version>-cuda12, latest-cuda12, <sha>-cuda12   (older drivers)
+# It replaces latest-docker-image.yml, which pushed the 1.x (TensorFlow) image to Docker Hub as
+# kundajelab/chrombpnet:latest. Every tag here ends in -cuda13 or -cuda12, so that :latest is never overwritten.
+# It needs no repository secrets: the automatic GITHUB_TOKEN with packages: write is enough for ghcr.io.
+# To publish to Docker Hub instead: log in to docker.io with a Docker Hub user and access token stored as
+# repository secrets (e.g. DOCKERHUB_USERNAME / DOCKERHUB_TOKEN) in place of ghcr.io / GITHUB_TOKEN, and set the
+# `image` step's name to docker.io/kundajelab/chrombpnet (the tags and the build cache refs follow it).
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: "cuda13 image platforms (linux/arm64 is built under QEMU and takes hours)"
+        default: linux/amd64
+        required: false
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { pixi_env: cuda13, cuda: "13.0", platforms: "${{ inputs.platforms || 'linux/amd64' }}" }
+          - { pixi_env: cuda12, cuda: "12.0", platforms: linux/amd64 }
+    steps:
+      # The CUDA environments are ~5 GB and exist twice during the build (build stage + runtime stage).
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+      - uses: actions/checkout@v7
+      - uses: docker/setup-qemu-action@v4
+        if: contains(matrix.platforms, 'arm64')
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # Registry paths must be lowercase but github.repository keeps the owner's case, and nothing lowercases the
+      # cache refs below for us.
+      - id: image
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+      - id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ steps.image.outputs.name }}
+          flavor: |
+            latest=false
+            suffix=-${{ matrix.pixi_env }},onlatest=true
+          tags: |
+            type=semver,pattern={{version}}
+            type=ref,event=tag
+            type=ref,event=branch
+            type=sha,prefix=
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Dockerfile
+          platforms: ${{ matrix.platforms }}
+          build-args: |
+            PIXI_ENV=${{ matrix.pixi_env }}
+            CUDA_VERSION=${{ matrix.cuda }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # Registry cache: the GitHub Actions cache (10 GB per repository) is too small for these layers.
+          cache-from: type=registry,ref=${{ steps.image.outputs.name }}:buildcache-${{ matrix.pixi_env }}
+          cache-to: type=registry,ref=${{ steps.image.outputs.name }}:buildcache-${{ matrix.pixi_env }},mode=max

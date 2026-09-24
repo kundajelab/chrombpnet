@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 import argparse
+from chrombpnet.helpers.generate_reports import modisco_table
 
 
 def read_args():
@@ -141,7 +142,10 @@ def qc_report(fpx,prefix,data_type):
 	<a href=\"https://github.com/kundajelab/chrombpnet/wiki/FAQ\">FAQ</a> section in wiki."
 
 
-	## TFModisco motifs learnt from ChromBPNet after bias correction (chrombpnet_nobias.h5) model 
+	## TFModisco motifs learnt from ChromBPNet after bias correction (chrombpnet_nobias.h5) model
+	table_profile, stat = modisco_table.load_motifs_table(os.path.join(prefix,"evaluation/modisco_profile/motifs.html"), "modisco_profile")
+	# the table ends up in a str.format template below
+	table_profile = table_profile.replace("{","{{").replace("}","}}")
 	tf_hed = "TFModisco motifs learnt from ChromBPNet after bias correction (chrombpnet_nobias.h5) model"
 
 	#tf_text_profile = "TFModisco on Profile head - Only TF motifs should be present and no bias motifs. cwm_fwd, cwm_rev should be free from any bias motifs. The motifs top matches in TOMTOM are shown (match_0, match_1, match_2)"
@@ -150,7 +154,7 @@ def qc_report(fpx,prefix,data_type):
 	These CWM motifs should be free from any bias motifs and should contain only Transcription Factor (TF) motifs.\
 	For each of these motifs, we use TOMTOM to find the top-3 closest matches (match_0, match_1, match_2) from a database consisting of both \
 	MEME TF motifs and heterogenous enzyme bias motifs that we have repeatedly seen in our datasets.  \
-	The qvals (qval0,qval1,qval2) should be low (< 0.0001) for most of the closest TF motif hits (i.e indicating that the closest match is the correct match) - this is also generally \
+	The {} should be low (< 0.0001) for most of the closest TF motif hits (i.e indicating that the closest match is the correct match) - this is also generally \
 	verifiable by eye as the closest match will look closely like the CWMs (atleast part of it in case of heterodimers). All the motifs in the list should look nothing like the enzyme bias motif. \
 	<br> \
 	<br> \
@@ -160,11 +164,10 @@ def qc_report(fpx,prefix,data_type):
 	<a href=\"https://github.com/kundajelab/chrombpnet/wiki/FAQ\">FAQ</a> section in wiki. \
 	<br> \
 	<br> \
-	<b> What to do if you find an obvious bias motif in the list? </b> <br>" 
+	<b> What to do if you find an obvious bias motif in the list? </b> <br>".format(modisco_table.stat_description(stat))
 
 	#tf_text_counts = "TFModisco on Counts head. cwm_fwd, cwm_rev should have only TF motifs.  The motifs top matches in TOMTOM are shown (match_0, match_1, match_2)"
 
-	table_profile = open(os.path.join(prefix,"evaluation/modisco_profile/motifs.html")).read().replace("./","./modisco_profile/").replace("width=\"240\"","width=\"240\", class=\"cover\"").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs").replace("dataframe","new")
 	#table_profile = open(os.path.join(prefix,"evaluation/modisco_profile/motifs.html")).read().replace("./","./modisco_profile/").replace("width=\"240\"","class=\"cover\"").replace("border=\"1\" class=\"dataframe\"","").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs").replace("dataframe","new")
 	#table_counts = open(os.path.join(prefix,"auxiliary/interpret_subsample/modisco_counts/motifs.html")).read().replace("./","./modisco_counts/").replace("width=\"240\"","class=\"cover\"").replace("border=\"1\" class=\"dataframe\"","").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs")
 

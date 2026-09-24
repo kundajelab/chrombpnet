@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 import argparse
+from chrombpnet.helpers.generate_reports import modisco_table
 
 def read_args():
 	parser = argparse.ArgumentParser(description="Make summary reports")
@@ -89,31 +90,11 @@ def qc_report(fpx,prefix):
 	df1 = df1[df1.columns.drop(list(df1.filter(regex='peaks_and_nonpeaks')))]
 	df1 = df1[df1.columns.drop(list(df1.filter(regex='spearmanr')))]
 
-	## TFModisco motifs learnt by bias model (bias.h5) model 
-	
-	def remove_negs(tables):
-		new_lines=[]
-		set_flag = True
-		lines = tables.split("\n")
-		jdx=0
-		for idx in range(len(lines)-1):
-			
-			if jdx==15:
-				set_flag = True
-				jdx=0
-	
-			if "neg_" in lines[idx+1]:
-				set_flag=False
-				jdx = 0
-		
-			if set_flag:
-				new_lines.append(lines[idx])
-			else:
-				jdx+=1
-		new_lines.append(lines[-1])
-		return  "\n".join(new_lines)
-				
-		
+	## TFModisco motifs learnt by bias model (bias.h5) model
+
+	table_profile, profile_stat = modisco_table.load_motifs_table(os.path.join(prefix,"evaluation/modisco_profile/motifs.html"), "modisco_profile", drop_negative=True)
+	table_counts, counts_stat = modisco_table.load_motifs_table(os.path.join(prefix,"evaluation/modisco_counts/motifs.html"), "modisco_counts", drop_negative=True)
+
 	tf_hed = "TFModisco motifs learnt from bias model (bias.h5) model"
 	
 	
@@ -123,8 +104,8 @@ def qc_report(fpx,prefix):
 	These CWM motifs should be free from any Transcription Factor (TF) motifs and should contain either only bias motifs or random repeats.\
 	For each of these motifs, we use TOMTOM to find the top-3 closest matches (match_0, match_1, match_2) from a database consisting of both \
 	MEME TF motifs and heterogenous enzyme bias motifs that we have repeatedly seen in our datasets.  \
-	The qvals (qval0,qval1,qval2) should be high (> 0.0001) if the closest hit is a TF motif (i.e indicating that the closest match is not the correct match) - this is also generally \
-	verifiable by eye as the closest match will look nothing like the CWMs. The qvals should be low if the closest hit is enzyme bias motif and \
+	The {0} should be high (> 0.0001) if the closest hit is a TF motif (i.e indicating that the closest match is not the correct match) - this is also generally \
+	verifiable by eye as the closest match will look nothing like the CWMs. The {1} should be low if the closest hit is enzyme bias motif and \
 	generally verifiable that the top match looks like the CWM. The first 3-5 motifs in the list below should look like enzyme bias motif. \
 	<br> \
 	<br> \
@@ -136,14 +117,14 @@ def qc_report(fpx,prefix):
 	<br> \
 	<b> What to do if you are unsure if a given CWM motif is resembling the match_0 logo for example? </b> <br> \
 	Get marginal footprint on the match_0 motif logo (using the command <em>chrombpnet footprints</em> and make sure that the bias models footprint is closer to that of controls with no motif \
-	inserted - for examples look at <a href=\"https://github.com/kundajelab/chrombpnet/wiki/FAQ\">FAQ</a> )"
+	inserted - for examples look at <a href=\"https://github.com/kundajelab/chrombpnet/wiki/FAQ\">FAQ</a> )".format(modisco_table.stat_description(profile_stat), modisco_table.stat_name(profile_stat))
 
 	tf_text_counts = "<b> TFModisco motifs generated from counts contribution scores of the bias model. </b> \
 	cwm_fwd, cwm_rev are the forward and reverse complemented consolidated motifs from contribution scores in subset of random peaks. \
 	These motifs should be free from any Transcription Factor (TF) motifs and should contain motifs either weakly related to bias motifs or random repeats. \
 	For each of these motifs, we use TOMTOM to find the top-3 closest matches (match_0, match_1, match_2) from a database consisting of both \
 	MEME TF motifs and heterogenous enzyme bias motifs that we have repeatedly seen in our datasets.  \
-	The qvals should be high (> 0.0001) if the closest hit is a TF motif (i.e indicating that the closest match is not the correct match, this is also generally \
+	The {} should be high (> 0.0001) if the closest hit is a TF motif (i.e indicating that the closest match is not the correct match, this is also generally \
 	verifiable by eye and making sure the closest match looks nothing like the CWMs). \
 	<br> \
 	<br> \
@@ -155,13 +136,7 @@ def qc_report(fpx,prefix):
 	<br> \
 	<b> What to do if you are unsure if a given CWM motif is resembling the match_0 logo for example? </b> <br> \
 	Get marginal footprint on the match_0 motif logo (using the command <em>chrombpnet footprints</em> and make sure that the bias models footprint is closer to that of controls with no motif \
-	inserted - for examples look at <a href=\"https://github.com/kundajelab/chrombpnet/wiki/FAQ\">FAQ</a> )"
-
-	table_profile = open(os.path.join(prefix,"evaluation/modisco_profile/motifs.html")).read().replace("./","./modisco_profile/").replace("width=\"240\"","width=\"240\", class=\"cover\"").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs").replace("dataframe","new")
-	table_counts = open(os.path.join(prefix,"evaluation/modisco_counts/motifs.html")).read().replace("./","./modisco_counts/").replace("width=\"240\"","width=\"240\", class=\"cover\"").replace(">pos_patterns.pattern",">pos_").replace(">neg_patterns.pattern",">neg_").replace("modisco_cwm_fwd","cwm_fwd").replace("modisco_cwm_rev","cwm_rev").replace("num_seqlets","NumSeqs").replace("dataframe","new")
-
-	table_profile = remove_negs(table_profile)
-	table_counts = remove_negs(table_counts)
+	inserted - for examples look at <a href=\"https://github.com/kundajelab/chrombpnet/wiki/FAQ\">FAQ</a> )".format(modisco_table.stat_description(counts_stat))
 
 	# 2. Combine them together using a long f-string
 

@@ -14,3 +14,15 @@ experimental_scripts
 tracks
 needs_cleanup
 old
+
+# Environments / tooling
+.pixi/*
+!.pixi/config.toml
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Committed JSON (*.json is ignored above)
+!/conda-pypi-map.json

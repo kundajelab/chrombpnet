@@ -3,11 +3,8 @@ import pyBigWig
 import numpy as np
 import pandas as pd
 import pyfaidx
-from tensorflow.keras.utils import get_custom_objects
-from tensorflow.keras.models import load_model
-import tensorflow as tf
 import chrombpnet.evaluation.make_bigwigs.bigwig_helper as bigwig_helper
-import chrombpnet.training.utils.losses as losses
+from chrombpnet.training.utils import model_io
 import chrombpnet.training.utils.data_utils as data_utils 
 import chrombpnet.training.utils.one_hot as one_hot
 import h5py
@@ -28,7 +25,7 @@ def write_predictions_h5py(output_prefix, profile, logcts, coords):
     coords_chrom_dset =  [str(coords[i][0]) for i in range(num_examples)]
     coords_center_dset =  [int(coords[i][1]) for i in range(num_examples)]
 
-    dt = h5py.special_dtype(vlen=str)
+    dt = h5py.string_dtype()
 
     # create the "coords" group datasets
     coords_chrom_dset = coord_group.create_dataset(
@@ -78,8 +75,8 @@ def compare_with_observed(bigwig, regions_df, regions, outputlen, pred_logits, p
 	metrics_dictionary["counts_metrics"]["regions"]["mse"] = mse
 	
 	metrics_dictionary["profile_metrics"]["regions"] = {}
-	metrics_dictionary["profile_metrics"]["regions"]["median_jsd"] = np.nanmedian(jsd_pw)
-	metrics_dictionary["profile_metrics"]["regions"]["median_norm_jsd"] = np.nanmedian(jsd_norm)
+	metrics_dictionary["profile_metrics"]["regions"]["median_jsd"] = float(np.nanmedian(jsd_pw))
+	metrics_dictionary["profile_metrics"]["regions"]["median_norm_jsd"] = float(np.nanmedian(jsd_norm))
 	
 	metrics.plot_histogram(jsd_pw, jsd_rnd, output_prefix, "All regions provided")
 	
@@ -112,39 +109,38 @@ def softmax(x, temp=1):
     norm_x = x - np.mean(x,axis=1, keepdims=True)
     return np.exp(temp*norm_x)/np.sum(np.exp(temp*norm_x), axis=1, keepdims=True)
 
-def load_model_wrapper(model_hdf5):
-    # read .h5 model
-    custom_objects={"multinomial_nll":losses.multinomial_nll, "tf": tf}    
-    get_custom_objects().update(custom_objects)    
-    model=load_model(model_hdf5, compile=False)
-    print("got the model")
-    model.summary()
-    return model
+def load_regions(args, inputlen, outputlen):
+    """Regions (only those on args.debug_chr if given), their one-hot sequences, the mask of regions whose
+    sequence has the full input length, and the output windows of those regions: seqs[k], regions[k] and
+    regions_df[regions_used].iloc[k] are the same region."""
+    regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
+    if args.debug_chr is not None:
+        # subset before extracting sequences so that the sequences and the regions stay aligned
+        debug_chr = [args.debug_chr] if isinstance(args.debug_chr, str) else list(args.debug_chr)
+        regions_df = regions_df[regions_df['chr'].isin(debug_chr)].reset_index(drop=True)
+        if len(regions_df) == 0:
+            raise ValueError("no regions of {} are on the --debug-chr chromosomes {}".format(args.regions, debug_chr))
+    print(regions_df.head())
+    with pyfaidx.Fasta(args.genome) as g:
+        seqs, regions_used = bigwig_helper.get_seq(regions_df, g, inputlen)
+    regions = bigwig_helper.get_regions(regions_df, outputlen, regions_used) # output regions
+    return regions_df, seqs, regions_used, regions
 
 def main(args):
 
 
     if args.chrombpnet_model_nb:
-        model_chrombpnet_nb = load_model_wrapper(model_hdf5=args.chrombpnet_model_nb)
+        model_chrombpnet_nb = model_io.load_model_wrapper(model_h5=args.chrombpnet_model_nb)
         inputlen = int(model_chrombpnet_nb.input_shape[1])
         outputlen = int(model_chrombpnet_nb.output_shape[0][1])
 
         # load data
-        regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
-        print(regions_df.head())
-        with pyfaidx.Fasta(args.genome) as g:
-            seqs, regions_used = bigwig_helper.get_seq(regions_df, g, inputlen)
-
+        regions_df, seqs, regions_used, regions = load_regions(args, inputlen, outputlen)
         gs = bigwig_helper.read_chrom_sizes(args.chrom_sizes)
-        regions = bigwig_helper.get_regions(args.regions, outputlen, regions_used) # output regions
-
-        if args.debug_chr is not None:
-            regions_df = regions_df[regions_df['chr'].isin(args.debug_chr)]
-            regions = [x for x in regions if x[0]==args.debug_chr]
         regions_df[regions_used].to_csv(args.output_prefix + "_chrombpnet_nobias_preds.bed", sep="\t", header=False, index=False)
 
 
-        pred_logits_wo_bias, pred_logcts_wo_bias = model_chrombpnet_nb.predict([seqs],
+        pred_logits_wo_bias, pred_logcts_wo_bias = model_chrombpnet_nb.predict(seqs,
                                           batch_size = args.batch_size,
                                           verbose=True)
 
@@ -160,30 +156,21 @@ def main(args):
                                use_tqdm=args.tqdm)
 
         if args.bigwig:
-        	compare_with_observed(args.bigwig, regions_df, regions, outputlen, 
+        	compare_with_observed(args.bigwig, regions_df[regions_used], regions, outputlen, 
         				pred_logits_wo_bias, pred_logcts_wo_bias, args.output_prefix+"_chrombpnet_nobias")
         	
 
     if args.chrombpnet_model:
-        model_chrombpnet = load_model_wrapper(model_hdf5=args.chrombpnet_model)
+        model_chrombpnet = model_io.load_model_wrapper(model_h5=args.chrombpnet_model)
         inputlen = int(model_chrombpnet.input_shape[1])
         outputlen = int(model_chrombpnet.output_shape[0][1])
 
         # load data
-        regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
-        print(regions_df.head())
-        with pyfaidx.Fasta(args.genome) as g:
-            seqs, regions_used = bigwig_helper.get_seq(regions_df, g, inputlen)
-
+        regions_df, seqs, regions_used, regions = load_regions(args, inputlen, outputlen)
         gs = bigwig_helper.read_chrom_sizes(args.chrom_sizes)
-        regions = bigwig_helper.get_regions(args.regions, outputlen, regions_used) # output regions
         regions_df[regions_used].to_csv(args.output_prefix + "_chrombpnet_preds.bed", sep="\t", header=False, index=False)
 
-        if args.debug_chr is not None:
-            regions_df = regions_df[regions_df['chr'].isin(args.debug_chr)]
-            regions = [x for x in regions if x[0]==args.debug_chr]
-
-        pred_logits, pred_logcts = model_chrombpnet.predict([seqs],
+        pred_logits, pred_logcts = model_chrombpnet.predict(seqs,
                                           batch_size = args.batch_size,
                                           verbose=True)
 
@@ -200,28 +187,19 @@ def main(args):
                                use_tqdm=args.tqdm)
 
         if args.bigwig:
-        	compare_with_observed(args.bigwig, regions_df, regions, outputlen, 
+        	compare_with_observed(args.bigwig, regions_df[regions_used], regions, outputlen, 
         				pred_logits, pred_logcts, args.output_prefix+"_chrombpnet")
         	
 
     if args.bias_model:
-        model_bias = load_model_wrapper(model_hdf5=args.bias_model)
+        model_bias = model_io.load_model_wrapper(model_h5=args.bias_model)
         inputlen = int(model_bias.input_shape[1])
         outputlen = int(model_bias.output_shape[0][1])
 
         # load data
-        regions_df = pd.read_csv(args.regions, sep='\t', names=NARROWPEAK_SCHEMA)
-        print(regions_df.head())
-        with pyfaidx.Fasta(args.genome) as g:
-            seqs, regions_used = bigwig_helper.get_seq(regions_df, g, inputlen)
-
+        regions_df, seqs, regions_used, regions = load_regions(args, inputlen, outputlen)
         regions_df[regions_used].to_csv(args.output_prefix + "_bias_preds.bed", sep="\t", header=False, index=False)
         gs = bigwig_helper.read_chrom_sizes(args.chrom_sizes)
-        regions = bigwig_helper.get_regions(args.regions, outputlen, regions_used) # output regions
-        if args.debug_chr is not None:
-            regions_df = regions_df[regions_df['chr'].isin(args.debug_chr)]
-            regions = [x for x in regions if x[0]==args.debug_chr]
-
 
         pred_bias_logits, pred_bias_logcts = model_bias.predict(seqs,
                                           batch_size = args.batch_size,
@@ -238,7 +216,7 @@ def main(args):
                                use_tqdm=args.tqdm)
 
         if args.bigwig:
-        	compare_with_observed(args.bigwig, regions_df, regions, outputlen, 
+        	compare_with_observed(args.bigwig, regions_df[regions_used], regions, outputlen, 
         				pred_bias_logits, pred_bias_logcts, args.output_prefix+"_bias")
         
     

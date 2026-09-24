@@ -1,0 +1,153 @@
+# ChromBPNet 2.x: Keras 3 on the JAX backend. TensorFlow is NOT a runtime dependency.
+# Python packages resolve through uv (uv.lock); conda-only tools (bedtools, bedGraphToBigWig, MEME, pango, ...)
+# come from pixi (pixi.lock), which reads this same file.
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chrombpnet"
+version = "2.0.0.dev0"
+description = "ChromBPNet: bias-factorized, base-resolution models of chromatin accessibility (Keras 3 / JAX)"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Anusri Pampari", email = "anusri@stanford.edu" }]
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "keras>=3.15.1,<4",
+    "jax>=0.11.2",           # CPU jaxlib by default; GPU through the cuda13 / cuda12 extras
+    "numpy>=2.1,<2.6",       # jax needs >=2.1; numba (modisco) caps <2.6
+    "scipy>=1.15",
+    "h5py>=3.12",            # legacy Keras-2 .h5 models and contribution-score files
+    "hdf5plugin>=5",         # Blosc filter used by chrombpnet 1.x (deepdish) score files
+    "pandas>=2.2",
+    "matplotlib>=3.9",
+    "pyfaidx>=0.8.1",
+    "pyBigWig>=0.3.24",
+    "modisco>=2.5.2,<3",     # PyPI "modisco" 2.x is tfmodisco-lite; never also install modisco-lite
+    "numba>=0.61",
+    "weasyprint>=66",
+    "termcolor>=2",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+cuda13 = ["jax[cuda13]>=0.11.2; sys_platform == 'linux'"]   # H100 / B200 / RTX PRO 6000; NVIDIA driver >= 580
+cuda12 = ["jax[cuda12]>=0.11.2; sys_platform == 'linux'"]   # fallback for clusters with older drivers
+
+[dependency-groups]
+dev = ["pytest>=8", "pytest-xdist>=3.6", "ruff>=0.8"]
+
+[project.scripts]
+chrombpnet = "chrombpnet.CHROMBPNET:main"
+print_meme_motif_file = "chrombpnet.data:print_meme_motif_file"
+
+[project.urls]
+Homepage = "https://github.com/kundajelab/chrombpnet"
+
+[tool.setuptools.packages.find]
+include = ["chrombpnet*"]
+
+[tool.setuptools.package-data]
+"chrombpnet.data" = ["*.txt", "*.tsv"]
+
+# ---------------------------------------------------------------- uv
+[tool.uv]
+conflicts = [[{ extra = "cuda12" }, { extra = "cuda13" }]]
+environments = ["sys_platform == 'linux'", "sys_platform == 'darwin'"]
+
+# ---------------------------------------------------------------- pixi
+[tool.pixi.workspace]
+channels = ["conda-forge", "bioconda"]
+# bioconda has no published conda->PyPI name map; declare pybigwig so uv does not also install it from PyPI.
+conda-pypi-map = { bioconda = "conda-pypi-map.json" }
+platforms = [
+    "linux-64",
+    "linux-aarch64",
+    "osx-arm64",
+    { name = "linux-64-cuda13", platform = "linux-64", cuda = "13.0" },
+    { name = "linux-aarch64-cuda13", platform = "linux-aarch64", cuda = "13.0" },
+    { name = "linux-64-cuda12", platform = "linux-64", cuda = "12.0" },
+]
+
+[tool.pixi.dependencies]
+python = "3.13.*"
+numpy = ">=2.1,<2.6"          # bioconda pybigwig pulls conda numpy; keep it inside jax/numba bounds
+pybigwig = ">=0.3.24"
+weasyprint = ">=66"           # brings pango/glib for the PDF reports
+fonts-conda-ecosystem = "*"
+bedtools = ">=2.31"
+ucsc-bedgraphtobigwig = ">=469"
+samtools = ">=1.21"
+
+[tool.pixi.target.linux-64.dependencies]
+meme = ">=5.5.7"              # tomtom for `modisco report-simple` (use --tomtom-lite where MEME is absent)
+
+[tool.pixi.target.linux-aarch64.dependencies]
+meme = ">=5.5.7"
+
+[tool.pixi.target.osx-arm64.dependencies]
+coreutils = "*"               # GNU sort used by the preprocessing helpers
+
+[tool.pixi.pypi-dependencies]
+chrombpnet = { path = ".", editable = true }
+
+[tool.pixi.activation.env]
+KERAS_BACKEND = "jax"
+
+[tool.pixi.tasks]
+versions = '''python -c "import jax, keras, chrombpnet; print('keras', keras.__version__, keras.backend.backend(), '| jax', jax.__version__, jax.devices())"'''
+
+[tool.pixi.feature.dev.tasks]
+lint = "ruff check chrombpnet tests"
+test = "pytest -q -m 'not gpu and not slow'"
+
+[tool.pixi.feature.cuda13]
+platforms = ["linux-64-cuda13", "linux-aarch64-cuda13"]
+
+[tool.pixi.feature.cuda13.tasks]
+gpu-check = '''python -c "import chrombpnet, jax; d = jax.devices('gpu'); print(d); import jax.numpy as jnp; print(float(jnp.ones((256, 256)).sum()))"'''
+test-gpu = "pytest -q -m gpu"
+
+[tool.pixi.feature.cuda12]
+platforms = ["linux-64-cuda12"]
+
+[tool.pixi.feature.cuda12.tasks]
+gpu-check = '''python -c "import chrombpnet, jax; print(jax.devices('gpu'))"'''
+
+[tool.pixi.feature.cpu]
+platforms = ["linux-64", "linux-aarch64", "osx-arm64"]
+
+[tool.pixi.environments]
+default = { features = ["cpu"], solve-group = "cpu" }
+dev = { features = ["cpu", "dev"], solve-group = "cpu" }
+cuda13 = { features = ["cuda13"], solve-group = "cuda13" }
+cuda13-dev = { features = ["cuda13", "dev"], solve-group = "cuda13" }
+cuda12 = { features = ["cuda12"], solve-group = "cuda12" }
+
+# ---------------------------------------------------------------- tooling
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "gpu: needs a CUDA GPU (pixi run -e cuda13-dev test-gpu)",
+    "slow: long end-to-end runs",
+    "needs_cli: needs bedtools / bedGraphToBigWig / tomtom on PATH (present in the pixi envs)",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["chrombpnet/evaluation/figure_notebooks", "workflows"]
+
+[tool.ruff.lint]
+select = ["E9", "F63", "F7", "F82"]

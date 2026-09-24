@@ -16,6 +16,12 @@ def update_train_args(parser):
     parser.add_argument("-l", "--learning-rate", type=float, default=0.001)
     parser.add_argument("-pf", "--params", type=str, required=True, default=None)
     parser.add_argument("--trackables",nargs="*",default=['loss','val_loss'], help="list of things to track per batch, such as logcount_predictions_loss,loss,profile_predictions_loss,val_logcount_predictions_loss,val_loss,val_profile_predictions_loss")
+    parser.add_argument("--optimizer", type=str, default="adam", choices=["adam", "muon"], help="adam, or muon for the dilated conv kernels (Adam at --learning-rate for the rest)")
+    parser.add_argument("--muon-lr", type=float, default=None, help="Learning rate of the Muon-optimized conv kernels (default 2e-3)")
+    parser.add_argument("--ema", action="store_true", help="Validate and save an exponential moving average of the weights")
+    parser.add_argument("--lr-schedule", type=str, default="constant", choices=["constant", "cosine"], help="constant, or warmup + cosine decay over --epochs")
+    parser.add_argument("--precision", type=str, default="default", choices=["default", "highest", "bf16"], help="default (TF32 on recent GPUs), highest (full float32) or bf16 (mixed bfloat16)")
+    parser.add_argument("--device", type=str, default="auto", choices=["auto", "gpu", "cpu"], help="gpu fails if JAX has no GPU")
 
 def update_model_args(parser):
     parser.add_argument("-s", "--seed", type=int, default=1234, help="seed to use for model training")

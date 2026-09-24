@@ -1,0 +1,14 @@
+.git
+.github
+.pixi
+.venv
+.pytest_cache
+.ruff_cache
+**/__pycache__
+**/*.pyc
+**/.ipynb_checkpoints
+*.egg-info
+chrombpnet/evaluation/figure_notebooks
+images
+tests
+workflows

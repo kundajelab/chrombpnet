@@ -1,9 +1,5 @@
 import numpy as np
 import chrombpnet.training.utils.one_hot as one_hot
-import tensorflow as tf
-from tensorflow.keras.utils import get_custom_objects
-from tensorflow.keras.models import load_model
-import chrombpnet.training.utils.losses as losses
 
 def filter_edge_regions(peaks_df, bw, width, peaks_bool):
     """
@@ -56,12 +52,9 @@ def get_seqs_cts(genome, bw, peaks_df, input_width=2114, output_width=1000):
     return (np.sum(np.array(vals),axis=1), one_hot.dna_to_one_hot(seqs))
 
 def load_model_wrapper(model_h5):
-    # read .h5 model
-    custom_objects={"tf": tf, "multinomial_nll":losses.multinomial_nll}    
-    get_custom_objects().update(custom_objects)    
-    model=load_model(model_h5)
-    print("got the model")
-    model.summary()
-    return model
+    # read .h5 model (compile=False). Imported here so that the bias-model step, which never loads a model,
+    # does not import keras.
+    from chrombpnet.training.utils.model_io import load_model_wrapper as model_io_load_model_wrapper
+    return model_io_load_model_wrapper(model_h5)
 
 

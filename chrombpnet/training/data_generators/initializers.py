@@ -44,7 +44,7 @@ def fetch_data_and_model_params_based_on_mode(mode, args, parameters, nonpeak_re
         shuffle_at_epoch_start=False
         
     else:
-        print("mode not defined - only train, valid, test are allowed")
+        raise ValueError("mode not defined - only train, valid, test are allowed, got {!r}".format(mode))
 
     return inputlen, outputlen,  nonpeak_regions, negative_sampling_ratio, max_jitter, add_revcomp, shuffle_at_epoch_start
 
@@ -55,7 +55,7 @@ def get_bed_regions_for_fold_split(bed_regions, mode, splits_dict):
     print("got split:"+str(mode)+" for bed regions:"+str(bed_regions_to_keep.shape))
     return bed_regions_to_keep, chroms_to_keep
 
-def initialize_generators(args, mode, parameters, return_coords):
+def initialize_generators(args, mode, parameters, return_coords, workers=1):
 
     # defaults
     peak_regions=None
@@ -89,7 +89,8 @@ def initialize_generators(args, mode, parameters, return_coords):
                                     cts_bw_file=args.bigwig,
                                     add_revcomp=add_revcomp,
                                     return_coords=return_coords,
-                                    shuffle_at_epoch_start=shuffle_at_epoch_start
+                                    shuffle_at_epoch_start=shuffle_at_epoch_start,
+                                    workers=workers
                                     )
     
     return generator

@@ -2,10 +2,8 @@
 # Adapted from Zahoor's mtbatchgen
 
 import numpy as np
-import shap
-import tensorflow as tf
 
-from deeplift.dinuc_shuffle import dinuc_shuffle
+from chrombpnet.evaluation.interpret.dinuc_shuffle import dinuc_shuffle
 
 
 def combine_mult_and_diffref(mult, orig_inp, bg_data):
@@ -51,6 +49,8 @@ def combine_mult_and_diffref(mult, orig_inp, bg_data):
 
 
 def shuffle_several_times(s,numshuffles=20):
+    # chrombpnet 1.x reference function (unseeded, one RandomState per shuffle); the explainer uses
+    # dinuc_shuffle.make_references (content-seeded, reproducible) instead
     if len(s)==2:
         return [np.array([dinuc_shuffle(s[0]) for i in range(numshuffles)]),
                 np.array([s[1] for i in range(numshuffles)])]
@@ -58,13 +58,22 @@ def shuffle_several_times(s,numshuffles=20):
         return [np.array([dinuc_shuffle(s[0]) for i in range(numshuffles)])]
 
 
-def get_weightedsum_meannormed_logits(model):
+def get_weightedsum_meannormed_logits(logits):
+    """Value of the chrombpnet 1.x profile DeepSHAP target for (N, outlen) logits, one value per example.
+
+    Its DeepSHAP multipliers are NOT its plain gradient: kundajelab-shap weights the logits by the midpoint
+    of the input's and the reference's softmax (deeplift_jax.profile_weights, used by the explainer).
+    """
+    import jax
+    import jax.numpy as jnp
+
     # Assumes the 0 task track is for profile
     # See Google slide deck for explanations
     # We meannorm as per section titled 
     # "Adjustments for Softmax Layers" in the DeepLIFT paper
-    meannormed_logits = (model.outputs[0] - \
-                         tf.reduce_mean(model.outputs[0], axis=1)[:, None])
+    logits = jnp.reshape(jnp.asarray(logits), (logits.shape[0], -1))
+    meannormed_logits = (logits - \
+                         jnp.mean(logits, axis=1)[:, None])
 
     # 'stop_gradient' will prevent importance from being propagated
     # through this operation; we do this because we just want to treat
@@ -72,14 +81,14 @@ def get_weightedsum_meannormed_logits(model):
     # logits, without having the network explain how the probabilities
     # themselves were derived. Could be worth contrasting explanations
     # derived with and without stop_gradient enabled...
-    stopgrad_meannormed_logits = tf.stop_gradient(meannormed_logits)
-    softmax_out = tf.nn.softmax(stopgrad_meannormed_logits, axis=1)
+    stopgrad_meannormed_logits = jax.lax.stop_gradient(meannormed_logits)
+    softmax_out = jax.nn.softmax(stopgrad_meannormed_logits, axis=1)
     
     # Weight the logits according to the softmax probabilities, take
     # the sum for each example. This mirrors what was done for the
     # bpnet paper.
-    weightedsum_meannormed_logits = tf.reduce_sum(softmax_out * \
-                                                  meannormed_logits,
-                                                  axis=1)
+    weightedsum_meannormed_logits = jnp.sum(softmax_out * \
+                                            meannormed_logits,
+                                            axis=1)
     
     return weightedsum_meannormed_logits

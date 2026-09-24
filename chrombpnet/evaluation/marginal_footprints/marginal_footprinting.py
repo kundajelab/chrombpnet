@@ -1,7 +1,7 @@
 import pyBigWig
 import pandas as pd
 import numpy as np
-import deepdish as dd
+import h5py
 import os
 import pyfaidx
 import random
@@ -9,28 +9,15 @@ import pickle as pkl
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import tensorflow as tf
 import argparse
 import json
-import chrombpnet.training.utils.losses as losses
 from chrombpnet.training.utils.data_utils import get_seq as get_seq
 import chrombpnet.training.utils.one_hot as one_hot
-from tensorflow.keras.utils import get_custom_objects
-from tensorflow.keras.models import load_model
+from chrombpnet.training.utils import model_io
 
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 PWM_SCHEMA = ["MOTIF_NAME", "MOTIF_PWM_FWD"]
-
-def load_model_wrapper(args):
-    # read .h5 model
-    custom_objects={"multinomial_nll":losses.multinomial_nll, "tf": tf}    
-    get_custom_objects().update(custom_objects)    
-    model=load_model(args.model_h5, compile=False)
-    print("got the model")
-    model.summary()
-    return model
-
 
 def fetch_footprinting_args():
     parser=argparse.ArgumentParser(description="get marginal footprinting for given model and given motifs")
@@ -41,8 +28,8 @@ def fetch_footprinting_args():
     parser.add_argument("-bs", "--batch_size", type=int, default="64", help="input batch size for the model")
     parser.add_argument("-o", "--output_prefix", type=str, required=True, help="Output prefix")
     parser.add_argument("-pwm_f", "--motifs_to_pwm", type=str, required=True, help="Path to a TSV file containing motifs in first column and motif string to use for footprinting in second column")    
-    parser.add_argument("--ylim",default=None,type=tuple, required=False,help="lower and upper y-limits for plotting the motif footprint, in the form of a tuple i.e. \
-    (0,0.8). If this is set to None, ylim will be autodetermined.")
+    parser.add_argument("--ylim", default=None, nargs=2, type=float, metavar=("YMIN", "YMAX"), required=False, help="lower and upper y-limits for plotting the motif footprint, e.g. \
+    --ylim 0 0.8. If this is not set, ylim will be autodetermined.")
     
     args = parser.parse_args()
     return args
@@ -77,13 +64,24 @@ def get_footprint_for_motif(seqs, motif, model, inputlen, batch_size):
 
     return footprint_for_motif.mean(0), counts_for_motif.mean(0)
 
+def write_footprints_h5(output_h5, footprints_at_motifs):
+    # same layout as the deepdish file written by chrombpnet 1.x, so deepdish.io.load still returns
+    # {motif: [footprint, counts]}: one group per motif tagged as a 2-item list, with items i0 and i1
+    with h5py.File(output_h5, "w") as f:
+        f.attrs["DEEPDISH_IO_VERSION"] = 12
+        for motif, (motif_footprint, motif_counts) in footprints_at_motifs.items():
+            group = f.create_group(motif)
+            group.attrs["TITLE"] = np.bytes_(b"list:2")
+            group.create_dataset("i0", data=np.asarray(motif_footprint, dtype=np.float32))
+            group.create_dataset("i1", data=np.asarray(motif_counts, dtype=np.float32))
+
 def main(args):
 
 	pwm_df = pd.read_csv(args.motifs_to_pwm, sep='\t',names=PWM_SCHEMA)
 	print(pwm_df.head())
 	genome_fasta = pyfaidx.Fasta(args.genome)
 
-	model=load_model_wrapper(args)
+	model=model_io.load_model_wrapper(model_h5=args.model_h5)
 	inputlen = model.input_shape[1] 
 	outputlen = model.output_shape[0][1] 
 	print("inferred model inputlen: ", inputlen)
@@ -151,9 +149,7 @@ def main(args):
 			ofile.close()
 
 	print("Saving marginal footprints")
-	dd.io.save("{}_footprints.h5".format(args.output_prefix),
-		footprints_at_motifs,
-		compression='blosc')
+	write_footprints_h5("{}_footprints.h5".format(args.output_prefix), footprints_at_motifs)
 
 
 if __name__ == '__main__':

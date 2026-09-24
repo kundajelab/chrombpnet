@@ -1,13 +1,5 @@
-import os
-import sys
-import os
-import sys
-import tensorflow as tf
 import numpy as np
-import chrombpnet.training.utils.losses as losses
 from chrombpnet.training.utils.data_utils import one_hot
-from tensorflow.keras.utils import get_custom_objects
-from tensorflow.keras.models import load_model
 
 
 def get_seq(peaks_df, genome, width):
@@ -28,11 +20,10 @@ def get_seq(peaks_df, genome, width):
 
 
 def load_model_wrapper(args):
-    # read .h5 model
-    custom_objects={"multinomial_nll": losses.multinomial_nll, "tf": tf}    
-    get_custom_objects().update(custom_objects)    
-    model=load_model(args.model_h5,compile=False)
+    # read .h5 model (args.model_h5, or a path)
+    from chrombpnet.training.utils import model_io
+    model_h5 = args if isinstance(args, str) else args.model_h5
+    model = model_io.load_model(model_h5, compile=False)
     print("got the model")
     model.summary()
     return model
-

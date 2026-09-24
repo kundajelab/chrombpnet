@@ -1,7 +1,8 @@
-from weasyprint import HTML, CSS
 import argparse
 
 def main(input_html,output_pdf):
+	# imported here: weasyprint needs pango/glib at import time, which only this step uses
+	from weasyprint import HTML, CSS
 	css = CSS(string='''
 		@page {
     		size: 1800mm 1300mm;

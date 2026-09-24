@@ -20,9 +20,10 @@ def counts_metrics(labels,preds,outf,title):
     '''
     Get count metrics
     '''
-    spearman_cor=spearmanr(labels,preds)[0]
-    pearson_cor=pearsonr(labels,preds)[0]  
-    mse=((labels - preds)**2).mean(axis=0)
+    # python floats: numpy/scipy float32 scalars are not JSON serializable
+    spearman_cor=float(spearmanr(labels,preds)[0])
+    pearson_cor=float(pearsonr(labels,preds)[0])
+    mse=float(((labels - preds)**2).mean(axis=0))
 
     #print("spearman:"+str(spearman_cor))
     #print("pearson:"+str(pearson_cor))
@@ -35,8 +36,9 @@ def counts_metrics(labels,preds,outf,title):
                     xlab='Log Count Labels',
                     ylab='Log Count Predictions')
     plt.suptitle(title+" count: spearman R="+str(round(spearman_cor,3))+", Pearson R="+str(round(pearson_cor,3))+", mse="+str(round(mse,3)))
-    plt.legend(loc='best')
     plt.savefig(outf+'.counts_pearsonr.png',format='png',dpi=300)
+    plt.close(plt.gcf()) # the density scatter figure
+    plt.close(fig)
     
     return spearman_cor, pearson_cor, mse
 
@@ -115,5 +117,6 @@ def plot_histogram(region_jsd, shuffled_labels_jsd, output_prefix, title):
     plt.title("JSD Dist: "+title)
     plt.legend(loc='best')
     plt.savefig(output_prefix+".profile_jsd.png",format='png',dpi=300)
+    plt.close()
 
 

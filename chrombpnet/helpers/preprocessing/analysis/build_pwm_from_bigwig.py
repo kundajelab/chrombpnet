@@ -1,7 +1,7 @@
 import pyfaidx
 import numpy as np
 import pyBigWig
-from modisco.visualization import viz_sequence
+from chrombpnet.utils import viz_sequence
 import matplotlib.pyplot as plt
 import argparse
 import chrombpnet.training.utils.one_hot as one_hot

@@ -6,6 +6,27 @@ from chrombpnet.data import DefaultDataFile, get_default_data_path
 from chrombpnet.data import print_meme_motif_file
 import numpy as np
 
+def interpret_args(args_copy, args):
+	# interpret reads args.seed/precision/batch_seqs; the pipeline's --seed and --precision are the training ones
+	args_copy.seed = getattr(args, "shap_seed", 1234)
+	args_copy.precision = getattr(args, "shap_precision", "auto")
+	args_copy.batch_seqs = getattr(args, "shap_batch_seqs", None)
+	return args_copy
+
+def run_modisco(args, scores_h5, modisco_h5, report_dir, meme_file):
+	# threads=None: the modisco subprocess gets the user's NUMBA_NUM_THREADS if set, else the CPUs allocated to the
+	# job (chrombpnet.evaluation.modisco.run.default_threads)
+	from chrombpnet.evaluation.modisco.run import modisco_motifs, modisco_report
+	modisco_motifs(scores_h5, modisco_h5, max_seqlets=getattr(args, "modisco_max_seqlets", 50000),
+		window=getattr(args, "modisco_window", 500), threads=None)
+	modisco_report(modisco_h5, report_dir, str(meme_file), tomtom_lite=getattr(args, "tomtom_lite", False))
+
+def run_modisco_heads(args, jobs, meme_file):
+	# jobs: (scores_h5, modisco_h5, report_dir) per head, run one after the other like chrombpnet 1.x (each modisco
+	# run uses all the CPUs of the job; running them at the same time would double the peak memory)
+	for job in jobs:
+		run_modisco(args, *job, meme_file)
+
 def chrombpnet_train_pipeline(args):
 
 	if args.file_prefix:
@@ -76,7 +97,7 @@ def chrombpnet_train_pipeline(args):
 	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.log".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.log".format(fpx)))
 	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.log.batch".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.log.batch".format(fpx)))
 	#os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.params.json".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.params.json".format(fpx)))
-	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.args.json").format(fpx),os.path.join(args.output_dir,"logs/{}chrombpnet.args.json".format(fpx)))
+	os.rename(os.path.join(args.output_dir,"models/{}chrombpnet.args.json".format(fpx)),os.path.join(args.output_dir,"logs/{}chrombpnet.args.json".format(fpx)))
 
 	if args.cmd == "train":
 		import chrombpnet.helpers.generate_reports.make_html as make_html
@@ -123,8 +144,9 @@ def chrombpnet_train_pipeline(args):
 	args_copy.peaks = os.path.join(args.output_dir,"auxiliary/{}filtered.peaks.bed".format(fpx))
 	import chrombpnet.evaluation.interpret.interpret as interpret
 	peaks = pd.read_csv(os.path.join(args_copy.peaks),sep="\t",header=None)
-	if peaks.shape[0] > 30000:
-		sub_peaks = peaks.sample(30000, random_state=1234)
+	interpret_subsample = getattr(args, "interpret_subsample", 30000)
+	if peaks.shape[0] > interpret_subsample:
+		sub_peaks = peaks.sample(interpret_subsample, random_state=1234)
 	else:
 		sub_peaks = peaks
 	sub_peaks.to_csv(os.path.join(args_copy.output_dir,"auxiliary/{}30K_subsample_peaks.bed".format(fpx)),sep="\t", header=False, index=False)
@@ -136,6 +158,7 @@ def chrombpnet_train_pipeline(args):
 	args_copy.model_h5 = os.path.join(args.output_dir,"models/{}chrombpnet_nobias.h5".format(fpx))
 	args_copy.output_prefix = os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}chrombpnet_nobias".format(fpx))
 	args_copy.debug_chr = None
+	interpret_args(args_copy, args)
 	interpret.main(args_copy)
 	
 	import chrombpnet
@@ -144,10 +167,9 @@ def chrombpnet_train_pipeline(args):
 	
 	# modisco-lite pipeline
 	
-	modisco_command = "modisco motifs -i {} -n 50000 -o {} -w 500".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}chrombpnet_nobias.profile_scores.h5".format(fpx)),os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_profile_scores.h5".format(fpx)))
-	os.system(modisco_command)
-	modisco_command = "modisco report -i {} -o {} -m {}".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_profile_scores.h5".format(fpx)),os.path.join(args.output_dir,"evaluation/modisco_profile/"),meme_file)
-	os.system(modisco_command)
+	run_modisco(args, os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}chrombpnet_nobias.profile_scores.h5".format(fpx)),
+		os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_profile_scores.h5".format(fpx)),
+		os.path.join(args.output_dir,"evaluation/modisco_profile/"), meme_file)
 	#modisco_command = "modisco motifs -i {} -n 50000 -o {} -w 500".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}chrombpnet_nobias.counts_scores.h5".format(fpx)),os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_counts_scores.h5".format(fpx)))
 	#os.system(modisco_command)
 	#modisco_command = "modisco report -i {} -o {} -m {}".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_counts_scores.h5".format(fpx)),os.path.join(args.output_dir,"evaluation/modisco_counts/"),meme_file)
@@ -170,21 +192,11 @@ def chrombpnet_qc(args):
 	else:
 		fpx = ""
 	
-	def load_model_wrapper(model_hdf5):
-		# read .h5 model
-		from tensorflow.keras.utils import get_custom_objects
-		from tensorflow.keras.models import load_model
-		import tensorflow as tf
-		import chrombpnet.training.utils.losses as losses
-		custom_objects={"multinomial_nll":losses.multinomial_nll, "tf": tf}    
-		get_custom_objects().update(custom_objects)    
-		model=load_model(model_hdf5)
-		model.summary()
-		return model
-    
-	chrombpnet_md = load_model_wrapper(model_hdf5=args.chrombpnet_model)
+	from chrombpnet.training.utils.model_io import load_model_wrapper
+	chrombpnet_md = load_model_wrapper(model_h5=args.chrombpnet_model)
 	args.inputlen = int(chrombpnet_md.input_shape[1])
 	args.outputlen = int(chrombpnet_md.output_shape[0][1])
+	del chrombpnet_md
 	
 	# make predictions with trained chrombpnet model
 	import chrombpnet.training.predict as predict
@@ -223,8 +235,9 @@ def chrombpnet_qc(args):
 	import chrombpnet.evaluation.interpret.interpret as interpret
 	args_copy.peaks = os.path.join(args.output_dir,"auxiliary/{}filtered.peaks.bed".format(fpx))
 	peaks = pd.read_csv(os.path.join(args_copy.peaks),sep="\t",header=None)
-	if peaks.shape[0] > 30000:
-		sub_peaks = peaks.sample(30000, random_state=1234)
+	interpret_subsample = getattr(args, "interpret_subsample", 30000)
+	if peaks.shape[0] > interpret_subsample:
+		sub_peaks = peaks.sample(interpret_subsample, random_state=1234)
 	else:
 		sub_peaks = peaks
 	sub_peaks.to_csv(os.path.join(args_copy.output_dir,"auxiliary/{}30K_subsample_peaks.bed".format(fpx)),sep="\t", header=False, index=False)
@@ -236,6 +249,7 @@ def chrombpnet_qc(args):
 	args_copy.model_h5 = args.chrombpnet_model_nb
 	args_copy.output_prefix = os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}chrombpnet_nobias".format(fpx))
 	args_copy.debug_chr = None
+	interpret_args(args_copy, args)
 	interpret.main(args_copy)
 	
 	import chrombpnet
@@ -244,10 +258,9 @@ def chrombpnet_qc(args):
 	
 	# modisco-lite pipeline
 	
-	modisco_command = "modisco motifs -i {} -n 50000 -o {} -w 500".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}chrombpnet_nobias.profile_scores.h5".format(fpx)),os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_profile_scores.h5".format(fpx)))
-	os.system(modisco_command)
-	modisco_command = "modisco report -i {} -o {} -m {}".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_profile_scores.h5".format(fpx)),os.path.join(args.output_dir,"evaluation/modisco_profile/"),meme_file)
-	os.system(modisco_command)
+	run_modisco(args, os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}chrombpnet_nobias.profile_scores.h5".format(fpx)),
+		os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_profile_scores.h5".format(fpx)),
+		os.path.join(args.output_dir,"evaluation/modisco_profile/"), meme_file)
 	#modisco_command = "modisco motifs -i {} -n 50000 -o {} -w 500".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}chrombpnet_nobias.counts_scores.h5".format(fpx)),os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_counts_scores.h5".format(fpx)))
 	#os.system(modisco_command)
 	#modisco_command = "modisco report -i {} -o {} -m {}".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_counts_scores.h5".format(fpx)),os.path.join(args.output_dir,"evaluation/modisco_counts/"),meme_file)
@@ -338,8 +351,9 @@ def train_bias_pipeline(args):
 	import chrombpnet.evaluation.interpret.interpret as interpret
 	args_copy.peaks = os.path.join(args_copy.output_dir,"auxiliary/{}filtered.bias_peaks.bed".format(fpx))
 	peaks = pd.read_csv(os.path.join(args_copy.peaks),sep="\t",header=None)
-	if peaks.shape[0] > 30000:
-		sub_peaks = peaks.sample(30000, random_state=1234)
+	interpret_subsample = getattr(args, "interpret_subsample", 30000)
+	if peaks.shape[0] > interpret_subsample:
+		sub_peaks = peaks.sample(interpret_subsample, random_state=1234)
 	else:
 		sub_peaks = peaks
 	sub_peaks.to_csv(os.path.join(args_copy.output_dir,"auxiliary/{}30K_subsample_peaks.bed".format(fpx)),sep="\t", header=False, index=False)
@@ -351,6 +365,7 @@ def train_bias_pipeline(args):
 	args_copy.model_h5 = os.path.join(args.output_dir,"models/{}bias.h5".format(fpx))
 	args_copy.output_prefix = os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}bias".format(fpx))
 	args_copy.debug_chr = None
+	interpret_args(args_copy, args)
 	interpret.main(args_copy)
 	
 	import chrombpnet
@@ -358,14 +373,10 @@ def train_bias_pipeline(args):
 	meme_file=get_default_data_path(DefaultDataFile.motifs_meme)
 	# modisco-lite pipeline
 	
-	modisco_command = "modisco motifs -i {} -n 50000 -o {} -w 500".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}bias.profile_scores.h5".format(fpx)),os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_profile_scores.h5".format(fpx)))
-	os.system(modisco_command)
-	modisco_command = "modisco report -i {} -o {} -m {}".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_profile_scores.h5".format(fpx)),os.path.join(args.output_dir,"evaluation/modisco_profile/"),meme_file)
-	os.system(modisco_command)
-	modisco_command = "modisco motifs -i {} -n 50000 -o {} -w 500".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}bias.counts_scores.h5".format(fpx)),os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_counts_scores.h5".format(fpx)))
-	os.system(modisco_command)
-	modisco_command = "modisco report -i {} -o {} -m {}".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_counts_scores.h5".format(fpx)),os.path.join(args.output_dir,"evaluation/modisco_counts/"),meme_file)
-	os.system(modisco_command)
+	modisco_jobs = [(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}bias.{}_scores.h5".format(fpx, head)),
+			os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_{}_scores.h5".format(fpx, head)),
+			os.path.join(args.output_dir,"evaluation/modisco_{}/".format(head))) for head in ["profile", "counts"]]
+	run_modisco_heads(args, modisco_jobs, meme_file)
 	
 	import chrombpnet.evaluation.modisco.convert_html_to_pdf as convert_html_to_pdf
 	convert_html_to_pdf.main(os.path.join(args.output_dir,"evaluation/modisco_counts/motifs.html"),os.path.join(args.output_dir,"evaluation/{}bias_counts.pdf".format(fpx)))
@@ -384,21 +395,11 @@ def bias_model_qc(args):
 	else:
 		fpx = ""
 	
-	def load_model_wrapper(model_hdf5):
-		# read .h5 model
-		from tensorflow.keras.utils import get_custom_objects
-		from tensorflow.keras.models import load_model
-		import tensorflow as tf
-		import chrombpnet.training.utils.losses as losses
-		custom_objects={"multinomial_nll":losses.multinomial_nll, "tf": tf}    
-		get_custom_objects().update(custom_objects)    
-		model=load_model(model_hdf5)
-		model.summary()
-		return model
-    
-	bias_md = load_model_wrapper(model_hdf5=args.bias_model)
+	from chrombpnet.training.utils.model_io import load_model_wrapper
+	bias_md = load_model_wrapper(model_h5=args.bias_model)
 	args.inputlen = int(bias_md.input_shape[1])
 	args.outputlen = int(bias_md.output_shape[0][1])
+	del bias_md
 	
 	# make predictions with trained bias model 
 	import chrombpnet.training.predict as predict
@@ -413,8 +414,9 @@ def bias_model_qc(args):
 	import chrombpnet.evaluation.interpret.interpret as interpret
 	args_copy.peaks = os.path.join(args_copy.output_dir,"auxiliary/{}filtered.bias_peaks.bed".format(fpx))
 	peaks = pd.read_csv(os.path.join(args_copy.peaks),sep="\t",header=None)
-	if peaks.shape[0] > 30000:
-		sub_peaks = peaks.sample(30000, random_state=1234)
+	interpret_subsample = getattr(args, "interpret_subsample", 30000)
+	if peaks.shape[0] > interpret_subsample:
+		sub_peaks = peaks.sample(interpret_subsample, random_state=1234)
 	else:
 		sub_peaks = peaks
 	sub_peaks.to_csv(os.path.join(args_copy.output_dir,"auxiliary/{}30K_subsample_peaks.bed".format(fpx)),sep="\t", header=False, index=False)
@@ -426,6 +428,7 @@ def bias_model_qc(args):
 	args_copy.model_h5 = args.bias_model
 	args_copy.output_prefix = os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}bias".format(fpx))
 	args_copy.debug_chr = None
+	interpret_args(args_copy, args)
 	interpret.main(args_copy)
 	
 	import chrombpnet
@@ -434,14 +437,10 @@ def bias_model_qc(args):
 	
 	# modisco-lite pipeline
 	
-	modisco_command = "modisco motifs -i {} -n 50000 -o {} -w 500".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}bias.profile_scores.h5".format(fpx)),os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_profile_scores.h5".format(fpx)))
-	os.system(modisco_command)
-	modisco_command = "modisco report -i {} -o {} -m {}".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_profile_scores.h5".format(fpx)),os.path.join(args.output_dir,"evaluation/modisco_profile/"),meme_file)
-	os.system(modisco_command)
-	modisco_command = "modisco motifs -i {} -n 50000 -o {} -w 500".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}bias.counts_scores.h5".format(fpx)),os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_counts_scores.h5".format(fpx)))
-	os.system(modisco_command)
-	modisco_command = "modisco report -i {} -o {} -m {}".format(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_counts_scores.h5".format(fpx)),os.path.join(args.output_dir,"evaluation/modisco_counts/"),meme_file)
-	os.system(modisco_command)
+	modisco_jobs = [(os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}bias.{}_scores.h5".format(fpx, head)),
+			os.path.join(args.output_dir,"auxiliary/interpret_subsample/{}modisco_results_{}_scores.h5".format(fpx, head)),
+			os.path.join(args.output_dir,"evaluation/modisco_{}/".format(head))) for head in ["profile", "counts"]]
+	run_modisco_heads(args, modisco_jobs, meme_file)
 	
 	import chrombpnet.evaluation.modisco.convert_html_to_pdf as convert_html_to_pdf
 	convert_html_to_pdf.main(os.path.join(args.output_dir,"evaluation/modisco_counts/motifs.html"),os.path.join(args.output_dir,"evaluation/{}bias_counts.pdf".format(fpx)))

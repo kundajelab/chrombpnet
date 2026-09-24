@@ -7,10 +7,10 @@ desc = """======================================================================
 		cis-regulatory sequence syntax, transcription factor footprints and regulatory variants
 		=================================================================================================="""
 
-def read_parser():
+def read_parser(argv=None):
 
         parser = argparse.ArgumentParser(description=desc,formatter_class=RawTextHelpFormatter)
-        subparsers = parser.add_subparsers(help="Must be eithier 'pipeline', 'train', 'qc', 'bias', 'prep', 'pred_bw', 'contribs_bw', 'modisco_motifs' ,'footprints', or 'snp_score'.", required=True, dest='cmd')
+        subparsers = parser.add_subparsers(help="Must be eithier 'pipeline', 'train', 'qc', 'bias', 'prep', 'pred_bw', 'contribs_bw', 'footprints' or 'export'.", required=True, dest='cmd')
         
         # main parsers
         
@@ -40,6 +40,7 @@ def read_parser():
         #custom_preds_parser = subparsers.add_parser("pred_custom", help="Make model predictions on custom sequences and output to .h5 file")
         #custom_contribs_parser = subparsers.add_parser("contribs_custom", help="Get contribution on custom sequences and output to .h5 file")
         footprints_parser = subparsers.add_parser("footprints", help="Get marginal footprinting for given model and given motifs")
+        export_parser = subparsers.add_parser("export", help="Export a model for TF-Keras 2.x readers (chrombpnet 1.x, variant-scorer, bpnet-lite)")
         #variants_parser = subparsers.add_parser("snp_score", help="Score SNPs with model")
 
         def general_training_args(required_train, optional_train):
@@ -75,8 +76,34 @@ def read_parser():
         	optional_train.add_argument('--bsort', required=False, default=False, action='store_true', help="In prpeprocess, by deafult we sort bam using unix sort but sometimes LC collate can cause issues, so this can be set to use betools sort which works well but is memory intensive..")
         	optional_train.add_argument('--tmpdir', required=False, default=None, type=str, help="temp dir for unix sort")
         	optional_train.add_argument('--no-st', required=False, default=False, action='store_true', help="Dont do streaming  and filtering in preprocessing (short chromosome contrigs not in reference fasta are not removed)")
+        	optional_train.add_argument("--optimizer", type=str, default="adam", choices=["adam", "muon"], help="Optimizer for model training. 'muon' (experimental) applies Muon to the dilated convolution kernels and Adam to all other weights")
+        	optional_train.add_argument("--muon-lr", type=float, default=None, help="Learning rate of the Muon updates (only with --optimizer muon, default 2e-3)")
+        	optional_train.add_argument("--ema", default=False, action="store_true", help="Keep an exponential moving average of the weights and checkpoint the averaged weights")
+        	optional_train.add_argument("--ema-momentum", type=float, default=0.999, help="Momentum of the weight moving average (only with --ema)")
+        	optional_train.add_argument("--lr-schedule", type=str, default="constant", choices=["constant", "cosine"], help="Learning rate schedule: constant (default) or warmup followed by cosine decay")
+        	optional_train.add_argument("--precision", type=str, default="default", choices=["default", "highest", "bf16"], help="Training numerics: default (TF32 matmuls/convolutions on GPUs that have them, like TensorFlow), highest (full float32) or bf16 (mixed bfloat16)")
+        	device_args(optional_train)
+        	interpret_modisco_args(optional_train)
 
         	return required_train, optional_train
+
+        def device_args(optional):
+        	optional.add_argument("--device", type=str, default="auto", choices=["auto", "gpu", "cpu"], help="auto: use a GPU if JAX finds one; gpu: fail early if JAX finds no GPU; cpu: run on the CPU")
+        	return optional
+
+        def interpret_args(optional):
+        	optional.add_argument("--shap-seed", type=int, default=1234, help="Seed for the dinucleotide-shuffled DeepSHAP references")
+        	optional.add_argument("--shap-batch-seqs", type=int, default=None, help="Sequences per DeepSHAP batch (each with its 20 references). default: chosen automatically from the model size and available GPU memory; halved on out-of-memory")
+        	optional.add_argument("--shap-precision", type=str, default="auto", choices=["auto", "highest", "default"], help="Matmul/convolution precision for DeepSHAP: auto (default; full float32 on CPU, TF32 on GPU as in chrombpnet 1.x), highest (full float32 everywhere; very slow on some GPUs) or default (TF32 on GPUs that have it)")
+        	return optional
+
+        def interpret_modisco_args(optional):
+        	optional.add_argument("--interpret-subsample", type=int, default=30000, help="Number of peaks (sampled with seed 1234) to compute contribution scores on for TF-MoDISco")
+        	interpret_args(optional)
+        	optional.add_argument("--modisco-max-seqlets", type=int, default=50000, help="Maximum number of seqlets per metacluster for TF-MoDISco (modisco motifs -n)")
+        	optional.add_argument("--modisco-window", type=int, default=500, help="Window around the peak center used for motif discovery (modisco motifs -w)")
+        	optional.add_argument("--tomtom-lite", default=False, action="store_true", help="Match motifs with tomtom-lite (much faster; reports p-values) instead of MEME tomtom (q-values)")
+        	return optional
 
         # Generate non-peak regions from peak-regions
         
@@ -156,6 +183,8 @@ def read_parser():
         optional_qc_parser.add_argument("-fp","--file-prefix",type=str,required=False, default=None, help="File prefix for output to use. All the files will be prefixed with this string if provided.")
         optional_qc_parser.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
         optional_qc_parser.add_argument('-hp', '--html-prefix', required=False, default="./", help="The html prefix to use for the html file output.")
+        device_args(optional_qc_parser)
+        interpret_modisco_args(optional_qc_parser)
  
 
         # bias model pipeline arguments
@@ -204,6 +233,8 @@ def read_parser():
         optional_bqc_parser.add_argument("-fp","--file-prefix",type=str,required=False, default=None, help="File prefix for output to use. All the files will be prefixed with this string if provided.")
         optional_bqc_parser.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for model training")
         optional_bqc_parser.add_argument('-hp', '--html-prefix', required=False, default="./", help="The html prefix to use for the html file output.")
+        device_args(optional_bqc_parser)
+        interpret_modisco_args(optional_bqc_parser)
  
 
         # Make prediction bigwigs
@@ -241,6 +272,7 @@ def read_parser():
         optional_contribs.add_argument("-os", "--output-prefix-stats", type=str, default=None, required=False, help="Output stats on bigwig")
         optional_contribs.add_argument("-t", "--tqdm", type=int,default=1, help="Use tqdm. If yes then you need to have it installed.")
         optional_contribs.add_argument("-d", "--debug-chr", nargs="+", type=str, default=None, help="Run for specific chromosomes only (e.g. chr1 chr2) for debugging")
+        interpret_args(optional_contribs)
     
    
         # Get marginal footprints
@@ -257,9 +289,28 @@ def read_parser():
         required_ftps.add_argument("-pwm_f", "--motifs-to-pwm", type=str, required=True, help="Path to a TSV file containing motifs in first column and motif string to use for footprinting in second column")    
         
         optional_ftps.add_argument("-bs", "--batch-size", type=int, default=64, help="batch size to use for prediction")
-        optional_ftps.add_argument("--ylim",default=None,type=tuple, required=False,help="lower and upper y-limits for plotting the motif footprint, in the form of a tuple i.e. \
-        (0,0.8). If this is set to None, ylim will be autodetermined.")
+        optional_ftps.add_argument("--ylim", default=None, nargs=2, type=float, metavar=("YMIN", "YMAX"), required=False, help="lower and upper y-limits for plotting the motif footprint, e.g. \
+        --ylim 0 0.8. If this is not set, ylim will be autodetermined.")
   
+        # Export a model for TF-Keras 2.x readers
+
+        export_parser._action_groups.pop()
+        required_export = export_parser.add_argument_group('required arguments')
+        optional_export = export_parser.add_argument_group('optional arguments')
+
+        required_export.add_argument("-m", "--model-h5", type=str, required=True, help="Model to export: bias / chrombpnet / chrombpnet_nobias .h5 or .keras file (written by chrombpnet 2.x or 1.x)")
+        required_export.add_argument("-o", "--output", type=str, required=True, help="Output .h5 file")
+        optional_export.add_argument("--legacy-h5", dest="format", action="store_const", const="legacy-h5", default="legacy-h5",
+                        help="Write a TF-Keras 2.x full-model .h5 file, in the layout chrombpnet 1.x wrote (the default and, for now, "
+                        "the only format). TF-Keras loads it with load_model(path, compile=False)")
+        optional_export.add_argument("--count-head", choices=["bytecode", "named"], default="bytecode",
+                        help="How the count head (logsumexp Lambda) of a full chrombpnet model is written. 'bytecode' (default): the "
+                        "chrombpnet 1.x Lambda verbatim (Python 3.8 bytecode), which TF-Keras on Python 3.8 - 3.10 (chrombpnet 1.x, "
+                        "variant-scorer) loads without custom objects. 'named': for TF-Keras on Python >= 3.11, which cannot unmarshal "
+                        "that bytecode; the Lambda names its function, so load_model needs "
+                        "custom_objects={'chrombpnet_logsumexp': ...} (see chrombpnet/helpers/postprocessing/README.md). "
+                        "Bias and no-bias models have no Lambda")
+
         # Do variant scoring
         
         #variants_parser._action_groups.pop()
@@ -291,7 +342,7 @@ def read_parser():
         
         # Pull the arguments
         
-        args = parser.parse_args()
+        args = parser.parse_args(argv)
 
         return args
 

@@ -1,4 +1,2 @@
-include requirements.txt
-include workflows/*
-include tests/*
-include chrombpnet/data/*
+include LICENSE README.md CHANGELOG.md pyproject.toml
+recursive-include chrombpnet/data *.txt *.tsv

@@ -6,13 +6,13 @@ from matplotlib import cm
 from matplotlib.colors import Normalize 
 from scipy.interpolate import interpn
 from scipy.stats import multinomial
+from scipy.special import logsumexp
 import math
 from scipy.spatial.distance import jensenshannon
 
 
 plt.rcParams["figure.figsize"]=10,5
-font = {'family' : 'normal',
-        'weight' : 'bold',
+font = {'weight' : 'bold',
         'size'   : 10}
 matplotlib.rc('font', **font)
 
@@ -45,9 +45,10 @@ def density_scatter(x, y, xlab, ylab, ax = None, sort = True, bins = 20):
     """
     Scatter plot colored by 2d histogram
     """
-    bad_indices=np.where(np.isnan(x))+np.where(np.isnan(y))
-    x=x[~np.isin(np.arange(x.size),bad_indices)]
-    y=y[~np.isin(np.arange(y.size),bad_indices)]
+    # drop the positions where either x or y is nan
+    bad=np.isnan(x) | np.isnan(y)
+    x=x[~bad]
+    y=y[~bad]
 
     if ax is None :
         fig , ax = plt.subplots()

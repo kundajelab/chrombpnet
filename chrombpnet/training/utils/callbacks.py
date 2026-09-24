@@ -1,4 +1,4 @@
-import tensorflow.keras as keras
+import keras
 
 class LossHistory(keras.callbacks.Callback):
     """
@@ -13,20 +13,21 @@ class LossHistory(keras.callbacks.Callback):
         self.outf.write('Epoch\tBatch\t'+'\t'.join(self.to_track)+'\n')
         keras.callbacks.Callback.__init__(self)
 
-    def on_train_begin(self, logs={}):
+    def on_train_begin(self, logs=None):
         self.losses ={}
 
-    def on_epoch_begin(self,epoch, logs={}):
+    def on_epoch_begin(self,epoch, logs=None):
         self.losses[epoch]={}
         for trackable in self.to_track:
             self.losses[epoch][trackable]=[]         
         self.cur_epoch=epoch
         
-    def on_batch_end(self, batch, logs={}):
+    def on_batch_end(self, batch, logs=None):
+        logs = logs or {}
         for trackable in self.to_track:
             self.losses[self.cur_epoch][trackable].append(logs.get(trackable))
         
-    def on_epoch_end(self,epoch,logs={}):
+    def on_epoch_end(self,epoch,logs=None):
         marker=self.to_track[0] 
         num_batches=len(self.losses[self.cur_epoch][marker])
         for i in range(num_batches):
@@ -36,5 +37,5 @@ class LossHistory(keras.callbacks.Callback):
             self.outf.write('\n')
 
         
-    def on_train_end(self,logs={}):
+    def on_train_end(self,logs=None):
         self.outf.close()

@@ -1,11 +1,9 @@
-import numpy as np ;
-from tensorflow.keras.backend import int_shape
-from tensorflow.keras.layers import Input, Cropping1D, add, Conv1D, GlobalAvgPool1D, Dense, Flatten
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.models import Model
+import keras
+from keras.layers import Input, Cropping1D, add, Conv1D, GlobalAvgPool1D, Dense, Flatten
+from keras.models import Model
 from chrombpnet.training.utils.losses import multinomial_nll
-import tensorflow as tf
-import random as rn
+from chrombpnet.training.optimizers import make_optimizer
+from chrombpnet.training.runtime import head_dtype
 import os 
 
 os.environ['PYTHONHASHSEED'] = '0'
@@ -31,9 +29,9 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
     
     #read in arguments
     seed=args.seed
-    np.random.seed(seed)    
-    tf.random.set_seed(seed)
-    rn.seed(seed)
+    keras.utils.set_random_seed(seed)
+    # float32 output heads under --precision bf16 (None = the global dtype policy)
+    out_dtype=head_dtype()
 
     #define inputs
     inp = Input(shape=(sequence_len, 4),name='sequence')    
@@ -56,8 +54,8 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
                         dilation_rate=2**i,
                         name=conv_layer_name)(x)
 
-        x_len = int_shape(x)[1]
-        conv_x_len = int_shape(conv_x)[1]
+        x_len = x.shape[1]
+        conv_x_len = conv_x.shape[1]
         assert((x_len - conv_x_len) % 2 == 0) # Necessary for symmetric cropping
 
         x = Cropping1D((x_len - conv_x_len) // 2, name="bpnet_{}crop".format(layer_names[i-1]))(x)
@@ -68,30 +66,34 @@ def getModelGivenModelOptionsAndWeightInits(args, model_params):
     prof_out_precrop = Conv1D(filters=num_tasks,
                         kernel_size=profile_kernel_size,
                         padding='valid',
-                        name='prof_out_precrop')(x)
+                        name='prof_out_precrop',
+                        dtype=out_dtype)(x)
 
     # Step 1.2 - Crop to match size of the required output size
-    cropsize = int(int_shape(prof_out_precrop)[1]/2)-int(out_pred_len/2)
+    cropsize = int(prof_out_precrop.shape[1]/2)-int(out_pred_len/2)
     assert cropsize>=0
-    assert (int_shape(prof_out_precrop)[1] % 2 == 0) # Necessary for symmetric cropping
+    assert (prof_out_precrop.shape[1] % 2 == 0) # Necessary for symmetric cropping
     prof = Cropping1D(cropsize,
-                name='logits_profile_predictions_preflatten')(prof_out_precrop)
+                name='logits_profile_predictions_preflatten',
+                dtype=out_dtype)(prof_out_precrop)
 
     # Branch 2. Counts prediction
     # Step 2.1 - Global average pooling along the "length", the result
     #            size is same as "filters" parameter to the BPNet function
 
-    profile_out = Flatten(name="logits_profile_predictions")(prof)
+    # the output layer names are a contract: they make the log keys (logits_profile_predictions_loss,
+    # logcount_predictions_loss) and find_chrombpnet_hyperparams looks up the count Dense by name
+    profile_out = Flatten(name="logits_profile_predictions", dtype=out_dtype)(prof)
 
-    gap_combined_conv = GlobalAvgPool1D(name='gap')(x) # acronym - gapcc
+    gap_combined_conv = GlobalAvgPool1D(name='gap', dtype=out_dtype)(x) # acronym - gapcc
 
     # Step 2.3 Dense layer to predict final counts
-    count_out = Dense(num_tasks, name="logcount_predictions")(gap_combined_conv)
+    count_out = Dense(num_tasks, name="logcount_predictions", dtype=out_dtype)(gap_combined_conv)
 
     # instantiate keras Model with inputs and outputs
-    model=Model(inputs=[inp],outputs=[profile_out, count_out])
+    model=Model(inputs=inp,outputs=[profile_out, count_out])
 
-    model.compile(optimizer=Adam(learning_rate=args.learning_rate),
+    model.compile(optimizer=make_optimizer(args),
                     loss=[multinomial_nll,'mse'],
                     loss_weights=[1,counts_loss_weight])
 

@@ -15,49 +15,115 @@ ChromBPNet (shown in the image as `Bias-Factorized ChromBPNet`) is a fully convo
 <img src="images/chrombpnet_arch.png" alt="ChromBPNet" align="center" style="width: 400px;"/>
 </p>
 
+> **ChromBPNet 2.x** runs on Keras 3 with the JAX backend instead of TensorFlow. It runs natively
+> on CUDA 13 GPUs (H100, B200, RTX PRO 6000 Blackwell), with a single NumPy 2 environment and a native JAX
+> DeepSHAP. The commands, inputs and outputs are the same as in 1.x except for the changes listed in the
+> [CHANGELOG](CHANGELOG.md), and chrombpnet 1.x models load as they are.
+
 ## Table of contents
 
 - [Installation](#installation)
+- [GPU notes](#gpu-notes)
 - [QuickStart](#quickstart)
+- [Optional flags](#optional-flags)
+- [Compatibility with chrombpnet 1.x](#compatibility-with-chrombpnet-1x)
+- [Validation](#validation)
 - [How-to-cite](#how-to-cite)
 
 ## Installation
 
-This section will discuss the packages needed to train a ChromBPNet model. Firstly, it is recommended that you use a GPU for model training and have the necessary NVIDIA drivers and CUDA already installed. You can verify that your machine is set up to use GPU's properly by executing the `nvidia-smi` command and ensuring that the command returns information about your system GPU(s) (rather than an error). Secondly there are two ways to ensure you have the necessary packages to train ChromBPNet models which we detail below,
+ChromBPNet needs Python >= 3.12 and, for training and interpretation, an NVIDIA GPU. It also runs on the CPU,
+including on Apple-silicon Macs, which is fine for testing and small jobs. TensorFlow is not needed. Pick one of
+the three ways below.
 
-### 1. Running in docker 
+### 1. pixi (recommended)
 
-Download and install the latest version of Docker for your platform. Here is the link for the installers -<a href="https://docs.docker.com/get-docker/">Docker Installers</a>.  Run the docker run command below to open an environment with all the packages installed and do `cd chrombpnet` to start running the tutorial.
-
-> **Note:**
-> To access your system GPU's from within the docker container, you must have [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) installed on your host machine.
-
-```
-docker run -it --rm --memory=100g --gpus device=0  kundajelab/chrombpnet:latest
-```
-
-### 2. Local installation
-
-Create a clean conda environment with python >=3.8 
-```
-conda create -n chrombpnet python=3.8
-conda activate chrombpnet
-```
-
-Install non-Python  requirements via conda
-```
-conda install -y -c conda-forge -c bioconda samtools bedtools ucsc-bedgraphtobigwig pybigwig meme
-```
-#### Install from pypi 
+[pixi](https://pixi.sh) installs both the Python packages and the command-line tools the pipeline calls
+(bedtools, bedGraphToBigWig, samtools, MEME `tomtom`, pango for the PDF reports), all from the committed lock
+file:
 
 ```
-pip install chrombpnet
+curl -fsSL https://pixi.sh/install.sh | bash
+git clone https://github.com/kundajelab/chrombpnet.git
+cd chrombpnet
+pixi install -e cuda13                    # Linux, NVIDIA driver >= 580
+pixi run -e cuda13 gpu-check              # lists the GPU(s) JAX sees
+pixi run -e cuda13 chrombpnet pipeline ...
+pixi shell -e cuda13                      # or activate the environment and call `chrombpnet` directly
 ```
-#### Install from source
+
+| environment | use it for |
+|---|---|
+| `cuda13` | Linux x86_64 / aarch64 with driver >= 580: H100, B200, RTX PRO 6000 and other Blackwell GPUs |
+| `cuda12` | Linux x86_64 with an older driver (>= 525; Blackwell GPUs need >= 570) |
+| `default` | CPU only: Linux and macOS arm64 (`pixi install`, `pixi run chrombpnet ...`) |
+| `dev`, `cuda13-dev` | the same plus pytest and ruff: `pixi run -e dev test`, `pixi run -e cuda13-dev test-gpu` |
+
+To install a GPU environment on a machine without a GPU (a login node, a CI runner, a container build), prefix
+the command with `CONDA_OVERRIDE_CUDA=13.0` (or `12.0`). MEME is only packaged for Linux, so on macOS use
+`--tomtom-lite` (see below).
+
+### 2. uv or pip (no conda)
+
 ```
 git clone https://github.com/kundajelab/chrombpnet.git
-pip install -e chrombpnet
+cd chrombpnet
+uv sync --extra cuda13                    # --extra cuda12 for older drivers, no extra for CPU
+uv run chrombpnet --help
+# or into an existing virtual environment (Python >= 3.12):
+uv pip install -e '.[cuda13]'
 ```
+
+The chrombpnet releases on PyPI (up to 1.x) are TensorFlow-based. Until 2.x is released there, install it from
+source as above. Without conda you have to provide these yourself:
+
+- **bedtools** and **bedGraphToBigWig** (UCSC). `chrombpnet pipeline` and `chrombpnet bias pipeline` need them to
+  turn BAM/fragment/tagAlign files into a bigWig, and `chrombpnet prep nonpeaks` needs bedtools.
+- **MEME `tomtom`** for motif matching in the reports. Alternatively pass `--tomtom-lite` to use the bundled
+  TOMTOM-lite. It is faster and needs no MEME, but reports p-values instead of q-values.
+- **pango** for the PDF reports (weasyprint), e.g. `apt install libpango-1.0-0 libpangoft2-1.0-0` or
+  `brew install pango`.
+- **pyBigWig** has PyPI wheels only for Linux x86_64. Elsewhere it builds from source, which needs a C compiler
+  and zlib headers.
+
+### 3. Docker or Apptainer
+
+```
+docker run --rm --gpus all ghcr.io/kundajelab/chrombpnet:latest-cuda13 chrombpnet --help
+apptainer exec --nv --cleanenv docker://ghcr.io/kundajelab/chrombpnet:latest-cuda13 chrombpnet --help
+docker build -t chrombpnet:cuda13 .       # build it yourself; see the Dockerfile header for cuda12 / CPU images
+```
+
+The image contains no CUDA toolkit. The host provides only the driver, through the
+[NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+(`--gpus`) or `apptainer --nv`. The docker workflow (`.github/workflows/docker.yml`) builds the images for
+release tags and pushes them to `ghcr.io/kundajelab/chrombpnet`, with `-cuda13` tags (driver >= 580) and
+`-cuda12` tags (older drivers), once the maintainers enable it. Until then, or if there is no image for your
+version, build one locally with `docker build`.
+
+Apptainer passes the host environment into the container and binds `$HOME`. The image already ignores the
+host's `PYTHONPATH`, `PYTHONHOME` and `~/.local` Python packages. `--cleanenv` also keeps out every other host
+variable, including ones you may want. Pass those explicitly, for example
+`--env CUDA_VISIBLE_DEVICES="$CUDA_VISIBLE_DEVICES"` when a scheduler has picked your GPUs, or
+`--env XLA_PYTHON_CLIENT_MEM_FRACTION=0.25`.
+
+## GPU notes
+
+- **Driver.** CUDA 13 needs NVIDIA driver >= 580 (the `nvidia-smi` header shows `CUDA Version: 13.x`). H100
+  (sm_90), B200 (sm_100) and RTX PRO 6000 Blackwell (sm_120) are supported natively. With an older driver use the
+  `cuda12` environment.
+- **No `module load cuda`, no `LD_LIBRARY_PATH`.** JAX brings its own CUDA, cuDNN and NCCL as pip wheels.
+  System CUDA libraries found first through `LD_LIBRARY_PATH` shadow them and break start-up.
+- **Memory.** Importing chrombpnet sets `XLA_PYTHON_CLIENT_PREALLOCATE=false` when it is unset (the Docker image
+  sets it too, and `gpu-check` imports chrombpnet first). JAX then allocates GPU memory as it needs it, instead of
+  reserving 75% of the card at start-up. An `export XLA_PYTHON_CLIENT_PREALLOCATE=true` of your own wins.
+- **Shared GPUs.** JAX does not return memory it has allocated until the process ends. DeepSHAP picks its batch
+  size from the model size and the free GPU memory, so `chrombpnet pipeline` keeps that memory through the
+  TF-MoDISco step that follows. On a GPU shared with other jobs, cap the process, e.g.
+  `export XLA_PYTHON_CLIENT_MEM_FRACTION=0.25`. The value is a fraction of the card's total memory.
+- **Backend.** Importing chrombpnet also sets `KERAS_BACKEND=jax`. If your own code imports `keras` before
+  chrombpnet, set `KERAS_BACKEND=jax` in the environment yourself.
+- **Clusters.** [`workflows/slurm/`](workflows/slurm/) has a SLURM template for H100/B200 clusters.
 
 ## QuickStart
 
@@ -212,6 +278,51 @@ For more information, also see:
 - [Training tutorial](https://github.com/kundajelab/chrombpnet/wiki/Tutorial)
 - [Frequently Asked Questions, FAQ](https://github.com/kundajelab/chrombpnet/wiki/FAQ)
  
+## Optional flags
+
+These are new in 2.x. The defaults reproduce the 1.x behaviour. `chrombpnet <command> --help` shows which
+commands take which flag.
+
+| flag | effect |
+|---|---|
+| `--optimizer {adam,muon}` | `muon` applies Muon to the dilated convolution kernels and Adam to everything else (experimental) |
+| `--muon-lr` | Muon learning rate (default 2e-3) |
+| `--ema` | train with an exponential moving average of the weights (momentum 0.999), and evaluate and save the averaged weights |
+| `--lr-schedule {constant,cosine}` | learning-rate schedule (default `constant`) |
+| `--precision {default,highest,bf16}` | float32 matmul/convolution precision for training: `default` lets the GPU use TF32 as TensorFlow did, `highest` forces full float32, `bf16` trains in mixed bfloat16 |
+| `--device {auto,gpu,cpu}` | `gpu` fails immediately if JAX sees no GPU, instead of silently training on the CPU |
+| `--interpret-subsample N` | number of peaks used for DeepSHAP and TF-MoDISco in the pipelines (default 30000) |
+| `--shap-seed`, `--shap-batch-seqs`, `--shap-precision` | DeepSHAP reference seed (default 1234), sequences per batch (default: automatic), precision (default `auto`: full float32 on CPU, TF32 on GPU as in 1.x) |
+| `--modisco-max-seqlets`, `--modisco-window` | TF-MoDISco limits (defaults 50000 and 500) |
+| `--tomtom-lite` | match motifs with TOMTOM-lite instead of MEME `tomtom`: much faster, needs no MEME, reports p-values |
+
+## Compatibility with chrombpnet 1.x
+
+- **Old models load directly.** TensorFlow 2.x `.h5` files from chrombpnet 1.x load as they are: `bias.h5`,
+  `bias_model_scaled.h5`, `chrombpnet.h5` and `chrombpnet_nobias.h5`, including the
+  [pre-trained bias models](https://zenodo.org/records/7443683/files/bias_models.zip?download=1). Use them with
+  `-b`, `pred_bw`, `contribs_bw`, `footprints` and so on. The loader replaces the logsumexp `Lambda` layer of
+  `chrombpnet.h5` and never runs stored bytecode.
+- **Counts-head DeepSHAP needs `chrombpnet_nobias.h5`.** `contribs_bw` refuses the counts head of a full
+  `chrombpnet.h5` (1.x or 2.x), because its counts output is a logsumexp of the bias and TF-model heads. Run it
+  on `chrombpnet_nobias.h5`, as the pipelines do, or pass `-pc profile`.
+- **New models cannot go the other way.** Model files keep their `.h5` names, but Keras 3 writes them.
+  TensorFlow 2.x chrombpnet cannot load them, and neither can tools that read the HDF5 weights directly. For
+  those, `chrombpnet export --legacy-h5 -m chrombpnet.h5 -o chrombpnet_legacy.h5` writes a copy in the layout of
+  the 1.x files, which TF-Keras 2.x, chrombpnet 1.x and bpnet-lite load (see the [CHANGELOG](CHANGELOG.md)).
+- **Contribution-score files keep the 1.x layout**: `/raw/seq`, `/shap/seq`, `/projected_shap/seq`, shape
+  (N, 4, L), Blosc-compressed. To read them with h5py, `import hdf5plugin` first.
+- **Results match 1.x statistically, not bit for bit.** Initial weights and random streams differ from
+  TensorFlow for the same seed. DeepSHAP references, the reads used for Tn5/DNase shift estimation and the
+  nonpeak subsample behind the outlier thresholds are now seeded. EarlyStopping restores the best epoch. See the
+  [CHANGELOG](CHANGELOG.md).
+
+## Validation
+
+[VALIDATION.md](VALIDATION.md) compares 2.x with chrombpnet 1.x on a public ENCODE ATAC-seq dataset (ENCSR763OVZ):
+loading ENCODE's released models, predictions and contribution scores against ENCODE's bigWigs, and retraining
+with Adam (the default) and Muon. It also describes the test suite and what has not been tested yet.
+
 ## How to Cite
 
 If you're using ChromBPNet in your work, please cite as follows:

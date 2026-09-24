@@ -1,14 +1,16 @@
 import argparse
 import pyBigWig
 import pyfaidx
+import shlex
 import subprocess
 import pandas as pd
 import numpy as np
 import itertools
+import random
 import warnings
 from termcolor import colored
 import os
-from modisco.visualization import viz_sequence
+from chrombpnet.utils import viz_sequence
 import chrombpnet.training.utils.one_hot as one_hot
 from chrombpnet.data import DefaultDataFile, get_default_data_path
 
@@ -23,6 +25,7 @@ def parse_args():
     parser.add_argument('--ATAC-ref-path', type=str, default=None, help="Path to ATAC reference motifs (ATAC.ref.motifs.txt used by default)")
     parser.add_argument('--DNASE-ref-path', type=str, default=None, help="Path to DNASE reference motifs (DNASE.ref.motfis.txt used by default)")
     parser.add_argument('--num-samples', type=int, default=10000, help="Number of reads to sample from BAM/fragment file")
+    parser.add_argument('-s', '--seed', dest='shift_seed', metavar='SEED', type=int, default=1234, help="Seed for sampling the reads")
     args = parser.parse_args()
     return args
 
@@ -59,34 +62,111 @@ def stream_filtered_tagaligns(src_tagaligns_stream, genome_file, out_stream):
         src_tagaligns_stream.stdout.close()
     return has_unknown_chroms
 
+def sample_filtered_tagaligns(src_tagaligns_stream, genome_file, num_lines, seed):
+    '''
+    Given a tagalign subprocess stream and reference genome file, draws a
+    uniform random sample of num_lines reads (without replacement) from the
+    reads in chromosomes included in the reference. Reservoir sampling, as
+    `shuf -n` does, but seeded so the sample is reproducible.
+
+    Returns:
+        List of sampled lines (bytes) and a Boolean indicating whether any
+        reads not in the reference fasta were detected.
+    '''
+    rng = random.Random(seed)
+    sample = []
+    seen = 0
+    has_unknown_chroms = False
+    with pyfaidx.Fasta(genome_file) as g:
+        chroms = set(g.keys())
+    for line in iter(src_tagaligns_stream.stdout.readline, b''):
+        tagalign_chrom = line.decode('utf-8').strip().split('\t')[0]
+        if tagalign_chrom not in chroms:
+            has_unknown_chroms = True
+            continue
+        if seen < num_lines:
+            sample.append(line)
+        else:
+            j = rng.randrange(seen + 1)
+            if j < num_lines:
+                sample[j] = line
+        seen += 1
+    src_tagaligns_stream.stdout.close()
+    return sample, has_unknown_chroms
+
+def check_returncode(p):
+    # raise if a finished subprocess.Popen stream (or ReadStream chain) failed
+    returncode = p.wait()
+    if returncode != 0:
+        raise subprocess.CalledProcessError(returncode, p.args)
+
+# gzip's exit status for a warning such as "trailing garbage ignored": the decompressed output is complete
+GZIP_WARNING = 2
+
+class ReadStream:
+    '''
+    A chain of subprocesses, each reading the previous one's stdout, used like a single
+    subprocess.Popen: stdout is the last process's, and wait() waits for every process and returns
+    the first non-zero exit status. A shell pipeline such as `zcat reads.gz | awk ...` reports only
+    its last command's status, which hid a truncated or corrupt gzipped input.
+    '''
+    def __init__(self, procs, args=None):
+        self.procs = procs
+        self.stdout = procs[-1].stdout
+        self.args = args if args is not None else " | ".join(shlex.join(p.args) for p in procs)
+        self.returncode = None
+
+    def wait(self):
+        self.returncode = 0
+        for p in self.procs:
+            returncode = p.wait()
+            if returncode == GZIP_WARNING and p.args[0] == "gzip":
+                continue
+            if returncode != 0 and self.returncode == 0:
+                self.returncode = returncode
+        return self.returncode
+
 def is_gz_file(filepath):
     # https://stackoverflow.com/questions/3703276/how-to-tell-if-a-file-is-gzip-compressed
     with open(filepath, 'rb') as test_f:
         return test_f.read(2) == b'\x1f\x8b'
 
+def gunzip_popen(file_path):
+    # `gzip -dc` reads .gz with GNU, BSD/macOS and busybox gzip (the macOS `zcat` only reads .Z files),
+    # and exits non-zero on a truncated or corrupt file
+    return subprocess.Popen(["gzip", "-dc", file_path], stdout=subprocess.PIPE)
+
 def bam_to_tagalign_stream(bam_path):
     p = subprocess.Popen(["bedtools", "bamtobed", "-i", bam_path], stdout=subprocess.PIPE)
     return p
+
+# each fragment becomes a + and a - strand read with the fragment's coordinates
+FRAGMENT_TO_TAGALIGN_AWK = ["awk", "-v", "OFS=\\t", '{print $1,$2,$3,1000,0,"+"; print $1,$2,$3,1000,0,"-"}']
 
 def fragment_to_tagalign_stream(fragment_file_path):
     """
     Expected format for fragment file: tsv with columns chr, start, end and optionally more columns
     """
-    frag_is_gz = is_gz_file(fragment_file_path)
-    read_method = "zcat " if frag_is_gz else "cat "
-    cmd = read_method + fragment_file_path + """ | awk -v OFS="\\t" '{print $1,$2,$3,1000,0,"+"; print $1,$2,$3,1000,0,"-"}'"""
-    p = subprocess.Popen([cmd], stdout=subprocess.PIPE, shell=True)
-    return p
+    if is_gz_file(fragment_file_path):
+        p_gz = gunzip_popen(fragment_file_path)
+        p_awk = subprocess.Popen(FRAGMENT_TO_TAGALIGN_AWK, stdin=p_gz.stdout, stdout=subprocess.PIPE)
+        p_gz.stdout.close()  # awk owns the pipe now, so gzip gets SIGPIPE if awk exits early
+        return ReadStream([p_gz, p_awk])
+    # on stdin rather than as an operand, which awk would take for a variable assignment if it contained '='
+    with open(fragment_file_path, 'rb') as f:
+        p = subprocess.Popen(FRAGMENT_TO_TAGALIGN_AWK, stdin=f, stdout=subprocess.PIPE)
+    return ReadStream([p], args=shlex.join(FRAGMENT_TO_TAGALIGN_AWK) + " < " + shlex.quote(fragment_file_path))
 
 def tagalign_stream(tagalign_file_path):
     """
     Expected format for tagAlign: tsv with columns chr, start, end, ignored, ignored, strand
     """
-    ta_is_gz = is_gz_file(tagalign_file_path)
-    p = subprocess.Popen(["zcat" if ta_is_gz else "cat", tagalign_file_path], stdout=subprocess.PIPE)
+    if is_gz_file(tagalign_file_path):
+        return ReadStream([gunzip_popen(tagalign_file_path)])
+    p = subprocess.Popen(["cat", tagalign_file_path], stdout=subprocess.PIPE)
     return p
 
-def sample_reads(bam_path, fragment_file_path, tagalign_file_path, num_samples, genome_fasta_path):
+def sample_reads(bam_path, fragment_file_path, tagalign_file_path, num_samples, genome_fasta_path, seed=1234):
     # only one of bam, fragment, tagalign is not None
     if bam_path:
         p1 = bam_to_tagalign_stream(bam_path)
@@ -96,10 +176,11 @@ def sample_reads(bam_path, fragment_file_path, tagalign_file_path, num_samples, 
         p1 = tagalign_stream(tagalign_file_path)
 
     # num_samples is per strand, so multiply by 2
-    p2 = subprocess.Popen(["shuf", "-n", str(2*num_samples)], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    has_unknown_chroms = stream_filtered_tagaligns(p1, genome_fasta_path, p2)
-    output = p2.communicate()[0]
-    
+    sampled, has_unknown_chroms = sample_filtered_tagaligns(p1, genome_fasta_path, 2*num_samples, seed)
+    check_returncode(p1)
+    if len(sampled) == 0:
+        raise ValueError("No reads in chromosomes of the reference genome fasta were found in the input file")
+
     if has_unknown_chroms:
         msg = '!!! WARNING: Input reads contain chromosomes not in the reference' \
             ' genome fasta provided. Please ensure you are using the correct' \
@@ -107,7 +188,7 @@ def sample_reads(bam_path, fragment_file_path, tagalign_file_path, num_samples, 
             ' genome, you can safely ignore this message.'
         warnings.warn(colored(msg, 'red'))
 
-    output = [x.split("\t") for x in output.decode('utf-8').split("\n")[:-1]]
+    output = [x.decode('utf-8').rstrip("\n").split("\t") for x in sampled]
     reads = pd.DataFrame(output)
     reads = reads.rename({0:'chr', 1:'start', 2:'end', 3:'x1', 4:'x2', 5:'strand'}, axis=1)
 
@@ -219,11 +300,11 @@ def compute_shift_DNASE(ref_plus_pwms, ref_minus_pwms, plus_pwm, minus_pwm):
     return plus_shift, minus_shift 
 
 
-def compute_shift(input_bam_file, input_fragment_file, input_tagalign_file, num_samples, genome_fasta_path, data_type, ref_motifs_file):
+def compute_shift(input_bam_file, input_fragment_file, input_tagalign_file, num_samples, genome_fasta_path, data_type, ref_motifs_file, seed=1234):
     # only one of the 3 inputs should be non None
     assert (input_bam_file is None) + (input_fragment_file is None) + (input_tagalign_file is None) == 2, "Only one input file!"
 
-    sampled_plus_reads, sampled_minus_reads = sample_reads(input_bam_file, input_fragment_file, input_tagalign_file, num_samples, genome_fasta_path)
+    sampled_plus_reads, sampled_minus_reads = sample_reads(input_bam_file, input_fragment_file, input_tagalign_file, num_samples, genome_fasta_path, seed)
 
     plus_pwm, minus_pwm = get_pwms(sampled_plus_reads, sampled_minus_reads, genome_fasta_path)
     ref_plus_pwms, ref_minus_pwms = get_ref_pwms(ref_motifs_file)
@@ -233,7 +314,7 @@ def compute_shift(input_bam_file, input_fragment_file, input_tagalign_file, num_
     elif data_type=="DNASE":
         plus_shift, minus_shift = compute_shift_DNASE(ref_plus_pwms, ref_minus_pwms, plus_pwm, minus_pwm)
 
-    return plus_shift, minus_shift
+    return int(plus_shift), int(minus_shift)
 
 
 def main():
@@ -253,7 +334,8 @@ def main():
             args.num_samples,
             args.genome,
             args.data_type,
-            ref_motifs_file)
+            ref_motifs_file,
+            args.shift_seed)
     
 
 if __name__=="__main__":

@@ -1,7 +1,8 @@
 import argparse
 import pyBigWig
 import numpy as np
-import deepdish
+import h5py
+import hdf5plugin  # registers the Blosc filter of chrombpnet 1.x (deepdish) and 2.x score files
 import chrombpnet.evaluation.make_bigwigs.bigwig_helper as bigwig_helper
 
 def import_parser():
@@ -21,7 +22,8 @@ def import_parser():
 
 def main(args):
 
-	d = deepdish.io.load(args.hdf5, '/projected_shap/seq')
+	with h5py.File(args.hdf5, "r") as f:
+		d = f['projected_shap']['seq'][:]
 
 	SEQLEN = d.shape[2]
 	assert(SEQLEN%2==0)

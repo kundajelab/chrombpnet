@@ -4,14 +4,9 @@ import scipy.stats
 import numpy as np
 import json
 import h5py
-import tensorflow as tf
 import chrombpnet.training.utils.argmanager as argmanager
-import chrombpnet.training.utils.losses as losses
 import chrombpnet.training.metrics as metrics
-import chrombpnet.training.data_generators.initializers as initializers
-from tensorflow.keras.utils import get_custom_objects
-from tensorflow.keras.models import load_model
-#from scipy import nanmean, nanstd
+from chrombpnet.training.utils import model_io
 
 def write_predictions_h5py(output_prefix, profile, logcts, coords):
     # open h5 file for writing predictions
@@ -27,7 +22,7 @@ def write_predictions_h5py(output_prefix, profile, logcts, coords):
     coords_center_dset =  [int(coords[i][1]) for i in range(num_examples)]
     coords_peak_dset =  [int(coords[i][3]) for i in range(num_examples)]
 
-    dt = h5py.special_dtype(vlen=str)
+    dt = h5py.string_dtype()
 
     # create the "coords" group datasets
     coords_chrom_dset = coord_group.create_dataset(
@@ -51,15 +46,6 @@ def write_predictions_h5py(output_prefix, profile, logcts, coords):
     h5_file.close()
 
 
-def load_model_wrapper(args):
-    # read .h5 model
-    custom_objects={"tf": tf, "multinomial_nll":losses.multinomial_nll}    
-    get_custom_objects().update(custom_objects)    
-    model=load_model(args.model_h5, compile=False)
-    print("got the model")
-    #model.summary()
-    return model
-
 def softmax(x, temp=1):
     norm_x = x - np.mean(x,axis=1, keepdims=True)
     return np.exp(temp*norm_x)/np.sum(np.exp(temp*norm_x), axis=1, keepdims=True)
@@ -71,6 +57,7 @@ def predict_on_batch_wrapper(model,test_generator):
     counts_sum_predictions = []
     true_counts_sum = []
     coordinates = []
+    batch_size = None
 
     for idx in range(num_batches):
         if idx%100==0:
@@ -78,8 +65,17 @@ def predict_on_batch_wrapper(model,test_generator):
         
         X,y,coords=test_generator[idx]
 
+        # pad a short batch to the full batch size, so the compiled predict function is reused (JAX compiles
+        # once per input shape), and drop the padded rows from the predictions
+        num_rows = X.shape[0]
+        if batch_size is None:
+            batch_size = max(num_rows, getattr(test_generator, "batch_size", num_rows))
+        if num_rows < batch_size:
+            X = np.concatenate([X, np.zeros((batch_size - num_rows,) + X.shape[1:], dtype=X.dtype)])
+
         #get the model predictions            
         preds=model.predict_on_batch(X)
+        preds=[p[:num_rows] for p in preds]
 
         # get counts predictions
         true_counts.extend(y[0])
@@ -99,7 +95,10 @@ def main(args):
     metrics_dictionary = {"counts_metrics":{}, "profile_metrics":{}}
 
     # get model architecture to load - can load .hdf5 and .weights/.arch
-    model=load_model_wrapper(args)
+    model=model_io.load_model(args.model_h5)
+    print("got the model")
+
+    import chrombpnet.training.data_generators.initializers as initializers
 
 
     test_generator = initializers.initialize_generators(args, mode="test", parameters=None, return_coords=True)
@@ -121,8 +120,8 @@ def main(args):
         metrics_dictionary["counts_metrics"]["peaks_and_nonpeaks"]["mse"] = mse
 
         metrics_dictionary["profile_metrics"]["peaks_and_nonpeaks"] = {}
-        metrics_dictionary["profile_metrics"]["peaks_and_nonpeaks"]["median_jsd"] = np.nanmedian(jsd_pw)        
-        metrics_dictionary["profile_metrics"]["peaks_and_nonpeaks"]["median_norm_jsd"] = np.nanmedian(jsd_norm)
+        metrics_dictionary["profile_metrics"]["peaks_and_nonpeaks"]["median_jsd"] = float(np.nanmedian(jsd_pw))
+        metrics_dictionary["profile_metrics"]["peaks_and_nonpeaks"]["median_norm_jsd"] = float(np.nanmedian(jsd_norm))
 
         metrics.plot_histogram(jsd_pw, jsd_rnd, args.output_prefix+"_peaks_and_nonpeaks", "Both peaks and non peaks")
 
@@ -137,8 +136,8 @@ def main(args):
         metrics_dictionary["counts_metrics"]["nonpeaks"]["mse"] = mse
 
         metrics_dictionary["profile_metrics"]["nonpeaks"] = {}
-        metrics_dictionary["profile_metrics"]["nonpeaks"]["median_jsd"] = np.nanmedian(jsd_pw[non_peaks_idx])        
-        metrics_dictionary["profile_metrics"]["nonpeaks"]["median_norm_jsd"] = np.nanmedian(jsd_norm[non_peaks_idx])
+        metrics_dictionary["profile_metrics"]["nonpeaks"]["median_jsd"] = float(np.nanmedian(jsd_pw[non_peaks_idx]))
+        metrics_dictionary["profile_metrics"]["nonpeaks"]["median_norm_jsd"] = float(np.nanmedian(jsd_norm[non_peaks_idx]))
 
         metrics.plot_histogram(jsd_pw[non_peaks_idx], jsd_rnd[non_peaks_idx], args.output_prefix+"_only_nonpeaks", "Only non peaks")
 
@@ -152,8 +151,8 @@ def main(args):
         metrics_dictionary["counts_metrics"]["peaks"]["mse"] = mse
 
         metrics_dictionary["profile_metrics"]["peaks"] = {}
-        metrics_dictionary["profile_metrics"]["peaks"]["median_jsd"] = np.nanmedian(jsd_pw[peaks_idx])        
-        metrics_dictionary["profile_metrics"]["peaks"]["median_norm_jsd"] = np.nanmedian(jsd_norm[peaks_idx])
+        metrics_dictionary["profile_metrics"]["peaks"]["median_jsd"] = float(np.nanmedian(jsd_pw[peaks_idx]))
+        metrics_dictionary["profile_metrics"]["peaks"]["median_norm_jsd"] = float(np.nanmedian(jsd_norm[peaks_idx]))
         metrics.plot_histogram(jsd_pw[peaks_idx], jsd_rnd[peaks_idx], args.output_prefix+"_only_peaks", "Only peaks")
 
         #ofile = open(args.output_prefix+"_pearson_cor.txt","w")

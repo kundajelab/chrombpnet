@@ -2,6 +2,7 @@ import argparse
 import pyBigWig
 import pyfaidx
 import subprocess
+import sys
 import tempfile
 import os
 import numpy as np
@@ -26,6 +27,7 @@ def parse_args():
     parser.add_argument('--ATAC-ref-path', type=str, default=None, help="Path to ATAC reference motifs (chrombpnet/data/ATAC.ref.motifs.txt used by default)")
     parser.add_argument('--DNASE-ref-path', type=str, default=None, help="Path to DNASE reference motifs (chrombpnet/data/DNASE.ref.motifs.txt used by default)")
     parser.add_argument('--num-samples', type=int, default=10000, help="Number of reads to sample from BAM/fragment/tagAlign file for shift estimation")
+    parser.add_argument('-s', '--seed', dest='shift_seed', metavar='SEED', type=int, default=1234, help="Seed for sampling the reads used in shift estimation")
     args = parser.parse_args()
 
     return args
@@ -61,19 +63,32 @@ def generate_bigwig(input_bam_file, input_fragment_file, input_tagalign_file, ou
         print("Making BedGraph (Do not filter chromosomes not in reference fasta)")
 
         with open(tmp_bedgraph.name, 'w') as f:
-            p2 = subprocess.Popen([cmd], stdin=p1.stdout, stdout=f, shell=True)
+            p2 = subprocess.Popen(["bash", "-o", "pipefail", "-c", cmd], stdin=p1.stdout, stdout=f)
             p1.stdout.close()
             p2.communicate()
     else:
         print("Making BedGraph (Filter chromosomes not in reference fasta)")
 
         with open(tmp_bedgraph.name, 'w') as f:
-            p2 = subprocess.Popen([cmd], stdin=subprocess.PIPE, stdout=f, shell=True)
+            p2 = subprocess.Popen(["bash", "-o", "pipefail", "-c", cmd], stdin=subprocess.PIPE, stdout=f)
             auto_shift_detect.stream_filtered_tagaligns(p1, genome_fasta_file, p2)
             p2.communicate()
+    auto_shift_detect.check_returncode(p2)
+    auto_shift_detect.check_returncode(p1)
+    # the pipeline runs with pipefail, so any failing stage (e.g. genomecov on a contig missing from the chrom
+    # sizes file) raised above; an empty bedGraph means no reads were left after filtering
+    if os.path.getsize(tmp_bedgraph.name) == 0:
+        raise RuntimeError("Empty bedGraph from `{}`: no reads left after filtering, or a command in the pipeline failed (see its error above)".format(cmd.strip()))
 
     print("Making Bigwig")
-    subprocess.run(["bedGraphToBigWig", tmp_bedgraph.name, chrom_sizes_file, output_prefix + "_unstranded.bw"])
+    try:
+        subprocess.run(["bedGraphToBigWig", tmp_bedgraph.name, chrom_sizes_file, output_prefix + "_unstranded.bw"], check=True)
+    except subprocess.CalledProcessError:
+        # bedtools genomecov only warns about reads on contigs missing from the chrom sizes, then bedGraphToBigWig fails
+        print("bedGraphToBigWig failed: every chromosome/contig with reads must be listed in the chrom sizes file {} "
+              "(use the full chrom sizes of the reference the reads were aligned to, not a main-chromosomes-only "
+              "file)".format(chrom_sizes_file), file=sys.stderr)
+        raise
 
     tmp_bedgraph.close()
 
@@ -93,13 +108,16 @@ def main(args):
                 ref_motifs_file =  get_default_data_path(DefaultDataFile.dnase_ref_motifs)
     
         print("Estimating enzyme shift in input file")
+        # the read sample has its own seed (-s/--seed of this script, else 1234): the pipelines' --seed is the
+        # training seed, and changing it must not change the reads the shift is estimated from
         plus_shift, minus_shift = auto_shift_detect.compute_shift(args.input_bam_file,
                 args.input_fragment_file,
                 args.input_tagalign_file,
                 args.num_samples,
                 args.genome,
                 args.data_type,
-                ref_motifs_file)
+                ref_motifs_file,
+                getattr(args, "shift_seed", 1234))
     
         print("Current estimated shift: {:+}/{:+}".format(plus_shift, minus_shift))
 

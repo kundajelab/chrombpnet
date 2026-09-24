@@ -28,7 +28,7 @@ def get_seq(peaks_df, genome, width):
 
 
 def get_regions(regions_file, seqlen, regions_used=None):
-    # regions file is assumed to be centered at summit (2nd + 10th column)
+    # regions file (a path, or the DataFrame read from it) is assumed to be centered at summit (2nd + 10th column)
     # it is adjusted to be of length seqlen centered at summit
 
     assert(seqlen%2==0)
@@ -36,7 +36,10 @@ def get_regions(regions_file, seqlen, regions_used=None):
     #with open(regions_file) as r:
     #    regions = [x.strip().split('\t') for x in r]
 
-    regions = pd.read_csv(regions_file,sep='\t',header=None)
+    if isinstance(regions_file, pd.DataFrame):
+        regions = regions_file
+    else:
+        regions = pd.read_csv(regions_file,sep='\t',header=None)
     #print(regions)
     if regions_used is None:
         regions = [[x[0], int(x[1])+int(x[9])-seqlen//2, int(x[1])+int(x[9])+seqlen//2, int(x[1])+int(x[9])] for x in np.array(regions.values)]
@@ -57,8 +60,14 @@ def write_bigwig(data, regions, gs, bw_out, debug_chr=None, use_tqdm=False, outs
     bw = pyBigWig.open(bw_out, 'w')
     bw.addHeader(gs)
     
+    order_of_regs = range(len(regions))
+    if debug_chr:
+        # subset to chromosome(s) (debugging): one name or a list of names
+        debug_chrs = {debug_chr} if isinstance(debug_chr, str) else set(debug_chr)
+        order_of_regs = [i for i in order_of_regs if regions[i][0] in debug_chrs]
+
     # regions may not be sorted, so get their sorted order
-    order_of_regs = sorted(range(len(regions)), key=lambda x:(chr_to_idx[regions[x][0]], regions[x][1]))
+    order_of_regs = sorted(order_of_regs, key=lambda x:(chr_to_idx[regions[x][0]], regions[x][1]))
 
     all_entries = []
     cur_chr = ""
@@ -70,10 +79,6 @@ def write_bigwig(data, regions, gs, bw_out, debug_chr=None, use_tqdm=False, outs
         iterator = tqdm(iterator)
 
     for itr in iterator:
-        # subset to chromosome (debugging)
-        if debug_chr and regions[i][0]!=debug_chr:
-            continue
-
         i = order_of_regs[itr]
         i_chr, i_start, i_end, i_mid = regions[i]
     
